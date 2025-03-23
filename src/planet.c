@@ -4,12 +4,21 @@
 #include <stdio.h>
 #include <SDL2/SDL2_gfxPrimitives.h>
 
-void generatePlanets(Planet *planets, int count) {
+void generatePlanets(Planet **planets, int count) {
+    Planet* planets_temp = realloc(*planets, count*sizeof(Planet));
+    if (planets_temp == NULL) {
+        printf("Erreur d'allocation mémoire (ou 0 planètes)!\n");
+        free(*planets);
+        *planets = NULL;  // Éviter un accès à une mémoire libérée
+        return;  // Sortir de la fonction pour éviter d'utiliser *planets après un échec
+    }
+    *planets = planets_temp;
+
     for (int i = 0; i < count; i++) {
-        planets[i].x = rand() % 10000;  // Assure-toi que les coordonnées sont correctes
-        planets[i].y = rand() % 5000;
-        planets[i].radius = 20 + rand() % 10;  // Taille entre 20 et 30
-        printf("Planète %d : (%.2f, %.2f)\n", i, planets[i].x, planets[i].y);
+        (*planets)[i].x = rand() % 100000;
+        (*planets)[i].y = rand() % 50000;
+        (*planets)[i].radius = 20 + rand() % 10;  // Taille entre 20 et 30
+        printf("Planète %d : (%.2f, %.2f)\n", i, (*planets)[i].x, (*planets)[i].y);
     }
     
 }
@@ -26,8 +35,8 @@ void renderPlanets(SDL_Renderer *renderer, Planet *planets, int count) {
         float screenY = (planets[i].y - camera.y) * camera.scale;
         float screenRadius = planets[i].radius * camera.scale;
 
-        if (screenX + screenRadius < 0 || screenX - screenRadius > 800 || 
-            screenY + screenRadius < 0 || screenY - screenRadius > 600) {
+        if (screenX + screenRadius < 0 || screenX - screenRadius > 1400 || 
+            screenY + screenRadius < 0 || screenY - screenRadius > 900) {
             continue;
         }
 

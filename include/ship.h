@@ -15,7 +15,7 @@ typedef struct {
     Uint32 waitStartTime;   // Temps d’attente à destination
 } Ship;
 
-void initShips(Ship *ships, int count, Planet *planets, int planetCount);
+void initShips(Ship **ships, int count, Planet *planets, int planetCount);
 void updateShips(Ship *ships, int count, Planet *planets, int planetCount);
 void renderShips(SDL_Renderer *renderer, Ship *ships, int count);
 
