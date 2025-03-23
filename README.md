@@ -1,5 +1,5 @@
 # Space Miner 🚀  
-Un jeu en C avec SDL2 où des vaisseaux voyagent entre des planètes.  
+Un jeu en C avec SDL2 dans lequel vous pourrez créer, développer et défendre une civilisation inter-galactique !
 
 ## Installation  
 1. Installez SDL2 et SDL2_gfx :  
@@ -8,7 +8,7 @@ Un jeu en C avec SDL2 où des vaisseaux voyagent entre des planètes.
    ```  
 2. Clonez le projet :  
    ```sh  
-   git clone https://github.com/TON_NOM_UTILISATEUR/space_miner.git  
+   git clone https://github.com/cTHE0/space_miner.git  
    cd space_miner  
    ```  
 3. Compilez et lancez :  
@@ -18,5 +18,4 @@ Un jeu en C avec SDL2 où des vaisseaux voyagent entre des planètes.
    ```  
 
 ## Contributions  
-Les contributions sont les bienvenues ! Forkez le repo et faites une PR.  
-
+Les contributions sont les bienvenues mais je vous prévient vous ne serez pas payé et Ada gardera tout l'argent ! Forkez le repo et faites une PR.  
