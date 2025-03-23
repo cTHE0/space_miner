@@ -21,7 +21,7 @@ git checkout -b feature-nom-de-la-fonctionnalite
 ```  
 
 ### 4️⃣ **Coder et tester**  
-Ajoutez/modifiez le code et testez bien vos changements.  
+Ajoutez/modifiez le code et TESTEZ bien vos changements.  
 
 ### 5️⃣ **Commiter vos modifications**  
 Ajoutez les fichiers modifiés et faites un commit avec un message clair :  
@@ -43,7 +43,7 @@ git push origin feature-nom-de-la-fonctionnalite
 4. Choisissez votre branche et soumettez la PR.  
 
 ### 8️⃣ **Attendre la revue et les modifications**  
-L’équipe examinera votre code et pourra demander des ajustements avant la fusion.  
+Théo (moi) examinera votre code et pourra demander des ajustements avant la fusion.  
 
 ---
 
@@ -83,5 +83,3 @@ Si je veux annuler définitivement un commit :
 ```sh  
 git reset --hard HEAD~1  
 ```  
-
-Merci pour votre contribution à Space Miner ! 🚀
