@@ -6,8 +6,8 @@
 
 void generatePlanets(Planet *planets, int count) {
     for (int i = 0; i < count; i++) {
-        planets[i].x = rand() % 800;  // Assure-toi que les coordonnées sont correctes
-        planets[i].y = rand() % 600;
+        planets[i].x = rand() % 10000;  // Assure-toi que les coordonnées sont correctes
+        planets[i].y = rand() % 5000;
         planets[i].radius = 20 + rand() % 10;  // Taille entre 20 et 30
         printf("Planète %d : (%.2f, %.2f)\n", i, planets[i].x, planets[i].y);
     }

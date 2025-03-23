@@ -5,7 +5,7 @@
 #include <SDL2/SDL2_gfxPrimitives.h>
 
 #define SHIP_SPEED 0.5f
-#define WAIT_TIME 10000  // 10 secondes en millisecondes
+#define WAIT_TIME 1000  // 10 secondes en millisecondes
 
 void initShips(Ship *ships, int count, Planet *planets, int planetCount) {
     for (int i = 0; i < count; i++) {

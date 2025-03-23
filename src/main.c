@@ -4,8 +4,8 @@
 #include "renderer.h"
 #include "ship.h"
 
-#define PLANET_COUNT 10
-#define SHIP_COUNT 5
+#define PLANET_COUNT 500
+#define SHIP_COUNT 1000
 
 int main() {
     SDL_Window *window;
