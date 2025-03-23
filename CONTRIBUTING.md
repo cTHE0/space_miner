@@ -1,6 +1,6 @@
 # Contribuer à Space Miner 🚀  
 
-Merci de votre intérêt pour l'amélioration de Space Miner !  
+Merci à toi Léon de nous éclairer !  
 
 ## 🛠️ Comment contribuer ?  
 
