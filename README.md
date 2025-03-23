@@ -18,4 +18,4 @@ Un jeu en C avec SDL2 dans lequel vous pourrez créer, développer et défendre 
    ```  
 
 ## Contributions  
-Les contributions sont les bienvenues mais je vous prévient vous ne serez pas payé et Ada gardera tout l'argent ! Forkez le repo et faites une PR.  
+Les contributions sont les bienvenues mais je vous prévient vous ne serez pas payé et Adam gardera tout l'argent ! Forkez le repo et faites une PR.  
