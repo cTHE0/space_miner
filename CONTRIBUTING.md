@@ -5,12 +5,12 @@ Merci à toi Léon de nous éclairer !
 ## 🛠️ Comment contribuer ?  
 
 ### 1️⃣ **Forker le projet**  
-Allez sur [le dépôt GitHub](https://github.com/TON_NOM_UTILISATEUR/space_miner) et cliquez sur **Fork** en haut à droite.  
+Allez sur [le dépôt GitHub](https://github.com/cTHE0/space_miner) et cliquez sur **Fork** en haut à droite.  
 
 ### 2️⃣ **Cloner le dépôt forké**  
 Clonez votre copie du projet sur votre machine locale :  
 ```sh  
-git clone https://github.com/VOTRE_UTILISATEUR/space_miner.git  
+git clone https://github.com/cTHE0/space_miner.git  
 cd space_miner  
 ```  
 
