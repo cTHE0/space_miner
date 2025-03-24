@@ -36,6 +36,15 @@ void handleEvents(int *running) {
                     lastMouseY = event.motion.y;
                 }
                 break;
+            case SDL_KEYDOWN:
+                switch (event.key.keysym.sym) {
+                    case SDLK_o:
+                        updateCamera(0, 0, 1.1f);
+                        break;
+                    case SDLK_p:
+                        updateCamera(0, 0, 0.9f);
+                        break;
+                }
         }
     }
 }
