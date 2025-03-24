@@ -15,8 +15,8 @@ void generatePlanets(Planet **planets, int count) {
     *planets = planets_temp;
 
     for (int i = 0; i < count; i++) {
-        (*planets)[i].x = rand() % 100000;
-        (*planets)[i].y = rand() % 50000;
+        (*planets)[i].x = rand() % 1000;
+        (*planets)[i].y = rand() % 500;
         (*planets)[i].radius = 20 + rand() % 10;  // Taille entre 20 et 30
         printf("Planète %d : (%.2f, %.2f)\n", i, (*planets)[i].x, (*planets)[i].y);
     }

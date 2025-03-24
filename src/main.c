@@ -4,8 +4,8 @@
 #include "renderer.h"
 #include "ship.h"
 
-#define INIT_PLANET_COUNT 50000
-#define INIT_SHIP_COUNT 100000
+#define INIT_PLANET_COUNT 50
+#define INIT_SHIP_COUNT 10
 
 int main() {
     int planet_count = INIT_PLANET_COUNT;
