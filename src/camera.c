@@ -14,5 +14,9 @@ void initCamera() {
 void updateCamera(float dx, float dy, float zoomFactor) {
     camera.x += dx / camera.scale;
     camera.y += dy / camera.scale;
-    camera.scale *= zoomFactor;
+    if (zoomFactor > 1 && camera.scale < 7) {
+        camera.scale *= zoomFactor;
+    } else if (zoomFactor < 1 && camera.scale > 0.4) {
+        camera.scale *= zoomFactor;
+    }
 }

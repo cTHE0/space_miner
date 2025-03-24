@@ -48,16 +48,16 @@ void handleEvents(int *running) {
                         updateCamera(0, 0, 0.9f);
                         break;
                     case SDLK_LEFT:
-                        updateCamera(-10, 0, 1);
+                        updateCamera(-50, 0, 1);
                         break;
                     case SDLK_RIGHT:
-                        updateCamera(10, 0, 1);
+                        updateCamera(50, 0, 1);
                         break;
                     case SDLK_UP:
-                        updateCamera(0, -10, 1);
+                        updateCamera(0, -50, 1);
                         break;
                     case SDLK_DOWN:
-                        updateCamera(0, 10, 1);
+                        updateCamera(0, 50, 1);
                         break;
                 }
                 break;
