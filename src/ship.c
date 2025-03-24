@@ -6,7 +6,7 @@
 #include <SDL2/SDL2_gfxPrimitives.h>
 
 #define SHIP_SPEED 0.1f
-#define WAIT_TIME 1000  // 10 secondes en millisecondes
+#define WAIT_TIME 1000  // 1000 millisecondes
 
 void initShips(Ship **ships, int count, Planet *planets, int planetCount) {
     *ships = malloc(count * sizeof(Ship));

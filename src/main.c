@@ -14,6 +14,7 @@ int main() {
     SDL_Window *window;
     SDL_Renderer *renderer;
     initRenderer(&window, &renderer);
+
     initCamera();
 
     Planet* planets = NULL;
