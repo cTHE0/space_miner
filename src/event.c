@@ -38,6 +38,9 @@ void handleEvents(int *running) {
                 break;
             case SDL_KEYDOWN:
                 switch (event.key.keysym.sym) {
+                    case SDLK_ESCAPE:
+                        *running = 0;
+                        break;
                     case SDLK_o:
                         updateCamera(0, 0, 1.1f);
                         break;
