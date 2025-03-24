@@ -2,6 +2,7 @@
 #define SHIP_H
 
 #include "planet.h"
+#include "ore.h"
 #include <SDL2/SDL.h>
 
 typedef enum { MOVING_TO_TARGET, WAITING, RETURNING } ShipState;
@@ -12,6 +13,9 @@ typedef struct {
     Planet *target;         // Planète cible
     float speed;            // Vitesse du vaisseau
     ShipState state;        // État du vaisseau
+    int life;
+    int comportment_capacity;
+    Compartment *compartments;
     Uint32 waitStartTime;   // Temps d’attente à destination
 } Ship;
 
