@@ -6,7 +6,7 @@
 
 #define INIT_PLANET_COUNT 50
 #define INIT_SHIP_COUNT 10
-
+//C'est Théo
 int main() {
     int planet_count = INIT_PLANET_COUNT;
     int ship_count = INIT_SHIP_COUNT;
