@@ -22,37 +22,15 @@ void generatePlanets(Planet **planets, int count) {
     
 }
 
-LODLevel getLOD(float screenRadius) {
-    if (screenRadius > 15) return LOD_HIGH;
-    if (screenRadius > 5) return LOD_MEDIUM;
-    return LOD_LOW;
-}
-
 void renderPlanets(SDL_Renderer *renderer, Planet *planets, int count) {
     for (int i = 0; i < count; i++) {
-        //(screenX, screenY) = coordonnées écran
-        //(planets[i].x, planets[i].y) = coordonnées monde
-        float screenX = (planets[i].x - camera.x) * camera.scale + SCREEN_WIDTH / 2;
-        float screenY = (planets[i].y - camera.y) * camera.scale + SCREEN_HEIGHT / 2;
-        float screenRadius = planets[i].radius * camera.scale;
+        float screenX = (planets[i].x - camera.x) * camera.scale + SCREEN_WIDTH / 2;  //(screenX, screenY) = coordonnées écran
+        float screenY = (planets[i].y - camera.y) * camera.scale + SCREEN_HEIGHT / 2;  //(planets[i].x, planets[i].y) = coordonnées monde
+        float screenRadius = planets[i].radius * camera.scale;  
 
-        if (screenX + screenRadius < 0 || screenX - screenRadius > SCREEN_WIDTH || 
-            screenY + screenRadius < 0 || screenY - screenRadius > SCREEN_HEIGHT) {
-            continue;
-        }
-
-        LODLevel lod = getLOD(screenRadius);
-
-        switch (lod) {
-            case LOD_HIGH:
-                filledCircleRGBA(renderer, (int)screenX, (int)screenY, (int)screenRadius, 255, 255, 255, 255);
-                break;
-            case LOD_MEDIUM:
-                circleRGBA(renderer, (int)screenX, (int)screenY, (int)screenRadius, 255, 255, 255, 255);
-                break;
-            case LOD_LOW:
-                pixelRGBA(renderer, (int)screenX, (int)screenY, 255, 255, 255, 255);
-                break;
-        }
+        if (screenX + screenRadius > 0 && screenX - screenRadius < SCREEN_WIDTH && 
+            screenY + screenRadius > 0 && screenY - screenRadius < SCREEN_HEIGHT) {
+            filledCircleRGBA(renderer, (int)screenX, (int)screenY, (int)screenRadius, 255, 255, 255, 255);
+        }   
     }
 }
