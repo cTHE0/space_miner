@@ -24,6 +24,8 @@ void initShips(Ship **ships, int count, Planet *planets, int planetCount) {
         (*ships)[i].speed = SHIP_SPEED;
         (*ships)[i].state = MOVING_TO_TARGET;
         (*ships)[i].waitStartTime = 0;
+        (*ships)[i].frameIndex = 0;
+        (*ships)[i].lastFrameTime = 0;
     }
 }
 
@@ -31,6 +33,11 @@ void updateShips(Ship *ships, int count, Planet *planets, int planetCount) {
     Uint32 currentTime = SDL_GetTicks();
 
     for (int i = 0; i < count; i++) {
+        if (SDL_GetTicks() > ships[i].lastFrameTime + SHIP_FRAME_DELAY) {
+            ships[i].frameIndex = (ships[i].frameIndex + 1) % 4; // 4 images dans le sprite sheet
+            ships[i].lastFrameTime = SDL_GetTicks();
+        }
+
         if (ships[i].state == MOVING_TO_TARGET || ships[i].state == RETURNING) {
             Planet *destination = (ships[i].state == MOVING_TO_TARGET) ? ships[i].target : ships[i].base;
             float dx = destination->x - ships[i].x;
@@ -65,7 +72,7 @@ void updateShips(Ship *ships, int count, Planet *planets, int planetCount) {
     }
 }
 
-void renderShips(SDL_Renderer *renderer, Ship *ships, int count) {
+void renderShips(SDL_Renderer *renderer, SDL_Texture *spriteSheet, Ship *ships, int count) {
     float angle;
 
     for (int i = 0; i < count; i++) {
@@ -83,16 +90,16 @@ void renderShips(SDL_Renderer *renderer, Ship *ships, int count) {
         float screenY = (ships[i].y - camera.y) * camera.scale + SCREEN_HEIGHT / 2;
 
 
-        // Points du triangle
-        float x1 = screenX + cos(angle) * size;
-        float y1 = screenY + sin(angle) * size;
-        float x2 = screenX + cos(angle + 2.5f) * size;
-        float y2 = screenY + sin(angle + 2.5f) * size;
-        float x3 = screenX + cos(angle - 2.5f) * size;
-        float y3 = screenY + sin(angle - 2.5f) * size;
+        // Point origine rect
+        float x = screenX + cos(angle) * size;
+        float y = screenY + sin(angle) * size;
 
         // Dessin du vaisseau
-        filledTrigonRGBA(renderer, (int)x1, (int)y1, (int)x2, (int)y2, (int)x3, (int)y3, 255, 255, 0, 255);
+        SDL_Rect srcRect = {ships[i].frameIndex * 64, 0, 64, 64}; // Frame actuelle sur le sprite sheet
+        SDL_Rect destRect = {ships[i].x, ships[i].y, 64, 64};       // Position et taille affichée
+
+        SDL_RenderCopy(renderer, spriteSheet, &srcRect, &destRect);
+
     }
 }
 

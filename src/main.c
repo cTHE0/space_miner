@@ -3,6 +3,7 @@
 #include "event.h"
 #include "renderer.h"
 #include "ship.h"
+#include "assets_gestion.h"
 
 #define INIT_PLANET_COUNT 50
 #define INIT_SHIP_COUNT 10
@@ -22,6 +23,8 @@ int main() {
     Ship* ships = NULL;
     initShips(&ships, ship_count, planets, planet_count);
 
+    SDL_Texture* shipSpriteSheet = loadSpriteSheet(renderer, "assets/img/spritesheet.png");
+
     int running = 1;
     while (running) {
         handleEvents(&running);
@@ -29,7 +32,7 @@ int main() {
 
         clearScreen(renderer);
         renderPlanets(renderer, planets, planet_count);
-        renderShips(renderer, ships, ship_count);
+        renderShips(renderer, shipSpriteSheet,ships, ship_count);
         presentScreen(renderer);
     }
 

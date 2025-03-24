@@ -1,6 +1,7 @@
 #include "camera.h"
 #include "config.h"
 #include <stdio.h>
+#include <SDL2/SDL_image.h>
 
 Camera camera;
 
