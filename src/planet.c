@@ -6,18 +6,16 @@
 #include <SDL2/SDL2_gfxPrimitives.h>
 
 void generatePlanets(Planet **planets, int count) {
-    Planet* planets_temp = realloc(*planets, count*sizeof(Planet));
-    if (planets_temp == NULL) {
+    *planets = malloc(count * sizeof(Planet));
+
+    if (*planets == NULL) {
         printf("Erreur d'allocation mémoire (ou 0 planètes)!\n");
-        free(*planets);
-        *planets = NULL;  // Éviter un accès à une mémoire libérée
         return;  // Sortir de la fonction pour éviter d'utiliser *planets après un échec
     }
-    *planets = planets_temp;
 
     for (int i = 0; i < count; i++) {
-        (*planets)[i].x = rand() % 1000;
-        (*planets)[i].y = rand() % 500;
+        (*planets)[i].x = rand() % SCREEN_WIDTH;
+        (*planets)[i].y = rand() % SCREEN_HEIGHT;
         (*planets)[i].radius = 20 + rand() % 10;  // Taille entre 20 et 30
         printf("Planète %d : (%.2f, %.2f)\n", i, (*planets)[i].x, (*planets)[i].y);
     }

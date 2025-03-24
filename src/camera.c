@@ -8,7 +8,7 @@ void initCamera() {
     camera.x = SCREEN_WIDTH / 2;
     camera.y = SCREEN_HEIGHT / 2;
     camera.scale = 1.0f;
-    printf("Caméra : x=%.2f, y=%.2f, scale=%.2f\n", camera.x, camera.y , camera.scale);
+    printf("Camera : x=%.2f, y=%.2f, scale=%.2f\n", camera.x, camera.y , camera.scale);
 }
 
 void updateCamera(float dx, float dy, float zoomFactor) {
