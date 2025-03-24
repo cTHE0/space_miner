@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <SDL2/SDL2_gfxPrimitives.h>
 
-#define SHIP_SPEED 0.5f
+#define SHIP_SPEED 0.1f
 #define WAIT_TIME 1000  // 10 secondes en millisecondes
 
 void initShips(Ship **ships, int count, Planet *planets, int planetCount) {
@@ -51,7 +51,7 @@ void updateShips(Ship *ships, int count, Planet *planets, int planetCount) {
                     ship->state = WAITING;
                     ship->waitStartTime = currentTime;
                 } else {
-                    ship->target = &planets[rand() % planetCount];  // ✅ Correction ici
+                    ship->target = &planets[rand() % planetCount];
                     ship->state = MOVING_TO_TARGET;
                 }
             }
@@ -78,7 +78,8 @@ void renderShips(SDL_Renderer *renderer, Ship *ships, int count) {
         float screenX = (ship->x - camera.x) * camera.scale + SCREEN_WIDTH / 2;
         float screenY = (ship->y - camera.y) * camera.scale + SCREEN_HEIGHT / 2;
 
-        // Points du triangle (NE PAS multiplier size par camera.scale)
+
+        // Points du triangle
         float x1 = screenX + cos(angle) * size;
         float y1 = screenY + sin(angle) * size;
         float x2 = screenX + cos(angle + 2.5f) * size;

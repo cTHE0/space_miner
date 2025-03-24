@@ -31,7 +31,7 @@ void handleEvents(int *running) {
                 if (dragging) {
                     int dx = event.motion.x - lastMouseX;
                     int dy = event.motion.y - lastMouseY;
-                    updateCamera(dx, dy, 1.0f);
+                    updateCamera(-dx, -dy, 1.0f);
                     lastMouseX = event.motion.x;
                     lastMouseY = event.motion.y;
                 }
@@ -47,7 +47,20 @@ void handleEvents(int *running) {
                     case SDLK_p:
                         updateCamera(0, 0, 0.9f);
                         break;
+                    case SDLK_LEFT:
+                        updateCamera(-10, 0, 1);
+                        break;
+                    case SDLK_RIGHT:
+                        updateCamera(10, 0, 1);
+                        break;
+                    case SDLK_UP:
+                        updateCamera(0, -10, 1);
+                        break;
+                    case SDLK_DOWN:
+                        updateCamera(0, 10, 1);
+                        break;
                 }
+                break;
         }
     }
 }

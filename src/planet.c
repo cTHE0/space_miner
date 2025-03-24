@@ -38,8 +38,8 @@ void renderPlanets(SDL_Renderer *renderer, Planet *planets, int count) {
         float screenY = (planets[i].y - camera.y) * camera.scale + SCREEN_HEIGHT / 2;
         float screenRadius = planets[i].radius * camera.scale;
 
-        if (screenX + screenRadius < 0 || screenX - screenRadius > 1400 || 
-            screenY + screenRadius < 0 || screenY - screenRadius > 900) {
+        if (screenX + screenRadius < 0 || screenX - screenRadius > SCREEN_WIDTH || 
+            screenY + screenRadius < 0 || screenY - screenRadius > SCREEN_HEIGHT) {
             continue;
         }
 
