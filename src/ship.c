@@ -73,7 +73,7 @@ void renderShips(SDL_Renderer *renderer, Ship *ships, int count) {
         if (ships[i].state == MOVING_TO_TARGET) {
             angle = atan2(ships[i].target->y - ships[i].y, ships[i].target->x - ships[i].x);
         } else {
-            angle = atan2(ships[i].target->x - ships[i].x, ships[i].target->y - ships[i].y);
+            angle = atan2(ships[i].y - ships[i].target->y, ships[i].x - ships[i].target->x);
         }
 
         float size = 8; // Taille FIXE du vaisseau (ne dépend plus de camera.scale)
