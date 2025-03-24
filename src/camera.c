@@ -5,8 +5,8 @@
 Camera camera;
 
 void initCamera() {
-    camera.x = SCREEN_WIDTH/2;
-    camera.y = SCREEN_HEIGHT/2;
+    camera.x = SCREEN_WIDTH / 2;
+    camera.y = SCREEN_HEIGHT / 2;
     camera.scale = 1.0f;
     printf("Caméra : x=%.2f, y=%.2f, scale=%.2f\n", camera.x, camera.y , camera.scale);
 
