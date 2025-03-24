@@ -9,14 +9,13 @@
 #define WAIT_TIME 1000  // 10 secondes en millisecondes
 
 void initShips(Ship **ships, int count, Planet *planets, int planetCount) {
-    Ship *ships_temp = realloc(*ships, count*sizeof(Ship));
-    if (ships_temp == NULL) {
-        printf("Erreur d'allocation mémoire (ou 0 vaisseaux)!\n");
-        free(*ships);
-        *ships = NULL;  // Éviter un accès à une mémoire libérée
-        return;  // Sortir de la fonction pour éviter d'utiliser *planets après un échec
+    *ships = malloc(count * sizeof(Ship));
+
+    if (*ships == NULL) {
+        printf("Erreur d'allocation mémoire pour les vaisseaux !\n");
+        return;  // Sortir de la fonction pour éviter d'utiliser *ships après un échec
     }
-    *ships = ships_temp;
+
     for (int i = 0; i < count; i++) {
         (*ships)[i].base = &planets[0]; // La première planète est la base
         (*ships)[i].target = &planets[rand() % planetCount];

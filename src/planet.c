@@ -9,7 +9,7 @@ void generatePlanets(Planet **planets, int count) {
     *planets = malloc(count * sizeof(Planet));
 
     if (*planets == NULL) {
-        printf("Erreur d'allocation mémoire (ou 0 planètes)!\n");
+        printf("Erreur d'allocation mémoire pour les planetes !\n");
         return;  // Sortir de la fonction pour éviter d'utiliser *planets après un échec
     }
 
