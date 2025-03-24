@@ -31,32 +31,35 @@ void updateShips(Ship *ships, int count, Planet *planets, int planetCount) {
     Uint32 currentTime = SDL_GetTicks();
 
     for (int i = 0; i < count; i++) {
-        Ship *ship = &ships[i];
-
-        if (ship->state == MOVING_TO_TARGET || ship->state == RETURNING) {
-            Planet *destination = (ship->state == MOVING_TO_TARGET) ? ship->target : ship->base;
-            float dx = destination->x - ship->x;
-            float dy = destination->y - ship->y;
+        if (ships[i].state == MOVING_TO_TARGET || ships[i].state == RETURNING) {
+            Planet *destination = (ships[i].state == MOVING_TO_TARGET) ? ships[i].target : ships[i].base;
+            float dx = destination->x - ships[i].x;
+            float dy = destination->y - ships[i].y;
             float distance = sqrt(dx * dx + dy * dy);
 
-            if (distance > ship->speed) {
-                ship->x += (dx / distance) * ship->speed;
-                ship->y += (dy / distance) * ship->speed;
+            if (distance - ships[i].speed > destination->radius) {
+                ships[i].x += (dx / distance) * ships[i].speed;
+                ships[i].y += (dy / distance) * ships[i].speed;
             } else {
-                ship->x = destination->x;
-                ship->y = destination->y;
-
-                if (ship->state == MOVING_TO_TARGET) {
-                    ship->state = WAITING;
-                    ship->waitStartTime = currentTime;
+                if (ships[i].state == MOVING_TO_TARGET) {
+                    ships[i].state = WAITING;
+                    ships[i].waitStartTime = currentTime;
+                } else if (ships[i].state == RETURNING) {
+                    ships[i].state = WAITING;
+                    ships[i].waitStartTime = currentTime;
                 } else {
-                    ship->target = &planets[rand() % planetCount];
-                    ship->state = MOVING_TO_TARGET;
+                    ships[i].target = &planets[rand() % planetCount];
+                    ships[i].state = MOVING_TO_TARGET;
                 }
             }
-        } else if (ship->state == WAITING) {
-            if (currentTime - ship->waitStartTime > WAIT_TIME) {
-                ship->state = RETURNING;
+        } else if (ships[i].state == WAITING) {
+            if (currentTime - ships[i].waitStartTime > WAIT_TIME) {
+                if (carre(ships[i].target->x - ships[i].x) + carre(ships[i].target->x - ships[i].x) >
+                    carre(ships[i].base->x - ships[i].x) + carre(ships[i].base->x - ships[i].x))  {
+                    ships[i].state = MOVING_TO_TARGET;
+                } else {
+                    ships[i].state = RETURNING;
+                }
             }
         }
     }

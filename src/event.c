@@ -12,9 +12,11 @@ void handleEvents(int *running) {
             case SDL_QUIT:
                 *running = 0;
                 break;
+                
             case SDL_MOUSEWHEEL:
                 updateCamera(0, 0, (event.wheel.y > 0) ? 1.1f : 0.9f);
                 break;
+
             case SDL_MOUSEBUTTONDOWN:
                 if (event.button.button == SDL_BUTTON_LEFT) {
                     dragging = 1;
@@ -22,11 +24,13 @@ void handleEvents(int *running) {
                     lastMouseY = event.button.y;
                 }
                 break;
+
             case SDL_MOUSEBUTTONUP:
                 if (event.button.button == SDL_BUTTON_LEFT) {
                     dragging = 0;
                 }
                 break;
+
             case SDL_MOUSEMOTION:
                 if (dragging) {
                     int dx = event.motion.x - lastMouseX;
@@ -36,6 +40,7 @@ void handleEvents(int *running) {
                     lastMouseY = event.motion.y;
                 }
                 break;
+
             case SDL_KEYDOWN:
                 switch (event.key.keysym.sym) {
                     case SDLK_ESCAPE:
