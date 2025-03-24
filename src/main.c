@@ -3,7 +3,7 @@
 #include "event.h"
 #include "renderer.h"
 #include "ship.h"
-
+//c'est Adam
 #define INIT_PLANET_COUNT 50
 #define INIT_SHIP_COUNT 10
 
