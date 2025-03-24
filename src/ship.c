@@ -66,19 +66,21 @@ void updateShips(Ship *ships, int count, Planet *planets, int planetCount) {
 }
 
 void renderShips(SDL_Renderer *renderer, Ship *ships, int count) {
-    for (int i = 0; i < count; i++) {
-        Ship *ship = &ships[i];
+    float angle;
 
+    for (int i = 0; i < count; i++) {
         // Calcul de la rotation du triangle selon la direction du déplacement
-        float dx = ship->target->x - ship->x;
-        float dy = ship->target->y - ship->y;
-        float angle = atan2(dy, dx);
+        if (ships[i].state == MOVING_TO_TARGET) {
+            angle = atan2(ships[i].target->y - ships[i].y, ships[i].target->x - ships[i].x);
+        } else {
+            angle = atan2(ships[i].target->x - ships[i].x, ships[i].target->y - ships[i].y);
+        }
 
         float size = 8; // Taille FIXE du vaisseau (ne dépend plus de camera.scale)
 
         // Calcul des coordonnées à l'écran (avec zoom pour la position, mais pas pour la taille)
-        float screenX = (ship->x - camera.x) * camera.scale + SCREEN_WIDTH / 2;
-        float screenY = (ship->y - camera.y) * camera.scale + SCREEN_HEIGHT / 2;
+        float screenX = (ships[i].x - camera.x) * camera.scale + SCREEN_WIDTH / 2;
+        float screenY = (ships[i].y - camera.y) * camera.scale + SCREEN_HEIGHT / 2;
 
 
         // Points du triangle
