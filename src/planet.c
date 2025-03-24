@@ -1,5 +1,6 @@
 #include "planet.h"
 #include "camera.h"
+#include "config.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <SDL2/SDL2_gfxPrimitives.h>
@@ -31,8 +32,10 @@ LODLevel getLOD(float screenRadius) {
 
 void renderPlanets(SDL_Renderer *renderer, Planet *planets, int count) {
     for (int i = 0; i < count; i++) {
-        float screenX = (planets[i].x - camera.x) * camera.scale;
-        float screenY = (planets[i].y - camera.y) * camera.scale;
+        //(screenX, screenY) = coordonnées écran
+        //(planets[i].x, planets[i].y) = coordonnées monde
+        float screenX = (planets[i].x - camera.x) * camera.scale + SCREEN_WIDTH / 2;
+        float screenY = (planets[i].y - camera.y) * camera.scale + SCREEN_HEIGHT / 2;
         float screenRadius = planets[i].radius * camera.scale;
 
         if (screenX + screenRadius < 0 || screenX - screenRadius > 1400 || 

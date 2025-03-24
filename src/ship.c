@@ -1,5 +1,6 @@
 #include "ship.h"
 #include "camera.h"
+#include "config.h"
 #include <math.h>
 #include <stdlib.h>
 #include <SDL2/SDL2_gfxPrimitives.h>
@@ -71,20 +72,23 @@ void renderShips(SDL_Renderer *renderer, Ship *ships, int count) {
         float dy = ship->target->y - ship->y;
         float angle = atan2(dy, dx);
 
-        float size = 8 * camera.scale; // Taille du vaisseau
+        float size = 8; // Taille FIXE du vaisseau (ne dépend plus de camera.scale)
 
-        // Points du triangle
-        float x1 = ship->x + cos(angle) * size;
-        float y1 = ship->y + sin(angle) * size;
-        float x2 = ship->x + cos(angle + 2.5f) * size;
-        float y2 = ship->y + sin(angle + 2.5f) * size;
-        float x3 = ship->x + cos(angle - 2.5f) * size;
-        float y3 = ship->y + sin(angle - 2.5f) * size;
+        // Calcul des coordonnées à l'écran (avec zoom pour la position, mais pas pour la taille)
+        float screenX = (ship->x - camera.x) * camera.scale + SCREEN_WIDTH / 2;
+        float screenY = (ship->y - camera.y) * camera.scale + SCREEN_HEIGHT / 2;
 
-        filledTrigonRGBA(renderer,
-            (int)((x1 - camera.x) * camera.scale), (int)((y1 - camera.y) * camera.scale),
-            (int)((x2 - camera.x) * camera.scale), (int)((y2 - camera.y) * camera.scale),
-            (int)((x3 - camera.x) * camera.scale), (int)((y3 - camera.y) * camera.scale),
-            255, 255, 0, 255);
+        // Points du triangle (NE PAS multiplier size par camera.scale)
+        float x1 = screenX + cos(angle) * size;
+        float y1 = screenY + sin(angle) * size;
+        float x2 = screenX + cos(angle + 2.5f) * size;
+        float y2 = screenY + sin(angle + 2.5f) * size;
+        float x3 = screenX + cos(angle - 2.5f) * size;
+        float y3 = screenY + sin(angle - 2.5f) * size;
+
+        // Dessin du vaisseau
+        filledTrigonRGBA(renderer, (int)x1, (int)y1, (int)x2, (int)y2, (int)x3, (int)y3, 255, 255, 0, 255);
     }
 }
+
+
