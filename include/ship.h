@@ -17,10 +17,13 @@ typedef struct {
     int comportment_capacity;
     Compartment *compartments;
     Uint32 waitStartTime;   // Temps d’attente à destination
+    // Gestion de l'animation
+    int frameIndex;
+    Uint32 lastFrameTime; // heure au dernier changement de frame
 } Ship;
 
 void initShips(Ship **ships, int count, Planet *planets, int planetCount);
 void updateShips(Ship *ships, int count, Planet *planets, int planetCount);
-void renderShips(SDL_Renderer *renderer, Ship *ships, int count);
+void renderShips(SDL_Renderer *renderer, SDL_Texture *spriteSheet, Ship *ships, int count);
 
 #endif

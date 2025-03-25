@@ -83,16 +83,16 @@ void renderShips(SDL_Renderer *renderer, SDL_Texture *spriteSheet, Ship *ships, 
             angle = atan2(ships[i].y - ships[i].target->y, ships[i].x - ships[i].target->x);
         }
 
+        /*
         float size = 8; // Taille FIXE du vaisseau (ne dépend plus de camera.scale)
 
         // Calcul des coordonnées à l'écran (avec zoom pour la position, mais pas pour la taille)
         float screenX = (ships[i].x - camera.x) * camera.scale + SCREEN_WIDTH / 2;
         float screenY = (ships[i].y - camera.y) * camera.scale + SCREEN_HEIGHT / 2;
 
-
         // Point origine rect
-        float x = screenX + cos(angle) * size;
-        float y = screenY + sin(angle) * size;
+        ships[i].x = screenX;
+        ships[i].y = screenY; */
 
         // Dessin du vaisseau
         SDL_Rect srcRect = {ships[i].frameIndex * 64, 0, 64, 64}; // Frame actuelle sur le sprite sheet

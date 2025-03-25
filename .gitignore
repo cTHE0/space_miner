@@ -1,5 +1,5 @@
 echo "src/*.o" >> .gitignore
-echo "sdl_zoom" >> .gitignore
+echo "space_miner" >> .gitignore
 echo "*.swp" >> .gitignore
 echo "*.log" >> .gitignore
 git add .gitignore
