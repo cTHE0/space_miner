@@ -5,6 +5,6 @@ extern const int SCREEN_WIDTH;
 extern const int SCREEN_HEIGHT;
 extern const int SHIP_FRAME_DELAY;
 #define carre(x) (x) * (x)
-#define PNG_IMAGE_NUMBER 14
+#define PNG_IMAGE_NUMBER 15
 
 #endif // CONFIG_H
