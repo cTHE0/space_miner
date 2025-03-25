@@ -98,7 +98,7 @@ void renderShips(SDL_Renderer *renderer, SDL_Texture *spriteSheet, Ship *ships, 
 
         // Dessin du vaisseau
         SDL_Rect srcRect = {ships[i].frameIndex * 64, 0, 64, 64}; // Frame actuelle sur le sprite sheet
-        SDL_Rect destRect = {screenX, screenY, 64, 64};       // Position et taille affichée
+        SDL_Rect destRect = {screenX, screenY, 64 * camera.scale, 64 * camera.scale};       // Position et taille affichée
 
         SDL_RenderCopy(renderer, spriteSheet, &srcRect, &destRect);
 
