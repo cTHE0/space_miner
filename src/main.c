@@ -9,7 +9,7 @@
 #define INIT_SHIP_COUNT 10
 
 int main() {
-
+    // Initialisation 
     int planet_count = INIT_PLANET_COUNT;
     int ship_count = INIT_SHIP_COUNT;
 
@@ -25,9 +25,9 @@ int main() {
     Ship* ships = NULL;
     initShips(&ships, ship_count, planets, planet_count);
 
-    //Initialiser 
     SDL_Texture **textures = loadTextures(renderer);
 
+    // Lancement de space_miner
     int running = 1;
     while (running) {
         handleEvents(&running);
@@ -35,7 +35,7 @@ int main() {
 
         clearScreen(renderer);
         renderPlanets(renderer, planets, planet_count);
-        renderShips(renderer, textures[0],ships, ship_count);
+        renderShips(renderer, textures[0], ships, ship_count);
         presentScreen(renderer);
     }
 
@@ -43,6 +43,7 @@ int main() {
     free(planets);  // Libération des planètes
     free(ships);    // Libération des vaisseaux
 
+    SDL_DestroyTextures(textures);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();

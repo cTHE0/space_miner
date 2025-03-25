@@ -7,7 +7,7 @@ void initRenderer(SDL_Window **window, SDL_Renderer **renderer) {
     
     // Initialiser SDL
     if (SDL_Init(SDL_INIT_VIDEO) < 0 || !IMG_Init(IMG_INIT_PNG)) {
-        printf("Erreur SDL : %s\n", SDL_GetError());
+        printf("Erreur initialisation de SDL : %s\n", SDL_GetError());
         return;
     }
 

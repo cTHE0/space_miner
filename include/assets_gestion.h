@@ -5,5 +5,6 @@
 #include <SDL2/SDL_image.h>
 
 SDL_Texture **loadTextures(SDL_Renderer *renderer);
+void SDL_DestroyTextures(SDL_Texture **textures);
 
 #endif
