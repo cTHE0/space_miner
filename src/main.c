@@ -9,6 +9,7 @@
 #define INIT_SHIP_COUNT 10
 
 int main() {
+
     int planet_count = INIT_PLANET_COUNT;
     int ship_count = INIT_SHIP_COUNT;
 
@@ -24,7 +25,8 @@ int main() {
     Ship* ships = NULL;
     initShips(&ships, ship_count, planets, planet_count);
 
-    SDL_Texture* shipSpriteSheet = loadSpriteSheet(renderer, "assets/img/spritesheet.png");
+    //Initialiser 
+    SDL_Texture **textures = loadTextures(renderer);
 
     int running = 1;
     while (running) {
@@ -33,7 +35,7 @@ int main() {
 
         clearScreen(renderer);
         renderPlanets(renderer, planets, planet_count);
-        renderShips(renderer, shipSpriteSheet,ships, ship_count);
+        renderShips(renderer, textures[0],ships, ship_count);
         presentScreen(renderer);
     }
 

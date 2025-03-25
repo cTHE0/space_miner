@@ -4,6 +4,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-SDL_Texture *loadSpriteSheet(SDL_Renderer *renderer, char adress[]);
+SDL_Texture **loadTextures(SDL_Renderer *renderer);
 
 #endif
