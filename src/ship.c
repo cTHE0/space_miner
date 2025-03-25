@@ -76,32 +76,24 @@ void renderShips(SDL_Renderer *renderer, SDL_Texture *spriteSheet, Ship *ships, 
     float angle;
 
     for (int i = 0; i < count; i++) {
-        // Calcul de la rotation du triangle selon la direction du déplacement
-        if (ships[i].state == MOVING_TO_TARGET) {
-            angle = atan2(ships[i].target->y - ships[i].y, ships[i].target->x - ships[i].x);
-        } else {
-            angle = atan2(ships[i].y - ships[i].target->y, ships[i].x - ships[i].target->x);
-        }
+        // Calcul de l'angle en radians puis conversion en degrés
+        angle = atan2(ships[i].target->y - ships[i].y, ships[i].target->x - ships[i].x);
+        angle = angle * (180.0 / M_PI); // Conversion radians → degrés
+        // Si la fusée ne va pas vers la cible, on l'inverse
+        angle += (ships[i].state == MOVING_TO_TARGET) ? 90.0 : -90.0;
 
-        /*
-        float size = 8; // Taille FIXE du vaisseau (ne dépend plus de camera.scale)
-
-        
-
-        // Point origine rect
-        ships[i].x = screenX;
-        ships[i].y = screenY; */
-
-        // Calcul des coordonnées à l'écran (avec zoom pour la position, mais pas pour la taille)
+        // Calcul des coordonnées à l'écran
         float screenX = (ships[i].x - camera.x) * camera.scale + SCREEN_WIDTH / 2;
         float screenY = (ships[i].y - camera.y) * camera.scale + SCREEN_HEIGHT / 2;
 
-        // Dessin du vaisseau
         SDL_Rect srcRect = {ships[i].frameIndex * 64, 0, 64, 64}; // Frame actuelle sur le sprite sheet
-        SDL_Rect destRect = {screenX, screenY, 64 * camera.scale, 64 * camera.scale};       // Position et taille affichée
+        SDL_Rect destRect = {(int)screenX, (int)screenY, (int)(64 * camera.scale), (int)(64 * camera.scale)}; // Position et taille affichée
 
-        SDL_RenderCopy(renderer, spriteSheet, &srcRect, &destRect);
+        // Définition du point de rotation (au centre du sprite)
+        SDL_Point center = { destRect.w / 2, destRect.h / 2 };
 
+        // Dessin avec rotation
+        SDL_RenderCopyEx(renderer, spriteSheet, &srcRect, &destRect, angle, &center, SDL_FLIP_NONE);
     }
 }
 
