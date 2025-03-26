@@ -15,11 +15,17 @@ void initCamera() {
 }
 
 void updateCamera(float dx, float dy, float zoomFactor) {
-    camera.rect.x += dx / camera.scale;
-    camera.rect.y += dy / camera.scale;
-    if ((zoomFactor > 1 && camera.scale < 7) || (zoomFactor < 1 && camera.scale > 0.4)) {
-        camera.scale *= zoomFactor;
-        camera.rect.h *= zoomFactor;
-        camera.rect.w *= zoomFactor;
+    if ((camera.rect.x + dx >= 0) && 
+        (camera.rect.y + dy >= 0) &&
+        (camera.rect.x + dx + camera.rect.w * zoomFactor <= 3500) && 
+        (camera.rect.y + dy + camera.rect.h * zoomFactor <= 3500)) {  // Eviter que la camera sorte de la map
+        camera.rect.x += dx / camera.scale;
+        camera.rect.y += dy / camera.scale;
+
+        if ((zoomFactor > 1 && camera.scale < 7) || (zoomFactor < 1 && camera.scale > 0.4)) {  // Limiter le zoom
+            camera.scale *= zoomFactor;
+            camera.rect.h *= zoomFactor;
+            camera.rect.w *= zoomFactor;
+        }
     }
 }

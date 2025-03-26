@@ -28,6 +28,7 @@ int main() {
 
     SDL_Texture **textures = loadTextures(renderer);
 
+
     // Lancement de space_miner
     int running = 1;
     while (running) {
@@ -41,13 +42,14 @@ int main() {
         presentScreen(renderer);
     }
 
-    // Libération de la mémoire allouée
+    // Libération de la mémoire allouée et 
     free(planets);  // Libération des planètes
     free(ships);    // Libération des vaisseaux
 
     SDL_DestroyTextures(textures);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    IMG_Quit();
     SDL_Quit();
     return 0;
 }
