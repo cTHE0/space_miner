@@ -37,7 +37,7 @@ int main() {
 
         clearScreen(renderer);
         renderMap(renderer, textures[13]);
-        renderPlanets(renderer, planets, planet_count);
+        renderPlanets(renderer, planets, textures[8], planet_count);
         renderShips(renderer, textures[0], ships, ship_count);
         presentScreen(renderer);
     }

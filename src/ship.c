@@ -80,9 +80,8 @@ void renderShips(SDL_Renderer *renderer, SDL_Texture *spriteSheet, Ship *ships, 
         double target_x = ships[i].target->x + ships[i].target->radius / 2;
         double target_y = ships[i].target->y + ships[i].target->radius / 2;
         angle = atan2(target_y- ships[i].y, target_x - ships[i].x);
-        angle = angle * (180.0 / M_PI); // Conversion radians → degrés
-        // Si la fusée ne va pas vers la cible, on l'inverse
-        angle += (ships[i].state == MOVING_TO_TARGET) ? 90.0 : -90.0;
+        angle = angle * (180.0 / M_PI);  // Conversion radians → degrés
+        angle += (ships[i].state == MOVING_TO_TARGET) ? 90.0 : -90.0;  // Si la fusée ne va pas vers la cible, on l'inverse
 
         // Calcul des coordonnées à l'écran
         float screenX = (ships[i].x - camera.rect.x) * camera.scale + SCREEN_WIDTH / 2;
