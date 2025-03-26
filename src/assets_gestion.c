@@ -19,7 +19,9 @@ SDL_Texture **loadTextures(SDL_Renderer *renderer) {
                                             "assets/img/planetes/p9.png",
                                             "assets/img/planetes/p10.png",
                                             "assets/img/maps/m1.png",
-                                            "assets/img/others/add_button.png"};
+                                            "assets/img/others/add_button.png",
+                                            "assets/img/maps/m2.png"
+                                        };
 
     for (int i = 0; i < PNG_IMAGE_NUMBER; i++) {
         textures[i] = IMG_LoadTexture(renderer, pngNames[i]);

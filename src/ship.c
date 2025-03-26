@@ -77,14 +77,16 @@ void renderShips(SDL_Renderer *renderer, SDL_Texture *spriteSheet, Ship *ships, 
 
     for (int i = 0; i < count; i++) {
         // Calcul de l'angle en radians puis conversion en degrés
-        angle = atan2(ships[i].target->y - ships[i].y, ships[i].target->x - ships[i].x);
+        double target_x = ships[i].target->x + ships[i].target->radius / 2;
+        double target_y = ships[i].target->y + ships[i].target->radius / 2;
+        angle = atan2(target_y- ships[i].y, target_x - ships[i].x);
         angle = angle * (180.0 / M_PI); // Conversion radians → degrés
         // Si la fusée ne va pas vers la cible, on l'inverse
         angle += (ships[i].state == MOVING_TO_TARGET) ? 90.0 : -90.0;
 
         // Calcul des coordonnées à l'écran
-        float screenX = (ships[i].x - camera.x) * camera.scale + SCREEN_WIDTH / 2;
-        float screenY = (ships[i].y - camera.y) * camera.scale + SCREEN_HEIGHT / 2;
+        float screenX = (ships[i].x - camera.rect.x) * camera.scale + SCREEN_WIDTH / 2;
+        float screenY = (ships[i].y - camera.rect.y) * camera.scale + SCREEN_HEIGHT / 2;
 
         SDL_Rect srcRect = {ships[i].frameIndex * 64, 0, 64, 64}; // Frame actuelle sur le sprite sheet
         SDL_Rect destRect = {(int)screenX, (int)screenY, (int)(64 * camera.scale), (int)(64 * camera.scale)}; // Position et taille affichée

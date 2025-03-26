@@ -4,6 +4,7 @@
 #include "renderer.h"
 #include "ship.h"
 #include "assets_gestion.h"
+#include "map.h"
 
 #define INIT_PLANET_COUNT 50
 #define INIT_SHIP_COUNT 10
@@ -34,6 +35,7 @@ int main() {
         updateShips(ships, ship_count, planets, planet_count);
 
         clearScreen(renderer);
+        renderMap(renderer, textures[13]);
         renderPlanets(renderer, planets, planet_count);
         renderShips(renderer, textures[0], ships, ship_count);
         presentScreen(renderer);

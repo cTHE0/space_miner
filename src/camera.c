@@ -6,18 +6,20 @@
 Camera camera;
 
 void initCamera() {
-    camera.x = SCREEN_WIDTH / 2;
-    camera.y = SCREEN_HEIGHT / 2;
+    camera.rect.x = SCREEN_WIDTH / 2;
+    camera.rect.y = SCREEN_HEIGHT / 2;
+    camera.rect.h = SCREEN_HEIGHT;
+    camera.rect.w = SCREEN_WIDTH;
     camera.scale = 1.0f;
-    printf("Camera : x=%.2f, y=%.2f, scale=%.2f\n", camera.x, camera.y , camera.scale);
+    printf("Camera : x=%.2d, y=%.2d, scale=%.2f\n", camera.rect.x, camera.rect.y , camera.scale);
 }
 
 void updateCamera(float dx, float dy, float zoomFactor) {
-    camera.x += dx / camera.scale;
-    camera.y += dy / camera.scale;
-    if (zoomFactor > 1 && camera.scale < 7) {
+    camera.rect.x += dx / camera.scale;
+    camera.rect.y += dy / camera.scale;
+    if ((zoomFactor > 1 && camera.scale < 7) || (zoomFactor < 1 && camera.scale > 0.4)) {
         camera.scale *= zoomFactor;
-    } else if (zoomFactor < 1 && camera.scale > 0.4) {
-        camera.scale *= zoomFactor;
+        camera.rect.h *= zoomFactor;
+        camera.rect.w *= zoomFactor;
     }
 }

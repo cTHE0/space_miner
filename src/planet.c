@@ -17,15 +17,14 @@ void generatePlanets(Planet **planets, int count) {
         (*planets)[i].x = rand() % SCREEN_WIDTH;
         (*planets)[i].y = rand() % SCREEN_HEIGHT;
         (*planets)[i].radius = 20 + rand() % 10;  // Taille entre 20 et 30
-        printf("Planète %d : (%.2f, %.2f)\n", i, (*planets)[i].x, (*planets)[i].y);
     }
     
 }
 
 void renderPlanets(SDL_Renderer *renderer, Planet *planets, int count) {
     for (int i = 0; i < count; i++) {
-        float screenX = (planets[i].x - camera.x) * camera.scale + SCREEN_WIDTH / 2;  //(screenX, screenY) = coordonnées écran
-        float screenY = (planets[i].y - camera.y) * camera.scale + SCREEN_HEIGHT / 2;  //(planets[i].x, planets[i].y) = coordonnées monde
+        float screenX = (planets[i].x - camera.rect.x) * camera.scale + SCREEN_WIDTH / 2;  //(screenX, screenY) = coordonnées écran
+        float screenY = (planets[i].y - camera.rect.y) * camera.scale + SCREEN_HEIGHT / 2;  //(planets[i].x, planets[i].y) = coordonnées monde
         float screenRadius = planets[i].radius * camera.scale;  
 
         if (screenX + screenRadius > 0 && screenX - screenRadius < SCREEN_WIDTH && 
