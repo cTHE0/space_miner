@@ -5,6 +5,7 @@
 #include "ship.h"
 #include "assets_gestion.h"
 #include "map.h"
+#include "time.h"
 
 #define INIT_PLANET_COUNT 50
 #define INIT_SHIP_COUNT 10
@@ -13,6 +14,8 @@ int main() {
     // Initialisation 
     int planet_count = INIT_PLANET_COUNT;
     int ship_count = INIT_SHIP_COUNT;
+
+    srand(time(NULL));
 
     SDL_Window *window;
     SDL_Renderer *renderer;

@@ -33,11 +33,13 @@ void updateShips(Ship *ships, int count, Planet *planets, int planetCount) {
     Uint32 currentTime = SDL_GetTicks();
 
     for (int i = 0; i < count; i++) {
+        // Pour animation de la flamme des fusees 
         if (SDL_GetTicks() > ships[i].lastFrameTime + SHIP_FRAME_DELAY) {
             ships[i].frameIndex = (ships[i].frameIndex + 1) % 4; // 4 images dans le sprite sheet
             ships[i].lastFrameTime = SDL_GetTicks();
         }
 
+        // Pour le deplacement des fusees dans l'espace
         if (ships[i].state == MOVING_TO_TARGET || ships[i].state == RETURNING) {
             Planet *destination = (ships[i].state == MOVING_TO_TARGET) ? ships[i].target : ships[i].base;
             float dx = destination->x - ships[i].x;

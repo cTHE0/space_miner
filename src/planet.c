@@ -17,7 +17,7 @@ void generatePlanets(Planet **planets, int count) {
     for (int i = 0; i < count; i++) {
         (*planets)[i].x = rand() % SCREEN_WIDTH;
         (*planets)[i].y = rand() % SCREEN_HEIGHT;
-        (*planets)[i].radius = 20 + rand() % 10;  // Taille entre 20 et 30
+        (*planets)[i].radius = 10 + rand() % 50;  // Taille entre 20 et 30
     }
     
 }
