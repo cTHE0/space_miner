@@ -7,8 +7,8 @@
 #include "map.h"
 #include "time.h"
 
-#define INIT_PLANET_COUNT 500
-#define INIT_SHIP_COUNT 100
+#define INIT_PLANET_COUNT 2
+#define INIT_SHIP_COUNT 1000
 
 int main(void) {
     // Initialisation 

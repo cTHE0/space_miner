@@ -15,7 +15,7 @@ void initCamera(void) {
 }
 
 void zoomCamera(float zoomFactor) {
-    if ((zoomFactor > 1 && camera.scale < 7) || (zoomFactor < 1 && camera.scale > 0.4)) {  // Limiter le zoom
+    if ((zoomFactor > 1 && camera.scale < 7) || (zoomFactor < 1 && camera.scale > 0.2)) {  // Limiter le zoom
         if (1 == 1){  // Eviter que la camera sorte de la map (raisonner avec renderPlanets)
             camera.scale *= zoomFactor;
             camera.rect.h *= zoomFactor;

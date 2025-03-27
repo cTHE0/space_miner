@@ -42,11 +42,11 @@ void updateShips(Ship *ships, int count, Planet *planets, int planetCount) {
         // Pour le deplacement des fusees dans l'espace
         if (ships[i].state == MOVING_TO_TARGET || ships[i].state == RETURNING) {
             Planet *destination = (ships[i].state == MOVING_TO_TARGET) ? ships[i].target : ships[i].base;
-            float dx = destination->x - ships[i].x;
-            float dy = destination->y - ships[i].y;
+            float dx = destination->x - (ships[i].x + 64 / 2);
+            float dy = destination->y - (ships[i].y + 64 / 2);
             float distance = sqrt(dx * dx + dy * dy);
 
-            if (distance - ships[i].speed > destination->radius) {
+            if (distance - ships[i].speed >= destination->radius) {
                 ships[i].x += (dx / distance) * ships[i].speed;
                 ships[i].y += (dy / distance) * ships[i].speed;
             } else {
@@ -79,15 +79,15 @@ void renderShips(SDL_Renderer *renderer, SDL_Texture *spriteSheet, Ship *ships, 
 
     for (int i = 0; i < count; i++) {
         // Calcul de l'angle en radians puis conversion en degrés
-        double target_x = ships[i].target->x + ships[i].target->radius / 2;
-        double target_y = ships[i].target->y + ships[i].target->radius / 2;
-        angle = atan2(target_y- ships[i].y, target_x - ships[i].x);
+        double target_x = ships[i].target->x;
+        double target_y = ships[i].target->y;
+        angle = atan2(target_y - (ships[i].y + 64 / 2 * camera.scale), target_x - (ships[i].x + 64 / 2 * camera.scale));
         angle = angle * (180.0f / M_PI);  // Conversion radians → degrés
         angle += (ships[i].state == MOVING_TO_TARGET) ? 90.0f : -90.0f;  // Si la fusée ne va pas vers la cible, on l'inverse
 
         // Calcul des coordonnées à l'écran
-        float screenX = (ships[i].x - camera.rect.x) * camera.scale + SCREEN_WIDTH / 2;
-        float screenY = (ships[i].y - camera.rect.y) * camera.scale + SCREEN_HEIGHT / 2;
+        float screenX = (ships[i].x - camera.rect.x - SCREEN_WIDTH / 2) * camera.scale + SCREEN_WIDTH / 2;
+        float screenY = (ships[i].y - camera.rect.y - SCREEN_HEIGHT / 2) * camera.scale + SCREEN_HEIGHT / 2;
 
         SDL_Rect srcRect = {ships[i].frameIndex * 64, 0, 64, 64}; // Frame actuelle sur le sprite sheet
         SDL_Rect destRect = {(int)screenX, (int)screenY, (int)(64 * camera.scale), (int)(64 * camera.scale)}; // Position et taille affichée
