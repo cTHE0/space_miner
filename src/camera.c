@@ -5,27 +5,27 @@
 
 Camera camera;
 
-void initCamera() {
-    camera.rect.x = SCREEN_WIDTH / 2;
-    camera.rect.y = SCREEN_HEIGHT / 2;
+void initCamera(void) {
+    camera.rect.x = 0;
+    camera.rect.y = 0;
     camera.rect.h = SCREEN_HEIGHT;
     camera.rect.w = SCREEN_WIDTH;
-    camera.scale = 1.0f;
+    camera.scale = 1.0;
     printf("Camera : x=%.2d, y=%.2d, scale=%.2f\n", camera.rect.x, camera.rect.y , camera.scale);
 }
 
-void updateCamera(float dx, float dy, float zoomFactor) {
-    if ((camera.rect.x + dx >= 0) && 
-        (camera.rect.y + dy >= 0) &&
-        (camera.rect.x + dx + camera.rect.w * zoomFactor <= 3500) && 
-        (camera.rect.y + dy + camera.rect.h * zoomFactor <= 3500)) {  // Eviter que la camera sorte de la map
-        camera.rect.x += dx / camera.scale;
-        camera.rect.y += dy / camera.scale;
+void zoomCamera(float zoomFactor) {
+    if ((zoomFactor > 1 && camera.scale < 7) || (zoomFactor < 1 && camera.scale > 0.4)) {  // Eviter que la camera sorte de la map
+        camera.scale *= zoomFactor;
+        camera.rect.h *= zoomFactor;
+        camera.rect.w *= zoomFactor;
+    }
+}
 
-        if ((zoomFactor > 1 && camera.scale < 7) || (zoomFactor < 1 && camera.scale > 0.4)) {  // Limiter le zoom
-            camera.scale *= zoomFactor;
-            camera.rect.h *= zoomFactor;
-            camera.rect.w *= zoomFactor;
-        }
+void translateCamera(float dx, float dy) {
+    if (camera.rect.x >= -dx && (camera.rect.x + dx + camera.rect.w) / camera.scale <= 3500 && 
+        camera.rect.y >= -dy && (camera.rect.y + dy + camera.rect.h) / camera.scale <= 3500) {  // Eviter que la camera sorte de la map
+        camera.rect.x += dx;
+        camera.rect.y += dy;
     }
 }

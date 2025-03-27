@@ -17,7 +17,7 @@ void initShips(Ship **ships, int count, Planet *planets, int planetCount) {
     }
 
     for (int i = 0; i < count; i++) {
-        (*ships)[i].base = &planets[0]; // La première planète est la base
+        (*ships)[i].base = &planets[0]; // La première planète est la base de chaque vaisseau
         (*ships)[i].target = &planets[rand() % planetCount];
         (*ships)[i].x = (*ships)[i].base->x;
         (*ships)[i].y = (*ships)[i].base->y;
@@ -82,8 +82,8 @@ void renderShips(SDL_Renderer *renderer, SDL_Texture *spriteSheet, Ship *ships, 
         double target_x = ships[i].target->x + ships[i].target->radius / 2;
         double target_y = ships[i].target->y + ships[i].target->radius / 2;
         angle = atan2(target_y- ships[i].y, target_x - ships[i].x);
-        angle = angle * (180.0 / M_PI);  // Conversion radians → degrés
-        angle += (ships[i].state == MOVING_TO_TARGET) ? 90.0 : -90.0;  // Si la fusée ne va pas vers la cible, on l'inverse
+        angle = angle * (180.0f / M_PI);  // Conversion radians → degrés
+        angle += (ships[i].state == MOVING_TO_TARGET) ? 90.0f : -90.0f;  // Si la fusée ne va pas vers la cible, on l'inverse
 
         // Calcul des coordonnées à l'écran
         float screenX = (ships[i].x - camera.rect.x) * camera.scale + SCREEN_WIDTH / 2;
@@ -93,7 +93,7 @@ void renderShips(SDL_Renderer *renderer, SDL_Texture *spriteSheet, Ship *ships, 
         SDL_Rect destRect = {(int)screenX, (int)screenY, (int)(64 * camera.scale), (int)(64 * camera.scale)}; // Position et taille affichée
 
         // Définition du point de rotation (au centre du sprite)
-        SDL_Point center = { destRect.w / 2, destRect.h / 2 };
+        SDL_Point center = {destRect.w / 2, destRect.h / 2};
 
         // Dessin avec rotation
         SDL_RenderCopyEx(renderer, spriteSheet, &srcRect, &destRect, angle, &center, SDL_FLIP_NONE);

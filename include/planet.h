@@ -4,7 +4,7 @@
 #include <SDL2/SDL.h>
 
 typedef struct {
-    float x, y;   // Position
+    float x, y;  // Position du centre de la planete sur la map
     float radius; // Rayon
 } Planet;
 

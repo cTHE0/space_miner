@@ -14,7 +14,7 @@ void handleEvents(int *running) {
                 break;
                 
             case SDL_MOUSEWHEEL:
-                updateCamera(0, 0, (event.wheel.y > 0) ? 1.1f : 0.9f);
+                zoomCamera((event.wheel.y > 0) ? 1.1f : 1 / 1.1f);
                 break;
 
             case SDL_MOUSEBUTTONDOWN:
@@ -35,7 +35,7 @@ void handleEvents(int *running) {
                 if (dragging) {
                     int dx = event.motion.x - lastMouseX;
                     int dy = event.motion.y - lastMouseY;
-                    updateCamera(-dx, -dy, 1.0f);
+                    translateCamera(-dx, -dy);
                     lastMouseX = event.motion.x;
                     lastMouseY = event.motion.y;
                 }
@@ -47,22 +47,22 @@ void handleEvents(int *running) {
                         *running = 0;
                         break;
                     case SDLK_o:
-                        updateCamera(0, 0, 1.1f);
+                        zoomCamera(1.1f);
                         break;
                     case SDLK_p:
-                        updateCamera(0, 0, 0.9f);
+                        zoomCamera(1 / 1.1f);
                         break;
                     case SDLK_LEFT:
-                        updateCamera(-50, 0, 1);
+                        translateCamera(-50, 0);
                         break;
                     case SDLK_RIGHT:
-                        updateCamera(50, 0, 1);
+                        translateCamera(50, 0);
                         break;
                     case SDLK_UP:
-                        updateCamera(0, -50, 1);
+                        translateCamera(0, -50);
                         break;
                     case SDLK_DOWN:
-                        updateCamera(0, 50, 1);
+                        translateCamera(0, 50);
                         break;
                 }
                 break;

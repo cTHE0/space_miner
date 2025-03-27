@@ -10,7 +10,7 @@
 #define INIT_PLANET_COUNT 150
 #define INIT_SHIP_COUNT 1200
 
-int main() {
+int main(void) {
     // Initialisation 
     int planet_count = INIT_PLANET_COUNT;
     int ship_count = INIT_SHIP_COUNT;
@@ -36,6 +36,7 @@ int main() {
     int running = 1;
     while (running) {
         handleEvents(&running);
+        
         updateShips(ships, ship_count, planets, planet_count);
 
         clearScreen(renderer);
@@ -45,10 +46,10 @@ int main() {
         presentScreen(renderer);
     }
 
-    // Libération de la mémoire allouée et 
-    free(planets);  // Libération des planètes
-    free(ships);    // Libération des vaisseaux
 
+    // Fermeture du programme
+    free(planets);
+    free(ships);
     SDL_DestroyTextures(textures);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
