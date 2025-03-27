@@ -1,6 +1,9 @@
 {
     "files.associations": {
         "cmath": "cpp",
-        "assets_gestion.h": "c"
+        "assets_gestion.h": "c",
+        "sdl_image.h": "c",
+        "config.h": "c",
+        "camera.h": "c"
     }
 }
