@@ -7,8 +7,8 @@
 #include "map.h"
 #include "time.h"
 
-#define INIT_PLANET_COUNT 150
-#define INIT_SHIP_COUNT 1200
+#define INIT_PLANET_COUNT 10000
+#define INIT_SHIP_COUNT 100
 
 int main(void) {
     // Initialisation 
@@ -36,7 +36,7 @@ int main(void) {
     int running = 1;
     while (running) {
         handleEvents(&running);
-        
+
         updateShips(ships, ship_count, planets, planet_count);
 
         clearScreen(renderer);

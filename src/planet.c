@@ -15,11 +15,11 @@ void generatePlanets(Planet **planets, int count) {
     }
 
     for (int i = 0; i < count; i++) {
-        float radius = 10 + rand() % 50;  // Taille entre 10 et 60
+        int radius = 10 + rand() % 50;  // Taille entre 10 et 60
 
         (*planets)[i].radius = radius;
-        (*planets)[i].x = (rand() % (int)(MAP_WIDTH - 2 * radius)) + (int)radius;
-        (*planets)[i].y = (rand() % (int)(MAP_HEIGHT - 2 * radius)) + (int)radius;
+        (*planets)[i].x = rand() % (MAP_WIDTH - 2 * radius) + radius;
+        (*planets)[i].y = rand() % (MAP_HEIGHT - 2 * radius) + radius;
     }
     
 }
@@ -27,8 +27,8 @@ void generatePlanets(Planet **planets, int count) {
 void renderPlanets(SDL_Renderer *renderer, Planet *planets, SDL_Texture *texturePlanet, int count) {
     for (int i = 0; i < count; i++) {
         //(screenX, screenY) = coordonnees  sur l'ecran physique de la planete (point en haut à gauche du rect)
-        float screenX = (planets[i].x - camera.rect.x - SCREEN_WIDTH / 2.f) * camera.scale + SCREEN_WIDTH / 2.f;  //(planets[i].x, planets[i].y) = coordonnees sur la map
-        float screenY = (planets[i].y - camera.rect.y - SCREEN_HEIGHT / 2.f) * camera.scale + SCREEN_HEIGHT / 2.f;  
+        float screenX = (planets[i].x - camera.rect.x - planets[i].radius- SCREEN_WIDTH / 2.f) * camera.scale + SCREEN_WIDTH / 2.f;  //(planets[i].x, planets[i].y) = coordonnees sur la map
+        float screenY = (planets[i].y - camera.rect.y - planets[i].radius - SCREEN_HEIGHT / 2.f) * camera.scale + SCREEN_HEIGHT / 2.f;  
         float screenRadius = planets[i].radius * camera.scale;  
 
         SDL_Rect srcRect = {0, 0, 32, 32};
