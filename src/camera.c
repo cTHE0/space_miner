@@ -33,5 +33,3 @@ void translateCamera(float dx, float dy) {
         camera.rect.y += dy;
     }
 }
-
-// (3500  - SCREEN_WIDTH / 2.f) * camera.scale - SCREEN_WIDTH / 2.f <= (camera.rect.x + dx) * camera.scale

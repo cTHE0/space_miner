@@ -8,5 +8,6 @@ extern const int MAP_WIDTH;
 extern const int MAP_HEIGHT;
 #define carre(x) (x) * (x)
 #define PNG_IMAGE_NUMBER 16
+#define ZOOMSTEP 40
 
 #endif // CONFIG_H

@@ -1,5 +1,6 @@
 #include "event.h"
 #include "camera.h"
+#include "config.h"
 #include <SDL2/SDL.h>
 
 void handleEvents(int *running) {
@@ -53,16 +54,16 @@ void handleEvents(int *running) {
                         zoomCamera(1 / 1.1f);
                         break;
                     case SDLK_LEFT:
-                        translateCamera(-40, 0);
+                        translateCamera(-ZOOMSTEP, 0);
                         break;
                     case SDLK_RIGHT:
-                        translateCamera(40, 0);
+                        translateCamera(ZOOMSTEP, 0);
                         break;
                     case SDLK_UP:
-                        translateCamera(0, -40);
+                        translateCamera(0, -ZOOMSTEP);
                         break;
                     case SDLK_DOWN:
-                        translateCamera(0, 40);
+                        translateCamera(0, ZOOMSTEP);
                         break;
                 }
                 break;
