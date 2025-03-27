@@ -53,16 +53,16 @@ void handleEvents(int *running) {
                         zoomCamera(1 / 1.1f);
                         break;
                     case SDLK_LEFT:
-                        translateCamera(-50, 0);
+                        translateCamera(-20, 0);
                         break;
                     case SDLK_RIGHT:
-                        translateCamera(50, 0);
+                        translateCamera(20, 0);
                         break;
                     case SDLK_UP:
-                        translateCamera(0, -50);
+                        translateCamera(0, -20);
                         break;
                     case SDLK_DOWN:
-                        translateCamera(0, 50);
+                        translateCamera(0, 20);
                         break;
                 }
                 break;

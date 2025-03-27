@@ -15,17 +15,32 @@ void initCamera(void) {
 }
 
 void zoomCamera(float zoomFactor) {
-    if ((zoomFactor > 1 && camera.scale < 7) || (zoomFactor < 1 && camera.scale > 0.4)) {  // Eviter que la camera sorte de la map
-        camera.scale *= zoomFactor;
-        camera.rect.h *= zoomFactor;
-        camera.rect.w *= zoomFactor;
+    if ((zoomFactor > 1 && camera.scale < 7) || (zoomFactor < 1 && camera.scale > 0.4)) {  // Limiter le zoom
+        /*if ((1 - camera.scale) * SCREEN_WIDTH / 2.f >= camera.rect.x &&  // Eviter que la camera sorte de la map (raisonner avec renderPlanets)
+            (1 - camera.scale) * SCREEN_HEIGHT / 2.f >= camera.rect.y &&
+            (3500 - camera.rect.x) * camera.scale <= (1 + camera.scale) * SCREEN_WIDTH / 2.f &&
+            (3500 - camera.rect.y) * camera.scale <= (1 + camera.scale) * SCREEN_HEIGHT / 2.f) {
+            camera.scale *= zoomFactor;
+            camera.rect.h *= zoomFactor;
+            camera.rect.w *= zoomFactor;
+        }*/
+
+        if (1 == 1){  // Eviter que la camera sorte de la map (raisonner avec renderPlanets)
+            camera.scale *= zoomFactor;
+            camera.rect.h *= zoomFactor;
+            camera.rect.w *= zoomFactor;
+        }
     }
 }
 
 void translateCamera(float dx, float dy) {
-    if (camera.rect.x >= -dx && (camera.rect.x + dx + camera.rect.w) / camera.scale <= 3500 && 
-        camera.rect.y >= -dy && (camera.rect.y + dy + camera.rect.h) / camera.scale <= 3500) {  // Eviter que la camera sorte de la map
+    if ((camera.rect.x + dx + SCREEN_WIDTH / 2.f) * camera.scale >= SCREEN_WIDTH / 2.f && 
+        (3500 - camera.rect.x - dx - SCREEN_WIDTH / 2.f) * camera.scale >= SCREEN_WIDTH / 2.f && 
+        (camera.rect.y + dy + SCREEN_HEIGHT / 2.f) * camera.scale >= SCREEN_HEIGHT / 2.f &&
+        (3500 - camera.rect.y - dy - SCREEN_HEIGHT / 2.f) * camera.scale >= SCREEN_HEIGHT / 2.f) {  // Eviter que la camera sorte de la map
         camera.rect.x += dx;
         camera.rect.y += dy;
     }
 }
+
+// (3500  - SCREEN_WIDTH / 2.f) * camera.scale - SCREEN_WIDTH / 2.f <= (camera.rect.x + dx) * camera.scale
