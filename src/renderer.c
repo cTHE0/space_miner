@@ -1,7 +1,7 @@
-#include "renderer.h"
-#include "config.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include "renderer.h"
+#include "config.h"
 
 void initRenderer(SDL_Window **window, SDL_Renderer **renderer) {
     

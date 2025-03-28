@@ -1,7 +1,7 @@
-#include "assets_gestion.h"
-#include "config.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include "assets_gestion.h"
+#include "config.h"
 
 SDL_Texture **loadTextures(SDL_Renderer *renderer) {
     SDL_Texture **textures = malloc(PNG_IMAGE_NUMBER * sizeof(SDL_Texture*));
@@ -21,8 +21,7 @@ SDL_Texture **loadTextures(SDL_Renderer *renderer) {
                                             "assets/img/maps/m1.png",
                                             "assets/img/others/add_button.png",
                                             "assets/img/maps/m2.png",
-                                            "assets/img/maps/m3.png"
-                                        };
+                                            "assets/img/maps/m3.png"};
 
     for (int i = 0; i < PNG_IMAGE_NUMBER; i++) {
         textures[i] = IMG_LoadTexture(renderer, pngNames[i]);

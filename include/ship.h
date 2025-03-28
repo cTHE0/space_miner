@@ -1,9 +1,9 @@
 #ifndef SHIP_H
 #define SHIP_H
 
+#include <SDL2/SDL.h>
 #include "planet.h"
 #include "ore.h"
-#include <SDL2/SDL.h>
 
 typedef enum { MOVING_TO_TARGET, WAITING, RETURNING } ShipState;
 

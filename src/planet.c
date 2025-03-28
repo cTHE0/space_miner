@@ -1,10 +1,10 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include "planet.h"
 #include "camera.h"
 #include "config.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 
 void generatePlanets(Planet **planets, int count) {
     *planets = malloc(count * sizeof(Planet));
@@ -26,8 +26,8 @@ void generatePlanets(Planet **planets, int count) {
 
 void renderPlanets(SDL_Renderer *renderer, Planet *planets, SDL_Texture *texturePlanet, int count) {
     for (int i = 0; i < count; i++) {
-        //(screenX, screenY) = coordonnees  sur l'ecran physique, du point en haut à gauche du rect de la planete
-        float screenX = (planets[i].x - camera.rect.x - planets[i].radius - SCREEN_WIDTH / 2.f) * camera.scale + SCREEN_WIDTH / 2.f;  //(planets[i].x, planets[i].y) = coordonnees sur la map
+        //(screenX, screenY) = coordonnees sur l'ecran physique, du point en haut à gauche du rect de la planete
+        float screenX = (planets[i].x - camera.rect.x - planets[i].radius - SCREEN_WIDTH / 2.f) * camera.scale + SCREEN_WIDTH / 2.f;  // (planets[i].x, planets[i].y) = coordonnees sur la map
         float screenY = (planets[i].y - camera.rect.y - planets[i].radius - SCREEN_HEIGHT / 2.f) * camera.scale + SCREEN_HEIGHT / 2.f;  
         float screenRadius = planets[i].radius * camera.scale;  
 

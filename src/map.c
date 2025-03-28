@@ -2,7 +2,6 @@
 #include <SDL2/SDL_image.h>
 #include "camera.h"
 #include "config.h"
-#include "camera.h"
 
 void renderMap(SDL_Renderer *renderer, SDL_Texture *textureMap) {
     SDL_Rect destRect;

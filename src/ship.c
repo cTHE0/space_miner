@@ -1,9 +1,9 @@
+#include <stdlib.h>
+#include <math.h>
+#include <SDL2/SDL2_gfxPrimitives.h>
 #include "ship.h"
 #include "camera.h"
 #include "config.h"
-#include <math.h>
-#include <stdlib.h>
-#include <SDL2/SDL2_gfxPrimitives.h>
 
 
 void initShips(Ship **ships, int count, Planet *planets, int planetCount) {

@@ -1,3 +1,4 @@
+#include <time.h>
 #include "camera.h"
 #include "planet.h"
 #include "event.h"
@@ -5,7 +6,6 @@
 #include "ship.h"
 #include "assets_gestion.h"
 #include "map.h"
-#include <time.h>
 #include "config.h"
 
 

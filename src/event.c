@@ -1,7 +1,7 @@
+#include <SDL2/SDL.h>
 #include "event.h"
 #include "camera.h"
 #include "config.h"
-#include <SDL2/SDL.h>
 
 void handleEvents(int *running) {
     static int lastMouseX, lastMouseY;
