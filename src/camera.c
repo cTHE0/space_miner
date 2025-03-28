@@ -15,11 +15,11 @@ void initCamera(void) {
 }
 
 void zoomCamera(float zoomFactor) {
-    if (zoomFactor < 1 && camera.scale > 0.3) {  // Limiter le zoom
-        float dx = 100, dy = 100;  // Adapter en fonction de camera.scale
+    if (zoomFactor < 1 && camera.scale > 0.5) {  // Limiter le zoom
+        float dx = STEP_TRANSLATION, dy = STEP_TRANSLATION;  // Adapter en fonction de camera.scale
 
-        int left = (camera.rect.x + camera.rect.h * zoomFactor / 2) * camera.scale < SCREEN_WIDTH / 2.f, 
-            up = (camera.rect.y + camera.rect.w * zoomFactor / 2) * camera.scale < SCREEN_HEIGHT / 2.f, 
+        int left = (camera.rect.x + dx + camera.rect.h * (zoomFactor - 1) + SCREEN_WIDTH / 2.f) * camera.scale < SCREEN_WIDTH / 2.f, 
+            up = (camera.rect.y + dy + camera.rect.w * (zoomFactor - 1) + SCREEN_HEIGHT / 2.f) * camera.scale < SCREEN_HEIGHT / 2.f, 
             right = (MAP_SIZE - camera.rect.x * camera.scale - SCREEN_WIDTH / 2.f) * camera.scale < SCREEN_WIDTH / 2.f,
             down = (MAP_SIZE - camera.rect.y * camera.scale - SCREEN_HEIGHT / 2.f) * camera.scale < SCREEN_HEIGHT;
 
@@ -56,8 +56,8 @@ void zoomCamera(float zoomFactor) {
 
 void translateCamera(float dx, float dy) {
     if ((camera.rect.x + dx + SCREEN_WIDTH / 2.f) * camera.scale >= SCREEN_WIDTH / 2.f && 
-        (MAP_SIZE - camera.rect.x - dx - SCREEN_WIDTH / 2.f) * camera.scale >= SCREEN_WIDTH / 2.f && 
         (camera.rect.y + dy + SCREEN_HEIGHT / 2.f) * camera.scale >= SCREEN_HEIGHT / 2.f &&
+        (MAP_SIZE - camera.rect.x - dx - SCREEN_WIDTH / 2.f) * camera.scale >= SCREEN_WIDTH / 2.f && 
         (MAP_SIZE - camera.rect.y - dy - SCREEN_HEIGHT / 2.f) * camera.scale >= SCREEN_HEIGHT / 2.f) {  // Eviter que la camera sorte de la map
         camera.rect.x += dx;
         camera.rect.y += dy;

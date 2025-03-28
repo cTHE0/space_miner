@@ -73,22 +73,36 @@ void updateShips(Ship *ships, int count, Planet *planets, int planetCount) {
 }
 
 void renderShips(SDL_Renderer *renderer, SDL_Texture *spriteSheet, Ship *ships, int count) {
+    float target_x, target_y;
+    float angle;
+    float screenX, screenY;
+    SDL_Rect srcRect, destRect;
+    SDL_Point center;
+        
     for (int i = 0; i < count; i++) {
         // Calcul de l'angle en degrés
-        float target_x = ships[i].target->x;
-        float target_y = ships[i].target->y;
-        float angle = atan2(target_y - (ships[i].y + 64 / 2.f), target_x - (ships[i].x + 64 / 2.f)) * 180.0f / M_PI;
+        target_x = ships[i].target->x;
+        target_y = ships[i].target->y;
+        angle = atan2(target_y - (ships[i].y + 64 / 2.f), target_x - (ships[i].x + 64 / 2.f)) * 180.0f / M_PI;
         angle += (ships[i].state == MOVING_TO_TARGET) ? 90.0f : -90.0f;  // Si la fusée ne va pas vers la cible, on l'inverse
 
         // Calcul des coordonnées à l'écran
-        float screenX = (ships[i].x - camera.rect.x - SCREEN_WIDTH / 2.f) * camera.scale + SCREEN_WIDTH / 2.f;
-        float screenY = (ships[i].y - camera.rect.y - SCREEN_HEIGHT / 2.f) * camera.scale + SCREEN_HEIGHT / 2.f;
+        screenX = (ships[i].x - camera.rect.x - SCREEN_WIDTH / 2.f) * camera.scale + SCREEN_WIDTH / 2.f;
+        screenY = (ships[i].y - camera.rect.y - SCREEN_HEIGHT / 2.f) * camera.scale + SCREEN_HEIGHT / 2.f;
 
-        SDL_Rect srcRect = {ships[i].frameIndex * 64, 0, 64, 64}; // Frame actuelle sur le sprite sheet
-        SDL_Rect destRect = {(int)screenX, (int)screenY, (int)(64 * camera.scale), (int)(64 * camera.scale)}; // Position et taille affichée
+        srcRect.x = ships[i].frameIndex * 64; // Frame actuelle sur le sprite sheet
+        srcRect.y = 0;
+        srcRect.h = 64;
+        srcRect.w = 64;
+
+        destRect.x = screenX;   // Position et taille affichée
+        destRect.y = screenY;
+        destRect.h = 64 * camera.scale;
+        destRect.w = 64 * camera.scale;
 
         // Définition du point de rotation (au centre du sprite)
-        SDL_Point center = {destRect.w / 2, destRect.h / 2};
+        center.x = destRect.w / 2;
+        center.y = destRect.h / 2;
 
         // Dessin avec rotation
         SDL_RenderCopyEx(renderer, spriteSheet, &srcRect, &destRect, angle, &center, SDL_FLIP_NONE);
