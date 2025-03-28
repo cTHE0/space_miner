@@ -5,8 +5,6 @@
 #include <stdlib.h>
 #include <SDL2/SDL2_gfxPrimitives.h>
 
-#define SHIP_SPEED 0.1f
-#define WAIT_TIME 1000  // 1000 millisecondes
 
 void initShips(Ship **ships, int count, Planet *planets, int planetCount) {
     *ships = malloc(count * sizeof(Ship));
@@ -62,7 +60,7 @@ void updateShips(Ship *ships, int count, Planet *planets, int planetCount) {
                 }
             }
         } else if (ships[i].state == WAITING) {
-            if (currentTime - ships[i].waitStartTime > WAIT_TIME) {
+            if (currentTime - ships[i].waitStartTime > WAIT_TIME_SHIP) {
                 if (carre(ships[i].target->x - ships[i].x) + carre(ships[i].target->x - ships[i].x) >
                     carre(ships[i].base->x - ships[i].x) + carre(ships[i].base->x - ships[i].x))  {
                     ships[i].state = MOVING_TO_TARGET;

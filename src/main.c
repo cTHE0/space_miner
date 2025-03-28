@@ -5,10 +5,9 @@
 #include "ship.h"
 #include "assets_gestion.h"
 #include "map.h"
-#include "time.h"
+#include <time.h>
+#include "config.h"
 
-#define INIT_PLANET_COUNT 500
-#define INIT_SHIP_COUNT 1000
 
 int main(void) {
     // Initialisation 
@@ -31,7 +30,6 @@ int main(void) {
 
     SDL_Texture **textures = loadTextures(renderer);
 
-
     // Lancement de space_miner
     int running = 1;
     while (running) {
@@ -45,7 +43,6 @@ int main(void) {
         renderShips(renderer, textures[0], ships, ship_count);
         presentScreen(renderer);
     }
-
 
     // Fermeture du programme
     free(planets);
