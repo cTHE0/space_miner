@@ -47,7 +47,7 @@ void zoomCamera(float zoomFactor) {
             camera.rect.h *= zoomFactor;
             camera.rect.w *= zoomFactor;
         }
-    } else if (zoomFactor > 1 && camera.scale < 7) {
+    } else if (zoomFactor > 1 && camera.scale < 6) {
             camera.scale *= zoomFactor;
             camera.rect.h *= zoomFactor;
             camera.rect.w *= zoomFactor;

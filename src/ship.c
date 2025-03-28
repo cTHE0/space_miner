@@ -40,13 +40,13 @@ void updateShips(Ship *ships, int count, Planet *planets, int planetCount) {
         // Pour le deplacement des fusees dans l'espace
         if (ships[i].state == MOVING_TO_TARGET || ships[i].state == RETURNING) {
             Planet *destination = (ships[i].state == MOVING_TO_TARGET) ? ships[i].target : ships[i].base;
-            double dx = destination->x - (ships[i].x + 64 / 2.);
-            double dy = destination->y - (ships[i].y + 64 / 2.);
-            double distance = sqrt(dx * dx + dy * dy);
+            float dx = destination->x - (ships[i].x + 64 / 2.f);
+            float dy = destination->y - (ships[i].y + 64 / 2.f);
+            float distance = sqrt(dx * dx + dy * dy);
 
             if (distance - ships[i].speed >= destination->radius) {
-                ships[i].x += (dx / distance) * ships[i].speed;
-                ships[i].y += (dy / distance) * ships[i].speed;
+                ships[i].x += dx * ships[i].speed / distance;
+                ships[i].y += dy * ships[i].speed / distance;
             } else {
                 if (ships[i].state == MOVING_TO_TARGET) {
                     ships[i].state = WAITING;
@@ -73,14 +73,11 @@ void updateShips(Ship *ships, int count, Planet *planets, int planetCount) {
 }
 
 void renderShips(SDL_Renderer *renderer, SDL_Texture *spriteSheet, Ship *ships, int count) {
-    float angle;
-
     for (int i = 0; i < count; i++) {
-        // Calcul de l'angle en radians puis conversion en degrés
-        double target_x = ships[i].target->x;
-        double target_y = ships[i].target->y;
-        angle = atan2(target_y - (ships[i].y + 64 / 2.f * camera.scale), target_x - (ships[i].x + 64 / 2.f * camera.scale));
-        angle = angle * (180.0f / M_PI);  // Conversion radians → degrés
+        // Calcul de l'angle en degrés
+        float target_x = ships[i].target->x;
+        float target_y = ships[i].target->y;
+        float angle = atan2(target_y - (ships[i].y + 64 / 2.f), target_x - (ships[i].x + 64 / 2.f)) * 180.0f / M_PI;
         angle += (ships[i].state == MOVING_TO_TARGET) ? 90.0f : -90.0f;  // Si la fusée ne va pas vers la cible, on l'inverse
 
         // Calcul des coordonnées à l'écran
