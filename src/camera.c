@@ -15,12 +15,42 @@ void initCamera(void) {
 }
 
 void zoomCamera(float zoomFactor) {
-    if ((zoomFactor > 1 && camera.scale < 7) || (zoomFactor < 1 && camera.scale > 0.2)) {  // Limiter le zoom
-        if (1 == 1){  // Eviter que la camera sorte de la map (raisonner avec renderPlanets)
+    if (zoomFactor < 1 && camera.scale > 0.3) {  // Limiter le zoom
+        float dx = 100, dy = 100;  // Adapter en fonction de camera.scale
+
+        int left = (camera.rect.x + camera.rect.h * zoomFactor / 2) * camera.scale < SCREEN_WIDTH / 2.f, 
+            up = (camera.rect.y + camera.rect.w * zoomFactor / 2) * camera.scale < SCREEN_HEIGHT / 2.f, 
+            right = (3500 - camera.rect.x * camera.scale - SCREEN_WIDTH / 2.f) * camera.scale < SCREEN_WIDTH / 2.f,
+            down = (3500 - camera.rect.y * camera.scale - SCREEN_HEIGHT / 2.f) * camera.scale < SCREEN_HEIGHT;
+
+        // Eviter que la camera sorte de la map (raisonner avec renderPlanets)
+        if (left) {
+            camera.rect.x += dx;
+            if (up) {
+                camera.rect.y += dy;
+            } else if (down) {
+                camera.rect.y -= dy;
+            }
+        } else if (right) {
+            camera.rect.x -= dx;
+            if (up) {
+                camera.rect.y += dy;
+            } else if (down) {
+                camera.rect.y -= dy;
+            }
+        } else if (up) {  // Condition (!left && !right) implicite 
+            camera.rect.y += dy;
+        } else if (down) {  // Condition (!left && !right) implicite 
+            camera.rect.y -= dy;
+        } else {  // Cas ou la camera ne risque pas de depasser
             camera.scale *= zoomFactor;
             camera.rect.h *= zoomFactor;
             camera.rect.w *= zoomFactor;
         }
+    } else if (zoomFactor > 1 && camera.scale < 7) {
+            camera.scale *= zoomFactor;
+            camera.rect.h *= zoomFactor;
+            camera.rect.w *= zoomFactor;
     }
 }
 
