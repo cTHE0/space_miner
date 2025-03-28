@@ -20,7 +20,8 @@ SDL_Texture **loadTextures(SDL_Renderer *renderer) {
                                             "assets/img/planetes/p10.png",
                                             "assets/img/maps/m1.png",
                                             "assets/img/others/add_button.png",
-                                            "assets/img/maps/m2.png"
+                                            "assets/img/maps/m2.png",
+                                            "assets/img/maps/m3.png"
                                         };
 
     for (int i = 0; i < PNG_IMAGE_NUMBER; i++) {

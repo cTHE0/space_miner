@@ -38,7 +38,7 @@ int main(void) {
         updateShips(ships, ship_count, planets, planet_count);
 
         clearScreen(renderer);
-        renderMap(renderer, textures[13]);
+        renderMap(renderer, textures[16]);
         renderPlanets(renderer, planets, textures[8], planet_count);
         renderShips(renderer, textures[0], ships, ship_count);
         presentScreen(renderer);

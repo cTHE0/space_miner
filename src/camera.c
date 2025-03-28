@@ -20,8 +20,8 @@ void zoomCamera(float zoomFactor) {
 
         int left = (camera.rect.x + camera.rect.h * zoomFactor / 2) * camera.scale < SCREEN_WIDTH / 2.f, 
             up = (camera.rect.y + camera.rect.w * zoomFactor / 2) * camera.scale < SCREEN_HEIGHT / 2.f, 
-            right = (3500 - camera.rect.x * camera.scale - SCREEN_WIDTH / 2.f) * camera.scale < SCREEN_WIDTH / 2.f,
-            down = (3500 - camera.rect.y * camera.scale - SCREEN_HEIGHT / 2.f) * camera.scale < SCREEN_HEIGHT;
+            right = (MAP_SIZE - camera.rect.x * camera.scale - SCREEN_WIDTH / 2.f) * camera.scale < SCREEN_WIDTH / 2.f,
+            down = (MAP_SIZE - camera.rect.y * camera.scale - SCREEN_HEIGHT / 2.f) * camera.scale < SCREEN_HEIGHT;
 
         // Eviter que la camera sorte de la map (raisonner avec renderPlanets)
         if (left) {
@@ -56,9 +56,9 @@ void zoomCamera(float zoomFactor) {
 
 void translateCamera(float dx, float dy) {
     if ((camera.rect.x + dx + SCREEN_WIDTH / 2.f) * camera.scale >= SCREEN_WIDTH / 2.f && 
-        (3500 - camera.rect.x - dx - SCREEN_WIDTH / 2.f) * camera.scale >= SCREEN_WIDTH / 2.f && 
+        (MAP_SIZE - camera.rect.x - dx - SCREEN_WIDTH / 2.f) * camera.scale >= SCREEN_WIDTH / 2.f && 
         (camera.rect.y + dy + SCREEN_HEIGHT / 2.f) * camera.scale >= SCREEN_HEIGHT / 2.f &&
-        (3500 - camera.rect.y - dy - SCREEN_HEIGHT / 2.f) * camera.scale >= SCREEN_HEIGHT / 2.f) {  // Eviter que la camera sorte de la map
+        (MAP_SIZE - camera.rect.y - dy - SCREEN_HEIGHT / 2.f) * camera.scale >= SCREEN_HEIGHT / 2.f) {  // Eviter que la camera sorte de la map
         camera.rect.x += dx;
         camera.rect.y += dy;
     }

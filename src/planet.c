@@ -18,8 +18,8 @@ void generatePlanets(Planet **planets, int count) {
         int radius = 10 + rand() % 50;  // Taille entre 10 et 60
 
         (*planets)[i].radius = radius;
-        (*planets)[i].x = rand() % (MAP_WIDTH - 2 * radius) + radius;
-        (*planets)[i].y = rand() % (MAP_HEIGHT - 2 * radius) + radius;
+        (*planets)[i].x = rand() % (MAP_SIZE - 2 * radius) + radius;
+        (*planets)[i].y = rand() % (MAP_SIZE - 2 * radius) + radius;
     }
     
 }
@@ -34,8 +34,8 @@ void renderPlanets(SDL_Renderer *renderer, Planet *planets, SDL_Texture *texture
         SDL_Rect srcRect = {0, 0, 32, 32};
         SDL_Rect destRect = {screenX, screenY, 2 * screenRadius, 2 * screenRadius};
 
-        if (screenX > -2 * screenRadius && screenX < MAP_WIDTH + 2 * screenRadius && 
-            screenY > -2 * screenRadius && screenY < MAP_HEIGHT + 2 * screenRadius) {   // On n'affiche pas les planètes situés en dehors du cadre     
+        if (screenX > -2 * screenRadius && screenX < MAP_SIZE + 2 * screenRadius && 
+            screenY > -2 * screenRadius && screenY < MAP_SIZE + 2 * screenRadius) {   // On n'affiche pas les planètes situés en dehors du cadre     
             SDL_RenderCopy(renderer, texturePlanet, &srcRect, &destRect);
         }   
     }
