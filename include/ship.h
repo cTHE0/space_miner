@@ -8,18 +8,15 @@
 typedef enum { MOVING_TO_TARGET, WAITING, RETURNING } ShipState;
 
 typedef struct {
-    float x, y;             // Position du vaisseau
-    Planet *base;           // Planète de départ
-    Planet *target;         // Planète cible
-    float speed;            // Vitesse du vaisseau
-    ShipState state;        // État du vaisseau
-    int life;
-    int comportment_capacity;
-    Compartment *compartments;
-    Uint32 waitStartTime;   // Temps d’attente à destination
-    // Gestion de l'animation
-    int frameIndex;
-    Uint32 lastFrameTime; // heure au dernier changement de frame
+    float x, y;              // Position du vaisseau
+    Planet *base;            // Planète de départ
+    Planet *target;          // Planète cible
+    float speed;             // Vitesse du vaisseau
+    ShipState state;         // Etat du vaisseau
+    float maxLife, currentLife; // Vie des fusees
+    Uint32 waitStartTime;    // Temps d’attente à destination  (a remplacer par le temps de minage/depot !!-> besoin d'ameliorer les stats des fusees)
+    int frameIndex;         // Numero de l'image prise dans le spritesheet
+    Uint32 lastFrameTime;   // Date au dernier changement de frame du spritesheet
 } Ship;
 
 void initShips(Ship **ships, int count, Planet *planets, int planetCount);

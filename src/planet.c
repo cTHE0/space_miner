@@ -39,7 +39,7 @@ void renderPlanets(SDL_Renderer *renderer, Planet *planets, SDL_Texture *texture
         }  
 
         // Affichage barre de minerais*       (*une seule barre, mais representant la valeur totale de minerais !?)
-        destRect.h = 7 * camera.scale;
+        destRect.h = 5 * camera.scale;
         destRect.y -= destRect.h + 2 / camera.scale;
 
         SDL_SetRenderDrawColor(renderer, 70, 70, 70, 255);
