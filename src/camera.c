@@ -15,42 +15,15 @@ void initCamera(void) {
 }
 
 void zoomCamera(float zoomFactor) {
-    if (zoomFactor < 1 && camera.scale > 0.6) {  // Limiter le zoom
-        // float dx = -SCREEN_WIDTH / 2.f / camera.scale * (1 - 1 / zoomFactor), 
-        //       dy = -SCREEN_HEIGHT / 2.f / camera.scale * (1 - 1 / zoomFactor);  // Adapter en fonction de camera.scale
-
-        // int left = (camera.rect.x + dx + SCREEN_WIDTH / 2.f) * camera.scale <= SCREEN_WIDTH / 2.f, 
-        //     up = (camera.rect.y + dy + SCREEN_HEIGHT / 2.f) * camera.scale <= SCREEN_HEIGHT / 2.f,
-        //     right = (camera.rect.x + dx + SCREEN_WIDTH / 2.f) * camera.scale >= -SCREEN_WIDTH / 2.f,
-        //     down = (camera.rect.y + dy + SCREEN_HEIGHT / 2.f) * camera.scale >= -SCREEN_HEIGHT / 2.f;
-        // // screenX = (-camera.rect.x - SCREEN_WIDTH / 2.f) * camera.scale + SCREEN_WIDTH / 2.f
-        // // camera.rect.x = (-screenX + SCREEN_WIDTH / 2.f) / camera.scale - SCREEN_WIDTH / 2.f
-        // // (-screenX + SCREEN_WIDTH / 2.f) / camera.scale (zoomFactor - 1)
-
-        float dx = 666, 
-              dy = 666;  // Adapter en fonction de camera.scale
-
-        int left = 0, 
-            up = 0,
-            right = 0,
-            down = 0;
-        
-        // Eviter que la camera sorte de la map (raisonner avec renderPlanets)
-        if (left) {
-            camera.rect.x += dx;
-        } else if (right) {
-            camera.rect.x -= dx;
-        } 
-        if (up) {
-            camera.rect.y += dy;
-        } else if (down) {
-            camera.rect.y -= dy;
+    if (zoomFactor < 1 && camera.scale > 0.3) {  // Limiter le zoom
+        if ((camera.rect.x + SCREEN_WIDTH / 2.f) * camera.scale * zoomFactor >= SCREEN_WIDTH / 2.f && 
+            (camera.rect.y + SCREEN_HEIGHT / 2.f) * camera.scale * zoomFactor >= SCREEN_HEIGHT / 2.f &&
+            (camera.rect.x + SCREEN_WIDTH / 2.f - MAP_SIZE) * camera.scale * zoomFactor <= -SCREEN_WIDTH / 2.f &&
+            (camera.rect.y + SCREEN_HEIGHT / 2.f - MAP_SIZE) * camera.scale * zoomFactor <= -SCREEN_HEIGHT / 2.f) {
+            camera.scale *= zoomFactor;
+            camera.rect.h *= zoomFactor;
+            camera.rect.w *= zoomFactor;
         }
-
-        // Maintenant que la camera ne risque pas de depasser :
-        camera.scale *= zoomFactor;
-        camera.rect.h *= zoomFactor;
-        camera.rect.w *= zoomFactor;
     } else if (zoomFactor > 1 && camera.scale < 6) {
         camera.scale *= zoomFactor;
         camera.rect.h *= zoomFactor;
