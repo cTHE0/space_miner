@@ -7,7 +7,7 @@
 #include "assets_gestion.h"
 #include "map.h"
 #include "config.h"
-
+#include "landing_page.h"
 
 int main(void) {
     // Initialisation 
@@ -31,9 +31,9 @@ int main(void) {
     SDL_Texture **textures = loadTextures(renderer);
 
     // Lancement de space_miner
-    int running = 1;
-    while (running) {
-        handleEvents(&running);
+    GameState state = GAME;
+    while (state != QUIT) {
+        handleEvents(&state);
 
         updateShips(ships, ship_count, planets, planet_count);
 

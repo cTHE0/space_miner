@@ -18,23 +18,23 @@ void afficherMenu(SDL_Renderer *renderer) {
 }
 
 // Gère les événements du menu
-void handleMenuEvents(int *running, EtatJeu *etat) {
+void handleMenuEvents(GameState *state) {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_QUIT) {
-            *running = 0;
+            *state = QUIT;
         }
 
         if (event.type == SDL_KEYDOWN) {
             switch (event.key.keysym.sym) {
                 case SDLK_ESCAPE:  // Quitter depuis le menu
-                    *running = 0;
+                    *state = QUIT;
                     break;
                 case SDLK_n:       // Nouvelle partie
-                    *etat = JEU;
+                    *state = GAME;
                     break;
                 case SDLK_c:       // Continuer (à compléter plus tard)
-                    *etat = JEU;  // Pour l'instant, même effet que "Nouvelle partie"
+                    *state = GAME;  // Pour l'instant, même effet que "Nouvelle partie"
                     break;
             }
         }

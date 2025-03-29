@@ -1,6 +1,8 @@
 #ifndef EVENT_H
 #define EVENT_H
 
-void handleEvents(int *running);
+#include "landing_page.h"
+
+void handleEvents(GameState *state);
 
 #endif

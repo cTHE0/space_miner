@@ -5,15 +5,15 @@
 
 // États possibles du jeu
 typedef enum {
-    MENU,
-    JEU,
-    QUITTER
-} EtatJeu;
+    LANDING_PAGE,
+    GAME,
+    QUIT
+} GameState;
 
 // Affiche le menu principal
 void afficherMenu(SDL_Renderer *renderer);
 
 // Gère les événements du menu
-void handleMenuEvents(int *running, EtatJeu *etat);
+void handleMenuEvents(GameState *state);
 
 #endif

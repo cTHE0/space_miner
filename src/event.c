@@ -2,8 +2,9 @@
 #include "event.h"
 #include "camera.h"
 #include "config.h"
+#include "landing_page.h"
 
-void handleEvents(int *running) {
+void handleEvents(GameState *state) {
     static int lastMouseX, lastMouseY;
     static int dragging = 0;
     SDL_Event event;
@@ -11,7 +12,7 @@ void handleEvents(int *running) {
     while (SDL_PollEvent(&event)) {
         switch (event.type) {
             case SDL_QUIT:
-                *running = 0;
+                *state = QUIT;
                 break;
                 
             case SDL_MOUSEWHEEL:
@@ -45,7 +46,7 @@ void handleEvents(int *running) {
             case SDL_KEYDOWN:
                 switch (event.key.keysym.sym) {
                     case SDLK_ESCAPE:
-                        *running = 0;
+                        *state = QUIT;
                         break;
                     case SDLK_o:
                         zoomCamera(1.1f);
