@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -I include -Wall -Wextra -O2
-LDFLAGS = -lm -lSDL2 -lSDL2_gfx -lSDL2_image
-SRC = src/main.c src/camera.c src/planet.c src/event.c src/renderer.c src/ship.c src/ore.c src/assets_gestion.c src/map.c
+LDFLAGS = -lm -lSDL2 -lSDL2_gfx -lSDL2_image -lSDL2_ttf
+SRC = src/main.c src/camera.c src/planet.c src/event.c src/renderer.c src/ship.c src/ore.c src/assets_gestion.c src/map.c src/text.c
 OBJ = $(SRC:.c=.o)
 EXEC = space_miner
 
