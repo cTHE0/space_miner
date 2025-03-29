@@ -9,19 +9,17 @@
 void generatePlanets(Planet **planets, int count) {
     *planets = malloc(count * sizeof(Planet));
 
-    if (*planets == NULL) {
-        printf("Erreur d'allocation mémoire pour les planetes !\n");
-        return;  // Sortir de la fonction pour éviter d'utiliser *planets après un échec
-    }
-
     for (int i = 0; i < count; i++) {
         int radius = 10 + rand() % 50;  // Taille entre 10 et 60
 
         (*planets)[i].radius = radius;
         (*planets)[i].x = rand() % (MAP_SIZE - 2 * radius) + radius;
         (*planets)[i].y = rand() % (MAP_SIZE - 2 * radius) + radius;
+
+        (*planets)[i].maxOre = 1 + rand () % 1000;  // Les planetes ne sont pas toutes rentables
+        (*planets)[i].currentOre = rand () % (int)(*planets)[i].maxOre;  // Les planetes ne sont pas toutes remplies de ressources
+        (*planets)[i].regenerationTime = rand () % 10000;  // En millisecondes
     }
-    
 }
 
 void renderPlanets(SDL_Renderer *renderer, Planet *planets, SDL_Texture *texturePlanet, int count) {
@@ -34,9 +32,22 @@ void renderPlanets(SDL_Renderer *renderer, Planet *planets, SDL_Texture *texture
         SDL_Rect srcRect = {0, 0, 32, 32};
         SDL_Rect destRect = {screenX, screenY, 2 * screenRadius, 2 * screenRadius};
 
+        // Affichage planetes
         if (screenX > -2 * screenRadius && screenX < MAP_SIZE + 2 * screenRadius && 
             screenY > -2 * screenRadius && screenY < MAP_SIZE + 2 * screenRadius) {   // On n'affiche pas les planètes situés en dehors du cadre     
             SDL_RenderCopy(renderer, texturePlanet, &srcRect, &destRect);
-        }   
+        }  
+
+        // Affichage barre de minerais*       (*une seule barre, mais representant la valeur totale de minerais !?)
+        destRect.h = 7 * camera.scale;
+        destRect.y -= destRect.h + 2 / camera.scale;
+
+        SDL_SetRenderDrawColor(renderer, 70, 70, 70, 255);
+        SDL_RenderFillRect(renderer, &destRect);
+
+        destRect.w *= planets[i].currentOre / planets[i].maxOre;
+
+        SDL_SetRenderDrawColor(renderer, 255, 215, 0, 255);
+        SDL_RenderFillRect(renderer, &destRect);
     }
 }

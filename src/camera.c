@@ -14,7 +14,7 @@ void initCamera(void) {
     printf("Camera : x=%.2d, y=%.2d, scale=%.2f\n", camera.rect.x, camera.rect.y , camera.scale);
 }
 
-void zoomCamera(float zoomFactor) {
+void zoomCamera(float zoomFactor) {  // Le zoom se bloque lorsqu'un depassement est detecte (temporaire)
     if (zoomFactor < 1 && camera.scale > 0.3) {  // Limiter le zoom
         if ((camera.rect.x + SCREEN_WIDTH / 2.f) * camera.scale * zoomFactor >= SCREEN_WIDTH / 2.f && 
             (camera.rect.y + SCREEN_HEIGHT / 2.f) * camera.scale * zoomFactor >= SCREEN_HEIGHT / 2.f &&
@@ -24,7 +24,7 @@ void zoomCamera(float zoomFactor) {
             camera.rect.h *= zoomFactor;
             camera.rect.w *= zoomFactor;
         }
-    } else if (zoomFactor > 1 && camera.scale < 6) {
+    } else if (zoomFactor > 1 && camera.scale < 6) {  // Limiter le zoom
         camera.scale *= zoomFactor;
         camera.rect.h *= zoomFactor;
         camera.rect.w *= zoomFactor;
