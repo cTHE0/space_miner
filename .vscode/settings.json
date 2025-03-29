@@ -5,6 +5,8 @@
         "sdl_image.h": "c",
         "config.h": "c",
         "camera.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "sdl.h": "c",
+        "menu.h": "c"
     }
 }
