@@ -31,11 +31,7 @@ void handleMenuEvents(GameState *state) {   // Gère les événements du menu
                     case SDLK_ESCAPE:      // Quitter depuis le menu
                         *state = QUIT;
                         break;
-                    case SDLK_n:           // Nouvelle partie
-                        *state = GAME;
-                        break;
-                    case SDLK_c:           // Continuer (à compléter plus tard)
-                        *state = GAME;     // Pour l'instant, même effet que "Nouvelle partie"
+                    default:
                         break;
                 }
                 break;
@@ -52,6 +48,17 @@ void handleMenuEvents(GameState *state) {   // Gère les événements du menu
                     bg_button_a_afficher = 0;
                 }
                 break;
+
+            case SDL_MOUSEBUTTONUP:
+                if (event.button.button == SDL_BUTTON_LEFT) {
+                    if (bg_button_a_afficher != 0) {  // Si la souris est dans les zones des boutons
+                        if (bg_button_a_afficher == 1 || bg_button_a_afficher == 2) {
+                            *state = GAME;
+                        }
+                    }
+                }
+                break;
+
 
             default:
                 break;
