@@ -3,20 +3,19 @@
 #include <stdio.h> 
 #include "config.h"
 
-SDL_bool init_SDL_ttf() {
+void init_SDL_ttf(void) {
     if (TTF_Init() == -1) {
         fprintf(stderr, "Erreur d'initialisation de SDL_ttf: %s\n", TTF_GetError());
-        return SDL_FALSE;
+        return;
     }
-    return SDL_TRUE;
 }
 
-void quit_SDL_ttf(TTF_Font *font) {
+void quit_SDL_ttf(TTF_Font *font) {  // Permet de quitter SDL_ttf et de fermer le futur tableau des polices
     TTF_CloseFont(font);
     TTF_Quit();
 }
 
-TTF_Font* load_font(const char* path, int size) {
+TTF_Font* loadFonts(const char* path, int size) {  // Chargement de toutes les polices utilisees dans le jeu
     TTF_Font* font = TTF_OpenFont(path, size);
     if (!font) {
         fprintf(stderr, "Erreur de chargement de la police: %s\n", TTF_GetError());
@@ -40,18 +39,17 @@ SDL_Texture* create_text_texture(SDL_Renderer* renderer, TTF_Font* font, int col
 }
 
 SDL_Texture **loadTextTextures(SDL_Renderer *renderer) {
-    TTF_Font *jersey10 = load_font("assets/fonts/jersey10.ttf", 50);
-    char *cstTexts[CST_TEXT_NUMBER] = {
-        "Space Miner", //1
-        "Continue", //2
-        "New Game", //3
-        "Settings", //4
-    }; // ATENTION: ne pas oublier de modifier CST_TEXT_NUMBER
-
+    TTF_Font *font = loadFonts("assets/fonts/f1.ttf", 50);
     SDL_Texture **res = malloc(CST_TEXT_NUMBER * sizeof(SDL_Texture*));
+    char *cstTexts[CST_TEXT_NUMBER] = {"Space Miner", // 1
+                                       "Continue", // 2
+                                       "New Game", // 3
+                                       "Settings", // 4
+                                      }; // ATENTION: ne pas oublier de modifier CST_TEXT_NUMBER
 
-    for (int i = 0; i<CST_TEXT_NUMBER; i++) {
-        res[i] = create_text_texture(renderer, jersey10, WHITE, cstTexts[i]);
+
+    for (int i = 0; i < CST_TEXT_NUMBER; i++) {
+        res[i] = create_text_texture(renderer, font, WHITE, cstTexts[i]);
     }
 
     return res;
@@ -62,11 +60,4 @@ void destroyTexts(SDL_Texture **textTextures) {
         SDL_DestroyTexture(textTextures[i]);
     }
     free(textTextures);
-}
-
-void initText() {
-    if (!init_SDL_ttf()) {
-        printf("Erreur initialisation ttf");
-        return;
-    }
 }

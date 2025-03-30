@@ -22,7 +22,7 @@ int main(void) {
     initRenderer(&window, &renderer);
 
     initCamera();
-    initText();
+    init_SDL_ttf();
 
     Planet* planets = NULL;
     generatePlanets(&planets, planet_count);
