@@ -7,7 +7,7 @@
 
 typedef enum { MOVING_TO_TARGET, WAITING, RETURNING } ShipState;
 
-typedef enum {BASIC, EXPLORER, DEFENDER} ShipType;
+typedef enum {BASIC, EXPLORER, DEFENDER } ShipType;
 
 typedef struct {
     ShipType shiptype;          // Type de vaisseau (utile pr définir ensuite son comportement, stats, render)

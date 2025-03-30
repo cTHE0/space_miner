@@ -68,8 +68,8 @@ int main(void) {
     destroyTextTextures(textTextures);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
-    free(planets);
     destroyShips(ships, ship_count);
+    free(planets);
     IMG_Quit();
     SDL_Quit();
     return 0;

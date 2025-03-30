@@ -3,14 +3,14 @@
 
 typedef enum { FUEL, ORE1, ORE2, ORE3, MISSILES, EMPTY } Ore;  // Types de minerais, essence, missiles stockés
 
-// Un seul compartiment
-typedef struct {
+
+typedef struct {  // Un seul compartiment
     Ore ore;
     int capacity;
 } Compartment;
 
-// Cargaison constituée de plusieurs compartiments
-typedef struct {
+
+typedef struct {  // Cargaison constituée de plusieurs compartiments
     int compartmentsNumber;
     Compartment *compartmentsList;
 } Cargo;

@@ -10,7 +10,6 @@ void generatePlanets(Planet **planets, int count) {
     *planets = malloc(count * sizeof(Planet));
 
     for (int i = 0; i < count; i++) {
-        printf("%d\n",i);
         (*planets)[i].maxOre = 1 + rand () % 1000;  // Les planetes ne sont pas toutes rentables
         (*planets)[i].currentOre = rand () % (int)(*planets)[i].maxOre;  // Les planetes ne sont pas toutes remplies de ressources
         (*planets)[i].regenerationTime = rand () % 10000;  // En millisecondes

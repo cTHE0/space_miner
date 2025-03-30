@@ -46,40 +46,23 @@ void zoomCamera(float zoomFactor) {
 }
 
 void translateCamera(float dx, float dy) {
-    if ((camera.rect.x + dx + SCREEN_WIDTH / 2.f) * camera.scale >= SCREEN_WIDTH / 2.f && 
-        (camera.rect.y + dy + SCREEN_HEIGHT / 2.f) * camera.scale >= SCREEN_HEIGHT / 2.f &&
-        (camera.rect.x + dx + SCREEN_WIDTH / 2.f - MAP_SIZE) * camera.scale <= -SCREEN_WIDTH / 2.f && 
-        (camera.rect.y + dy + SCREEN_HEIGHT / 2.f - MAP_SIZE) * camera.scale <= -SCREEN_HEIGHT / 2.f) {  // Eviter que la camera sorte de la map
-        camera.rect.x += dx;
-        camera.rect.y += dy;
+    if (dx < 0) {
+        if ((camera.rect.x + dx + SCREEN_WIDTH / 2.f) * camera.scale >= SCREEN_WIDTH / 2.f) {
+            camera.rect.x += dx;
+        }
+    } else {
+        if ((camera.rect.x + dx + SCREEN_WIDTH / 2.f - MAP_SIZE) * camera.scale <= -SCREEN_WIDTH / 2.f) {
+            camera.rect.x += dx;
+        }
+    }
+
+    if (dy < 0) {
+        if ((camera.rect.y + dy + SCREEN_HEIGHT / 2.f) * camera.scale >= SCREEN_HEIGHT / 2.f) {
+            camera.rect.y += dy;
+        }
+    } else {
+        if ((camera.rect.y + dy + SCREEN_HEIGHT / 2.f - MAP_SIZE) * camera.scale <= -SCREEN_HEIGHT / 2.f) {
+            camera.rect.y += dy;
+        }
     }
 }
-
-// Raisonnement correction limite de zoom
-
-// a = (camera.rect.x + SCREEN_WIDTH / 2.f) * camera.scale * zoomFactor - SCREEN_WIDTH / 2.f < 0
-// b = (camera.rect.x + SCREEN_WIDTH / 2.f) * camera.scale - SCREEN_WIDTH / 2.f = 0
-
-// delta = a - b = (camera.rect.x + SCREEN_WIDTH / 2.f) * camera.scale * (zoomFactor - 1) 
-
-
-// Grace a dx, on veut que delta(camera.rect.x = camera.rect.xcamera.rect.x + dx) = 0:
-
-// (camera.rect.x + dx + SCREEN_WIDTH / 2.f) * camera.scale * zoomFactor - SCREEN_WIDTH / 2.f = 0
-
-// dx = SCREEN_WIDTH / 2.f / camera.scale / zoomFactor - SCREEN_WIDTH / 2.f - camera.rect.x
-
-
-
-
-// a = (camera.rect.x + dx + SCREEN_WIDTH / 2.f - MAP_SIZE) * camera.scale * zoomFactor + SCREEN_WIDTH / 2.f > 0
-// b = (camera.rect.x + dx + SCREEN_WIDTH / 2.f - MAP_SIZE) * camera.scale + SCREEN_WIDTH / 2.f = 0
-
-// delta = a - b = (camera.rect.x + dx + SCREEN_WIDTH / 2.f - MAP_SIZE) * camera.scale * (zoomFactor - 1) 
-
-
-// Grace a dx, on veut que delta(camera.rect.x = camera.rect.xcamera.rect.x + dx) = 0:
-
-// (camera.rect.x + dx + SCREEN_WIDTH / 2.f - MAP_SIZE) * camera.scale * zoomFactor + SCREEN_WIDTH / 2.f = 0
-
-// dx = -SCREEN_WIDTH / 2.f / camera.scale / zoomFactor + MAP_SIZE - SCREEN_WIDTH / 2.f - camera.rect.x
