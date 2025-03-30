@@ -42,7 +42,7 @@ int main(void) {
         case LANDING_PAGE:
             handleMenuEvents(&state);
             updateFrameIndex();
-            afficherMenu(renderer, textures[16] , textures[17], textures[18], textures[19], textures[20], cstTextTextures);
+            displayMenu(renderer, textures[16] , textures[17], textures[18], textures[19], textures[20], cstTextTextures);
             break;
         
         case GAME:
