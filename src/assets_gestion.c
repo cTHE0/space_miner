@@ -3,7 +3,7 @@
 #include "assets_gestion.h"
 #include "config.h"
 
-SDL_Texture **loadTextures(SDL_Renderer *renderer) {
+SDL_Texture **loadTextures(SDL_Renderer *renderer) { // ATTENTION: ne pas oublier de modifier PNG_IMAGE_NUMBER !!
     SDL_Texture **textures = malloc(PNG_IMAGE_NUMBER * sizeof(SDL_Texture*));
     char pngNames[PNG_IMAGE_NUMBER][128] = {"assets/img/ships/s1.png",  // 128 : limite de caractères par chaine de caractère
                                             "assets/img/ships/s2.png",
