@@ -76,37 +76,42 @@ void updateShips(Ship *ships, int count, Planet *planets, int planetCount) {
 
 void renderShips(SDL_Renderer *renderer, SDL_Texture *spriteSheet, Ship *ships, int count) {
     for (int i = 0; i < count; i++) {
-        // Calcul de l'angle en degrés
+        // Calcul des coordonnees a l'ecran
         float target_x = ships[i].target->x;
         float target_y = ships[i].target->y;
-        float angle = atan2(target_y - (ships[i].y + 64 / 2.f), target_x - (ships[i].x + 64 / 2.f)) * 180.0f / M_PI;
-        angle += (ships[i].state == MOVING_TO_TARGET) ? 90.0f : -90.0f;  // Si la fusée ne va pas vers la cible, on l'inverse
 
-        // Calcul des coordonnées à l'écran
         float screenX = (ships[i].x - camera.rect.x - SCREEN_WIDTH / 2.f) * camera.scale + SCREEN_WIDTH / 2.f;
         float screenY = (ships[i].y - camera.rect.y - SCREEN_HEIGHT / 2.f) * camera.scale + SCREEN_HEIGHT / 2.f;
 
-        SDL_Rect srcRect = {ships[i].frameIndex * 64, 0, 64, 64}; // Frame actuelle sur le sprite sheet
+        // On n'affiche pas les fusees situees en dehors de l'ecran 
+        if (screenX >= -64 * camera.scale && screenX <= SCREEN_WIDTH && 
+            screenY >= -64 * camera.scale && screenY <= SCREEN_HEIGHT + 64 * camera.scale) {
+            // Calcul de l'angle en degres
+            float angle = atan2(target_y - (ships[i].y + 64 / 2.f), target_x - (ships[i].x + 64 / 2.f)) * 180.0f / M_PI;
+            angle += (ships[i].state == MOVING_TO_TARGET) ? 90.0f : -90.0f;  // Si la fusée ne va pas vers la cible, on l'inverse
 
-        SDL_Rect destRect = {screenX, screenY, 64 * camera.scale, 64 * camera.scale};  // Position et taille affichée
+            SDL_Rect srcRect = {ships[i].frameIndex * 64, 0, 64, 64};  // Frame actuelle sur le sprite sheet
+            SDL_Rect destRect = {screenX, screenY, 64 * camera.scale, 64 * camera.scale};  // Position et taille affichée
 
-        // Définition du point de rotation (au centre du sprite)
-        SDL_Point center = {destRect.w / 2, destRect.h / 2};
+            // Définition du point de rotation (au centre du sprite)
+            SDL_Point center = {destRect.w / 2, destRect.h / 2};
 
-        // Dessin des fusees avec rotation
-        SDL_RenderCopyEx(renderer, spriteSheet, &srcRect, &destRect, angle, &center, SDL_FLIP_NONE);
+            // Dessin des fusees avec rotation
+            SDL_RenderCopyEx(renderer, spriteSheet, &srcRect, &destRect, angle, &center, SDL_FLIP_NONE);
 
-        // Dessin de la barre de vie
-        destRect.h = 1 * camera.scale;
-        destRect.y -= destRect.h + 2 / camera.scale;
+            // Dessin de la barre de vie (1)
+            destRect.h = 1 * camera.scale;
+            destRect.y -= destRect.h + 2 / camera.scale;
 
-        SDL_SetRenderDrawColor(renderer, 70, 70, 70, 255);
-        SDL_RenderFillRect(renderer, &destRect);
+            SDL_SetRenderDrawColor(renderer, 70, 70, 70, 255);
+            SDL_RenderFillRect(renderer, &destRect);
 
-        destRect.w *= ships[i].currentLife / ships[i].maxLife;
+            // Dessin de la barre de vie (1)
+            destRect.w *= ships[i].currentLife / ships[i].maxLife;
 
-        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-        SDL_RenderFillRect(renderer, &destRect);
+            SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+            SDL_RenderFillRect(renderer, &destRect);
+        }
     }
 }
 
