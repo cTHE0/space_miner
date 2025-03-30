@@ -15,6 +15,7 @@ void initShips(Ship **ships, int count, Planet *planets, int planetCount) {
     }
 
     for (int i = 0; i < count; i++) {
+        (*ships)[i].shiptype = BASIC;
         (*ships)[i].base = &planets[0]; // La première planète est la base de chaque vaisseau
         (*ships)[i].target = &planets[rand() % planetCount];
         (*ships)[i].x = (*ships)[i].base->x;
@@ -26,6 +27,21 @@ void initShips(Ship **ships, int count, Planet *planets, int planetCount) {
         (*ships)[i].lastFrameTime = 0;
         (*ships)[i].maxLife = 100;
         (*ships)[i].currentLife = rand() % (int)(*ships)[i].maxLife;
+        (*ships)[i].cargo.compartmentsNumber = 3;
+
+        // Allocation des compartiments
+        (*ships)[i].cargo.compartmentsList = malloc((*ships)[i].cargo.compartmentsNumber * sizeof(Compartment));
+        if ((*ships)[i].cargo.compartmentsList == NULL) {
+            printf("Erreur d'allocation mémoire pour les compartiments du vaisseau %d!\n", i);
+            
+            // Libérer la mémoire des vaisseaux déjà créés
+            for (int j = 0; j < i; j++) {
+                free((*ships)[j].cargo.compartmentsList);
+            }
+            free(*ships);
+            *ships = NULL;
+            return;
+        }
     }
 }
 
@@ -110,4 +126,9 @@ void renderShips(SDL_Renderer *renderer, SDL_Texture *spriteSheet, Ship *ships, 
     }
 }
 
-
+void destroyShips(Ship *ships, int ship_count) {
+    for (int i = 0; i < ship_count; i++) {
+        free(ships[i].cargo.compartmentsList);
+    }
+    free(ships);
+}

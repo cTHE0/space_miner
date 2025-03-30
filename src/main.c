@@ -69,7 +69,7 @@ int main(void) {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     free(planets);
-    free(ships);
+    destroyShips(ships, ship_count);
     IMG_Quit();
     SDL_Quit();
     return 0;
