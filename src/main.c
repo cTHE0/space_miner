@@ -8,6 +8,7 @@
 #include "map.h"
 #include "config.h"
 #include "landing_page.h"
+#include "text.h"
 
 int main(void) {
     // Initialisation 
@@ -21,6 +22,7 @@ int main(void) {
     initRenderer(&window, &renderer);
 
     initCamera();
+    initText();
 
     Planet* planets = NULL;
     generatePlanets(&planets, planet_count);
@@ -29,6 +31,7 @@ int main(void) {
     initShips(&ships, ship_count, planets, planet_count);
 
     SDL_Texture **textures = loadTextures(renderer);
+    SDL_Texture **cstTextTextures = loadTextTextures(renderer);
 
     // Lancement de space_miner
     GameState state = LANDING_PAGE;
@@ -38,6 +41,8 @@ int main(void) {
         {
         case LANDING_PAGE:
             handleMenuEvents(&state);
+            updateFrameIndex();
+            afficherMenu(renderer, textures[16] , textures[17], textures[18], textures[19], textures[20], cstTextTextures);
             break;
         
         case GAME:
@@ -62,6 +67,7 @@ int main(void) {
     free(planets);
     free(ships);
     SDL_DestroyTextures(textures);
+    destroyTexts(cstTextTextures);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     IMG_Quit();

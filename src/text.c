@@ -1,5 +1,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include <stdio.h> 
+#include "config.h"
 
 SDL_bool init_SDL_ttf() {
     if (TTF_Init() == -1) {
@@ -35,4 +37,36 @@ SDL_Texture* create_text_texture(SDL_Renderer* renderer, TTF_Font* font, int col
         fprintf(stderr, "Erreur de création de texture: %s\n", SDL_GetError());
     }
     return texture;
+}
+
+SDL_Texture **loadTextTextures(SDL_Renderer *renderer) {
+    TTF_Font *jersey10 = load_font("assets/fonts/jersey10.ttf", 50);
+    char *cstTexts[CST_TEXT_NUMBER] = {
+        "Space Miner", //1
+        "Continue", //2
+        "New Game", //3
+        "Settings", //4
+    }; // ATENTION: ne pas oublier de modifier CST_TEXT_NUMBER
+
+    SDL_Texture **res = malloc(CST_TEXT_NUMBER * sizeof(SDL_Texture*));
+
+    for (int i = 0; i<CST_TEXT_NUMBER; i++) {
+        res[i] = create_text_texture(renderer, jersey10, WHITE, cstTexts[i]);
+    }
+
+    return res;
+}
+
+void destroyTexts(SDL_Texture **textTextures) {
+    for (int i = 0; i<CST_TEXT_NUMBER; i++) {
+        SDL_DestroyTexture(textTextures[i]);
+    }
+    free(textTextures);
+}
+
+void initText() {
+    if (!init_SDL_ttf()) {
+        printf("Erreur initialisation ttf");
+        return;
+    }
 }

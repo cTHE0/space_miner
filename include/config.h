@@ -8,7 +8,8 @@
 
 #define INIT_PLANET_COUNT 500
 #define INIT_SHIP_COUNT 100
-#define PNG_IMAGE_NUMBER 17
+#define PNG_IMAGE_NUMBER 21
+#define CST_TEXT_NUMBER 4
 
 
 #define SHIP_FRAME_DELAY 100
@@ -18,5 +19,8 @@
 #define SHIP_SPEED 0.1f
 
 #define carre(x) (x) * (x)
+
+// COULEURS
+#define WHITE (int[3]){255, 255, 255}
 
 #endif
