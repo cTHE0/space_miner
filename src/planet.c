@@ -32,22 +32,23 @@ void renderPlanets(SDL_Renderer *renderer, Planet *planets, SDL_Texture *texture
         SDL_Rect srcRect = {0, 0, 32, 32};
         SDL_Rect destRect = {screenX, screenY, 2 * screenRadius, 2 * screenRadius};
 
-        // Affichage planetes
-        if (screenX > -2 * screenRadius && screenX < MAP_SIZE + 2 * screenRadius && 
-            screenY > -2 * screenRadius && screenY < MAP_SIZE + 2 * screenRadius) {   // On n'affiche pas les planètes situés en dehors du cadre     
+        if (screenX >= -2 * screenRadius && screenX <= SCREEN_WIDTH && 
+            screenY >= -2 * screenRadius && screenY <= SCREEN_HEIGHT + screenRadius) {   // On n'affiche pas les planètes situés en dehors de l'ecran  
+            // Affichage planete 
             SDL_RenderCopy(renderer, texturePlanet, &srcRect, &destRect);
-        }  
 
-        // Affichage barre de minerais*       (*une seule barre, mais representant la valeur totale de minerais !?)
-        destRect.h = 5 * camera.scale;
-        destRect.y -= destRect.h + 2 / camera.scale;
+            // Affichage barre* de minerais (1)      (*une seule barre, mais representant la valeur totale de minerais !?)
+            destRect.h = 5 * camera.scale;
+            destRect.y -= destRect.h + 2 / camera.scale;
 
-        SDL_SetRenderDrawColor(renderer, 70, 70, 70, 255);
-        SDL_RenderFillRect(renderer, &destRect);
+            SDL_SetRenderDrawColor(renderer, 70, 70, 70, 255);
+            SDL_RenderFillRect(renderer, &destRect);
 
-        destRect.w *= planets[i].currentOre / planets[i].maxOre;
+            // Affichage barre de minerais (2)
+            destRect.w *= planets[i].currentOre / planets[i].maxOre;
 
-        SDL_SetRenderDrawColor(renderer, 255, 215, 0, 255);
-        SDL_RenderFillRect(renderer, &destRect);
+            SDL_SetRenderDrawColor(renderer, 255, 215, 0, 255);
+            SDL_RenderFillRect(renderer, &destRect);
+        }
     }
 }
