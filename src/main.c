@@ -30,8 +30,8 @@ int main(void) {
     Ship* ships = NULL;
     initShips(&ships, ship_count, planets, planet_count);
 
-    SDL_Texture **textures = loadTextures(renderer);
-    SDL_Texture **cstTextTextures = loadTextTextures(renderer);
+    SDL_Texture **imageTextures = loadTextures(renderer);
+    SDL_Texture **textTextures = loadTextTextures(renderer);
 
     // Lancement de space_miner
     GameState state = LANDING_PAGE;
@@ -42,7 +42,7 @@ int main(void) {
         case LANDING_PAGE:
             handleMenuEvents(&state);
             updateFrameIndex();
-            displayMenu(renderer, textures[16] , textures[17], textures[18], textures[19], textures[20], cstTextTextures);
+            displayMenu(renderer, imageTextures, textTextures);
             break;
         
         case GAME:
@@ -51,9 +51,9 @@ int main(void) {
             updateShips(ships, ship_count, planets, planet_count);
 
             clearScreen(renderer);
-            renderMap(renderer, textures[16]);
-            renderPlanets(renderer, planets, textures[8], planet_count);
-            renderShips(renderer, textures[0], ships, ship_count);
+            renderMap(renderer, imageTextures[16]);
+            renderPlanets(renderer, planets, imageTextures[8], planet_count);
+            renderShips(renderer, imageTextures[0], ships, ship_count);
             presentScreen(renderer);
             break;
         
@@ -64,12 +64,12 @@ int main(void) {
     }
     
     // Fermeture du programme
-    free(planets);
-    free(ships);
-    SDL_DestroyTextures(textures);
-    destroyTexts(cstTextTextures);
+    destroyImageTextures(imageTextures);
+    destroyTextTextures(textTextures);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    free(planets);
+    free(ships);
     IMG_Quit();
     SDL_Quit();
     return 0;

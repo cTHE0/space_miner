@@ -40,7 +40,7 @@ SDL_Texture* create_text_texture(SDL_Renderer* renderer, TTF_Font* font, int col
 
 SDL_Texture **loadTextTextures(SDL_Renderer *renderer) {
     TTF_Font *font = loadFonts("assets/fonts/f1.ttf", 50);
-    SDL_Texture **res = malloc(CST_TEXT_NUMBER * sizeof(SDL_Texture*));
+    SDL_Texture **textTextures = malloc(CST_TEXT_NUMBER * sizeof(SDL_Texture*));
     char *cstTexts[CST_TEXT_NUMBER] = {"Space Miner",
                                        "Continue",
                                        "New Game",
@@ -48,13 +48,13 @@ SDL_Texture **loadTextTextures(SDL_Renderer *renderer) {
 
 
     for (int i = 0; i < CST_TEXT_NUMBER; i++) {
-        res[i] = create_text_texture(renderer, font, WHITE, cstTexts[i]);
+        textTextures[i] = create_text_texture(renderer, font, WHITE, cstTexts[i]);
     }
 
-    return res;
+    return textTextures;
 }
 
-void destroyTexts(SDL_Texture **textTextures) {
+void destroyTextTextures(SDL_Texture **textTextures) {
     for (int i = 0; i<CST_TEXT_NUMBER; i++) {
         SDL_DestroyTexture(textTextures[i]);
     }

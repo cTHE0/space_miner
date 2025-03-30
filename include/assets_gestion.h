@@ -7,6 +7,6 @@
 
 SDL_Texture* IMG_LoadTextureWithAlpha(SDL_Renderer* renderer, const char* filePath, Uint8 alpha);
 SDL_Texture **loadTextures(SDL_Renderer *renderer);
-void SDL_DestroyTextures(SDL_Texture **textures);
+void destroyImageTextures(SDL_Texture **textures);
 
 #endif

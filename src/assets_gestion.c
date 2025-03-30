@@ -65,9 +65,9 @@ SDL_Texture **loadTextures(SDL_Renderer *renderer) { // ATTENTION: ne pas oublie
     return textures;
 }
 
-void SDL_DestroyTextures(SDL_Texture **textures) {
+void destroyImageTextures(SDL_Texture **imageTextures) {
     for (int i = 0; i < PNG_IMAGE_NUMBER; i++) {
-        SDL_DestroyTexture(textures[i]);
+        SDL_DestroyTexture(imageTextures[i]);
     }
-    free(textures);
+    free(imageTextures);
 }
