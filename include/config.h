@@ -7,7 +7,7 @@
 
 
 #define INIT_PLANET_COUNT 500
-#define INIT_SHIP_COUNT 1000
+#define INIT_SHIP_COUNT 100
 #define PNG_IMAGE_NUMBER 17
 
 
@@ -19,4 +19,4 @@
 
 #define carre(x) (x) * (x)
 
-#endif // CONFIG_H
+#endif

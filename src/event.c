@@ -35,8 +35,8 @@ void handleEvents(GameState *state) {
 
             case SDL_MOUSEMOTION:
                 if (dragging) {
-                    int dx = event.motion.x - lastMouseX;
-                    int dy = event.motion.y - lastMouseY;
+                    int dx = (event.motion.x - lastMouseX) / camera.scale;
+                    int dy = (event.motion.y - lastMouseY) / camera.scale;
                     translateCamera(-dx, -dy);
                     lastMouseX = event.motion.x;
                     lastMouseY = event.motion.y;
