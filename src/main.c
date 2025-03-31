@@ -9,6 +9,8 @@
 #include "config.h"
 #include "landing_page.h"
 #include "text.h"
+#include "renderer.h"
+
 
 int main(void) {
     // Initialisation 
@@ -50,11 +52,7 @@ int main(void) {
 
             updateShips(ships, ship_count, planets, planet_count);
 
-            clearScreen(renderer);
-            renderMap(renderer, imageTextures[16]);
-            renderPlanets(renderer, planets, imageTextures[8], planet_count);
-            renderShips(renderer, imageTextures[0], ships, ship_count);
-            presentScreen(renderer);
+            displayGame(renderer, imageTextures, ships, planets, ship_count, planet_count);
             break;
         
         default:

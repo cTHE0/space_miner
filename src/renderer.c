@@ -1,5 +1,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include "ship.h"
+#include "planet.h"
+#include "map.h"
 #include "renderer.h"
 #include "config.h"
 
@@ -28,6 +31,10 @@ void clearScreen(SDL_Renderer *renderer) {
     SDL_RenderClear(renderer);
 }
 
-void presentScreen(SDL_Renderer *renderer) {
+void displayGame(SDL_Renderer *renderer, SDL_Texture **imageTextures, Ship *ships, Planet *planets, int ship_count, int planet_count) {
+    clearScreen(renderer);
+    renderMap(renderer, imageTextures[16]);
+    renderPlanets(renderer, planets, imageTextures[8], planet_count);
+    renderShips(renderer, imageTextures[0], ships, ship_count);
     SDL_RenderPresent(renderer);
 }
