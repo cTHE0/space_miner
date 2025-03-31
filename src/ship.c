@@ -24,8 +24,6 @@ void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
         (*ships)[i].state = MOVING_TO_TARGET;
         (*ships)[i].maxLife = 100;
         (*ships)[i].currentLife = rand() % (int)(*ships)[i].maxLife;
-        (*ships)[i].cargo.compartmentsNumber = 3;
-        (*ships)[i].sizeCompartment = 100;
 
         (*ships)[i].waitStartTime = 0;
         (*ships)[i].frameIndex = rand() % 4;  // Desynchronisation des fusees
@@ -34,6 +32,7 @@ void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
         (*ships)[i].lastRefreshFuel = SDL_GetTicks();
 
         // Allocation des compartiments
+        (*ships)[i].cargo.compartmentsNumber = 3;
         (*ships)[i].cargo.compartmentsList = malloc((*ships)[i].cargo.compartmentsNumber * sizeof(Compartment));
         if ((*ships)[i].cargo.compartmentsList == NULL) {
             printf("Erreur d'allocation mémoire pour les compartiments du vaisseau %d!\n", i);
@@ -48,6 +47,7 @@ void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
         }
         for (int j = 0; j < (*ships)[i].cargo.compartmentsNumber; j++) {  // Ici, chaque compartiment contient de l'essence
             (*ships)[i].cargo.compartmentsList[j].ore = FUEL;
+            (*ships)[i].cargo.compartmentsList[j].maxCapacity = 100;
             (*ships)[i].cargo.compartmentsList[j].currentCapacity = 100;
         }
     }
@@ -183,7 +183,7 @@ void renderShipBars(SDL_Renderer *renderer, Ship ship, SDL_Point ShipOnScreen) {
     if (nbFuelCompartment == 0) {
         destRect.w = 0;
     } else {
-        destRect.w *= ship.cargo.compartmentsList[firstFuelCompartment].currentCapacity / (float)ship.sizeCompartment;
+        destRect.w *= ship.cargo.compartmentsList[firstFuelCompartment].currentCapacity / (float)ship.cargo.compartmentsList[firstFuelCompartment].maxCapacity;
     }
 
     SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
