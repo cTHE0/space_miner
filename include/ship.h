@@ -10,11 +10,12 @@ typedef enum { MOVING_TO_TARGET, WAITING, RETURNING } ShipState;
 typedef enum {BASIC, EXPLORER, DEFENDER } ShipType;
 
 typedef struct {
-    ShipType shiptype;          // Type de vaisseau (utile pr définir ensuite son comportement, stats, render)
+    ShipType shiptype;          // Type ude vaisseau (utile pr définir ensuite son comportement, stats, render)
     float x, y;                 // Position du vaisseau
     Planet *base;               // Planète de départ
     Planet *target;             // Planète cible
     float speed;                // Vitesse du vaisseau
+    float fuelConsumption;      // Consommation du fuel du vaisseau
     ShipState state;            // Etat du vaisseau
     float maxLife, currentLife; // Vie des fusees
     Cargo cargo;                // Cargaison de la fusée

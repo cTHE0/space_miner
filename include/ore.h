@@ -6,7 +6,9 @@ typedef enum { FUEL, ORE1, ORE2, ORE3, MISSILES, EMPTY } Ore;  // Types de miner
 
 typedef struct {  // Un seul compartiment
     Ore ore;
-    int capacity;
+    int capacityMax;
+    int currentCapacity;
+    int flowSpeed;
 } Compartment;
 
 

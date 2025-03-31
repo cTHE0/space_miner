@@ -27,9 +27,10 @@ void initShips(Ship **ships, int count, Planet *planets, int planetCount) {
         (*ships)[i].lastFrameTime = 0;
         (*ships)[i].maxLife = 100;
         (*ships)[i].currentLife = rand() % (int)(*ships)[i].maxLife;
-        (*ships)[i].cargo.compartmentsNumber = 3;
+        (*ships)[i].fuelConsumption = 100;
 
         // Allocation des compartiments
+        (*ships)[i].cargo.compartmentsNumber = 3;
         (*ships)[i].cargo.compartmentsList = malloc((*ships)[i].cargo.compartmentsNumber * sizeof(Compartment));
         if ((*ships)[i].cargo.compartmentsList == NULL) {
             printf("Erreur d'allocation mémoire pour les compartiments du vaisseau %d!\n", i);
@@ -42,6 +43,7 @@ void initShips(Ship **ships, int count, Planet *planets, int planetCount) {
             *ships = NULL;
             return;
         }
+
     }
 }
 
