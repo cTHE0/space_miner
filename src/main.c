@@ -9,11 +9,13 @@
 #include "config.h"
 #include "landing_page.h"
 #include "text.h"
+#include "ship_window.h"
 
 int main(void) {
     // Initialisation 
     int planet_count = INIT_PLANET_COUNT;
     int ship_count = INIT_SHIP_COUNT;
+    int window_width, window_height;
 
     srand(time(NULL));
 
@@ -29,6 +31,9 @@ int main(void) {
 
     Ship* ships = NULL;
     initShips(&ships, ship_count, planets, planet_count);
+
+    SDL_GetWindowSize(window, &window_width, &window_height);
+    printf("(%d, %d)", window_width, window_height);
 
     SDL_Texture **imageTextures = loadTextures(renderer);
     SDL_Texture **textTextures = loadTextTextures(renderer);
@@ -54,6 +59,7 @@ int main(void) {
             renderMap(renderer, imageTextures[16]);
             renderPlanets(renderer, planets, imageTextures[8], planet_count);
             renderShips(renderer, imageTextures[0], ships, ship_count);
+            renderShipWindows(renderer, imageTextures, textTextures);
             presentScreen(renderer);
             break;
         
@@ -70,6 +76,7 @@ int main(void) {
     SDL_DestroyWindow(window);
     destroyShips(ships, ship_count);
     free(planets);
+    freeWindows();
     IMG_Quit();
     SDL_Quit();
     return 0;

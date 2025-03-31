@@ -3,6 +3,7 @@
 #include "camera.h"
 #include "config.h"
 #include "landing_page.h"
+#include "ship_window.h"
 
 void handleEvents(GameState *state) {
     static int lastMouseX, lastMouseY;
@@ -65,6 +66,12 @@ void handleEvents(GameState *state) {
                         break;
                     case SDLK_DOWN:
                         translateCamera(0, STEP_TRANSLATION);
+                        break;
+                    case SDLK_f:
+                        addShipWindows();
+                        break;
+                    case SDLK_v:
+                        deleteShipWindows();
                         break;
                 }
                 break;
