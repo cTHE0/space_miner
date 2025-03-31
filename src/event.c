@@ -73,7 +73,12 @@ void handleEvents(GameState *state) {
                     case SDLK_v:
                         deleteShipWindows();
                         break;
+                    default:
+                        break;
                 }
+                break;
+                
+            default:
                 break;
         }
     }

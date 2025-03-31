@@ -32,7 +32,7 @@ void updateShips(Ship *ships, int shipCount, Planet *planets, int planetCount);
     void updateShipAnimation(Ship *ship, Uint32 currentTime);
     void updateShipMove(Ship *ship, Planet *planets, int planetCount, Uint32 currentTime);
     void updateShipFuel(Ship *ship, Uint32 currentTime);
-void renderShips(SDL_Renderer *renderer, SDL_Texture *spriteSheet, Ship *ships, int count);
+void renderShips(SDL_Renderer *renderer, SDL_Texture *spriteSheet, Ship *ships, int shipCount);
     void renderShipImage(SDL_Renderer *renderer, SDL_Texture *spriteSheet, Ship ship, SDL_Point ShipOnScreen);
     void renderShipBars(SDL_Renderer *renderer, Ship ship, SDL_Point ShipOnScreen);
 

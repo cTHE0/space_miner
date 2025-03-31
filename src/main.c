@@ -39,25 +39,24 @@ int main(void) {
     GameState state = LANDING_PAGE;
 
     while (state != QUIT) {
-        switch (state)
-        {
-        case LANDING_PAGE:
-            handleMenuEvents(&state);
-            updateFrameIndex();
-            displayMenu(renderer, imageTextures, textTextures);
-            break;
-        
-        case GAME:
-            handleEvents(&state);
+        switch (state) {
+            case LANDING_PAGE:
+                handleMenuEvents(&state);
+                updateFrameIndex();
+                displayMenu(renderer, imageTextures, textTextures);
+                break;
+            
+            case GAME:
+                handleEvents(&state);
 
-            updateShips(ships, ship_count, planets, planet_count);
+                updateShips(ships, ship_count, planets, planet_count);
 
-            displayGame(renderer, imageTextures, textTextures, ships, planets, ship_count, planet_count);
-            break;
-        
-        default:
-            state = QUIT;
-            break;
+                displayGame(renderer, imageTextures, textTextures, ships, planets, ship_count, planet_count);
+                break;
+            
+            default:
+                state = QUIT;
+                break;
         }
     }
     

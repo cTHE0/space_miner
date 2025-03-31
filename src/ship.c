@@ -24,11 +24,11 @@ void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
         (*ships)[i].state = MOVING_TO_TARGET;
         (*ships)[i].maxLife = 100;
         (*ships)[i].currentLife = rand() % (int)(*ships)[i].maxLife;
+        (*ships)[i].fuelConsumption = 5;  // Consommation d'essence par intervalle de temps FUEL_UPDATE_INTERVAL
 
         (*ships)[i].waitStartTime = 0;
         (*ships)[i].frameIndex = rand() % 4;  // Desynchronisation des fusees
         (*ships)[i].lastFrameTime = 0;
-        (*ships)[i].fuelConsumption = 5;  // Consommation d'essence par intervalle de temps FUEL_UPDATE_INTERVAL
         (*ships)[i].lastRefreshFuel = SDL_GetTicks();
 
         // Allocation des compartiments
@@ -132,8 +132,8 @@ void updateShipFuel(Ship *ship, Uint32 currentTime) {  // Gere la consommation d
     }
 }
 
-void renderShips(SDL_Renderer *renderer, SDL_Texture *spriteSheet, Ship *ships, int count) {
-    for (int i = 0; i < count; i++) {
+void renderShips(SDL_Renderer *renderer, SDL_Texture *spriteSheet, Ship *ships, int shipCount) {
+    for (int i = 0; i < shipCount; i++) {
         // Calcul des coordonnees a l'ecran, du point en haut a gauche de la fusee
         SDL_Point ShipOnScreen = {(ships[i].x - camera.rect.x - SCREEN_WIDTH / 2.f) * camera.scale + SCREEN_WIDTH / 2.f,
                                   (ships[i].y - camera.rect.y - SCREEN_HEIGHT / 2.f) * camera.scale + SCREEN_HEIGHT / 2.f};
