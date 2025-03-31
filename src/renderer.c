@@ -5,6 +5,7 @@
 #include "map.h"
 #include "renderer.h"
 #include "config.h"
+#include "ship_window.h"
 
 void initRenderer(SDL_Window **window, SDL_Renderer **renderer) {
     
@@ -31,10 +32,11 @@ void clearScreen(SDL_Renderer *renderer) {
     SDL_RenderClear(renderer);
 }
 
-void displayGame(SDL_Renderer *renderer, SDL_Texture **imageTextures, Ship *ships, Planet *planets, int ship_count, int planet_count) {
+void displayGame(SDL_Renderer *renderer, SDL_Texture **imageTextures, SDL_Texture **textTextures, Ship *ships, Planet *planets, int ship_count, int planet_count) {
     clearScreen(renderer);
     renderMap(renderer, imageTextures[16]);
     renderPlanets(renderer, planets, imageTextures[8], planet_count);
     renderShips(renderer, imageTextures[0], ships, ship_count);
+    renderShipWindows(renderer, imageTextures, textTextures);
     SDL_RenderPresent(renderer);
 }
