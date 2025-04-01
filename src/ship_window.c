@@ -13,31 +13,30 @@ int nb_ship_windows = 0;
 ShipWindow *ship_windows = NULL;
 
 void addShipWindows() {
-    nb_ships_to_be_describe += 1;
-    Ship *temp = realloc(ship_windows, nb_ship_windows * sizeof(Ship));
-    if (temp == NULL) {
+    nb_ship_windows += 1;
+    ship_windows = realloc(ship_windows, nb_ship_windows * sizeof(ShipWindow));
+    if (ship_windows == NULL) {
         fprintf(stderr, "Erreur de réallocation de mémoire\n");
         return;
     }
-    ships_to_be_describe = temp;
 }
 
 void deleteShipWindows() {
-    if (nb_ships_to_be_describe == 0) {
+    if (nb_ship_windows == 0) {
         printf("Erreur, il n'y a plus de fenêtre à supprimer !!\n");
         return;
     }
-    nb_ships_to_be_describe -= 1;
-    if (nb_ships_to_be_describe == 0) {
-        free(ships_to_be_describe);
-        ships_to_be_describe = NULL;
+    nb_ship_windows -= 1;
+    if (nb_ship_windows == 0) {
+        free(ship_windows);
+        ship_windows= NULL;
     } else {
-        Ship *temp = realloc(ships_to_be_describe, nb_ships_to_be_describe * sizeof(Ship));
+        ShipWindow *temp = realloc(ship_windows, nb_ship_windows * sizeof(ShipWindow));
         if (temp == NULL) {
             fprintf(stderr, "Erreur de réallocation de mémoire\n");
             return;
         }
-        ships_to_be_describe = temp;
+        ship_windows = temp;
     }
 }
 
@@ -51,8 +50,8 @@ void renderShipWindow(SDL_Renderer *renderer, SDL_Texture **imageTextures, SDL_T
 }
 
 void renderShipWindows(SDL_Renderer *renderer, SDL_Texture **imageTextures, SDL_Texture **textTextures) {
-    for (int i = 0; i < nb_ships_to_be_describe; i++) {
-        renderShipWindow(renderer, imageTextures, textTextures, ships_to_be_describe[i]);
+    for (int i = 0; i < nb_ship_windows; i++) {
+        renderShipWindow(renderer, imageTextures, textTextures, ship_windows[i].ship);
     }
 }
 
@@ -67,5 +66,5 @@ void openCloseShipWindowsGestion(int x, int y, int ship_count, Ship *ships) {
 }
 
 void freeWindows() {
-    free(ships_to_be_describe);
+    free(ship_windows);
 }

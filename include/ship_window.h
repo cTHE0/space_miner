@@ -8,6 +8,7 @@ typedef struct
     Ship ship;
     SDL_Rect destRect;
     SDL_Rect crossRect;
+
 } ShipWindow;
 
 
