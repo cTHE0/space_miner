@@ -31,6 +31,11 @@ void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
         (*ships)[i].lastFrameTime = 0;
         (*ships)[i].lastRefreshFuel = SDL_GetTicks();
 
+        (*ships)[i].destRect.x = 0;
+        (*ships)[i].destRect.y = 0;
+        (*ships)[i].destRect.w = 0;
+        (*ships)[i].destRect.h = 0;
+
         // Allocation des compartiments
         (*ships)[i].cargo.compartmentsNumber = 3;
         (*ships)[i].cargo.compartmentsList = malloc((*ships)[i].cargo.compartmentsNumber * sizeof(Compartment));
@@ -142,6 +147,10 @@ void renderShips(SDL_Renderer *renderer, SDL_Texture *spriteSheet, Ship *ships, 
             ShipOnScreen.y >= -64 * camera.scale && ShipOnScreen.y <= SCREEN_HEIGHT + 64 * camera.scale) {  // Si la fusee est dans l'ecran 
             renderShipImage(renderer, spriteSheet, ships[i], ShipOnScreen);
             renderShipBars(renderer, ships[i], ShipOnScreen);
+            ships[i].destRect.x = ShipOnScreen.x;
+            ships[i].destRect.y = ShipOnScreen.y;
+            ships[i].destRect.w = 64 * camera.scale;
+            ships[i].destRect.h = 64 * camera.scale;
         }
     }
 }

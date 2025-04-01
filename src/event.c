@@ -4,8 +4,9 @@
 #include "config.h"
 #include "landing_page.h"
 #include "ship_window.h"
+#include "ship.h"
 
-void handleEvents(GameState *state) {
+void handleEvents(GameState *state, int ship_count, Ship *ships) {
     static int lastMouseX, lastMouseY;
     static int dragging = 0;
     SDL_Event event;
@@ -25,6 +26,8 @@ void handleEvents(GameState *state) {
                     dragging = 1;
                     lastMouseX = event.button.x;
                     lastMouseY = event.button.y;
+
+                    openCloseShipWindowsGestion(lastMouseX, lastMouseY, ship_count, ships);
                 }
                 break;
 

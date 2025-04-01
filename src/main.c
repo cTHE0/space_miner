@@ -47,7 +47,7 @@ int main(void) {
                 break;
             
             case GAME:
-                handleEvents(&state);
+                handleEvents(&state, ship_count, ships);
 
                 updateShips(ships, ship_count, planets, planet_count);
 

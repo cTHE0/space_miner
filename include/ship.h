@@ -25,6 +25,7 @@ typedef struct {
     Uint32 waitStartTime;       // Temps d’attente à destination  (a remplacer par le temps de minage/depot !!-> besoin d'ameliorer les stats des fusees)
     int frameIndex;             // Numero de l'image prise dans le spritesheet
     Uint32 lastFrameTime;       // Date au dernier changement de frame du spritesheet
+    SDL_Rect destRect;          // Rect dans écran où afficher ship
 } Ship;
 
 void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount);
