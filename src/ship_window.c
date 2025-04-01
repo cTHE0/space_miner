@@ -41,8 +41,8 @@ void deleteShipWindows() {
 }
 
 void renderShipWindow(SDL_Renderer *renderer, SDL_Texture **imageTextures, SDL_Texture **textTextures, Ship ship) {
-    SDL_Rect dst_rect = {200, 300, 500, 300};
-    SDL_RenderCopy(renderer, imageTextures[20], NULL, &dst_rect);
+    SDL_Rect dst_rect = {400, 250, 800, 600};
+    SDL_RenderCopy(renderer, imageTextures[21], NULL, &dst_rect);
 }
 
 void renderShipWindows(SDL_Renderer *renderer, SDL_Texture **imageTextures, SDL_Texture **textTextures) {
