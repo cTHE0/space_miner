@@ -3,6 +3,14 @@
 
 #include "ship.h"
 
+typedef struct
+{
+    Ship ship;
+    SDL_Rect destRect;
+    SDL_Rect crossRect;
+} ShipWindow;
+
+
 void addShipWindows();
 void deleteShipWindows();
 void renderShipWindow(SDL_Renderer *renderer, SDL_Texture **imageTextures, SDL_Texture **textTextures, Ship ship);

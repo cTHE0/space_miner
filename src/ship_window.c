@@ -9,12 +9,12 @@
 #include <stdio.h>
 #include "ship.h"
 
-int nb_ships_to_be_describe = 0;
-Ship *ships_to_be_describe = NULL;
+int nb_ship_windows = 0;
+ShipWindow *ship_windows = NULL;
 
 void addShipWindows() {
     nb_ships_to_be_describe += 1;
-    Ship *temp = realloc(ships_to_be_describe, nb_ships_to_be_describe * sizeof(Ship));
+    Ship *temp = realloc(ship_windows, nb_ship_windows * sizeof(Ship));
     if (temp == NULL) {
         fprintf(stderr, "Erreur de réallocation de mémoire\n");
         return;
@@ -61,6 +61,7 @@ void openCloseShipWindowsGestion(int x, int y, int ship_count, Ship *ships) {
     for (int i = 0; i<ship_count; i++) {
         if (SDL_PointInFRect(&mouse, &ships[i].destRect)) {
             addShipWindows();
+            return;
         }
     }
 }
