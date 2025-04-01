@@ -11,7 +11,7 @@
 #include "text.h"
 #include "renderer.h"
 #include "ship_window.h"
-
+//paojhfberjzi
 int main(void) {
     // Initialisation 
     int planet_count = INIT_PLANET_COUNT;
