@@ -52,6 +52,7 @@ SDL_Texture **loadTextures(SDL_Renderer *renderer) { // ATTENTION: ne pas oublie
                                             "assets/img/asteroids/asteroid2.png",
                                             "assets/img/others/bg_button.png",
                                             "assets/img/others/bg_window.png",
+                                            "assets/img/others/cross.png",
                                         };
 
     for (int i = 0; i < PNG_IMAGE_NUMBER; i++) {
@@ -62,7 +63,7 @@ SDL_Texture **loadTextures(SDL_Renderer *renderer) { // ATTENTION: ne pas oublie
         }
     
     textures[20] = IMG_LoadTextureWithAlpha(renderer, "assets/img/others/bg_button.png", 100);
-    textures[21] = IMG_LoadTextureWithAlpha(renderer, "assets/img/others/bg_window.png", 100);
+    textures[21] = IMG_LoadTextureWithAlpha(renderer, "assets/img/others/bg_window.png", 180);
     }
     return textures;
 }
