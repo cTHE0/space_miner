@@ -21,7 +21,7 @@ void addShipWindows() {
     }
 }
 
-void deleteShipWindows() {
+void deleteShipWindows(int x, int y, int i) { // i : numéro de la fenêtre à suppr
     if (nb_ship_windows == 0) {
         printf("Erreur, il n'y a plus de fenêtre à supprimer !!\n");
         return;
@@ -40,7 +40,7 @@ void deleteShipWindows() {
     }
 }
 
-void renderShipWindow(SDL_Renderer *renderer, SDL_Texture **imageTextures, SDL_Texture **textTextures, Ship ship) {
+void renderShipWindow(SDL_Renderer *renderer, SDL_Texture **imageTextures, SDL_Texture **textTextures, ShipWindow ship_window) {
     SDL_Rect window_rect = {400, 250, 800, 600};
     int cross_size = window_rect.w * 0.03;
     SDL_Rect cross_rect = {window_rect.x + window_rect.w - cross_size - 15, window_rect.y + 15, cross_size, cross_size};
@@ -51,14 +51,14 @@ void renderShipWindow(SDL_Renderer *renderer, SDL_Texture **imageTextures, SDL_T
 
 void renderShipWindows(SDL_Renderer *renderer, SDL_Texture **imageTextures, SDL_Texture **textTextures) {
     for (int i = 0; i < nb_ship_windows; i++) {
-        renderShipWindow(renderer, imageTextures, textTextures, ship_windows[i].ship);
+        renderShipWindow(renderer, imageTextures, textTextures, ship_windows[i]);
     }
 }
 
 void openCloseShipWindowsGestion(int x, int y, int ship_count, Ship *ships) {
     SDL_Point mouse = {x, y};
     for (int i = 0; i<ship_count; i++) {
-        if (SDL_PointInFRect(&mouse, &ships[i].destRect)) {
+        if (SDL_PointInRect(&mouse, &ships[i].destRect)) {
             addShipWindows();
             return;
         }
