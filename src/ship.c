@@ -17,7 +17,7 @@ void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
     for (int i = 0; i < shipCount; i++) {
         (*ships)[i].shiptype = TRANSPORTER;
         (*ships)[i].base = &planets[0];  // La première planète est la base de chaque vaisseau
-        (*ships)[i].target = &planets[rand() % planetCount];
+        (*ships)[i].target = &planets[rand() % (planetCount - 1)] + 1;
         (*ships)[i].x = (*ships)[i].base->x;
         (*ships)[i].y = (*ships)[i].base->y;
         (*ships)[i].speed = (rand() / (float)RAND_MAX + 0.01) * SHIP_SPEED;
@@ -29,7 +29,7 @@ void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
         (*ships)[i].waitStartTime = 0;
         (*ships)[i].frameIndex = rand() % 4;  // Desynchronisation des fusees
         (*ships)[i].lastFrameTime = 0;
-        (*ships)[i].lastRefreshFuel = SDL_GetTicks();
+        (*ships)[i].lastRefreshFilling = SDL_GetTicks();
 
         (*ships)[i].destRect.x = 0;
         (*ships)[i].destRect.y = 0;
@@ -37,7 +37,7 @@ void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
         (*ships)[i].destRect.h = 0;
 
         // Allocation des compartiments
-        (*ships)[i].cargo.compartmentsNumber = 3;
+        (*ships)[i].cargo.compartmentsNumber = 10;
         (*ships)[i].cargo.compartmentsList = malloc((*ships)[i].cargo.compartmentsNumber * sizeof(Compartment));
         if ((*ships)[i].cargo.compartmentsList == NULL) {
             printf("Erreur d'allocation mémoire pour les compartiments du vaisseau %d!\n", i);
@@ -54,16 +54,17 @@ void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
             (*ships)[i].cargo.compartmentsList[j].ore = FUEL;
             (*ships)[i].cargo.compartmentsList[j].maxCapacity = 100;
             (*ships)[i].cargo.compartmentsList[j].currentCapacity = 100;
+            (*ships)[i].cargo.compartmentsList[j].flowSpeed = 5;
         }
     }
 }
 
-void updateShips(Ship *ships, int shipCount, Planet *planets, int planetCount) { 
+void updateShips(Ship *ships, int shipCount) { 
     Uint32 currentTime = SDL_GetTicks();
 
     for (int i = 0; i < shipCount; i++) {
         updateShipAnimation(&ships[i], currentTime);  // Permet de changer de frame du sprite sheet de la fusee i
-        updateShipMove(&ships[i], planets, planetCount, currentTime);  // Actualise le mouvement de la fusee i
+        updateShipMove(&ships[i], currentTime);  // Actualise le mouvement de la fusee i
         updateShipFuel(&ships[i], currentTime);  // Gère la consommation d'essence de la fusee i
     }
 }
@@ -75,9 +76,9 @@ void updateShipAnimation(Ship *ship, Uint32 currentTime) {  // Pour animation de
     }
 }
 
-void updateShipMove(Ship *ship, Planet *planets, int planetCount, Uint32 currentTime) {  // Pour animation de la flamme des fusees 
+void updateShipMove(Ship *ship, Uint32 currentTime) {  // Pour animation de la flamme des fusees 
     // Pour le deplacement des fusees dans l'espace
-    if (ship->state == MOVING_TO_TARGET || ship->state == RETURNING) {
+    if (ship->state == MOVING_TO_TARGET || ship->state == MOVING_TO_BASE) {
         Planet *dest = (ship->state == MOVING_TO_TARGET) ? ship->target : ship->base;
         float dx = dest->x - (ship->x + 64 / 2.f);
         float dy = dest->y - (ship->y + 64 / 2.f);
@@ -87,34 +88,21 @@ void updateShipMove(Ship *ship, Planet *planets, int planetCount, Uint32 current
             ship->x += dx * ship->speed / distance;
             ship->y += dy * ship->speed / distance;
         } else {
-            if (ship->state == MOVING_TO_TARGET) {
-                ship->state = WAITING;
-                ship->waitStartTime = currentTime;
-            } else if (ship->state == RETURNING) {
-                ship->state = WAITING;
-                ship->waitStartTime = currentTime;
-            } else {
-                ship->target = &planets[rand() % planetCount];
-                ship->state = MOVING_TO_TARGET;
-            }
+            ship->waitStartTime = currentTime;
+            ship->state = (ship->state == MOVING_TO_BASE) ? WAITING_ON_BASE : WAITING_ON_TARGET;
         }
-    } else if (ship->state == WAITING) {
+    } else if (ship->state == WAITING_ON_TARGET) {  // Partie a supprimer qd les fusees pourront miner
         if (currentTime - ship->waitStartTime > WAIT_TIME_SHIP) {
-            ship->lastRefreshFuel = currentTime;  // La fusee decolle, actualisation de lastRefreshFuel
-            if (carre(ship->target->x - ship->x) + carre(ship->target->x - ship->x) >
-                carre(ship->base->x - ship->x) + carre(ship->base->x - ship->x))  {
-                ship->state = MOVING_TO_TARGET;
-            } else {
-                ship->state = RETURNING;
-            }
+            ship->state = MOVING_TO_BASE; 
+            ship->lastRefreshFilling = currentTime;
         }
     }
 }
 
 void updateShipFuel(Ship *ship, Uint32 currentTime) {  // Gere la consommation d'essence
-    if (currentTime - ship->lastRefreshFuel >= FUEL_UPDATE_INTERVAL) {  // Actualisation chaque seconde
-        ship->lastRefreshFuel += FUEL_UPDATE_INTERVAL;
-        if ((ship->state == MOVING_TO_TARGET || ship->state == RETURNING)) {  // Cas ou la fusee est en mouvement
+    if (currentTime - ship->lastRefreshFilling >= FUEL_UPDATE_INTERVAL) {  // Actualisation chaque seconde
+        ship->lastRefreshFilling += FUEL_UPDATE_INTERVAL;
+        if ((ship->state == MOVING_TO_TARGET || ship->state == MOVING_TO_BASE)) {  // Cas ou la fusee est en mouvement
             int i = 0;
             int HaveFuel = 0;  // 1: La fusee a de l'essence, 0: la fusee n'en a plus
             while (i < ship->cargo.compartmentsNumber) {
@@ -131,7 +119,43 @@ void updateShipFuel(Ship *ship, Uint32 currentTime) {  // Gere la consommation d
             }
             if (HaveFuel == 0) {
                 ship->state = OUT_OF_FUEL;
+            }
+        } else if (ship->state == WAITING_ON_BASE) {
+            int fullyFuelFilled = 1;  // 1: La fusée a fait le plein, 0: plein en cours
+            int lastEmptyFuelCompartment = -1;  // Permet de ne remplir que le dernier réservoir vide
+            int fuelGiven = 0;  // Vérifie si de l'essence a été donnée (1:oui, 0:non)
+            for (int i = 0; i < ship->cargo.compartmentsNumber; i++) {
+                if (ship->cargo.compartmentsList[i].ore == FUEL &&
+                    ship->cargo.compartmentsList[i].currentCapacity < ship->cargo.compartmentsList[i].maxCapacity) {
+                    lastEmptyFuelCompartment = i;
+                    fullyFuelFilled = 0;
+                    if (ship->cargo.compartmentsList[i].currentCapacity > 0) {
+                        ship->cargo.compartmentsList[i].currentCapacity += ship->cargo.compartmentsList[i].flowSpeed;
+                        fuelGiven = 1;
+                        if (ship->cargo.compartmentsList[i].currentCapacity >= ship->cargo.compartmentsList[i].maxCapacity) {
+                            ship->cargo.compartmentsList[i].currentCapacity = ship->cargo.compartmentsList[i].maxCapacity;
+                        }
+                        break;
+                    }
+                }
+            }
 
+            // Si aucune essence n'a été donnée, remplir le dernier compartiment vide
+            if (!fuelGiven && lastEmptyFuelCompartment != -1) {
+                ship->cargo.compartmentsList[lastEmptyFuelCompartment].currentCapacity += ship->cargo.compartmentsList[lastEmptyFuelCompartment].flowSpeed;
+            }
+
+            // Vérifier si tous les compartiments sont pleins
+            for (int i = 0; i < ship->cargo.compartmentsNumber && fullyFuelFilled; i++) {
+                if (ship->cargo.compartmentsList[i].ore == FUEL &&
+                    ship->cargo.compartmentsList[i].currentCapacity < ship->cargo.compartmentsList[i].maxCapacity) {
+                    fullyFuelFilled = 0;
+                }
+            }
+
+            // Si tous les réservoirs sont pleins, changer l'état du vaisseau
+            if (fullyFuelFilled) {
+                ship->state = MOVING_TO_TARGET;
             }
         }
     }
@@ -158,7 +182,12 @@ void renderShips(SDL_Renderer *renderer, SDL_Texture *spriteSheet, Ship *ships, 
 void renderShipImage(SDL_Renderer *renderer, SDL_Texture *spriteSheet, Ship ship, SDL_Point ShipOnScreen) {
     // Calcul de l'angle en degres de l'image
     float angle = atan2(ship.target->y - (ship.y + 64 / 2.f), ship.target->x - (ship.x + 64 / 2.f)) * 180.0f / M_PI;
-    angle += (ship.state == MOVING_TO_TARGET) ? 90.0f : -90.0f;  // Si la fusée ne va pas vers la cible, on l'inverse
+
+    if (ship.state == MOVING_TO_TARGET || ship.state == WAITING_ON_BASE) {  // Pour que les fusees atterissent dans le bon sens
+        angle += 90;
+    } else if (ship.state == MOVING_TO_BASE || ship.state == WAITING_ON_TARGET) {
+        angle -= 90;
+    }
 
     SDL_Rect srcRect = {ship.frameIndex * 64, 0, 64, 64};  // Frame actuelle sur le sprite sheet
     SDL_Rect destRect = {ShipOnScreen.x, ShipOnScreen.y, 64 * camera.scale, 64 * camera.scale};  // Position et taille affichee
@@ -179,24 +208,26 @@ void renderShipBars(SDL_Renderer *renderer, Ship ship, SDL_Point ShipOnScreen) {
     SDL_RenderFillRect(renderer, &destRect);
 
     // Dessin de la barre d'essence (2)
-    int nbFuelCompartment = 0;
-    int firstFuelCompartment;
-    for (int i = ship.cargo.compartmentsNumber - 1; i >= 0; i--) {  // firstFuelCompartment permet d'afficher la bonne barre
-        if (ship.cargo.compartmentsList[i].ore == FUEL &&           // d'essence, celle qui est modifiee lors du deplacement.
-            ship.cargo.compartmentsList[i].currentCapacity > 0) {           
-            nbFuelCompartment ++;
-            firstFuelCompartment = i;
+    int fuelRemaining = 0;  // O: Il n'y a plus d'essence dans les reservoirs, 1 sinon
+    int CompartmentToDisplay = -1;  // Permet d'afficher celui qui varie
+    int i;
+    for (i = 0; i < ship.cargo.compartmentsNumber; i++) {
+        if (ship.cargo.compartmentsList[i].ore == FUEL &&
+            ship.cargo.compartmentsList[i].currentCapacity > 0) {   
+            fuelRemaining = 1;                 
+            CompartmentToDisplay = i;
+            if (ship.cargo.compartmentsList[i].currentCapacity < ship.cargo.compartmentsList[i].maxCapacity) {
+                break;
+            }
         }
     }
 
-    if (nbFuelCompartment == 0) {
-        destRect.w = 0;
-    } else {
-        destRect.w *= ship.cargo.compartmentsList[firstFuelCompartment].currentCapacity / (float)ship.cargo.compartmentsList[firstFuelCompartment].maxCapacity;
+    if (fuelRemaining == 1) {
+        destRect.w *= ship.cargo.compartmentsList[CompartmentToDisplay].currentCapacity / (float)ship.cargo.compartmentsList[CompartmentToDisplay].maxCapacity;
+        SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
+        SDL_RenderFillRect(renderer, &destRect);
     }
 
-    SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
-    SDL_RenderFillRect(renderer, &destRect);
 }
 
 void destroyShips(Ship *ships, int ship_count) {

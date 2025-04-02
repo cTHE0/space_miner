@@ -11,7 +11,8 @@
 #include "text.h"
 #include "renderer.h"
 #include "ship_window.h"
-// hhhhhh
+
+
 int main(void) {
     // Initialisation 
     int planet_count = INIT_PLANET_COUNT;
@@ -49,7 +50,7 @@ int main(void) {
             case GAME:
                 handleEvents(&state, ship_count, ships);
 
-                updateShips(ships, ship_count, planets, planet_count);
+                updateShips(ships, ship_count);
 
                 displayGame(renderer, imageTextures, textTextures, ships, planets, ship_count, planet_count);
                 break;
