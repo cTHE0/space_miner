@@ -6,8 +6,8 @@
 #define MAP_SIZE 3000
 
 
-#define INIT_PLANET_COUNT 2
-#define INIT_SHIP_COUNT 1
+#define INIT_PLANET_COUNT 100
+#define INIT_SHIP_COUNT 100
 #define PNG_IMAGE_NUMBER 23
 #define CST_TEXT_NUMBER 4
 
@@ -17,7 +17,7 @@
 #define FUEL_UPDATE_INTERVAL 200  // En millisecondes
 
 #define STEP_TRANSLATION 40
-#define SHIP_SPEED 0.1f
+#define SHIP_SPEED 0.05f
 
 #define WHITE (int[3]){255, 255, 255}  // COULEURS
 
