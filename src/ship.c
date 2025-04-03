@@ -20,11 +20,11 @@ void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
         (*ships)[i].target = &planets[rand() % (planetCount - 1)] + 1;
         (*ships)[i].x = (*ships)[i].base->x;
         (*ships)[i].y = (*ships)[i].base->y;
-        (*ships)[i].speed = (rand() / (float)RAND_MAX + 0.01) * SHIP_SPEED;
+        (*ships)[i].speed = (rand() / (float)RAND_MAX * 0.7 + 0.3) * SHIP_SPEED;
         (*ships)[i].state = MOVING_TO_TARGET;
         (*ships)[i].maxLife = 100;
         (*ships)[i].currentLife = rand() % (int)(*ships)[i].maxLife;
-        (*ships)[i].fuelConsumption = 5;  // Consommation d'essence par intervalle de temps FUEL_UPDATE_INTERVAL
+        (*ships)[i].fuelConsumption = 1;  // Consommation d'essence par intervalle de temps FUEL_UPDATE_INTERVAL
 
         (*ships)[i].waitStartTime = 0;
         (*ships)[i].frameIndex = rand() % 4;  // Desynchronisation des fusees
@@ -37,7 +37,7 @@ void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
         (*ships)[i].destRect.h = 0;
 
         // Allocation des compartiments
-        (*ships)[i].cargo.compartmentsNumber = 10;
+        (*ships)[i].cargo.compartmentsNumber = 2;
         (*ships)[i].cargo.compartmentsList = malloc((*ships)[i].cargo.compartmentsNumber * sizeof(Compartment));
         if ((*ships)[i].cargo.compartmentsList == NULL) {
             printf("Erreur d'allocation mémoire pour les compartiments du vaisseau %d!\n", i);
