@@ -16,3 +16,6 @@ $(EXEC): $(OBJ)
 
 clean:
 	rm -f $(OBJ) $(EXEC)
+
+# Lancer le programme avec valgrind :
+# 		gcc -g -Wall -Wextra -O2 -I include -lm -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_gfx src/*.c -o space_miner && valgrind ./space_miner
