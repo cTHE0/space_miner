@@ -7,45 +7,45 @@
 #include <SDL2/SDL_image.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "ship.h"
+#include "tools.h"
 
 int nb_ship_windows = 0;
-ShipWindow *ship_windows = NULL;
+ShipWindow *ship_windows = NULL; // ship_windows[0] en background, puis ship_windows[0], ... jusqu'à ship_windows[nb_ship_windows - 1] au 1er plan
+int ShipWindow_size = sizeof(ShipWindow);
 
-void addShipWindows() {
+void addShipWindow(Ship ship) {
     nb_ship_windows += 1;
     ship_windows = realloc(ship_windows, nb_ship_windows * sizeof(ShipWindow));
+
+    SDL_Rect window_rect = {400, 250, 800, 600};
+    int cross_size = (int) window_rect.w * 0.03;
+    SDL_Rect cross_rect = {window_rect.x + window_rect.w - cross_size - 15, window_rect.y + 15, cross_size, cross_size};
+
     if (ship_windows == NULL) {
         fprintf(stderr, "Erreur de réallocation de mémoire\n");
         return;
     }
+    ShipWindow nv_ship_window = {ship, window_rect, cross_rect};
+    ship_windows[nb_ship_windows-1] = nv_ship_window;
 }
 
-void deleteShipWindows(int x, int y, int i) { // i : numéro de la fenêtre à suppr
+void deleteShipWindows(int i) { // i : numéro de la fenêtre à suppr
     if (nb_ship_windows == 0) {
         printf("Erreur, il n'y a plus de fenêtre à supprimer !!\n");
         return;
     }
-    nb_ship_windows -= 1;
-    if (nb_ship_windows == 0) {
+    if (nb_ship_windows == 1) {
+        nb_ship_windows = 0;
         free(ship_windows);
         ship_windows= NULL;
     } else {
-        ShipWindow *temp = realloc(ship_windows, nb_ship_windows * sizeof(ShipWindow));
-        if (temp == NULL) {
-            fprintf(stderr, "Erreur de réallocation de mémoire\n");
-            return;
-        }
-        ship_windows = temp;
+        ship_windows = supprElemList(ship_windows, &nb_ship_windows, ShipWindow_size, i);
     }
 }
 
 void renderShipWindow(SDL_Renderer *renderer, SDL_Texture **imageTextures, SDL_Texture **textTextures, ShipWindow ship_window) {
-    SDL_Rect window_rect = {400, 250, 800, 600};
-    int cross_size = window_rect.w * 0.03;
-    SDL_Rect cross_rect = {window_rect.x + window_rect.w - cross_size - 15, window_rect.y + 15, cross_size, cross_size};
-    SDL_RenderCopy(renderer, imageTextures[21], NULL, &window_rect);
-    SDL_RenderCopy(renderer, imageTextures[22], NULL, &cross_rect);
+    SDL_RenderCopy(renderer, imageTextures[21], NULL, &ship_window.destRect);
+    SDL_RenderCopy(renderer, imageTextures[22], NULL, &ship_window.crossRect);
 
 }
 
@@ -59,7 +59,13 @@ void openCloseShipWindowsGestion(int x, int y, int ship_count, Ship *ships) {
     SDL_Point mouse = {x, y};
     for (int i = 0; i<ship_count; i++) {
         if (SDL_PointInRect(&mouse, &ships[i].destRect)) {
-            addShipWindows();
+            addShipWindow(ships[i]);
+            return;
+        }
+    }
+    for (int i = 0; i<nb_ship_windows; i++) {
+        if (SDL_PointInRect(&mouse, &ship_windows[i].crossRect)) {
+            deleteShipWindows(i);
             return;
         }
     }
@@ -67,4 +73,24 @@ void openCloseShipWindowsGestion(int x, int y, int ship_count, Ship *ships) {
 
 void freeWindows() {
     free(ship_windows);
+}
+
+int whichWindow(int mouseX, int mouseY) { // Retourne indice ship fenêtre sur laquelle l'user a cliqué ou retourne -1 s'il n'a cliqué sur aucune fenêtre mais sur map
+    SDL_Point mouse = {mouseX, mouseY};
+    for (int i = 0; i<nb_ship_windows; i++) {
+        if (SDL_PointInRect(&mouse, &ship_windows[nb_ship_windows-i-1].destRect)) { //On parcourt à l'envers car la fenetre la plus en bas a pour indice 0, ...
+            return i;
+        }
+    }
+    return -1;
+}
+
+void moveWindow(int dx, int dy, int i) { // i numéro de la fenêtre à bouger
+    ship_windows = moveToEnd(ship_windows, nb_ship_windows, ShipWindow_size, i); //On place d'abord la fenêtre sur laquelle on vient de cliquer au 1er plan
+
+    // Puis on décale la fenêtre et la zone croix pr la fermer
+    ship_windows[nb_ship_windows - 1].destRect.x += dx;
+    ship_windows[nb_ship_windows - 1].destRect.y += dy;
+    ship_windows[nb_ship_windows - 1].crossRect.x += dx;
+    ship_windows[nb_ship_windows - 1].crossRect.y += dy;
 }

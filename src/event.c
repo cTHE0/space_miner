@@ -27,7 +27,7 @@ void handleEvents(GameState *state, int ship_count, Ship *ships) {
                     lastMouseX = event.button.x;
                     lastMouseY = event.button.y;
 
-                    openCloseShipWindowsGestion(lastMouseX, lastMouseY, ship_count, ships);
+                    openCloseShipWindowsGestion(lastMouseX, lastMouseY, ship_count, ships); // On a cliqué sur un ship donc on ouvre une nouvelle fenêtre
                 }
                 break;
 
@@ -41,9 +41,16 @@ void handleEvents(GameState *state, int ship_count, Ship *ships) {
                 if (dragging) {
                     int dx = (event.motion.x - lastMouseX) / camera.scale;
                     int dy = (event.motion.y - lastMouseY) / camera.scale;
-                    translateCamera(-dx, -dy);
                     lastMouseX = event.motion.x;
                     lastMouseY = event.motion.y;
+
+                    int which_window_is_selected = whichWindow(lastMouseX, lastMouseY);
+                    if (which_window_is_selected == -1) { //On n'a pas cliqué sur une fenêtre mais sur la map
+                        translateCamera(-dx, -dy);
+                    }
+                    else { // On a cliqué sur la fenêtre en position which_window_is_selected
+                        moveWindow(dx*camera.scale, dy*camera.scale, which_window_is_selected);
+                    }
                 }
                 break;
 
@@ -69,12 +76,6 @@ void handleEvents(GameState *state, int ship_count, Ship *ships) {
                         break;
                     case SDLK_DOWN:
                         translateCamera(0, STEP_TRANSLATION);
-                        break;
-                    case SDLK_f:
-                        addShipWindows();
-                        break;
-                    case SDLK_v:
-                        deleteShipWindows();
                         break;
                     default:
                         break;
