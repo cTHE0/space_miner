@@ -67,7 +67,6 @@ int main(void) {
     SDL_DestroyWindow(window);
     destroyShips(ships, ship_count);
     free(planets);
-    freeWindows();
     IMG_Quit();
     SDL_Quit();
     return 0;

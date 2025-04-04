@@ -11,15 +11,8 @@ typedef struct
     SDL_Rect crossRect;
 } ShipWindow;
 
+void afficheShipWindow(SDL_Renderer *renderer, SDL_Texture **imageTextures, SDL_Texture **textTextures);
+void openWindowGestion(int x, int y, Ship *ships, int nb_ships);
 
-void addShipWindow(Ship ship);
-void deleteShipWindows();
-void renderShipWindow(SDL_Renderer *renderer, SDL_Texture **imageTextures, SDL_Texture **textTextures, ShipWindow ship_window);
-void renderShipWindows(SDL_Renderer *renderer, SDL_Texture **imageTextures, SDL_Texture **textTextures);
-void openCloseShipWindowsGestion(int x, int y, int ship_count, Ship *ships);
-void freeWindows();
-int whichWindow(int mouseX, int mouseY);
-void moveWindow(int dx, int dy, int i);
-
-
+extern which_ship_is_viewed;
 #endif

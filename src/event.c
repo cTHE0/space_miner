@@ -26,31 +26,26 @@ void handleEvents(GameState *state, int ship_count, Ship *ships) {
                     dragging = 1;
                     lastMouseX = event.button.x;
                     lastMouseY = event.button.y;
-
-                    openCloseShipWindowsGestion(lastMouseX, lastMouseY, ship_count, ships); // On a cliqué sur un ship donc on ouvre une nouvelle fenêtre
                 }
                 break;
 
             case SDL_MOUSEBUTTONUP:
                 if (event.button.button == SDL_BUTTON_LEFT) {
+                    if (dragging == 1) {
+                        openWindowGestion(lastMouseX, lastMouseY, ships, ship_count); // On a cliqué sur un ship donc on ouvre une nouvelle fenêtre
+                    }
                     dragging = 0;
                 }
                 break;
 
             case SDL_MOUSEMOTION:
                 if (dragging) {
-                    int dx = (event.motion.x - lastMouseX) / camera.scale;
-                    int dy = (event.motion.y - lastMouseY) / camera.scale;
+                    int dx = (event.motion.x - lastMouseX);
+                    int dy = (event.motion.y - lastMouseY);
+                    translateCamera(-dx / camera.scale, -dy / camera.scale);
                     lastMouseX = event.motion.x;
                     lastMouseY = event.motion.y;
-
-                    int which_window_is_selected = whichWindow(lastMouseX, lastMouseY);
-                    if (which_window_is_selected == -1) { //On n'a pas cliqué sur une fenêtre mais sur la map
-                        translateCamera(-dx, -dy);
-                    }
-                    else { // On a cliqué sur la fenêtre en position which_window_is_selected
-                        moveWindow(dx*camera.scale, dy*camera.scale, which_window_is_selected);
-                    }
+                    
                 }
                 break;
 

@@ -8,5 +8,6 @@
         "stdio.h": "c",
         "sdl.h": "c",
         "menu.h": "c"
-    }
+    },
+    "makefile.configureOnOpen": false
 }
