@@ -43,13 +43,13 @@ void clickOnShip(Ship *ships, int shipCount, SDL_Point mouse) {
 
 void clickOnPlanet(Planet *planets, int planetCount, SDL_Point mouse) {
     for (int i = 0; i < planetCount; i++) {
-        //(screenX, screenY) = coordonnees sur l'ecran physique, du point en haut à gauche du rect de la planete
+        //(screenX, screenY) = coordonnees sur l'ecran physique, du point au milieu de la planete
         // (planets[i].x, planets[i].y) = coordonnees sur la map
-        float screenX = (planets[i].x - camera.rect.x - planets[i].radius - SCREEN_WIDTH / 2.f) * camera.scale + SCREEN_WIDTH / 2.f;
-        float screenY = (planets[i].y - camera.rect.y - planets[i].radius - SCREEN_HEIGHT / 2.f) * camera.scale + SCREEN_HEIGHT / 2.f;  
+        float screenX = (planets[i].x - camera.rect.x - SCREEN_WIDTH / 2.f) * camera.scale + SCREEN_WIDTH / 2.f;
+        float screenY = (planets[i].y - camera.rect.y - SCREEN_HEIGHT / 2.f) * camera.scale + SCREEN_HEIGHT / 2.f;  
         float screenRadius = planets[i].radius * camera.scale;  
         if (fabs(screenX - mouse.x) < screenRadius && fabs(screenY - mouse.y) < screenRadius) {
-            whichWindowShip = i;
+            whichWindowPlanet = i;
             windowOpened = PLANET_WINDOW;
             return;
         }
