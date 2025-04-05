@@ -10,12 +10,12 @@
 #include "landing_page.h"
 #include "text.h"
 #include "renderer.h"
-#include "ship_window.h"
+#include "window.h"
 
 int main(void) {
     // Initialisation 
-    int planet_count = INIT_PLANET_COUNT;
-    int ship_count = INIT_SHIP_COUNT;
+    int planetCount = INIT_PLANET_COUNT;
+    int shipCount = INIT_SHIP_COUNT;
 
     srand(time(NULL));
 
@@ -27,10 +27,10 @@ int main(void) {
     init_SDL_ttf();
 
     Planet* planets = NULL;
-    generatePlanets(&planets, planet_count);
+    generatePlanets(&planets, planetCount);
 
     Ship* ships = NULL;
-    initShips(&ships, ship_count, planets, planet_count);
+    initShips(&ships, shipCount, planets, planetCount);
 
     SDL_Texture **imageTextures = loadTextures(renderer);
     SDL_Texture **textTextures = loadTextTextures(renderer);
@@ -47,11 +47,11 @@ int main(void) {
                 break;
             
             case GAME:
-                handleEvents(&state, ship_count, ships);
+                handleEvents(&state, ships, shipCount, planets, planetCount);
 
-                updateShips(ships, ship_count);
+                updateShips(ships, shipCount);
 
-                displayGame(renderer, imageTextures, textTextures, ships, planets, ship_count, planet_count);
+                displayGame(renderer, imageTextures, textTextures, ships, planets, shipCount, planetCount);
                 break;
             
             default:
@@ -65,7 +65,7 @@ int main(void) {
     destroyTextTextures(textTextures);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
-    destroyShips(ships, ship_count);
+    destroyShips(ships, shipCount);
     free(planets);
     IMG_Quit();
     SDL_Quit();

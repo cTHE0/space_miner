@@ -37,5 +37,6 @@ void renderShips(SDL_Renderer *renderer, SDL_Texture *spriteSheet, Ship *ships, 
     void renderShipImage(SDL_Renderer *renderer, SDL_Texture *spriteSheet, Ship ship, SDL_Point ShipOnScreen);
     void renderShipBars(SDL_Renderer *renderer, Ship ship, SDL_Point ShipOnScreen);
 
-void destroyShips(Ship *ships, int ship_count);
+void destroyShips(Ship *ships, int shipCount);
+
 #endif

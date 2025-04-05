@@ -230,8 +230,8 @@ void renderShipBars(SDL_Renderer *renderer, Ship ship, SDL_Point ShipOnScreen) {
 
 }
 
-void destroyShips(Ship *ships, int ship_count) {
-    for (int i = 0; i < ship_count; i++) {
+void destroyShips(Ship *ships, int shipCount) {
+    for (int i = 0; i < shipCount; i++) {
         free(ships[i].cargo.compartmentsList);
     }
     free(ships);

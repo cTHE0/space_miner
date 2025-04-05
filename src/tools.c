@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <camera.h>
+
 
 void *supprElemList(void *list, int *nb_elem, int type_size, int i) {
     // Vérification des paramètres

@@ -2,7 +2,8 @@
 #include <SDL2/SDL_image.h>
 #include "camera.h"
 #include "config.h"
-#include "ship_window.h"
+#include "window.h"
+#include "renderer.h"
 
 Camera camera;
 
@@ -47,7 +48,7 @@ void zoomCamera(float zoomFactor) {
 }
 
 void translateCamera(float dx, float dy) {
-    if (which_ship_is_viewed != -1) {
+    if (windowOpened != NO_WINDOW) {
         return;
     }
 

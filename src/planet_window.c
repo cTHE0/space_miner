@@ -11,10 +11,10 @@
 #include "tools.h"
 
 
-int whichWindowShip = -1;
+int whichWindowPlanet = -1;
 
-void afficheShipWindow(SDL_Renderer *renderer, SDL_Texture **imageTextures, SDL_Texture **textTextures) {
-    if (windowOpened == SHIP_WINDOW) {  // Affichage de la fenetre
+void affichePlanetWindow(SDL_Renderer *renderer, SDL_Texture **imageTextures, SDL_Texture **textTextures) {
+    if (windowOpened == PLANET_WINDOW) {  // Affichage de la fenetre
         SDL_RenderCopy(renderer, imageTextures[21], NULL, &windowRect);
         SDL_RenderCopy(renderer, imageTextures[22], NULL, &WindowCrossRect);
     }
