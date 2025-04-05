@@ -78,7 +78,7 @@ void updateFrameIndex() {
     }
 }
 
-void displayMenu(SDL_Renderer *renderer, SDL_Texture **imageTextures, SDL_Texture **cstTextTextures) {
+void displayMenu(SDL_Renderer *renderer, SDL_Texture **imageTextures, SDL_Texture **textTextures) {
     // Initialisation graphique du menu
     SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, imageTextures[16], NULL, NULL);
@@ -102,7 +102,7 @@ void displayMenu(SDL_Renderer *renderer, SDL_Texture **imageTextures, SDL_Textur
 
     // Affichage du texte
     SDL_Rect titleRect = {700, 90, 500, 120};
-    SDL_RenderCopy(renderer, cstTextTextures[0], NULL, &titleRect);  // Affiche "Space Miner"
+    SDL_RenderCopy(renderer, textTextures[0], NULL, &titleRect);  // Affiche "Space Miner"
 
     switch (bg_button_a_afficher) {
         case 1:
@@ -119,13 +119,13 @@ void displayMenu(SDL_Renderer *renderer, SDL_Texture **imageTextures, SDL_Textur
     }
     
     SDL_Rect text1Rect = {880, 320, 150, 45};
-    SDL_RenderCopy(renderer, cstTextTextures[1], NULL, &text1Rect);  // Affiche "Continue"
+    SDL_RenderCopy(renderer, textTextures[1], NULL, &text1Rect);  // Affiche "Continue"
 
     SDL_Rect text2Rect = {880, 420, 150, 45};
-    SDL_RenderCopy(renderer, cstTextTextures[2], NULL, &text2Rect);  // Affiche "New game"
+    SDL_RenderCopy(renderer, textTextures[2], NULL, &text2Rect);  // Affiche "New game"
 
     SDL_Rect text3Rect = {880, 520, 150, 45};
-    SDL_RenderCopy(renderer, cstTextTextures[3], NULL, &text3Rect);  // Affiche "Settings"
+    SDL_RenderCopy(renderer, textTextures[3], NULL, &text3Rect);  // Affiche "Settings"
 
     SDL_RenderPresent(renderer);
 }

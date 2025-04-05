@@ -10,6 +10,7 @@ void generatePlanets(Planet **planets, int count) {
     *planets = malloc(count * sizeof(Planet));
 
     for (int i = 0; i < count; i++) {
+        (*planets)[i].idPicture = rand () % 10;
         (*planets)[i].maxOre = 1 + rand () % 1000;  // Les planetes ne sont pas toutes rentables
         (*planets)[i].currentOre = rand () % (int)(*planets)[i].maxOre;  // Les planetes ne sont pas toutes remplies de ressources
         (*planets)[i].regenerationTime = rand () % 10000;  // En millisecondes
@@ -38,20 +39,19 @@ void generatePlanets(Planet **planets, int count) {
     }
 }
 
-void renderPlanets(SDL_Renderer *renderer, Planet *planets, SDL_Texture *texturePlanet, int count) {
+void renderPlanets(SDL_Renderer *renderer, Planet *planets, SDL_Texture **texturePlanet, int count) {
     for (int i = 0; i < count; i++) {
         //(screenX, screenY) = coordonnees sur l'ecran physique, du point en haut à gauche du rect de la planete
         float screenX = (planets[i].x - camera.rect.x - planets[i].radius - SCREEN_WIDTH / 2.f) * camera.scale + SCREEN_WIDTH / 2.f;  // (planets[i].x, planets[i].y) = coordonnees sur la map
         float screenY = (planets[i].y - camera.rect.y - planets[i].radius - SCREEN_HEIGHT / 2.f) * camera.scale + SCREEN_HEIGHT / 2.f;  
         float screenRadius = planets[i].radius * camera.scale;  
 
-        SDL_Rect srcRect = {0, 0, 32, 32};
         SDL_Rect destRect = {screenX, screenY, 2 * screenRadius, 2 * screenRadius};
 
         if (screenX >= -2 * screenRadius && screenX <= SCREEN_WIDTH && 
             screenY >= -2 * screenRadius && screenY <= SCREEN_HEIGHT + screenRadius) {   // On n'affiche pas les planètes situés en dehors de l'ecran  
             // Affichage planete 
-            SDL_RenderCopy(renderer, texturePlanet, &srcRect, &destRect);
+            SDL_RenderCopy(renderer, texturePlanet[3 + planets[i].idPicture], NULL, &destRect);
 
             // Affichage barre* de minerais (1)      (*une seule barre, mais representant la valeur totale de minerais !?)
             destRect.h = 5 * camera.scale;

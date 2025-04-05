@@ -19,7 +19,7 @@ typedef struct {
 } LPFrameControler;
 
 // Affiche le menu principal i.e: landing page
-void displayMenu(SDL_Renderer *renderer, SDL_Texture **imageTextures, SDL_Texture **cstTextTextures);
+void displayMenu(SDL_Renderer *renderer, SDL_Texture **imageTextures, SDL_Texture **textTextures);
 
 void updateFrameIndex();
 

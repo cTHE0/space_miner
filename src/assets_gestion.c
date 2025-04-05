@@ -63,7 +63,7 @@ SDL_Texture **loadTextures(SDL_Renderer *renderer) { // ATTENTION: ne pas oublie
         }
     
     textures[20] = IMG_LoadTextureWithAlpha(renderer, "assets/img/others/bg_button.png", 100);
-    textures[21] = IMG_LoadTextureWithAlpha(renderer, "assets/img/others/bg_window.png", 180);
+    textures[21] = IMG_LoadTextureWithAlpha(renderer, "assets/img/others/bg_window.png", 230);
     }
     return textures;
 }

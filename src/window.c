@@ -55,3 +55,8 @@ void clickOnPlanet(Planet *planets, int planetCount, SDL_Point mouse) {
         }
     }
 }
+
+void displayWindow(SDL_Renderer *renderer, SDL_Texture **imageTextures, SDL_Texture **textTextures, Ship *ships, Planet *planets, int shipCount, int planetCount) {
+    displayShipWindow(renderer, imageTextures, textTextures, ships, shipCount);
+    displayPlanetWindow(renderer, imageTextures, textTextures, planets, planetCount);
+}
