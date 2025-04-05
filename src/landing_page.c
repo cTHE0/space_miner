@@ -78,27 +78,27 @@ void updateFrameIndex() {
     }
 }
 
-void displayMenu(SDL_Renderer *renderer, SDL_Texture **imageTextures, SDL_Texture **textTextures) {
+void displayMenu(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
     // Initialisation graphique du menu
     SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, imageTextures[16], NULL, NULL);
+    SDL_RenderCopy(renderer, imageTextures[2][0], NULL, NULL);
 
     // Affichage de la planetes en rotation
     SDL_Rect srcRect = {lp_frame_controller.frameIndex1 * 100, 0, 100, 100}; // Frame actuelle sur le sprite sheet de la planete du menu
     SDL_Rect destRect = {85, 198, 500, 500};  // Position et taille affichee
-    SDL_RenderCopy(renderer, imageTextures[17], &srcRect, &destRect);
+    SDL_RenderCopy(renderer, imageTextures[1][10], &srcRect, &destRect);
 
     // Affichages de l'asteroide 1
     SDL_Rect asteroid1Rect = {SCREEN_WIDTH - 4 * lp_frame_controller.frameIndex2, lp_frame_controller.frameIndex3, 50, 50};
     SDL_Point asteroid1Center = {asteroid1Rect.w / 2, asteroid1Rect.h / 2};
 
-    SDL_RenderCopyEx(renderer, imageTextures[18], NULL, &asteroid1Rect, lp_frame_controller.frameIndex2, &asteroid1Center, SDL_FLIP_NONE);
+    SDL_RenderCopyEx(renderer, imageTextures[5][0], NULL, &asteroid1Rect, lp_frame_controller.frameIndex2, &asteroid1Center, SDL_FLIP_NONE);
 
     // Affichages de l'asteroide 2
     SDL_Rect asteroid2Rect = {80 + SCREEN_WIDTH - 4 * lp_frame_controller.frameIndex2, 40 + lp_frame_controller.frameIndex3, 40, 40};
     SDL_Point asteroid2Center = {asteroid2Rect.w / 2, asteroid2Rect.h / 2};
 
-    SDL_RenderCopyEx(renderer, imageTextures[19], NULL, &asteroid2Rect, lp_frame_controller.frameIndex3, &asteroid2Center, SDL_FLIP_NONE);
+    SDL_RenderCopyEx(renderer, imageTextures[5][1], NULL, &asteroid2Rect, lp_frame_controller.frameIndex3, &asteroid2Center, SDL_FLIP_NONE);
 
     // Affichage du texte
     SDL_Rect titleRect = {700, 90, 500, 120};
@@ -106,13 +106,13 @@ void displayMenu(SDL_Renderer *renderer, SDL_Texture **imageTextures, SDL_Textur
 
     switch (bg_button_a_afficher) {
         case 1:
-            SDL_RenderCopy(renderer, imageTextures[20], NULL, &bgButton1Rect);  // Affiche le rectangle derriere "Continue"
+            SDL_RenderCopy(renderer, imageTextures[6][0], NULL, &bgButton1Rect);  // Affiche le rectangle derriere "Continue"
             break;
         case 2:
-            SDL_RenderCopy(renderer, imageTextures[20], NULL, &bgButton2Rect);  // Affiche le rectangle derriere "New game"
+            SDL_RenderCopy(renderer, imageTextures[6][0], NULL, &bgButton2Rect);  // Affiche le rectangle derriere "New game"
             break;
         case 3:
-            SDL_RenderCopy(renderer, imageTextures[20], NULL, &bgButton3Rect);  // Affiche le rectangle derriere "Settings"
+            SDL_RenderCopy(renderer, imageTextures[6][0], NULL, &bgButton3Rect);  // Affiche le rectangle derriere "Settings"
             break;
         default:
             break;

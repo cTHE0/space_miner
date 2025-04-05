@@ -6,7 +6,7 @@
 #include "config.h"
 
 SDL_Texture* IMG_LoadTextureWithAlpha(SDL_Renderer* renderer, const char* filePath, Uint8 alpha);
-SDL_Texture **loadTextures(SDL_Renderer *renderer);
-void destroyImageTextures(SDL_Texture **textures);
+SDL_Texture ***loadTextures(SDL_Renderer *renderer);
+void destroyImageTextures(SDL_Texture ***textures);
 
 #endif

@@ -32,7 +32,7 @@ int main(void) {
     Ship* ships = NULL;
     initShips(&ships, shipCount, planets, planetCount);
 
-    SDL_Texture **imageTextures = loadTextures(renderer);
+    SDL_Texture ***imageTextures = loadTextures(renderer);
     SDL_Texture **textTextures = loadTextTextures(renderer);
 
     // Lancement de space_miner

@@ -8,7 +8,6 @@
 
 #define INIT_PLANET_COUNT 100
 #define INIT_SHIP_COUNT 100
-#define PNG_IMAGE_NUMBER 23
 #define CST_TEXT_NUMBER 4
 
 

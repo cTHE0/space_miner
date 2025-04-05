@@ -12,13 +12,13 @@
 
 
 int whichWindowPlanet = -1;
-static SDL_Rect planetDisplayedPlanetWindow = {SCREEN_WIDTH / 4., SCREEN_HEIGHT / 3., 300, 300};
+static SDL_Rect planetDisplayedRect = {SCREEN_WIDTH / 4., SCREEN_HEIGHT / 3., 300, 300};
 
-void displayPlanetWindow(SDL_Renderer *renderer, SDL_Texture **imageTextures, SDL_Texture **textTextures, Planet *planets, int planetCount) {
+void displayPlanetWindow(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planets, int planetCount) {
     if (windowOpened == PLANET_WINDOW) {  // Affichage de la fenetre
-        SDL_RenderCopy(renderer, imageTextures[21], NULL, &windowRect);
-        SDL_RenderCopy(renderer, imageTextures[22], NULL, &WindowCrossRect);
-        SDL_RenderCopy(renderer, imageTextures[3 + planets[whichWindowPlanet].idPicture], NULL, &planetDisplayedPlanetWindow);
+        SDL_RenderCopy(renderer, imageTextures[6][1], NULL, &windowRect);
+        SDL_RenderCopy(renderer, imageTextures[4][1], NULL, &WindowCrossRect);
+        SDL_RenderCopy(renderer, imageTextures[1][planets[whichWindowPlanet].idPicture], NULL, &planetDisplayedRect);
 
     }
 }

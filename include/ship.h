@@ -11,6 +11,7 @@ typedef enum { TRANSPORTER, EXPLORER, DEFENDER } ShipType;
 
 typedef struct {
     ShipType shiptype;          // Type de vaisseau (utile pr définir ensuite son comportement, stats, render)
+    int idPicture;              // Chaque fusee a un skin particulier
     float x, y;                 // Position de la fusee
     Planet *base;               // Planète de départ
     Planet *target;             // Planète ciblee
@@ -33,7 +34,7 @@ void updateShips(Ship *ships, int shipCount);
     void updateShipAnimation(Ship *ship, Uint32 currentTime);
     void updateShipMove(Ship *ship, Uint32 currentTime);
     void updateShipFuel(Ship *ship, Uint32 currentTime);
-void renderShips(SDL_Renderer *renderer, SDL_Texture *spriteSheet, Ship *ships, int shipCount);
+void renderShips(SDL_Renderer *renderer, SDL_Texture ***textureShip, Ship *ships, int shipCount);
     void renderShipImage(SDL_Renderer *renderer, SDL_Texture *spriteSheet, Ship ship, SDL_Point ShipOnScreen);
     void renderShipBars(SDL_Renderer *renderer, Ship ship, SDL_Point ShipOnScreen);
 

@@ -28,49 +28,81 @@ SDL_Texture* IMG_LoadTextureWithAlpha(SDL_Renderer* renderer, const char* filePa
     return texture;
 }
 
-SDL_Texture **loadTextures(SDL_Renderer *renderer) { // ATTENTION: ne pas oublier de modifier PNG_IMAGE_NUMBER !!
-    SDL_Texture **textures = malloc(PNG_IMAGE_NUMBER * sizeof(SDL_Texture*));
-    char pngNames[PNG_IMAGE_NUMBER][128] = {"assets/img/ships/s1.png",  // 128 : limite de caractères par chaine de caractère
-                                            "assets/img/ships/s2.png",
-                                            "assets/img/ships/s3.png",
-                                            "assets/img/planets/p1.png",
-                                            "assets/img/planets/p2.png",
-                                            "assets/img/planets/p3.png",
-                                            "assets/img/planets/p4.png",
-                                            "assets/img/planets/p5.png",
-                                            "assets/img/planets/p6.png",
-                                            "assets/img/planets/p7.png",
-                                            "assets/img/planets/p8.png",
-                                            "assets/img/planets/p9.png",
-                                            "assets/img/planets/p10.png",
-                                            "assets/img/maps/m1.png",
-                                            "assets/img/others/add_button.png",
-                                            "assets/img/maps/m2.png",
-                                            "assets/img/maps/m3.png",
-                                            "assets/img/planets/lp_planet.png",
-                                            "assets/img/asteroids/asteroid1.png",
-                                            "assets/img/asteroids/asteroid2.png",
-                                            "assets/img/others/bg_button.png",
-                                            "assets/img/others/bg_window.png",
-                                            "assets/img/others/cross.png",
-                                        };
+SDL_Texture ***loadTextures(SDL_Renderer *renderer) {
+    // Ordre de stockage dans imageTextures : 
+    // ships(0), planetes(1), maps(2), attackers(3), buttons(4), asteroids(5), others(6)
 
-    for (int i = 0; i < PNG_IMAGE_NUMBER; i++) {
-        textures[i] = IMG_LoadTexture(renderer, pngNames[i]);
-        if (!textures[i]) {
-            printf("Erreur chargement de la texture %d (%s) : %s\n",i , pngNames[i], IMG_GetError());
-            return NULL;
+    // Parametre du tableau de textures (A MODIFIER)
+    int nbCategories = 7;
+    int nbPicturePerCategories[7] = {10, 11, 3, 1, 2, 2, 2};
+
+    // Chargement des noms des fichiers (A MODIFIER)
+    char pngNames[31][128] = {"assets/img/ships/1.png",  // 128 : limite de caractères par chaine de caractère
+                              "assets/img/ships/2.png",
+                              "assets/img/ships/3.png",
+                              "assets/img/ships/4.png",
+                              "assets/img/ships/5.png",
+                              "assets/img/ships/6.png",
+                              "assets/img/ships/7.png",
+                              "assets/img/ships/8.png",
+                              "assets/img/ships/9.png",
+                              "assets/img/ships/10.png",
+                              "assets/img/planets/1.png",
+                              "assets/img/planets/2.png",
+                              "assets/img/planets/3.png",
+                              "assets/img/planets/4.png",
+                              "assets/img/planets/5.png",
+                              "assets/img/planets/6.png",
+                              "assets/img/planets/7.png",
+                              "assets/img/planets/8.png",
+                              "assets/img/planets/9.png",
+                              "assets/img/planets/10.png",
+                              "assets/img/planets/11.png",
+                              "assets/img/maps/1.png",
+                              "assets/img/maps/2.png",
+                              "assets/img/maps/3.png",
+                              "assets/img/attackers/1.png",
+                              "assets/img/buttons/add_button.png",
+                              "assets/img/buttons/cross.png",
+                              "assets/img/asteroids/1.png",
+                              "assets/img/asteroids/2.png",
+                              "assets/img/others/bg_button.png",
+                              "assets/img/others/bg_window.png",
+                             };
+
+    // Allocation et remplissage du tableau de textures
+    SDL_Texture ***imageTextures = malloc(nbCategories * sizeof(SDL_Texture**));
+    int shift = 0;
+    for (int i = 0; i < nbCategories - 1; i++) {
+        imageTextures[i] = malloc(nbPicturePerCategories[i] * sizeof(SDL_Texture*));
+
+        for (int j = 0; j < nbPicturePerCategories[i]; j++) {
+            imageTextures[i][j] = IMG_LoadTexture(renderer, pngNames[shift + j]);
+            if (!imageTextures[i][j]) {
+                printf("Erreur chargement de la texture %s : %s\n", pngNames[j], IMG_GetError());
+                return NULL;
+            }
         }
-    
-    textures[20] = IMG_LoadTextureWithAlpha(renderer, "assets/img/others/bg_button.png", 100);
-    textures[21] = IMG_LoadTextureWithAlpha(renderer, "assets/img/others/bg_window.png", 230);
+        shift += nbPicturePerCategories[i];
     }
-    return textures;
+
+    // Allocation de la sous-liste 'others' a la main ('others' est tjr a la fin du tableau de texture)
+    imageTextures[nbCategories - 1] = malloc(nbPicturePerCategories[nbCategories - 1] * sizeof(SDL_Texture*));
+    imageTextures[nbCategories - 1][0] = IMG_LoadTextureWithAlpha(renderer, pngNames[shift + 0], 100);
+    imageTextures[nbCategories - 1][1] = IMG_LoadTextureWithAlpha(renderer, pngNames[shift + 1], 230);
+    
+    return imageTextures;
 }
 
-void destroyImageTextures(SDL_Texture **imageTextures) {
-    for (int i = 0; i < PNG_IMAGE_NUMBER; i++) {
-        SDL_DestroyTexture(imageTextures[i]);
+void destroyImageTextures(SDL_Texture ***imageTextures) {
+    int nbCategories = 7;
+    int nbPicturePerCategories[7] = {10, 11, 3, 1, 2, 2, 2};
+
+    for (int i = 0; i < nbCategories; i++) {
+        for (int j = 0; j < nbPicturePerCategories[i]; j++) {
+            SDL_DestroyTexture(imageTextures[i][j]);
+        }
+        free(imageTextures[i]);
     }
     free(imageTextures);
 }

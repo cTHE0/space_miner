@@ -16,6 +16,7 @@ void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
 
     for (int i = 0; i < shipCount; i++) {
         (*ships)[i].shiptype = TRANSPORTER;
+        (*ships)[i].idPicture = rand() % 10;
         (*ships)[i].base = &planets[0];  // La première planète est la base de chaque vaisseau
         (*ships)[i].target = &planets[rand() % (planetCount - 1)] + 1;
         (*ships)[i].x = (*ships)[i].base->x;
@@ -161,7 +162,7 @@ void updateShipFuel(Ship *ship, Uint32 currentTime) {  // Gere la consommation d
     }
 }
 
-void renderShips(SDL_Renderer *renderer, SDL_Texture *spriteSheet, Ship *ships, int shipCount) {
+void renderShips(SDL_Renderer *renderer, SDL_Texture ***textureShip, Ship *ships, int shipCount) {
     for (int i = 0; i < shipCount; i++) {
         // Calcul des coordonnees a l'ecran, du point en haut a gauche de la fusee
         SDL_Point ShipOnScreen = {(ships[i].x - camera.rect.x - SCREEN_WIDTH / 2.f) * camera.scale + SCREEN_WIDTH / 2.f,
@@ -169,7 +170,7 @@ void renderShips(SDL_Renderer *renderer, SDL_Texture *spriteSheet, Ship *ships, 
 
         if (ShipOnScreen.x >= -64 * camera.scale && ShipOnScreen.x <= SCREEN_WIDTH && 
             ShipOnScreen.y >= -64 * camera.scale && ShipOnScreen.y <= SCREEN_HEIGHT + 64 * camera.scale) {  // Si la fusee est dans l'ecran 
-            renderShipImage(renderer, spriteSheet, ships[i], ShipOnScreen);
+            renderShipImage(renderer, textureShip[0][ships[i].idPicture], ships[i], ShipOnScreen);
             renderShipBars(renderer, ships[i], ShipOnScreen);
             ships[i].destRect.x = ShipOnScreen.x;
             ships[i].destRect.y = ShipOnScreen.y;
@@ -179,7 +180,7 @@ void renderShips(SDL_Renderer *renderer, SDL_Texture *spriteSheet, Ship *ships, 
     }
 }
 
-void renderShipImage(SDL_Renderer *renderer, SDL_Texture *spriteSheet, Ship ship, SDL_Point ShipOnScreen) {
+void renderShipImage(SDL_Renderer *renderer, SDL_Texture *textureShip, Ship ship, SDL_Point ShipOnScreen) {
     // Calcul de l'angle en degres de l'image
     float angle = atan2(ship.target->y - (ship.y + 64 / 2.f), ship.target->x - (ship.x + 64 / 2.f)) * 180.0f / M_PI;
 
@@ -194,7 +195,7 @@ void renderShipImage(SDL_Renderer *renderer, SDL_Texture *spriteSheet, Ship ship
     SDL_Point center = {destRect.w / 2, destRect.h / 2};  // Définition du point de rotation (au centre du sprite)
 
     // Dessin des fusees avec rotation
-    SDL_RenderCopyEx(renderer, spriteSheet, &srcRect, &destRect, angle, &center, SDL_FLIP_NONE);
+    SDL_RenderCopyEx(renderer, textureShip, &srcRect, &destRect, angle, &center, SDL_FLIP_NONE);
 }
 
 
