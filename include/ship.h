@@ -20,7 +20,7 @@ typedef struct {
     int maxLife, currentLife;   // Vie de la fusee
     Cargo cargo;                // Cargaison de la fusee (qui contient les compartiments)
     int sizeCompartment;        // Taille de chaque compartiment
-    Uint32 lastRefreshFilling;     // Dernier instant ou la fusee a actualisee sa consommation d'essence
+    Uint32 lastRefreshFilling;  // Dernier instant ou la fusee a actualisee sa consommation d'essence
     int fuelConsumption;        // Dernier instant ou la fusee a actualisee sa consommation d'essence
 
     Uint32 waitStartTime;       // Temps d’attente à destination  (a remplacer par le temps de minage/depot !!-> besoin d'ameliorer les stats des fusees)
