@@ -16,6 +16,10 @@ void initCamera(void) {
 }
 
 void zoomCamera(float zoomFactor) {
+    if (windowOpened != NO_WINDOW) {
+        return;
+    }
+    
     if (zoomFactor < 1) {  // Limiter le zoom
         float dx1 = camera.rect.x + (1 - 1 / camera.scale / zoomFactor) * SCREEN_WIDTH / 2.f, 
               dy1 = camera.rect.y + (1 - 1 / camera.scale / zoomFactor) * SCREEN_HEIGHT / 2.f,
