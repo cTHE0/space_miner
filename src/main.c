@@ -17,21 +17,19 @@
 
 int main(void) {
     // Initialisation 
-    int planetCount = INIT_PLANET_COUNT;
-    int shipCount = INIT_SHIP_COUNT;
-
     srand(time(NULL));
 
     SDL_Window *window;
     SDL_Renderer *renderer;
-    initRenderer(&window, &renderer);
+    initSDL(&window, &renderer);
 
     initCamera();
-    init_SDL_ttf();
 
+    int planetCount = INIT_PLANET_COUNT;
     Planet* planets = NULL;
     generatePlanets(&planets, planetCount);
 
+    int shipCount = INIT_SHIP_COUNT;
     Ship* ships = NULL;
     initShips(&ships, shipCount, planets, planetCount);
 

@@ -7,9 +7,9 @@
 
 LPFrameControler lp_frame_controller = {0, 0, 0, 0, 0};
 
-SDL_Rect bgButton1Rect = {780, 320, 350, 55};  // Position du background des boutons sur le menu
-SDL_Rect bgButton2Rect = {780, 420, 350, 55};
-SDL_Rect bgButton3Rect = {780, 520, 350, 55};
+SDL_Rect bgButton1Rect = {SCREEN_WIDTH * 0.55, SCREEN_HEIGHT * 0.35, SCREEN_WIDTH * 0.27, SCREEN_HEIGHT * 0.07};  // Position du background des boutons sur le menu
+SDL_Rect bgButton2Rect = {SCREEN_WIDTH * 0.55, SCREEN_HEIGHT * 0.47, SCREEN_WIDTH * 0.27, SCREEN_HEIGHT * 0.07};
+SDL_Rect bgButton3Rect = {SCREEN_WIDTH * 0.55, SCREEN_HEIGHT * 0.59, SCREEN_WIDTH * 0.27, SCREEN_HEIGHT * 0.07};
 
 int bg_button_a_afficher;
 
@@ -81,11 +81,11 @@ void updateFrameIndex() {
 void displayMenu(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
     // Initialisation graphique du menu
     SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, imageTextures[2][0], NULL, NULL);
+    SDL_RenderCopy(renderer, imageTextures[6][2], NULL, NULL);
 
     // Affichage de la planetes en rotation
     SDL_Rect srcRect = {lp_frame_controller.frameIndex1 * 100, 0, 100, 100}; // Frame actuelle sur le sprite sheet de la planete du menu
-    SDL_Rect destRect = {85, 198, 500, 500};  // Position et taille affichee
+    SDL_Rect destRect = {SCREEN_WIDTH * 0.05, SCREEN_HEIGHT * 0.2, SCREEN_WIDTH * 0.35, SCREEN_WIDTH * 0.35};  // Position et taille affichee
     SDL_RenderCopy(renderer, imageTextures[1][10], &srcRect, &destRect);
 
     // Affichages de l'asteroide 1
@@ -100,8 +100,8 @@ void displayMenu(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Textu
 
     SDL_RenderCopyEx(renderer, imageTextures[5][1], NULL, &asteroid2Rect, lp_frame_controller.frameIndex3, &asteroid2Center, SDL_FLIP_NONE);
 
-    // Affichage du texte
-    SDL_Rect titleRect = {700, 90, 500, 120};
+    // Affichage du titre Space Miner
+    SDL_Rect titleRect = {SCREEN_WIDTH * 0.45, SCREEN_HEIGHT * 0.07, SCREEN_WIDTH * 0.5, SCREEN_HEIGHT * 0.2};
     SDL_RenderCopy(renderer, textTextures[0], NULL, &titleRect);  // Affiche "Space Miner"
 
     switch (bg_button_a_afficher) {
@@ -118,13 +118,13 @@ void displayMenu(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Textu
             break;
     }
     
-    SDL_Rect text1Rect = {880, 320, 150, 45};
+    SDL_Rect text1Rect = {SCREEN_WIDTH * 0.625, SCREEN_HEIGHT * 0.35, SCREEN_WIDTH * 0.13, SCREEN_HEIGHT * 0.07};
     SDL_RenderCopy(renderer, textTextures[1], NULL, &text1Rect);  // Affiche "Continue"
 
-    SDL_Rect text2Rect = {880, 420, 150, 45};
+    SDL_Rect text2Rect = {SCREEN_WIDTH * 0.625, SCREEN_HEIGHT * 0.47, SCREEN_WIDTH * 0.13, SCREEN_HEIGHT * 0.07};
     SDL_RenderCopy(renderer, textTextures[2], NULL, &text2Rect);  // Affiche "New game"
 
-    SDL_Rect text3Rect = {880, 520, 150, 45};
+    SDL_Rect text3Rect = {SCREEN_WIDTH * 0.625, SCREEN_HEIGHT * 0.59, SCREEN_WIDTH * 0.13, SCREEN_HEIGHT * 0.07};
     SDL_RenderCopy(renderer, textTextures[3], NULL, &text3Rect);  // Affiche "Settings"
 
     SDL_RenderPresent(renderer);

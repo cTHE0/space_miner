@@ -39,7 +39,7 @@ SDL_Texture* create_text_texture(SDL_Renderer* renderer, TTF_Font* font, int col
 }
 
 SDL_Texture **loadTextTextures(SDL_Renderer *renderer) {
-    TTF_Font *font = loadFonts("assets/fonts/f1.ttf", 50);
+    TTF_Font *font = loadFonts("assets/fonts/f1.ttf", 56); // Taille 56 optimale pour cette police
     SDL_Texture **textTextures = malloc(CST_TEXT_NUMBER * sizeof(SDL_Texture*));
     char *cstTexts[CST_TEXT_NUMBER] = {"Space Miner",
                                        "Continue",

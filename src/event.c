@@ -91,7 +91,7 @@ void handleEvents(GameState *state, Ship *ships, int shipCount, Planet *planets,
                         break;
                 }
                 break;
-                
+            
             default:
                 break;
         }

@@ -34,10 +34,10 @@ SDL_Texture ***loadTextures(SDL_Renderer *renderer) {
 
     // Parametre du tableau de textures (A MODIFIER)
     int nbCategories = 7;
-    int nbPicturePerCategories[7] = {10, 11, 3, 1, 2, 2, 2};
+    int nbPicturePerCategories[7] = {10, 11, 3, 1, 2, 2, 3};
 
     // Chargement des noms des fichiers (A MODIFIER)
-    char pngNames[31][128] = {"assets/img/ships/1.png",  // 128 : limite de caractères par chaine de caractère
+    char pngNames[32][128] = {"assets/img/ships/1.png",  // 128 : limite de caractères par chaine de caractère
                               "assets/img/ships/2.png",
                               "assets/img/ships/3.png",
                               "assets/img/ships/4.png",
@@ -68,6 +68,7 @@ SDL_Texture ***loadTextures(SDL_Renderer *renderer) {
                               "assets/img/asteroids/2.png",
                               "assets/img/others/bg_button.png",
                               "assets/img/others/bg_window.png",
+                              "assets/img/others/bg_menu.png",
                              };
 
     // Allocation et remplissage du tableau de textures
@@ -90,13 +91,14 @@ SDL_Texture ***loadTextures(SDL_Renderer *renderer) {
     imageTextures[nbCategories - 1] = malloc(nbPicturePerCategories[nbCategories - 1] * sizeof(SDL_Texture*));
     imageTextures[nbCategories - 1][0] = IMG_LoadTextureWithAlpha(renderer, pngNames[shift + 0], 100);
     imageTextures[nbCategories - 1][1] = IMG_LoadTextureWithAlpha(renderer, pngNames[shift + 1], 230);
+    imageTextures[nbCategories - 1][2] = IMG_LoadTexture(renderer, pngNames[shift + 2]);
     
     return imageTextures;
 }
 
 void destroyImageTextures(SDL_Texture ***imageTextures) {
     int nbCategories = 7;
-    int nbPicturePerCategories[7] = {10, 11, 3, 1, 2, 2, 2};
+    int nbPicturePerCategories[7] = {10, 11, 3, 1, 2, 2, 3};
 
     for (int i = 0; i < nbCategories; i++) {
         for (int j = 0; j < nbPicturePerCategories[i]; j++) {

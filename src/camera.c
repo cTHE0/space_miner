@@ -31,7 +31,7 @@ void zoomCamera(float zoomFactor) {
             right = (camera.rect.x + dx2 + SCREEN_WIDTH / 2.f - MAP_SIZE) * camera.scale > -SCREEN_WIDTH / 2.f,
             down = (camera.rect.y + dy2 + SCREEN_HEIGHT / 2.f - MAP_SIZE) * camera.scale > -SCREEN_HEIGHT / 2.f;
         
-        if (!(left && right) && !(up && down)) {  // Verifie que l'on a pas atteint deux bords opposes
+        if (MAP_SIZE > SCREEN_WIDTH / camera.scale / zoomFactor) {  // Limite de dezoom
             if (left) {
                 camera.rect.x -= dx1;
             } else if (right) {
