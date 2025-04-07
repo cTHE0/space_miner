@@ -36,6 +36,9 @@ SDL_Texture* IMG_LoadTextureWithAlpha(SDL_Renderer* renderer, const char* filePa
 }
 
 SDL_Texture ***loadTextures(SDL_Renderer *renderer) {
+    /* Pour ajouter un image, il suffit de l'ajouter dans un dossier et de la renommer comme
+     * il se doit.
+     */
     const char *path = "assets/img/";
     nbCategories = foldersNbFunction(path);          // Nombre de dossiers
     char **foldersPath = foldersPathFunction(path);  // Chemins des dossiers
