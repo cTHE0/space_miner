@@ -71,7 +71,7 @@ void updateShips(Ship *ships, int shipCount) {
 }
 
 void updateShipAnimation(Ship *ship, Uint32 currentTime) {  // Pour animation de la flamme des fusees 
-    if (currentTime > ship->lastFrameTime + SHIP_FRAME_DELAY) {
+    if (currentTime > ship->lastFrameTime + SPRITE_SHEETS_DELAY) {
         ship->frameIndex = (ship->frameIndex + 1) % 4;  // 4 images dans le sprite sheet
         ship->lastFrameTime = currentTime;
     }

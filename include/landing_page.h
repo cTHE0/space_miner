@@ -12,11 +12,10 @@ typedef enum {
 
 typedef struct {
     int frameIndex1;  // Numero de l'image prise dans le spritesheet de la planete du menu
-    int frameIndex2;  // Numero de l'image prise dans le spritesheet de l'asteroide 1
-    int frameIndex3;  // Numero de l'image prise dans le spritesheet de l'asteroide 2
+    int frameIndex2;  // Permet de gerer la rotation est le deplacement des meteorites
     Uint32 lastFrameTime1;   // Date au dernier changement de frame du spritesheet de la planete du menu
     Uint32 lastFrameTime2;   // Date au dernier changement de frame du spritesheet des asteroide du menu
-} LPFrameControler;
+} lpFrameControler;
 
 // Affiche le menu principal i.e: landing page
 void displayMenu(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures);

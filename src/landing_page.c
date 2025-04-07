@@ -5,7 +5,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-LPFrameControler lp_frame_controller = {0, 0, 0, 0, 0};
+lpFrameControler lpFrameController = {0, 0, 0, 0};
 
 SDL_Rect bgButton1Rect = {SCREEN_WIDTH * 0.55, SCREEN_HEIGHT * 0.35, SCREEN_WIDTH * 0.27, SCREEN_HEIGHT * 0.07};  // Position du background des boutons sur le menu
 SDL_Rect bgButton2Rect = {SCREEN_WIDTH * 0.55, SCREEN_HEIGHT * 0.47, SCREEN_WIDTH * 0.27, SCREEN_HEIGHT * 0.07};
@@ -59,7 +59,6 @@ void handleMenuEvents(GameState *state) {   // Gère les événements du menu
                 }
                 break;
 
-
             default:
                 break;
         }
@@ -67,14 +66,13 @@ void handleMenuEvents(GameState *state) {   // Gère les événements du menu
 }
 
 void updateFrameIndex() {
-    if (SDL_GetTicks() > lp_frame_controller.lastFrameTime1 + SHIP_FRAME_DELAY) {
-        lp_frame_controller.frameIndex1 = (lp_frame_controller.frameIndex1 + 1) % 160;  // 160 images dans le sprite sheet de la
-        lp_frame_controller.lastFrameTime1 = SDL_GetTicks();                            // planetes qui tourne dans le menu
+    if (SDL_GetTicks() > lpFrameController.lastFrameTime1 + SPRITE_SHEETS_DELAY) {
+        lpFrameController.frameIndex1 = (lpFrameController.frameIndex1 + 1) % 160;  // 160 images dans le sprite sheet de la
+        lpFrameController.lastFrameTime1 = SDL_GetTicks();                            // planetes qui tourne dans le menu
     }
-    if (SDL_GetTicks() > lp_frame_controller.lastFrameTime2 + 0.14 * SHIP_FRAME_DELAY) {
-        lp_frame_controller.frameIndex2 = (lp_frame_controller.frameIndex2 + 1) % (SCREEN_WIDTH / 4);
-        lp_frame_controller.frameIndex3 = (lp_frame_controller.frameIndex3 + 1) % SCREEN_HEIGHT;
-        lp_frame_controller.lastFrameTime2 = SDL_GetTicks();
+    if (SDL_GetTicks() > lpFrameController.lastFrameTime2 + 0.15 * SPRITE_SHEETS_DELAY) {
+        lpFrameController.frameIndex2 = (lpFrameController.frameIndex2 + 1) % (3000);
+        lpFrameController.lastFrameTime2 = SDL_GetTicks();
     }
 }
 
@@ -84,21 +82,21 @@ void displayMenu(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Textu
     SDL_RenderCopy(renderer, imageTextures[4][2], NULL, NULL);
 
     // Affichage de la planetes en rotation
-    SDL_Rect srcRect = {lp_frame_controller.frameIndex1 * 100, 0, 100, 100}; // Frame actuelle sur le sprite sheet de la planete du menu
+    SDL_Rect srcRect = {lpFrameController.frameIndex1 * 100, 0, 100, 100}; // Frame actuelle sur le sprite sheet de la planete du menu
     SDL_Rect destRect = {SCREEN_WIDTH * 0.05, SCREEN_HEIGHT * 0.2, SCREEN_WIDTH * 0.35, SCREEN_WIDTH * 0.35};  // Position et taille affichee
     SDL_RenderCopy(renderer, imageTextures[5][0], &srcRect, &destRect);
 
     // Affichages de l'asteroide 1
-    SDL_Rect asteroid1Rect = {SCREEN_WIDTH - 4 * lp_frame_controller.frameIndex2, lp_frame_controller.frameIndex3, SCREEN_WIDTH * 0.1, SCREEN_WIDTH * 0.1};
+    SDL_Rect asteroid1Rect = {(0.0005 * lpFrameController.frameIndex2 - 0.1) * SCREEN_WIDTH, 0.0001 * lpFrameController.frameIndex2 * SCREEN_HEIGHT, SCREEN_WIDTH * 0.1, SCREEN_WIDTH * 0.1};
     SDL_Point asteroid1Center = {asteroid1Rect.w / 2, asteroid1Rect.h / 2};
 
-    SDL_RenderCopyEx(renderer, imageTextures[0][0], NULL, &asteroid1Rect, lp_frame_controller.frameIndex2, &asteroid1Center, SDL_FLIP_NONE);
+    SDL_RenderCopyEx(renderer, imageTextures[0][0], NULL, &asteroid1Rect, lpFrameController.frameIndex2, &asteroid1Center, SDL_FLIP_NONE);
 
     // Affichages de l'asteroide 2
-    SDL_Rect asteroid2Rect = {80 + SCREEN_WIDTH - 4 * lp_frame_controller.frameIndex2, 40 + lp_frame_controller.frameIndex3, 40, 40};
+    SDL_Rect asteroid2Rect = {(0.001 * lpFrameController.frameIndex2 - 1) * SCREEN_WIDTH, (0.0012 * lpFrameController.frameIndex2 - 1.5) * SCREEN_HEIGHT, SCREEN_WIDTH * 0.05, SCREEN_WIDTH * 0.05};
     SDL_Point asteroid2Center = {asteroid2Rect.w / 2, asteroid2Rect.h / 2};
 
-    SDL_RenderCopyEx(renderer, imageTextures[0][1], NULL, &asteroid2Rect, lp_frame_controller.frameIndex3, &asteroid2Center, SDL_FLIP_NONE);
+    SDL_RenderCopyEx(renderer, imageTextures[0][1], NULL, &asteroid2Rect, -3 * lpFrameController.frameIndex2, &asteroid2Center, SDL_FLIP_NONE);
 
     // Affichage du titre Space Miner
     SDL_Rect titleRect = {SCREEN_WIDTH * 0.45, SCREEN_HEIGHT * 0.07, SCREEN_WIDTH * 0.5, SCREEN_HEIGHT * 0.2};
@@ -129,6 +127,3 @@ void displayMenu(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Textu
 
     SDL_RenderPresent(renderer);
 }
-
-
-
