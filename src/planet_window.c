@@ -16,9 +16,9 @@ static SDL_Rect planetDisplayedRect = {SCREEN_WIDTH / 4., SCREEN_HEIGHT / 3., 30
 
 void displayPlanetWindow(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planets, int planetCount) {
     if (windowOpened == PLANET_WINDOW) {  // Affichage de la fenetre
-        SDL_RenderCopy(renderer, imageTextures[6][1], NULL, &windowRect);
-        SDL_RenderCopy(renderer, imageTextures[4][1], NULL, &WindowCrossRect);
-        SDL_RenderCopy(renderer, imageTextures[1][planets[whichWindowPlanet].idPicture], NULL, &planetDisplayedRect);
+        SDL_RenderCopy(renderer, imageTextures[4][3], NULL, &windowRect);  // Arriere plan de la fenetre d'informations
+        SDL_RenderCopy(renderer, imageTextures[2][0], NULL, &WindowCrossRect);  // Croix pour fermer la fenetre
+        SDL_RenderCopy(renderer, imageTextures[5][planets[whichWindowPlanet].idPicture], NULL, &planetDisplayedRect);  // Planete decrite dans cette fenetre
 
     }
 }

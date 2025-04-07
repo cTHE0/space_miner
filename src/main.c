@@ -15,6 +15,7 @@
 #include "renderer.h"
 #include "window.h"
 
+
 int main(void) {
     // Initialisation 
     srand(time(NULL));

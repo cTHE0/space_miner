@@ -1,7 +1,14 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <string.h>
+#include <dirent.h>
 #include "assets_gestion.h"
 #include "config.h"
+#include "tools.h"
+
+
+static int nbCategories;   // Initialisation
+static int *nbPicturesPerCategory;  // Initialisation
 
 SDL_Texture* IMG_LoadTextureWithAlpha(SDL_Renderer* renderer, const char* filePath, Uint8 alpha) {
     // Charger directement la texture avec SDL_Image
@@ -29,82 +36,164 @@ SDL_Texture* IMG_LoadTextureWithAlpha(SDL_Renderer* renderer, const char* filePa
 }
 
 SDL_Texture ***loadTextures(SDL_Renderer *renderer) {
-    // Ordre de stockage dans imageTextures : 
-    // ships(0), planetes(1), maps(2), attackers(3), buttons(4), asteroids(5), others(6)
+    const char *path = "assets/img/";
+    nbCategories = foldersNbFunction(path);          // Nombre de dossiers
+    char **foldersPath = foldersPathFunction(path);  // Chemins des dossiers
+    nbPicturesPerCategory = filesNbFunction(foldersPath);  // Nombre de fichiers par categorie
 
-    // Parametre du tableau de textures (A MODIFIER)
-    int nbCategories = 7;
-    int nbPicturePerCategories[7] = {10, 11, 3, 1, 2, 2, 3};
-
-    // Chargement des noms des fichiers (A MODIFIER)
-    char pngNames[32][128] = {"assets/img/ships/1.png",  // 128 : limite de caractères par chaine de caractère
-                              "assets/img/ships/2.png",
-                              "assets/img/ships/3.png",
-                              "assets/img/ships/4.png",
-                              "assets/img/ships/5.png",
-                              "assets/img/ships/6.png",
-                              "assets/img/ships/7.png",
-                              "assets/img/ships/8.png",
-                              "assets/img/ships/9.png",
-                              "assets/img/ships/10.png",
-                              "assets/img/planets/1.png",
-                              "assets/img/planets/2.png",
-                              "assets/img/planets/3.png",
-                              "assets/img/planets/4.png",
-                              "assets/img/planets/5.png",
-                              "assets/img/planets/6.png",
-                              "assets/img/planets/7.png",
-                              "assets/img/planets/8.png",
-                              "assets/img/planets/9.png",
-                              "assets/img/planets/10.png",
-                              "assets/img/planets/11.png",
-                              "assets/img/maps/1.png",
-                              "assets/img/maps/2.png",
-                              "assets/img/maps/3.png",
-                              "assets/img/attackers/1.png",
-                              "assets/img/buttons/add_button.png",
-                              "assets/img/buttons/cross.png",
-                              "assets/img/asteroids/1.png",
-                              "assets/img/asteroids/2.png",
-                              "assets/img/others/bg_button.png",
-                              "assets/img/others/bg_window.png",
-                              "assets/img/others/bg_menu.png",
-                             };
-
-    // Allocation et remplissage du tableau de textures
+    // Allocation pour imageTextures
     SDL_Texture ***imageTextures = malloc(nbCategories * sizeof(SDL_Texture**));
-    int shift = 0;
-    for (int i = 0; i < nbCategories - 1; i++) {
-        imageTextures[i] = malloc(nbPicturePerCategories[i] * sizeof(SDL_Texture*));
 
-        for (int j = 0; j < nbPicturePerCategories[i]; j++) {
-            imageTextures[i][j] = IMG_LoadTexture(renderer, pngNames[shift + j]);
+    // Indice du dossier 'others'
+    int indexOthers = -1;
+
+    // Construction de imageTextures
+    for (int i = 0; i < nbCategories; i++) {
+        if (strcmp(foldersPath[i], "assets/img/others") == 0) {
+            indexOthers = i;
+            continue;
+        }
+        imageTextures[i] = malloc(nbPicturesPerCategory[i] * sizeof(SDL_Texture*));
+
+        // Chargement des textures pour chaque image dans chaque dossier
+        for (int j = 0; j < nbPicturesPerCategory[i]; j++) {
+            char pathPng[128];
+            snprintf(pathPng, sizeof(pathPng), "%s/%d.png", foldersPath[i], j);
+
+            imageTextures[i][j] = IMG_LoadTexture(renderer, pathPng);
             if (!imageTextures[i][j]) {
-                printf("Erreur chargement de la texture %s : %s\n", pngNames[j], IMG_GetError());
+                printf("Erreur chargement de la texture %s : %s\n", pathPng, IMG_GetError());
                 return NULL;
             }
         }
-        shift += nbPicturePerCategories[i];
     }
 
-    // Allocation de la sous-liste 'others' a la main ('others' est tjr a la fin du tableau de texture)
-    imageTextures[nbCategories - 1] = malloc(nbPicturePerCategories[nbCategories - 1] * sizeof(SDL_Texture*));
-    imageTextures[nbCategories - 1][0] = IMG_LoadTextureWithAlpha(renderer, pngNames[shift + 0], 100);
-    imageTextures[nbCategories - 1][1] = IMG_LoadTextureWithAlpha(renderer, pngNames[shift + 1], 230);
-    imageTextures[nbCategories - 1][2] = IMG_LoadTexture(renderer, pngNames[shift + 2]);
-    
+    // Traitement spécifique pour 'others'
+    imageTextures[indexOthers] = malloc(nbPicturesPerCategory[indexOthers] * sizeof(SDL_Texture*));
+    imageTextures[indexOthers][0] = IMG_LoadTextureWithAlpha(renderer, "assets/img/others/0.png", 100);
+    imageTextures[indexOthers][1] = IMG_LoadTextureWithAlpha(renderer, "assets/img/others/1.png", 230);
+    imageTextures[indexOthers][2] = IMG_LoadTexture(renderer, "assets/img/others/2.png");
+
+    // Libération des chemins des dossiers
+    for (int i = 0; i < nbCategories; i++) {
+        free(foldersPath[i]);
+    }
+    free(foldersPath);
+
     return imageTextures;
 }
 
-void destroyImageTextures(SDL_Texture ***imageTextures) {
-    int nbCategories = 7;
-    int nbPicturePerCategories[7] = {10, 11, 3, 1, 2, 2, 3};
 
+
+int foldersNbFunction(const char *path) {
+    // Ouvrir le dossier
+    DIR *folder = opendir(path);
+    if (folder == NULL) {
+        perror("Erreur lors de l'ouverture du dossier");
+        return -1;  // Retourne -1 en cas d'erreur
+    }
+
+    // Compter le nombre de dossier
+    struct dirent *entree;
+    int indexFolder = 0;
+    while ((entree = readdir(folder)) != NULL) {
+        if (strcmp(entree->d_name, ".") != 0 && strcmp(entree->d_name, "..") != 0) {  // Ignorer dossiers spécials
+            if (entree->d_type == DT_DIR) {  // Si l'entrée est un répertoire, l'incrémenter
+                indexFolder++;
+            }
+        }
+    }
+
+    // Fermer le dossier après lecture
+    closedir(folder);
+
+    return indexFolder;
+}
+
+char **foldersPathFunction(const char *path) {
+    // Ouvrir le dossier
+    DIR *folder = opendir(path);
+    if (folder == NULL) {
+        perror("Erreur lors de l'ouverture du dossier");
+        return NULL;  // Retourner NULL en cas d'erreur
+    }
+
+    // Lire toutes les entrées du dossier
+    char **foldersName = malloc(nbCategories * sizeof(char *));  // Nombre de dossier a allouer 
+    struct dirent *entree;
+    int indexFolder = 0;
+    while ((entree = readdir(folder)) != NULL) {
+        if (strcmp(entree->d_name, ".") != 0 && strcmp(entree->d_name, "..") != 0) {  // Ignorer les dossiers speciaux
+            if (entree->d_type == DT_DIR) {  // Si l'entrée est un répertoire, l'ajouter au tableau
+                foldersName[indexFolder] = malloc(128 * sizeof(char));   // 128 caracteres par chemin maximum
+                strcpy(foldersName[indexFolder], entree->d_name);  // Copier le nom du dossier
+                indexFolder++;
+            }
+        }
+    }
+
+    // Fermuture du dossier après lecture
+    closedir(folder);
+
+    // Trier les noms de dossiers par ordre alphabétique
+    qsort(foldersName, indexFolder, sizeof(char *), compare);
+
+    // Ajouter le debut du chemin assets/img/ avant le nom du dossier
     for (int i = 0; i < nbCategories; i++) {
-        for (int j = 0; j < nbPicturePerCategories[i]; j++) {
+        char pathFolder[128];
+        strcpy(pathFolder, path);
+        strcat(pathFolder, foldersName[i]);
+        strcat(pathFolder, "/");
+        strcpy(foldersName[i], pathFolder);
+    }
+
+    return foldersName;
+}
+
+int *filesNbFunction(char **foldersPath) {  // Creer une liste d'entiers. Chaque entier est le nombre de fichier dans une categorie d'image
+    int *filesNbPerFolder = malloc(nbCategories * sizeof(int));
+    struct dirent *entree;
+
+    for (int i = 0; i < nbCategories; i++) {  // Pour chaque categorie
+        // Ouvrir le sous-dossier
+        DIR *folder = opendir(foldersPath[i]);
+        if (folder == NULL) {
+            perror("Erreur lors de l'ouverture du dossier");
+            return NULL;  // Retourner NULL en cas d'erreur
+        }
+
+        // Compter le nombre d'image.
+        int indexFile = 0;
+        while ((entree = readdir(folder)) != NULL) {  
+            if (strcmp(entree->d_name, ".") != 0 && strcmp(entree->d_name, "..") != 0) {  // Ignorer "." et ".."
+                if (entree->d_type == DT_REG) {  // Si l'entrée est un fichier, l'ajouter au tableau
+                    indexFile++;
+                }
+            }
+        }
+        filesNbPerFolder[i] = indexFile;
+
+        // Fermuture du dossier après lecture
+        closedir(folder);
+    }
+
+    return filesNbPerFolder;
+}
+
+int compare(const void *a, const void *b) {  // Fonction de comparaison pour qsort
+    const char **nomA = (const char **)a;
+    const char **nomB = (const char **)b;
+    return strcmp(*nomA, *nomB);
+}
+
+void destroyImageTextures(SDL_Texture ***imageTextures) {
+    for (int i = 0; i < nbCategories; i++) {
+        for (int j = 0; j < nbPicturesPerCategory[i]; j++) {
             SDL_DestroyTexture(imageTextures[i][j]);
         }
         free(imageTextures[i]);
     }
+    
     free(imageTextures);
+    free(nbPicturesPerCategory);
 }

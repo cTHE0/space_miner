@@ -21,10 +21,10 @@ void zoomCamera(float zoomFactor) {
     }
     
     if (zoomFactor < 1) {  // Limiter le zoom
-        float dx1 = camera.rect.x + (1 - 1 / camera.scale / zoomFactor) * SCREEN_WIDTH / 2.f, 
-              dy1 = camera.rect.y + (1 - 1 / camera.scale / zoomFactor) * SCREEN_HEIGHT / 2.f,
-              dx2 = camera.rect.x - MAP_SIZE + (1 + 1 / camera.scale / zoomFactor) * SCREEN_WIDTH / 2.f,
-              dy2 = camera.rect.y - MAP_SIZE + (1 + 1 / camera.scale / zoomFactor) * SCREEN_HEIGHT / 2.f;
+        float dx1 = camera.rect.x + (1 - 1 / (camera.scale * zoomFactor)) * SCREEN_WIDTH / 2.f, 
+              dy1 = camera.rect.y + (1 - 1 / (camera.scale * zoomFactor)) * SCREEN_HEIGHT / 2.f,
+              dx2 = camera.rect.x - MAP_SIZE + (1 + 1 / (camera.scale * zoomFactor)) * SCREEN_WIDTH / 2.f,
+              dy2 = camera.rect.y - MAP_SIZE + (1 + 1 / (camera.scale * zoomFactor)) * SCREEN_HEIGHT / 2.f;
 
         int left = (camera.rect.x + dx1 + SCREEN_WIDTH / 2.f) * camera.scale < SCREEN_WIDTH / 2.f, 
             up = (camera.rect.y + dy1 + SCREEN_HEIGHT / 2.f) * camera.scale < SCREEN_HEIGHT / 2.f,

@@ -20,15 +20,15 @@ static SDL_Point centerShip = {32, 32};
 
 void displayShipWindow(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships, int shipCount) {
     if (windowOpened == SHIP_WINDOW) {  // Affichage de la fenetre
-        SDL_RenderCopy(renderer, imageTextures[6][1], NULL, &windowRect);
-        SDL_RenderCopy(renderer, imageTextures[1][ships[whichWindowShip].target->idPicture], NULL, &targetDisplayedRect);
-        SDL_RenderCopy(renderer, imageTextures[1][ships[whichWindowShip].base->idPicture], NULL, &baseDisplayedRect);
-        SDL_RenderCopy(renderer, imageTextures[4][1], NULL, &WindowCrossRect);
+        SDL_RenderCopy(renderer, imageTextures[4][3], NULL, &windowRect);
+        SDL_RenderCopy(renderer, imageTextures[5][ships[whichWindowShip].target->idPicture], NULL, &targetDisplayedRect);
+        SDL_RenderCopy(renderer, imageTextures[5][ships[whichWindowShip].base->idPicture], NULL, &baseDisplayedRect);
+        SDL_RenderCopy(renderer, imageTextures[2][0], NULL, &WindowCrossRect);
 
         if (ships[whichWindowShip].state == MOVING_TO_TARGET || ships[whichWindowShip].state == WAITING_ON_BASE) {  
-            SDL_RenderCopyEx(renderer, imageTextures[0][ships[whichWindowShip].idPicture], &srcRectShip, &destRectShip, 90, &centerShip, SDL_FLIP_NONE);
+            SDL_RenderCopyEx(renderer, imageTextures[6][ships[whichWindowShip].idPicture], &srcRectShip, &destRectShip, 90, &centerShip, SDL_FLIP_NONE);
         } else if (ships[whichWindowShip].state == MOVING_TO_BASE || ships[whichWindowShip].state == WAITING_ON_TARGET) {  
-            SDL_RenderCopyEx(renderer, imageTextures[0][ships[whichWindowShip].idPicture], &srcRectShip, &destRectShip, 270, &centerShip, SDL_FLIP_NONE);
+            SDL_RenderCopyEx(renderer, imageTextures[6][ships[whichWindowShip].idPicture], &srcRectShip, &destRectShip, 270, &centerShip, SDL_FLIP_NONE);
         }
     }
 }

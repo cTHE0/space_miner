@@ -10,7 +10,7 @@ void generatePlanets(Planet **planets, int count) {
     *planets = malloc(count * sizeof(Planet));
 
     for (int i = 0; i < count; i++) {
-        (*planets)[i].idPicture = rand () % 10;
+        (*planets)[i].idPicture = rand () % 10 + 1;
         (*planets)[i].maxOre = 1 + rand () % 1000;  // Les planetes ne sont pas toutes rentables
         (*planets)[i].currentOre = rand () % (int)(*planets)[i].maxOre;  // Les planetes ne sont pas toutes remplies de ressources
         (*planets)[i].regenerationTime = rand () % 10000;  // En millisecondes
@@ -51,7 +51,7 @@ void renderPlanets(SDL_Renderer *renderer, Planet *planets, SDL_Texture ***textu
         if (screenX >= -2 * screenRadius && screenX <= SCREEN_WIDTH && 
             screenY >= -2 * screenRadius && screenY <= SCREEN_HEIGHT + screenRadius) {   // On n'affiche pas les planètes situés en dehors de l'ecran  
             // Affichage planete 
-            SDL_RenderCopy(renderer, texturePlanet[1][planets[i].idPicture], NULL, &destRect);
+            SDL_RenderCopy(renderer, texturePlanet[5][planets[i].idPicture], NULL, &destRect);
 
             // Affichage barre* de minerais (1)      (*une seule barre, mais representant la valeur totale de minerais !?)
             destRect.h = 5 * camera.scale;

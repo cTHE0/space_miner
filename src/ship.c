@@ -170,7 +170,7 @@ void renderShips(SDL_Renderer *renderer, SDL_Texture ***textureShip, Ship *ships
 
         if (ShipOnScreen.x >= -64 * camera.scale && ShipOnScreen.x <= SCREEN_WIDTH && 
             ShipOnScreen.y >= -64 * camera.scale && ShipOnScreen.y <= SCREEN_HEIGHT + 64 * camera.scale) {  // Si la fusee est dans l'ecran 
-            renderShipImage(renderer, textureShip[0][ships[i].idPicture], ships[i], ShipOnScreen);
+            renderShipImage(renderer, textureShip[6][ships[i].idPicture], ships[i], ShipOnScreen);
             renderShipBars(renderer, ships[i], ShipOnScreen);
             ships[i].destRect.x = ShipOnScreen.x;
             ships[i].destRect.y = ShipOnScreen.y;
