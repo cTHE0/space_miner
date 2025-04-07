@@ -51,8 +51,8 @@ SDL_Texture ***loadTextures(SDL_Renderer *renderer) {
     int indexOthers = -1;
 
     // Construction de imageTextures
-    for (int i = 0; i < nbCategories; i++) {
-        if (strcmp(foldersPath[i], "assets/img/others") == 0) {
+    for (int i = 0; i < nbCategories; i++) {    
+        if (strcmp(foldersPath[i], "assets/img/others4/") == 0) {
             indexOthers = i;
             continue;
         }
@@ -73,9 +73,10 @@ SDL_Texture ***loadTextures(SDL_Renderer *renderer) {
 
     // Traitement spécifique pour 'others'
     imageTextures[indexOthers] = malloc(nbPicturesPerCategory[indexOthers] * sizeof(SDL_Texture*));
-    imageTextures[indexOthers][0] = IMG_LoadTextureWithAlpha(renderer, "assets/img/others/0.png", 100);
-    imageTextures[indexOthers][1] = IMG_LoadTextureWithAlpha(renderer, "assets/img/others/1.png", 230);
-    imageTextures[indexOthers][2] = IMG_LoadTexture(renderer, "assets/img/others/2.png");
+    imageTextures[indexOthers][0] = IMG_LoadTexture(renderer, "assets/img/others4/0.png");
+    imageTextures[indexOthers][1] = IMG_LoadTextureWithAlpha(renderer, "assets/img/others4/1.png", 100);
+    imageTextures[indexOthers][2] = IMG_LoadTexture(renderer, "assets/img/others4/2.png");
+    imageTextures[indexOthers][3] = IMG_LoadTextureWithAlpha(renderer, "assets/img/others4/3.png", 230);
 
     // Libération des chemins des dossiers
     for (int i = 0; i < nbCategories; i++) {
