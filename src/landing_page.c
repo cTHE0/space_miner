@@ -88,15 +88,13 @@ void displayMenu(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Textu
 
     // Affichages de l'asteroide 1
     SDL_Rect asteroid1Rect = {(0.0005 * lpFrameController.frameIndex2 - 0.1) * SCREEN_WIDTH, 0.0001 * lpFrameController.frameIndex2 * SCREEN_HEIGHT, SCREEN_WIDTH * 0.1, SCREEN_WIDTH * 0.1};
-    SDL_Point asteroid1Center = {asteroid1Rect.w / 2, asteroid1Rect.h / 2};
 
-    SDL_RenderCopyEx(renderer, imageTextures[0][0], NULL, &asteroid1Rect, lpFrameController.frameIndex2, &asteroid1Center, SDL_FLIP_NONE);
+    SDL_RenderCopyEx(renderer, imageTextures[0][0], NULL, &asteroid1Rect, lpFrameController.frameIndex2, NULL, SDL_FLIP_NONE);
 
     // Affichages de l'asteroide 2
     SDL_Rect asteroid2Rect = {(0.001 * lpFrameController.frameIndex2 - 1) * SCREEN_WIDTH, (0.0012 * lpFrameController.frameIndex2 - 1.5) * SCREEN_HEIGHT, SCREEN_WIDTH * 0.05, SCREEN_WIDTH * 0.05};
-    SDL_Point asteroid2Center = {asteroid2Rect.w / 2, asteroid2Rect.h / 2};
 
-    SDL_RenderCopyEx(renderer, imageTextures[0][1], NULL, &asteroid2Rect, -3 * lpFrameController.frameIndex2, &asteroid2Center, SDL_FLIP_NONE);
+    SDL_RenderCopyEx(renderer, imageTextures[0][1], NULL, &asteroid2Rect, -3 * lpFrameController.frameIndex2, NULL, SDL_FLIP_NONE);
 
     // Affichage du titre Space Miner
     SDL_Rect titleRect = {SCREEN_WIDTH * 0.45, SCREEN_HEIGHT * 0.07, SCREEN_WIDTH * 0.5, SCREEN_HEIGHT * 0.2};
