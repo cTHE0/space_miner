@@ -12,21 +12,20 @@ typedef enum { TRANSPORTER, EXPLORER, DEFENDER } ShipType;
 typedef struct {
     ShipType shiptype;          // Type de vaisseau (utile pr définir ensuite son comportement, stats, render)
     int idPicture;              // Chaque fusee a un skin particulier
-    float x, y;                 // Position de la fusee
+    float x, y, w, h;           // Rect de la fusee sur la map
+    SDL_Rect destRect;          // Rect de la fusee sur l'ecran physique
     Planet *base;               // Planète de départ
     Planet *target;             // Planète ciblee
     float speed;                // Vitesse de la fusee
     ShipState state;            // Etat de la fusee
     int maxLife, currentLife;   // Vie de la fusee
     Cargo cargo;                // Cargaison de la fusee (qui contient les compartiments)
-    int sizeCompartment;        // Taille de chaque compartiment
     Uint32 lastRefreshFilling;  // Dernier instant ou la fusee a actualisee sa consommation d'essence
     int fuelConsumption;        // Dernier instant ou la fusee a actualisee sa consommation d'essence
 
     Uint32 waitStartTime;       // Temps d’attente à destination  (a remplacer par le temps de minage/depot !!-> besoin d'ameliorer les stats des fusees)
     int frameIndex;             // Numero de l'image prise dans le spritesheet
     Uint32 lastFrameTime;       // Date au dernier changement de frame du spritesheet
-    SDL_Rect destRect;          // Rect dans écran où afficher ship
 } Ship;
 
 void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount);

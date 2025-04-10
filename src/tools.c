@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
+#include "ship.h"
+#include "planet.h"
+#include "config.h"
 #include <dirent.h>
 #include <camera.h>
 
@@ -100,3 +104,14 @@ void *moveToEnd(void *list, int nb_elem, int type_size, int index) {
     return list;
 }
 
+float distanceShipPlanet(Ship ship, Planet planet) {
+    return sqrt(carre(ship.x + ship.w / 2. - planet.x) + carre(ship.y + ship.h / 2. - planet.y));
+}
+
+float distancePlanetPlanet(Planet planet1, Planet planet2) {
+    return sqrt(carre(planet1.x - planet2.x) + carre(planet1.y - planet2.y));
+}
+
+float distanceShipShip(Ship ship1, Ship ship2) {
+    return sqrt(carre(ship1.x + ship1.w / 2. - ship2.x - ship2.w / 2.) + carre(ship1.y + ship1.h / 2. - ship2.y - ship2.h / 2.));
+}

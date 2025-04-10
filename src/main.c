@@ -26,13 +26,11 @@ int main(void) {
 
     initCamera();
 
-    int planetCount = INIT_PLANET_COUNT;
-    Planet* planets = NULL;
-    generatePlanets(&planets, planetCount);
-
     int shipCount = INIT_SHIP_COUNT;
     Ship* ships = NULL;
-    initShips(&ships, shipCount, planets, planetCount);
+
+    int planetCount = INIT_PLANET_COUNT;
+    Planet* planets = NULL;
 
     SDL_Texture ***imageTextures = loadTextures(renderer);
     SDL_Texture **textTextures = loadTextTextures(renderer);
@@ -46,9 +44,15 @@ int main(void) {
                 handleMenuEvents(&state);
                 updateFrameIndex();
                 displayMenu(renderer, imageTextures, textTextures);
+
+                if (state == GAME) {  
+                    generatePlanets(&planets, planetCount);
+                    initShips(&ships, shipCount, planets, planetCount);
+                }
                 break;
             
             case GAME:
+
                 handleEvents(&state, ships, shipCount, planets, planetCount);
 
                 updateShips(ships, shipCount);
