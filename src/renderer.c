@@ -55,7 +55,7 @@ void clearScreen(SDL_Renderer *renderer) {
 
 void displayGame(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships, Planet *planets, int shipCount, int planetCount) {
     clearScreen(renderer);
-    renderMap(renderer, imageTextures[3][0]);
+    renderMap(renderer, imageTextures[3][2]);
     renderPlanets(renderer, planets, imageTextures, planetCount);
     renderShips(renderer, imageTextures, ships, shipCount);
     displayWindow(renderer, imageTextures, textTextures, ships, planets, shipCount, planetCount);

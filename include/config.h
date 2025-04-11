@@ -3,7 +3,7 @@
 
 #define SCREEN_WIDTH 1920 // (autre 16/9 courant plus petit : 1280 par 720)
 #define SCREEN_HEIGHT 1080
-#define MAP_SIZE 3000
+#define MAP_SIZE 3500
 
 
 #define INIT_PLANET_COUNT 5
