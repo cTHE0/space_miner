@@ -3,11 +3,11 @@
 
 #define SCREEN_WIDTH 1920 // (autre 16/9 courant plus petit : 1280 par 720)
 #define SCREEN_HEIGHT 1080
-#define MAP_SIZE 10500
+#define MAP_SIZE 84000
 
 
-#define INIT_PLANET_COUNT 50
-#define INIT_SHIP_COUNT 10000
+#define INIT_PLANET_COUNT 5000
+#define INIT_SHIP_COUNT 1000
 #define CST_TEXT_NUMBER 4
 
 

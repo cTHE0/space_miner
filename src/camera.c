@@ -49,6 +49,7 @@ void zoomCamera(float zoomFactor) {
     } else if (camera.scale < 6) {  // zoomFactor >= 1 implicite 
         camera.scale *= zoomFactor;
     }
+    
 }
 
 void translateCamera(float dx, float dy) {
