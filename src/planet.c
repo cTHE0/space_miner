@@ -5,38 +5,13 @@
 #include "planet.h"
 #include "camera.h"
 #include "config.h"
+#include "solar_system.h"
 
 void generatePlanets(Planet **planets, int count) {
     *planets = malloc(count * sizeof(Planet));
 
-    for (int i = 0; i < count; i++) {
-        (*planets)[i].idPicture = rand () % 10 + 1;
-        (*planets)[i].maxOre = 1 + rand () % 1000;  // Les planetes ne sont pas toutes rentables
-        (*planets)[i].currentOre = rand () % (int)(*planets)[i].maxOre;  // Les planetes ne sont pas toutes remplies de ressources
-        (*planets)[i].regenerationTime = rand () % 10000;  // En millisecondes
+    generateSolarSystem(planets, MAP_SIZE/2, MAP_SIZE/2, 0, count - 1);
 
-        // Recherche d'une nouvelle planete eloignee de toutes les autres
-        short planetIsAlone = 0;  // 0: la nouvelle planete est proche d'une autre, 1: la nouvelle planete est eloignee
-        int r, x, y;
-        while (planetIsAlone == 0) {
-            r = 25 + rand() % 75;
-            x = rand() % (MAP_SIZE - 2 * r) + r;
-            y = rand() % (MAP_SIZE - 2 * r) + r;
-            planetIsAlone = 1;  // La nouvelle planete est eloignee A PART SI l'on en detecte une autre a cote
-
-            for (int j = 0; j < i; j++) {  // Verifie qu'il n'y ait pas de planetes trop proches de la planete i
-                if (planetIsAlone == 1 && 
-                    (abs(x - (int)(*planets)[j].x) < r + (*planets)[j].radius &&
-                     abs(y - (int)(*planets)[j].y) < r + (*planets)[j].radius)) {
-                    planetIsAlone = 0;
-                    break;
-                }
-            }
-        }
-        (*planets)[i].radius = r;
-        (*planets)[i].x = x;
-        (*planets)[i].y = y;
-    }
 }
 
 void renderPlanets(SDL_Renderer *renderer, Planet *planets, SDL_Texture ***texturePlanet, int count) {
