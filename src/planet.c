@@ -10,7 +10,16 @@
 void generatePlanets(Planet **planets, int count) {
     *planets = malloc(count * sizeof(Planet));
 
-    generateSolarSystem(planets, MAP_SIZE/2, MAP_SIZE/2, 0, count - 1);
+    int n = 0; //nombre planètes (+étoiles) déjà présentent
+    int k;
+
+    while (n < count) {
+        k = rand() % 6; //nb de planètes (sans étoile) à rajouter ds système solaire suivant
+        if (k+1+n <= count){ //si on peut encore rajouter k planètes avec leur étoile correspondante
+            generateSolarSystem(planets, rand() % MAP_SIZE, rand() % MAP_SIZE, n, k);
+            n += (k+1);
+        }
+    }
 
 }
 

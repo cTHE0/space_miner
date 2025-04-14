@@ -10,7 +10,7 @@ void generateSolarSystem(Planet **planets, int x, int y, int i, int nb_planets_s
     (*planets)[i].currentOre = rand () % (int)(*planets)[i].maxOre;  // Les planetes ne sont pas toutes remplies de ressources
     (*planets)[i].regenerationTime = rand () % 10000;  // En millisecondes
     int r;
-    r = 200 + rand() % 100;
+    r = 150 + rand() % 50;
     (*planets)[i].radius = r;
     (*planets)[i].x = x;
     (*planets)[i].y = y;
@@ -25,9 +25,9 @@ void generateSolarSystem(Planet **planets, int x, int y, int i, int nb_planets_s
         short planetIsAlone = 0;  // 0: la nouvelle planete est proche d'une autre, 1: la nouvelle planete est eloignee
         int rp, xp, yp;
         while (planetIsAlone == 0) {
-            rp = 50 + rand() % 55;
-            xp = x + (1000 - rand()%2000); //abscisse planète
-            yp = y + (1000 - rand()%2000);
+            rp = 25 + rand() % 30;
+            xp = x + (2000 - rand()%4000); //abscisse planète
+            yp = y + (2000 - rand()%4000);
             planetIsAlone = 1;  // La nouvelle planete est eloignee A PART SI l'on en detecte une autre a cote
 
             for (int k = i; k < j; k++) {  // Verifie qu'il n'y ait pas de planetes trop proches de la planete i
