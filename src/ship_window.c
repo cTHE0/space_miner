@@ -24,8 +24,15 @@ static SDL_Rect windowLine1Rect;
 static SDL_Rect windowLine2Rect;
 static SDL_Rect windowLine3Rect;
 static SDL_Rect windowLine4Rect;
+static SDL_Rect category1TitleRect;
+static SDL_Rect category2TitleRect;
+static SDL_Rect category3TitleRect;
+static SDL_Rect category4TitleRect;
+static SDL_Rect category5TitleRect;
 
-void initRectShipWindow() {
+void initRectShipWindow(SDL_Texture **textTextures) {
+    int textureWidth, textureHeight;  // Permet de garder les proportions des textes
+
     baseDisplayedRect.x = windowRect.x + windowRect.w * 0.05;
     baseDisplayedRect.y = windowRect.y + windowRect.h * 0.18;
     baseDisplayedRect.w = windowRect.w * 0.12;
@@ -46,10 +53,11 @@ void initRectShipWindow() {
     narrowRect.w = 4;
     narrowRect.h = 15;
 
+    SDL_QueryTexture(textTextures[4], NULL, NULL, &textureWidth, &textureHeight);
     windowTitleRect.x = windowRect.x + windowRect.w * 0.01;  
-    windowTitleRect.y = windowRect.y + windowRect.h * 0.01;
-    windowTitleRect.w = windowRect.w * 0.3;
-    windowTitleRect.h = windowRect.h * 0.1;
+    windowTitleRect.y = windowRect.y + windowRect.h * 0.007;
+    windowTitleRect.w = textureWidth * windowRect.w * 0.0005;
+    windowTitleRect.h = textureHeight * windowRect.w * 0.0005;
 
     windowLine1Rect.x = windowRect.x;  // Grande barre horizontale haut
     windowLine1Rect.y = windowRect.y + windowRect.h * 0.07;
@@ -70,10 +78,40 @@ void initRectShipWindow() {
     windowLine4Rect.y = windowRect.y + windowRect.h * 0.07;
     windowLine4Rect.w = 3;
     windowLine4Rect.h = windowRect.h * 0.93;
+
+    SDL_QueryTexture(textTextures[5], NULL, NULL, &textureWidth, &textureHeight);
+    category1TitleRect.x = windowRect.x + windowRect.w * 0.04;  // Travel information
+    category1TitleRect.y = windowRect.y + windowRect.h * 0.1;
+    category1TitleRect.w = textureWidth * windowRect.w * 0.0005;
+    category1TitleRect.h = textureHeight * windowRect.w * 0.0005;
+
+    SDL_QueryTexture(textTextures[8], NULL, NULL, &textureWidth, &textureHeight);
+    category2TitleRect.x = windowRect.x + windowRect.w * 0.04;  // Tank manager
+    category2TitleRect.y = windowRect.y + windowRect.h * 0.53;
+    category2TitleRect.w = textureWidth * windowRect.w * 0.0005;
+    category2TitleRect.h = textureHeight * windowRect.w * 0.0005;
+
+    SDL_QueryTexture(textTextures[11], NULL, NULL, &textureWidth, &textureHeight);
+    category3TitleRect.x = windowRect.x + windowRect.w * 0.58;  // Ship condition
+    category3TitleRect.y = windowRect.y + windowRect.h * 0.1;
+    category3TitleRect.w = textureWidth * windowRect.w * 0.0005;
+    category3TitleRect.h = textureHeight * windowRect.w * 0.0005;
+
+    SDL_QueryTexture(textTextures[13], NULL, NULL, &textureWidth, &textureHeight);
+    category4TitleRect.x = windowRect.x + windowRect.w * 0.58;  // Reported problems
+    category4TitleRect.y = windowRect.y + windowRect.h * 0.32;
+    category4TitleRect.w = textureWidth * windowRect.w * 0.0005;
+    category4TitleRect.h = textureHeight * windowRect.w * 0.0005;
+
+    SDL_QueryTexture(textTextures[14], NULL, NULL, &textureWidth, &textureHeight);
+    category5TitleRect.x = windowRect.x + windowRect.w * 0.58;  // Tank composition
+    category5TitleRect.y = windowRect.y + windowRect.h * 0.61;
+    category5TitleRect.w = textureWidth * windowRect.w * 0.0005;
+    category5TitleRect.h = textureHeight * windowRect.w * 0.0005;
 }
 
 void displayShipWindow(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships, int shipCount) {
-    initRectShipWindow();
+    initRectShipWindow(textTextures);
 
     if (windowOpened == SHIP_WINDOW) {  // La fenetre d'information d'une fusee est-elle ouverte ?
         // Affichage du bg
@@ -140,5 +178,21 @@ void displayShipWindow(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL
             destRectShip.x = baseDisplayedRect.x + baseDisplayedRect.w + f * dp - baseDisplayedRect.w * 0.53;
             SDL_RenderCopyEx(renderer, imageTextures[6][ships[whichWindowShip].idPicture], &srcRectShip, &destRectShip, 270, NULL, SDL_FLIP_NONE);
         }
+
+        // Affichage du titre "Travel information"
+        SDL_RenderCopy(renderer, textTextures[5], NULL, &category1TitleRect);
+
+        // Affichage du titre "Tank manager"
+        SDL_RenderCopy(renderer, textTextures[8], NULL, &category2TitleRect);
+
+        // Affichage du titre "Ship condition"
+        SDL_RenderCopy(renderer, textTextures[11], NULL, &category3TitleRect);
+
+        // Affichage du titre "Reported problemes"
+        SDL_RenderCopy(renderer, textTextures[13], NULL, &category4TitleRect);
+
+        // Affichage du titre "Tank composition"
+        SDL_RenderCopy(renderer, textTextures[14], NULL, &category5TitleRect);
+
     }
 }

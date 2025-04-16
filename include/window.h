@@ -5,7 +5,7 @@
 
 void displayWindow(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships, Planet *planets, int shipCount, int planetCount);
     void displayShipWindow(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships, int shipCount);
-    void initRectShipWindow();
+    void initRectShipWindow(SDL_Texture **textTextures);
 
     void displayPlanetWindow(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planets, int planetCount);
 

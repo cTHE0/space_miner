@@ -16,7 +16,7 @@ SDL_Rect windowRect = {(1 - 0.8) * SCREEN_WIDTH / 2.,
                        SCREEN_WIDTH * 0.8,
                        SCREEN_HEIGHT * 0.8};
 SDL_Rect WindowCrossRect = {(1 + 0.8) / 2. * SCREEN_WIDTH - (SCREEN_WIDTH * 0.8) * 0.03, 
-                            (1 - 0.8) * SCREEN_HEIGHT / 2 + 15,
+                            (1 - 0.8) * SCREEN_HEIGHT / 2 + 20,
                             (SCREEN_WIDTH * 0.8) * 0.015,
                             (SCREEN_WIDTH * 0.8) * 0.015};
 

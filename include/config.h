@@ -18,9 +18,6 @@
 #define STEP_TRANSLATION 40
 #define SHIP_SPEED 0.2f
 
-#define WHITE (int[3]){255, 255, 255}  // COULEURS
-#define BLACK (int[3]){0  , 0  ,   0}
-
 #define carre(x) (x) * (x)
 
 #endif
