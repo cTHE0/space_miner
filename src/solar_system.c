@@ -15,7 +15,7 @@ void generateSolarSystem(Planet **planets, int x, int y, int nbEntityGenerated, 
 
     // Generation des planetes
     for (int j = nbEntityGenerated + 1; j < nbEntityGenerated + nbEntityNewSS; j++) {
-        (*planets)[j].idPicture = rand () % 10 + 1;
+        (*planets)[j].idPicture = rand () % 8 + 1;
         (*planets)[j].maxOre = 1 + rand () % 1000;  // Les planetes ne sont pas toutes rentables
         (*planets)[j].currentOre = rand () % (int)(*planets)[j].maxOre;  // Les planetes ne sont pas toutes remplies de ressources
         (*planets)[j].regenerationTime = rand () % 10000;  // En millisecondes

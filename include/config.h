@@ -6,8 +6,8 @@
 #define MAP_SIZE 84000
 
 
-#define INIT_PLANET_COUNT 1000
-#define INIT_SHIP_COUNT 200
+#define INIT_PLANET_COUNT 3
+#define INIT_SHIP_COUNT 1
 #define CST_TEXT_NUMBER 18
 
 

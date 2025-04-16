@@ -14,7 +14,7 @@ void generatePlanets(Planet **planets, int planetCount) {
     int nbEntityNewSS;  // Nombre de planetes (étoile incluse) a ajouter dans le prochain systeme solaire
 
     while (nbEntityGenerated < planetCount) {
-        nbEntityNewSS = 3 + rand() % 15;  // Nb de planètes (étoile incluse) à rajouter ds système solaire suivant
+        nbEntityNewSS = 3 + rand() % 15;  // Nb de planètes (étoile incluse) à rajouter ds le nouveau système solaire
 
         if (nbEntityGenerated + nbEntityNewSS > planetCount){  // Le nouveau systeme solaire passe-t-il ?
             nbEntityNewSS = planetCount - nbEntityGenerated;

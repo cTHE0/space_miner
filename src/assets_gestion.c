@@ -40,7 +40,7 @@ SDL_Texture ***loadTextures(SDL_Renderer *renderer) {
      * il se doit.
      */
     const char *path = "assets/img/";
-    nbCategories = foldersNbFunction(path);          // Nombre de dossiers
+    nbCategories = foldersNbFunction(path);  // Nombre de dossiers
     char **foldersPath = foldersPathFunction(path);  // Chemins des dossiers
     nbPicturesPerCategory = filesNbFunction(foldersPath);  // Nombre de fichiers par categorie
 
