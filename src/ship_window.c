@@ -110,89 +110,106 @@ void initRectShipWindow(SDL_Texture **textTextures) {
     category5TitleRect.h = textureHeight * windowRect.w * 0.0005;
 }
 
-void displayShipWindow(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships, int shipCount) {
+void displayShipWindow(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
     initRectShipWindow(textTextures);
 
-    if (windowOpened == SHIP_WINDOW) {  // La fenetre d'information d'une fusee est-elle ouverte ?
-        // Affichage du bg
-        SDL_RenderCopy(renderer, imageTextures[4][3], NULL, &windowRect);
+    if (windowOpened != SHIP_WINDOW) {  // La fenetre d'information d'une fusee est-elle ouverte ?
+        return;
+    }
 
-        // Affichage de la croix pour fermer la fenetre
-        SDL_RenderCopy(renderer, imageTextures[2][0], NULL, &WindowCrossRect);
+    ShipWindowFondations(renderer, imageTextures, textTextures);
+    ShipWindowTravelInfo(renderer, imageTextures, textTextures, ships);
+    ShipWindowTravelTankManager(renderer, imageTextures, textTextures, ships);
+    ShipWindowTravelShipCond(renderer, imageTextures, textTextures, ships);
+    ShipWindowTravelTankCompo(renderer, imageTextures, textTextures, ships);
+}
 
-        // Affichage du titre de la page
-        SDL_RenderCopy(renderer, textTextures[4], NULL, &windowTitleRect);
+void ShipWindowFondations(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
+    // Affichage du bg
+    SDL_RenderCopy(renderer, imageTextures[4][3], NULL, &windowRect);
 
-        // Affichage des deux planetes
-        SDL_RenderCopy(renderer, imageTextures[5][ships[whichWindowShip].target->idPicture], NULL, &targetDisplayedRect);
-        SDL_RenderCopy(renderer, imageTextures[5][ships[whichWindowShip].base->idPicture], NULL, &baseDisplayedRect);
+    // Affichage de la croix pour fermer la fenetre
+    SDL_RenderCopy(renderer, imageTextures[2][0], NULL, &WindowCrossRect);
 
-        // Affichages des barres qui separent les informations de la page
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        SDL_RenderFillRect(renderer, &windowLine1Rect);  // Grande barre horizontale haut
-        SDL_RenderFillRect(renderer, &windowLine2Rect);  // Barre horizontale milieu
-        SDL_RenderFillRect(renderer, &windowLine3Rect);  // Barre horizontale droite milieu
-        SDL_RenderFillRect(renderer, &windowLine4Rect);  // Barre verticale du milieu
+    // Affichage du titre de la page
+    SDL_RenderCopy(renderer, textTextures[4], NULL, &windowTitleRect);
 
-        // Affichage du systeme de progression de la fusee dans l'espace
-        int dp = targetDisplayedRect.x - baseDisplayedRect.x - baseDisplayedRect.w;  // Distance en pixel entre 2 planètes sur fenêtre
-        float f;
+    // Affichages des barres qui separent les informations de la page
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderFillRect(renderer, &windowLine1Rect);  // Grande barre horizontale haut
+    SDL_RenderFillRect(renderer, &windowLine2Rect);  // Barre horizontale milieu
+    SDL_RenderFillRect(renderer, &windowLine3Rect);  // Barre horizontale droite milieu
+    SDL_RenderFillRect(renderer, &windowLine4Rect);  // Barre verticale du milieu
+}
 
-        if (ships[whichWindowShip].state == MOVING_TO_TARGET || ships[whichWindowShip].state == WAITING_ON_BASE) {  
-            // Fraction du chemin parcourue
-            f = distanceShipPlanet(ships[whichWindowShip], *ships[whichWindowShip].base)
-                / (distancePlanetPlanet(*ships[whichWindowShip].target, *ships[whichWindowShip].base) - ships[whichWindowShip].base->radius - ships[whichWindowShip].target->radius);  
+void ShipWindowTravelInfo(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
+    // Affichage du titre "Travel information"
+    SDL_RenderCopy(renderer, textTextures[5], NULL, &category1TitleRect);
 
-            // Tracer la fleche
-            narrowRect.x = baseDisplayedRect.x + baseDisplayedRect.w;
-            SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-            while (narrowRect.x < targetDisplayedRect.x) { 
-                if (narrowRect.x >= (int)(baseDisplayedRect.x + baseDisplayedRect.w + f * dp)) {
-                    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-                }
-                SDL_RenderFillRect(renderer, &narrowRect);
-                narrowRect.x += narrowRect.w * 2;
+    // Affichage des deux planetes
+    SDL_RenderCopy(renderer, imageTextures[5][ships[whichWindowShip].target->idPicture], NULL, &targetDisplayedRect);
+    SDL_RenderCopy(renderer, imageTextures[5][ships[whichWindowShip].base->idPicture], NULL, &baseDisplayedRect);
+
+    // Affichage du systeme de progression de la fusee dans l'espace
+    int dp = targetDisplayedRect.x - baseDisplayedRect.x - baseDisplayedRect.w;  // Distance en pixel entre 2 planètes sur fenêtre
+    float f;
+
+    if (ships[whichWindowShip].state == MOVING_TO_TARGET || ships[whichWindowShip].state == WAITING_ON_BASE) {  
+        // Fraction du chemin parcourue
+        f = distanceShipPlanet(ships[whichWindowShip], *ships[whichWindowShip].base)
+            / (distancePlanetPlanet(*ships[whichWindowShip].target, *ships[whichWindowShip].base) - ships[whichWindowShip].base->radius - ships[whichWindowShip].target->radius);  
+
+        // Tracer la fleche
+        narrowRect.x = baseDisplayedRect.x + baseDisplayedRect.w;
+        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+        while (narrowRect.x < targetDisplayedRect.x) { 
+            if (narrowRect.x >= (int)(baseDisplayedRect.x + baseDisplayedRect.w + f * dp)) {
+                SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
             }
-
-            // Tracer la fusee
-            destRectShip.x = baseDisplayedRect.x + baseDisplayedRect.w + f * dp - baseDisplayedRect.w * 0.3;
-            SDL_RenderCopyEx(renderer, imageTextures[6][ships[whichWindowShip].idPicture], &srcRectShip, &destRectShip, 90, NULL, SDL_FLIP_NONE);
-
-        } else if (ships[whichWindowShip].state == MOVING_TO_BASE || ships[whichWindowShip].state == WAITING_ON_TARGET) { 
-            // Fraction du chemin parcourue
-            f = distanceShipPlanet(ships[whichWindowShip], *ships[whichWindowShip].base)
-                / (distancePlanetPlanet(*ships[whichWindowShip].target, *ships[whichWindowShip].base) - ships[whichWindowShip].base->radius - ships[whichWindowShip].target->radius); 
-
-            // Tracer la fleche
-            narrowRect.x = baseDisplayedRect.x + baseDisplayedRect.w;
-            SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-            while (narrowRect.x < targetDisplayedRect.x) {
-                if (narrowRect.x >= (int)(baseDisplayedRect.x + baseDisplayedRect.w + f * dp)) {
-                    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-                } 
-                SDL_RenderFillRect(renderer, &narrowRect);
-                narrowRect.x += narrowRect.w * 2;
-            }
-
-            // Tracer la fusee
-            destRectShip.x = baseDisplayedRect.x + baseDisplayedRect.w + f * dp - baseDisplayedRect.w * 0.53;
-            SDL_RenderCopyEx(renderer, imageTextures[6][ships[whichWindowShip].idPicture], &srcRectShip, &destRectShip, 270, NULL, SDL_FLIP_NONE);
+            SDL_RenderFillRect(renderer, &narrowRect);
+            narrowRect.x += narrowRect.w * 2;
         }
 
-        // Affichage du titre "Travel information"
-        SDL_RenderCopy(renderer, textTextures[5], NULL, &category1TitleRect);
+        // Tracer la fusee
+        destRectShip.x = baseDisplayedRect.x + baseDisplayedRect.w + f * dp - baseDisplayedRect.w * 0.3;
+        SDL_RenderCopyEx(renderer, imageTextures[6][ships[whichWindowShip].idPicture], &srcRectShip, &destRectShip, 90, NULL, SDL_FLIP_NONE);
 
-        // Affichage du titre "Tank manager"
-        SDL_RenderCopy(renderer, textTextures[8], NULL, &category2TitleRect);
+    } else if (ships[whichWindowShip].state == MOVING_TO_BASE || ships[whichWindowShip].state == WAITING_ON_TARGET) { 
+        // Fraction du chemin parcourue
+        f = distanceShipPlanet(ships[whichWindowShip], *ships[whichWindowShip].base)
+            / (distancePlanetPlanet(*ships[whichWindowShip].target, *ships[whichWindowShip].base) - ships[whichWindowShip].base->radius - ships[whichWindowShip].target->radius); 
 
-        // Affichage du titre "Ship condition"
-        SDL_RenderCopy(renderer, textTextures[11], NULL, &category3TitleRect);
+        // Tracer la fleche
+        narrowRect.x = baseDisplayedRect.x + baseDisplayedRect.w;
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+        while (narrowRect.x < targetDisplayedRect.x) {
+            if (narrowRect.x >= (int)(baseDisplayedRect.x + baseDisplayedRect.w + f * dp)) {
+                SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+            } 
+            SDL_RenderFillRect(renderer, &narrowRect);
+            narrowRect.x += narrowRect.w * 2;
+        }
 
-        // Affichage du titre "Reported problemes"
-        SDL_RenderCopy(renderer, textTextures[13], NULL, &category4TitleRect);
-
-        // Affichage du titre "Tank composition"
-        SDL_RenderCopy(renderer, textTextures[14], NULL, &category5TitleRect);
-
+        // Tracer la fusee
+        destRectShip.x = baseDisplayedRect.x + baseDisplayedRect.w + f * dp - baseDisplayedRect.w * 0.53;
+        SDL_RenderCopyEx(renderer, imageTextures[6][ships[whichWindowShip].idPicture], &srcRectShip, &destRectShip, 270, NULL, SDL_FLIP_NONE);
     }
+}
+
+void ShipWindowTravelTankManager(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
+    // Affichage du titre "Tank manager"
+    SDL_RenderCopy(renderer, textTextures[8], NULL, &category2TitleRect);
+}
+
+void ShipWindowTravelShipCond(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
+    // Affichage du titre "Ship condition"
+    SDL_RenderCopy(renderer, textTextures[11], NULL, &category3TitleRect);
+
+    // Affichage du titre "Reported problemes"
+    SDL_RenderCopy(renderer, textTextures[13], NULL, &category4TitleRect);
+}
+
+void ShipWindowTravelTankCompo(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
+    // Affichage du titre "Tank composition"
+    SDL_RenderCopy(renderer, textTextures[14], NULL, &category5TitleRect);
 }

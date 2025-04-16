@@ -41,31 +41,30 @@ SDL_Texture* createTextTexture(SDL_Renderer* renderer, TTF_Font* font, SDL_Color
     return texture;
 }
 
-SDL_Texture **loadTextTextures(SDL_Renderer *renderer) {
-    TTF_Font *font = loadFonts("assets/fonts/f1.ttf", 56);  // Taille 56 optimale pour cette police
+SDL_Texture **loadTextTextures(SDL_Renderer *renderer) {  // ATENTION: ne pas oublier de modifier CST_TEXT_NUMBER
+    TTF_Font *font = loadFonts("assets/fonts/f1.ttf", 56);  // Taille optimale pour cette police : 56
     SDL_Texture **textTextures = malloc(CST_TEXT_NUMBER * sizeof(SDL_Texture*));
     TextToLoad cstTexts[CST_TEXT_NUMBER] = {{"Space Miner", {255, 255, 255, 255}, font},
-                                             {"Continue", {255, 255, 255, 255}, font},
-                                             {"New game", {255, 255, 255, 255}, font},
-                                             {"Settings", {255, 255, 255, 255}, font},
-                                             {"Ship #1,887 – Basic Rocket Model S", {0, 0, 0, 255}, font},
-                                             {"Travel information", {0, 0, 0, 255}, font},
-                                             {"NOT ENOUGH FUEL", {0, 0, 0, 255}, font},
-                                             {"STOP", {0, 0, 0, 255}, font},
-                                             {"Tank manager", {0, 0, 0, 255}, font},
-                                             {"Base:", {0, 0, 0, 255}, font},
-                                             {"Target:", {0, 0, 0, 255}, font},
-                                             {"Ship condition", {0, 0, 0, 255}, font},
-                                             {"Repair", {0, 0, 0, 255}, font},
-                                             {"Reported problems", {0, 0, 0, 255}, font},
-                                             {"Tank composition", {0, 0, 0, 255}, font},
-                                             {"Tank 1", {0, 0, 0, 255}, font},
-                                             {"Tank 2", {0, 0, 0, 255}, font},
-                                             {"Tank 3", {0, 0, 0, 255}, font},
-                                             {"STOP", {0, 0, 0, 255}, font},
-                                             {"STOP", {0, 0, 0, 255}, font}
-                                            }; // ATENTION: ne pas oublier de modifier CST_TEXT_NUMBER
-
+                                            {"Continue", {255, 255, 255, 255}, font},
+                                            {"New game", {255, 255, 255, 255}, font},
+                                            {"Settings", {255, 255, 255, 255}, font},
+                                            {"Ship #1,887 – Basic Rocket Model S", {0, 0, 0, 255}, font},
+                                            {"Travel information", {0, 0, 0, 255}, font},
+                                            {"NOT ENOUGH FUEL", {0, 0, 0, 255}, font},
+                                            {"STOP", {0, 0, 0, 255}, font},
+                                            {"Tank manager", {0, 0, 0, 255}, font},
+                                            {"Base:", {0, 0, 0, 255}, font},
+                                            {"Target:", {0, 0, 0, 255}, font},
+                                            {"Ship condition", {0, 0, 0, 255}, font},
+                                            {"Repair", {0, 0, 0, 255}, font},
+                                            {"Reported problems", {0, 0, 0, 255}, font},
+                                            {"Tank composition", {0, 0, 0, 255}, font},
+                                            {"Tank 1", {0, 0, 0, 255}, font},
+                                            {"Tank 2", {0, 0, 0, 255}, font},
+                                            {"Tank 3", {0, 0, 0, 255}, font},
+                                            {"STOP", {0, 0, 0, 255}, font},
+                                            {"STOP", {0, 0, 0, 255}, font}
+                                           };
 
     for (int i = 0; i < CST_TEXT_NUMBER; i++) {
         textTextures[i] = createTextTexture(renderer, cstTexts[i].font, cstTexts[i].color, cstTexts[i].text);
@@ -75,7 +74,7 @@ SDL_Texture **loadTextTextures(SDL_Renderer *renderer) {
 }
 
 void destroyTextTextures(SDL_Texture **textTextures) {
-    for (int i = 0; i<CST_TEXT_NUMBER; i++) {
+    for (int i = 0; i < CST_TEXT_NUMBER; i++) {
         SDL_DestroyTexture(textTextures[i]);
     }
     free(textTextures);

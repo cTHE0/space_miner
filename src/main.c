@@ -35,6 +35,8 @@ int main(void) {
     SDL_Texture ***imageTextures = loadTextures(renderer);
     SDL_Texture **textTextures = loadTextTextures(renderer);
 
+    
+
     // Lancement de space_miner
     GameState state = LANDING_PAGE;
 
