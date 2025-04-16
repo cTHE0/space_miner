@@ -7,24 +7,26 @@
 #include "config.h"
 #include "solar_system.h"
 
-void generatePlanets(Planet **planets, int count) {
-    *planets = malloc(count * sizeof(Planet));
+void generatePlanets(Planet **planets, int planetCount) {
+    *planets = malloc(planetCount * sizeof(Planet));
 
-    int n = 0; //nombre planètes (+étoiles) déjà présentent
-    int k;
+    int nbEntityGenerated = 0;  // Nombre planètes (étoiles incluses) déjà présentes
+    int nbEntityNewSS;  // Nombre de planetes (étoile incluse) a ajouter dans le prochain systeme solaire
 
-    while (n < count) {
-        k = rand() % 10; //nb de planètes (sans étoile) à rajouter ds système solaire suivant
-        if (k+1+n <= count){ //si on peut encore rajouter k planètes avec leur étoile correspondante
-            generateSolarSystem(planets, rand() % MAP_SIZE, rand() % MAP_SIZE, n, k);
-            n += (k+1);
+    while (nbEntityGenerated < planetCount) {
+        nbEntityNewSS = 3 + rand() % 15;  // Nb de planètes (étoile incluse) à rajouter ds système solaire suivant
+
+        if (nbEntityGenerated + nbEntityNewSS > planetCount){  // Le nouveau systeme solaire passe-t-il ?
+            nbEntityNewSS = planetCount - nbEntityGenerated;
         }
-    }
 
+        generateSolarSystem(planets, rand() % MAP_SIZE, rand() % MAP_SIZE, nbEntityGenerated, nbEntityNewSS);
+        nbEntityGenerated += nbEntityNewSS;
+    }
 }
 
-void renderPlanets(SDL_Renderer *renderer, Planet *planets, SDL_Texture ***texturePlanet, int count) {
-    for (int i = 0; i < count; i++) {
+void renderPlanets(SDL_Renderer *renderer, Planet *planets, SDL_Texture ***texturePlanet, int planetCount) {
+    for (int i = 0; i < planetCount; i++) {
         //(screenX, screenY) = coordonnees sur l'ecran physique, du point en haut à gauche du rect de la planete
         float screenX = (planets[i].x - camera.rect.x - planets[i].radius - SCREEN_WIDTH / 2.f) * camera.scale + SCREEN_WIDTH / 2.f;  // (planets[i].x, planets[i].y) = coordonnees sur la map
         float screenY = (planets[i].y - camera.rect.y - planets[i].radius - SCREEN_HEIGHT / 2.f) * camera.scale + SCREEN_HEIGHT / 2.f;  
