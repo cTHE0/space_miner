@@ -44,7 +44,22 @@ SDL_Texture **loadTextTextures(SDL_Renderer *renderer) {
     char *cstTexts[CST_TEXT_NUMBER] = {"Space Miner",
                                        "Continue",
                                        "New Game",
-                                       "Settings"}; // ATENTION: ne pas oublier de modifier CST_TEXT_NUMBER
+                                       "Settings",
+                                       "n°1.887 - Basic Rocket Model S",
+                                        "Travel information",
+                                        "NOT ENOUGH FUEL",
+                                        "STOP",
+                                        "Tank manager",
+                                        "Base: ",
+                                        "Target: ",
+                                        "Ship condition",
+                                        "Repair",
+                                        "Reported problems",
+                                        "Tank composition",
+                                        "Tank 1",
+                                        "Tank 2",
+                                        "Tank 3",
+                                    }; // ATENTION: ne pas oublier de modifier CST_TEXT_NUMBER
 
 
     for (int i = 0; i < CST_TEXT_NUMBER; i++) {

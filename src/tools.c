@@ -105,11 +105,11 @@ void *moveToEnd(void *list, int nb_elem, int type_size, int index) {
 }
 
 float distanceShipPlanet(Ship ship, Planet planet) {
-    return sqrt(carre(ship.x + ship.w / 2. - planet.x) + carre(ship.y + ship.h / 2. - planet.y));
+    return sqrt(carre(ship.x + ship.w / 2. - (planet.x + planet.radius)) + carre(ship.y + ship.h / 2. - (planet.y + planet.radius)));
 }
 
 float distancePlanetPlanet(Planet planet1, Planet planet2) {
-    return sqrt(carre(planet1.x - planet2.x) + carre(planet1.y - planet2.y));
+    return sqrt(carre((planet1.x + planet1.radius)- (planet2.x + planet2.radius)) + carre((planet1.y + planet1.radius) - (planet2.y + planet2.radius)));
 }
 
 float distanceShipShip(Ship ship1, Ship ship2) {

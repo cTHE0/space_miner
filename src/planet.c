@@ -14,7 +14,7 @@ void generatePlanets(Planet **planets, int count) {
     int k;
 
     while (n < count) {
-        k = rand() % 6; //nb de planètes (sans étoile) à rajouter ds système solaire suivant
+        k = rand() % 10; //nb de planètes (sans étoile) à rajouter ds système solaire suivant
         if (k+1+n <= count){ //si on peut encore rajouter k planètes avec leur étoile correspondante
             generateSolarSystem(planets, rand() % MAP_SIZE, rand() % MAP_SIZE, n, k);
             n += (k+1);
