@@ -8,7 +8,7 @@
 
 #define INIT_PLANET_COUNT 3
 #define INIT_SHIP_COUNT 1
-#define CST_TEXT_NUMBER 18
+#define CST_TEXT_NUMBER 20
 
 
 #define SPRITE_SHEETS_DELAY 100  // En nombre de tick
@@ -19,6 +19,7 @@
 #define SHIP_SPEED 0.2f
 
 #define WHITE (int[3]){255, 255, 255}  // COULEURS
+#define BLACK (int[3]){0  , 0  ,   0}
 
 #define carre(x) (x) * (x)
 

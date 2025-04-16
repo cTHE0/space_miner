@@ -2,6 +2,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <stdio.h> 
 #include "config.h"
+#include "text.h"
 
 void init_SDL_ttf(void) {
     if (TTF_Init() == -1) {
@@ -17,19 +18,21 @@ void quit_SDL_ttf(TTF_Font *font) {  // Permet de quitter SDL_ttf et de fermer l
 
 TTF_Font* loadFonts(const char* path, int size) {  // Chargement de toutes les polices utilisees dans le jeu
     TTF_Font* font = TTF_OpenFont(path, size);
+
     if (!font) {
         fprintf(stderr, "Erreur de chargement de la police: %s\n", TTF_GetError());
     }
+
     return font;
 }
 
-SDL_Texture* create_text_texture(SDL_Renderer* renderer, TTF_Font* font, int color[3], const char* text) {
-    SDL_Color sdl_color = {color[0], color[1], color[2], 255};
-    SDL_Surface* surface = TTF_RenderText_Blended(font, text, sdl_color);
+SDL_Texture* createTextTexture(SDL_Renderer* renderer, TTF_Font* font, SDL_Color color, const char* text) {
+    SDL_Surface* surface = TTF_RenderUTF8_Solid(font, text, color);
     if (!surface) {
         fprintf(stderr, "Erreur de rendu du texte: %s\n", TTF_GetError());
         return NULL;
     }
+
     SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
     SDL_FreeSurface(surface);
     if (!texture) {
@@ -39,31 +42,33 @@ SDL_Texture* create_text_texture(SDL_Renderer* renderer, TTF_Font* font, int col
 }
 
 SDL_Texture **loadTextTextures(SDL_Renderer *renderer) {
-    TTF_Font *font = loadFonts("assets/fonts/f1.ttf", 56); // Taille 56 optimale pour cette police
+    TTF_Font *font = loadFonts("assets/fonts/f1.ttf", 56);  // Taille 56 optimale pour cette police
     SDL_Texture **textTextures = malloc(CST_TEXT_NUMBER * sizeof(SDL_Texture*));
-    char *cstTexts[CST_TEXT_NUMBER] = {"Space Miner",
-                                       "Continue",
-                                       "New Game",
-                                       "Settings",
-                                       "n°1.887 - Basic Rocket Model S",
-                                        "Travel information",
-                                        "NOT ENOUGH FUEL",
-                                        "STOP",
-                                        "Tank manager",
-                                        "Base: ",
-                                        "Target: ",
-                                        "Ship condition",
-                                        "Repair",
-                                        "Reported problems",
-                                        "Tank composition",
-                                        "Tank 1",
-                                        "Tank 2",
-                                        "Tank 3",
-                                    }; // ATENTION: ne pas oublier de modifier CST_TEXT_NUMBER
+    TextToLoad cstTexts[CST_TEXT_NUMBER] = {{"Space Miner", {255, 255, 255, 255}, font},
+                                             {"Continue", {255, 255, 255, 255}, font},
+                                             {"New game", {255, 255, 255, 255}, font},
+                                             {"Settings", {255, 255, 255, 255}, font},
+                                             {"Ship #1,887 – Basic Rocket Model S", {0, 0, 0, 255}, font},
+                                             {"Travel information", {0, 0, 0, 255}, font},
+                                             {"NOT ENOUGH FUEL", {0, 0, 0, 255}, font},
+                                             {"STOP", {0, 0, 0, 255}, font},
+                                             {"Tank manager", {0, 0, 0, 255}, font},
+                                             {"Base:", {0, 0, 0, 255}, font},
+                                             {"Target:", {0, 0, 0, 255}, font},
+                                             {"Ship condition", {0, 0, 0, 255}, font},
+                                             {"Repair", {0, 0, 0, 255}, font},
+                                             {"Reported problems", {0, 0, 0, 255}, font},
+                                             {"Tank composition", {0, 0, 0, 255}, font},
+                                             {"Tank 1", {0, 0, 0, 255}, font},
+                                             {"Tank 2", {0, 0, 0, 255}, font},
+                                             {"Tank 3", {0, 0, 0, 255}, font},
+                                             {"STOP", {0, 0, 0, 255}, font},
+                                             {"STOP", {0, 0, 0, 255}, font}
+                                            }; // ATENTION: ne pas oublier de modifier CST_TEXT_NUMBER
 
 
     for (int i = 0; i < CST_TEXT_NUMBER; i++) {
-        textTextures[i] = create_text_texture(renderer, font, WHITE, cstTexts[i]);
+        textTextures[i] = createTextTexture(renderer, cstTexts[i].font, cstTexts[i].color, cstTexts[i].text);
     }
 
     return textTextures;

@@ -7,9 +7,9 @@
 
 lpFrameControler lpFrameController = {0, 0, 0, 0};
 
-SDL_Rect bgButton1Rect = {SCREEN_WIDTH * 0.55, SCREEN_HEIGHT * 0.35, SCREEN_WIDTH * 0.27, SCREEN_HEIGHT * 0.07};  // Position du background des boutons sur le menu
-SDL_Rect bgButton2Rect = {SCREEN_WIDTH * 0.55, SCREEN_HEIGHT * 0.47, SCREEN_WIDTH * 0.27, SCREEN_HEIGHT * 0.07};
-SDL_Rect bgButton3Rect = {SCREEN_WIDTH * 0.55, SCREEN_HEIGHT * 0.59, SCREEN_WIDTH * 0.27, SCREEN_HEIGHT * 0.07};
+SDL_Rect bgButton1Rect = {SCREEN_WIDTH * 0.53, SCREEN_HEIGHT * 0.358, SCREEN_WIDTH * 0.3, SCREEN_HEIGHT * 0.07};  // Position du background des boutons sur le menu
+SDL_Rect bgButton2Rect = {SCREEN_WIDTH * 0.53, SCREEN_HEIGHT * 0.478, SCREEN_WIDTH * 0.3, SCREEN_HEIGHT * 0.07};
+SDL_Rect bgButton3Rect = {SCREEN_WIDTH * 0.53, SCREEN_HEIGHT * 0.598, SCREEN_WIDTH * 0.3, SCREEN_HEIGHT * 0.07};
 
 int bg_button_a_afficher;
 
@@ -97,7 +97,10 @@ void displayMenu(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Textu
     SDL_RenderCopyEx(renderer, imageTextures[0][1], NULL, &asteroid2Rect, -3 * lpFrameController.frameIndex2, NULL, SDL_FLIP_NONE);
 
     // Affichage du titre Space Miner
-    SDL_Rect titleRect = {SCREEN_WIDTH * 0.45, SCREEN_HEIGHT * 0.07, SCREEN_WIDTH * 0.5, SCREEN_HEIGHT * 0.2};
+    int textureWidth, textureHeight;  // Permet de garder les proportions du texte
+    SDL_QueryTexture(textTextures[0], NULL, NULL, &textureWidth, &textureHeight);
+
+    SDL_Rect titleRect = {SCREEN_WIDTH * 0.38, SCREEN_HEIGHT * 0.07, textureWidth * SCREEN_WIDTH * 0.0025, textureHeight * SCREEN_HEIGHT * 0.0025};
     SDL_RenderCopy(renderer, textTextures[0], NULL, &titleRect);  // Affiche "Space Miner"
 
     switch (bg_button_a_afficher) {
@@ -114,13 +117,16 @@ void displayMenu(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Textu
             break;
     }
     
-    SDL_Rect text1Rect = {SCREEN_WIDTH * 0.625, SCREEN_HEIGHT * 0.35, SCREEN_WIDTH * 0.13, SCREEN_HEIGHT * 0.07};
+    SDL_QueryTexture(textTextures[1], NULL, NULL, &textureWidth, &textureHeight);  // Permet de garder les proportions du texte
+    SDL_Rect text1Rect = {SCREEN_WIDTH * 0.618, SCREEN_HEIGHT * 0.35, textureWidth * SCREEN_HEIGHT * 0.0013, textureHeight * SCREEN_HEIGHT * 0.0013};
     SDL_RenderCopy(renderer, textTextures[1], NULL, &text1Rect);  // Affiche "Continue"
 
-    SDL_Rect text2Rect = {SCREEN_WIDTH * 0.625, SCREEN_HEIGHT * 0.47, SCREEN_WIDTH * 0.13, SCREEN_HEIGHT * 0.07};
+    SDL_QueryTexture(textTextures[2], NULL, NULL, &textureWidth, &textureHeight);
+    SDL_Rect text2Rect = {SCREEN_WIDTH * 0.608, SCREEN_HEIGHT * 0.47, textureWidth * SCREEN_HEIGHT * 0.0013, textureHeight * SCREEN_HEIGHT * 0.0013};
     SDL_RenderCopy(renderer, textTextures[2], NULL, &text2Rect);  // Affiche "New game"
 
-    SDL_Rect text3Rect = {SCREEN_WIDTH * 0.625, SCREEN_HEIGHT * 0.59, SCREEN_WIDTH * 0.13, SCREEN_HEIGHT * 0.07};
+    SDL_QueryTexture(textTextures[3], NULL, NULL, &textureWidth, &textureHeight);
+    SDL_Rect text3Rect = {SCREEN_WIDTH * 0.62, SCREEN_HEIGHT * 0.59, textureWidth * SCREEN_HEIGHT * 0.0013, textureHeight * SCREEN_HEIGHT * 0.0013};
     SDL_RenderCopy(renderer, textTextures[3], NULL, &text3Rect);  // Affiche "Settings"
 
     SDL_RenderPresent(renderer);
