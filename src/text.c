@@ -62,8 +62,10 @@ SDL_Texture **loadTextTextures(SDL_Renderer *renderer) {  // ATENTION: ne pas ou
                                             {"Tank 1", {0, 0, 0, 255}, font},
                                             {"Tank 2", {0, 0, 0, 255}, font},
                                             {"Tank 3", {0, 0, 0, 255}, font},
+                                            {"Tank 4", {0, 0, 0, 255}, font},
+                                            {"Tank 5", {0, 0, 0, 255}, font},
+                                            {"Tank 6", {0, 0, 0, 255}, font},
                                             {"STOP", {0, 0, 0, 255}, font},
-                                            {"STOP", {0, 0, 0, 255}, font}
                                            };
 
     for (int i = 0; i < CST_TEXT_NUMBER; i++) {
