@@ -23,6 +23,10 @@ void generatePlanets(Planet **planets, int planetCount) {
         generateSolarSystem(planets, rand() % MAP_SIZE, rand() % MAP_SIZE, nbEntityGenerated, nbEntityNewSS);
         nbEntityGenerated += nbEntityNewSS;
     }
+
+    Planet originPlanet = (*planets)[1];
+    (*planets)[1] = (*planets)[0];
+    (*planets)[0] = originPlanet;
 }
 
 void renderPlanets(SDL_Renderer *renderer, Planet *planets, SDL_Texture ***texturePlanet, int planetCount) {
