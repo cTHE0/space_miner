@@ -3,11 +3,11 @@
 
 #define SCREEN_WIDTH 1920 // (autre 16/9 courant plus petit : 1280 par 720)
 #define SCREEN_HEIGHT 1080
-#define MAP_SIZE 84000
+#define MAP_SIZE 672000
 
 
-#define INIT_PLANET_COUNT 3
-#define INIT_SHIP_COUNT 1
+#define INIT_PLANET_COUNT 100
+#define INIT_SHIP_COUNT 10000
 #define CST_TEXT_NUMBER 20
 
 
@@ -16,7 +16,7 @@
 #define FUEL_UPDATE_INTERVAL 200  // En millisecondes
 
 #define STEP_TRANSLATION 40
-#define SHIP_SPEED 0.2f
+#define SHIP_SPEED 1.2f
 
 #define carre(x) (x) * (x)
 

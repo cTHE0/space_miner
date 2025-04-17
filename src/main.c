@@ -50,6 +50,8 @@ int main(void) {
                 if (state == GAME) {
                     generatePlanets(&planets, planetCount);
                     initShips(&ships, shipCount, planets, planetCount);
+                    camera.rect.x = planets[0].x;
+                    camera.rect.y = planets[0].y;
                 }
                 break;
             

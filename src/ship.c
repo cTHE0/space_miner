@@ -16,7 +16,7 @@ void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
 
     for (int i = 0; i < shipCount; i++) {
         (*ships)[i].shiptype = TRANSPORTER;
-        (*ships)[i].idPicture = rand() % 10;
+        (*ships)[i].idPicture = rand() % 11;
         (*ships)[i].base = &planets[0];  // La première planète est la base de chaque vaisseau
         (*ships)[i].target = &planets[rand() % (planetCount - 1)] + 1;
         (*ships)[i].x = (*ships)[i].base->x;

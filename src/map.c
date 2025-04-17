@@ -8,11 +8,11 @@ void renderMap(SDL_Renderer *renderer, SDL_Texture *textureMap) {
     SDL_Rect destRect;
 
     if (camera.scale > 0.35 ) {
-        destRect.w = MAP_SIZE * camera.scale / 24 ;  // Largeur adaptée au zoom
-        destRect.h = MAP_SIZE * camera.scale / 24;  // Hauteur adaptée au zoom
+        destRect.w = MAP_SIZE * camera.scale / 192 ;  // Largeur adaptée au zoom
+        destRect.h = MAP_SIZE * camera.scale / 192;  // Hauteur adaptée au zoom
 
-        for (int i = 0; i<24; i++){
-            for (int j = 0; j<24; j++){
+        for (int i = 0; i < 192; i++){
+            for (int j = 0; j < 192; j++){
                 // Appliquer le décalage et le zoom de la caméra
                 destRect.x = ((i*3500 - camera.rect.x - SCREEN_WIDTH / 2.f) * camera.scale + SCREEN_WIDTH / 2.f);
                 destRect.y = ((j*3500 - camera.rect.y - SCREEN_HEIGHT / 2.f) * camera.scale + SCREEN_HEIGHT / 2.f);
