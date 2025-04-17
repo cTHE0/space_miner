@@ -8,7 +8,7 @@
 
 #define INIT_PLANET_COUNT 3
 #define INIT_SHIP_COUNT 1
-#define CST_TEXT_NUMBER 20
+#define CST_TEXT_NUMBER 22
 
 
 #define SPRITE_SHEETS_DELAY 100  // En nombre de tick
