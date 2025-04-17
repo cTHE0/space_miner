@@ -5,8 +5,8 @@
 #define SCREEN_HEIGHT 1080
 #define MAP_SIZE 350000
 
-#define INIT_PLANET_COUNT 3
-#define INIT_SHIP_COUNT 1
+#define INIT_PLANET_COUNT 10
+#define INIT_SHIP_COUNT 15
 #define CST_TEXT_NUMBER 22
 
 #define SPRITE_SHEETS_DELAY 100  // En nombre de tick
@@ -14,7 +14,7 @@
 #define FUEL_UPDATE_INTERVAL 200  // En millisecondes
 
 #define STEP_TRANSLATION 40
-#define SHIP_SPEED 0.8f
+#define SHIP_SPEED 0.2f
 
 #define carre(x) (x) * (x)
 
