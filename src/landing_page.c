@@ -100,7 +100,7 @@ void displayMenu(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Textu
     int textureWidth, textureHeight;  // Permet de garder les proportions du texte
     SDL_QueryTexture(textTextures[0], NULL, NULL, &textureWidth, &textureHeight);
 
-    SDL_Rect titleRect = {SCREEN_WIDTH * 0.38, SCREEN_HEIGHT * 0.07, textureWidth * SCREEN_WIDTH * 0.0025, textureHeight * SCREEN_HEIGHT * 0.0025};
+    SDL_Rect titleRect = {SCREEN_WIDTH * 0.42, SCREEN_HEIGHT * 0.07, textureWidth * SCREEN_HEIGHT * 0.004, textureHeight * SCREEN_HEIGHT * 0.004};
     SDL_RenderCopy(renderer, textTextures[0], NULL, &titleRect);  // Affiche "Space Miner"
 
     switch (bg_button_a_afficher) {

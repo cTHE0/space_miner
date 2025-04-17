@@ -119,9 +119,9 @@ void displayShipWindow(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL
 
     ShipWindowFondations(renderer, imageTextures, textTextures);
     ShipWindowTravelInfo(renderer, imageTextures, textTextures, ships);
-    ShipWindowTravelTankManager(renderer, imageTextures, textTextures, ships);
-    ShipWindowTravelShipCond(renderer, imageTextures, textTextures, ships);
-    ShipWindowTravelTankCompo(renderer, imageTextures, textTextures, ships);
+    ShipWindowTankManager(renderer, imageTextures, textTextures, ships);
+    ShipWindowShipCond(renderer, imageTextures, textTextures, ships);
+    ShipWindowTankCompo(renderer, imageTextures, textTextures, ships);
 }
 
 void ShipWindowFondations(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
@@ -196,12 +196,12 @@ void ShipWindowTravelInfo(SDL_Renderer *renderer, SDL_Texture ***imageTextures, 
     }
 }
 
-void ShipWindowTravelTankManager(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
+void ShipWindowTankManager(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
     // Affichage du titre "Tank manager"
     SDL_RenderCopy(renderer, textTextures[8], NULL, &category2TitleRect);
 }
 
-void ShipWindowTravelShipCond(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
+void ShipWindowShipCond(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
     // Affichage du titre "Ship condition"
     SDL_RenderCopy(renderer, textTextures[11], NULL, &category3TitleRect);
 
@@ -209,7 +209,7 @@ void ShipWindowTravelShipCond(SDL_Renderer *renderer, SDL_Texture ***imageTextur
     SDL_RenderCopy(renderer, textTextures[13], NULL, &category4TitleRect);
 }
 
-void ShipWindowTravelTankCompo(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
+void ShipWindowTankCompo(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
     // Affichage du titre "Tank composition"
     SDL_RenderCopy(renderer, textTextures[14], NULL, &category5TitleRect);
 }

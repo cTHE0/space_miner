@@ -47,7 +47,7 @@ int main(void) {
                 updateFrameIndex();
                 displayMenu(renderer, imageTextures, textTextures);
 
-                if (state == GAME) {  
+                if (state == GAME) {
                     generatePlanets(&planets, planetCount);
                     initShips(&ships, shipCount, planets, planetCount);
                 }

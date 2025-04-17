@@ -8,9 +8,9 @@ void displayWindow(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Tex
         void initRectShipWindow(SDL_Texture **textTextures);
         void ShipWindowFondations(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures);
         void ShipWindowTravelInfo(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships);
-        void ShipWindowTravelTankManager(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships);
-        void ShipWindowTravelShipCond(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships);
-        void ShipWindowTravelTankCompo(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships);
+        void ShipWindowTankManager(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships);
+        void ShipWindowShipCond(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships);
+        void ShipWindowTankCompo(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships);
 
     void displayPlanetWindow(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planets, int planetCount);
 
