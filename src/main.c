@@ -35,12 +35,18 @@ int main(void) {
     SDL_Texture ***imageTextures = loadTextures(renderer);
     SDL_Texture **textTextures = loadTextTextures(renderer);
 
-    
+    // Variables pour mesurer les FPS
+    Uint32 toShowFPS = SDL_GetTicks();
+    Uint32 toLimitFPS;
+    int frameCount = 0;
 
     // Lancement de space_miner
     GameState state = LANDING_PAGE;
 
     while (state != QUIT) {
+        frameCount++;
+        toLimitFPS = SDL_GetTicks();
+
         switch (state) {
             case LANDING_PAGE:
                 handleMenuEvents(&state);
@@ -67,6 +73,18 @@ int main(void) {
             default:
                 state = QUIT;
                 break;
+        }
+
+        // Affichage des FPS
+        if (SDL_GetTicks() - toShowFPS >= 2000) {
+            printf("FPS: %d\n", (frameCount * 1000) / (SDL_GetTicks() - toShowFPS));
+            frameCount = 0;
+            toShowFPS = SDL_GetTicks();
+        }
+            
+        // Limite les FPS
+        if ((SDL_GetTicks() - toLimitFPS) < 16) {
+            SDL_Delay(1000 / FPS - (SDL_GetTicks() - toLimitFPS));
         }
     }
     

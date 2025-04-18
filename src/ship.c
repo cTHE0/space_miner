@@ -23,7 +23,7 @@ void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
         (*ships)[i].y = (*ships)[i].base->y;
         (*ships)[i].w = 62;
         (*ships)[i].h = 62;
-        (*ships)[i].speed = (rand() / (float)RAND_MAX * 0.7 + 0.3) * SHIP_SPEED;
+        (*ships)[i].speed = (rand() / (float)RAND_MAX * 0.6 + 0.4) * SHIP_SPEED;
         (*ships)[i].state = MOVING_TO_TARGET;
         (*ships)[i].maxLife = 100;
         (*ships)[i].currentLife = rand() % (int)(*ships)[i].maxLife;
