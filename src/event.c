@@ -61,7 +61,12 @@ void handleEvents(GameState *state, Ship *ships, int shipCount, Planet *planets,
             case SDL_KEYDOWN:
                 switch (event.key.keysym.sym) {
                     case SDLK_ESCAPE:
-                        *state = QUIT;
+                        if (windowOpened) {
+                            windowOpened = NO_WINDOW;
+                        }
+                        else {
+                            *state = QUIT;
+                        }
                         break;
                     case SDLK_o:
                         zoomCamera(1.1f);

@@ -21,8 +21,5 @@ void renderMap(SDL_Renderer *renderer, SDL_Texture *textureMap) {
             }
         }
     }
-
-    
-    
     
 }

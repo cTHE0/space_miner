@@ -11,7 +11,7 @@ SDL_Rect bgButton1Rect = {SCREEN_WIDTH * 0.53, SCREEN_HEIGHT * 0.358, SCREEN_WID
 SDL_Rect bgButton2Rect = {SCREEN_WIDTH * 0.53, SCREEN_HEIGHT * 0.478, SCREEN_WIDTH * 0.3, SCREEN_HEIGHT * 0.07};
 SDL_Rect bgButton3Rect = {SCREEN_WIDTH * 0.53, SCREEN_HEIGHT * 0.598, SCREEN_WIDTH * 0.3, SCREEN_HEIGHT * 0.07};
 
-int bg_button_a_afficher;
+int bg_button_a_afficher = 0;
 
 
 void handleMenuEvents(GameState *state) {   // Gère les événements du menu
@@ -30,6 +30,14 @@ void handleMenuEvents(GameState *state) {   // Gère les événements du menu
                 switch (event.key.keysym.sym) {
                     case SDLK_ESCAPE:      // Quitter depuis le menu
                         *state = QUIT;
+                        break;
+                    case SDLK_TAB:
+                        bg_button_a_afficher = (bg_button_a_afficher + 1) % 4;
+                        break;
+                    case SDLK_RETURN:
+                        if (bg_button_a_afficher == 1 || bg_button_a_afficher == 2){
+                            *state = GAME;
+                        }
                         break;
                     default:
                         break;
