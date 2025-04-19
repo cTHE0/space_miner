@@ -165,7 +165,7 @@ void initArrayOfSyllabes() {
     }
 }
 
-void generateRandomName(char *randomString) {
+void generateRandomName(char *randomString, int seed) {
     // Creation du tableau de syllabes
     initArrayOfSyllabes();
 
@@ -177,7 +177,11 @@ void generateRandomName(char *randomString) {
     // Generation du nom
     char syllabe[4];
     for (int i = 0; i < nbSyllabes; i++) {
-        strcpy(syllabe, arrayOfSyllabes[rand() % sizeArrayOfSyllabes]);  // Generer une nouvelle syllabe
+        strcpy(syllabe, arrayOfSyllabes[seed % sizeArrayOfSyllabes]);  // Generer une nouvelle syllabe
         strcat(randomString, syllabe);  // Ajouter une nouvelle syllabe
     }
+}
+
+void generatePlanetName(char *randomString, int x, int y) { //Par la suite mettre cette fonction dans planet.c selon la vision
+    generateRandomName(randomString, (x+y+SEED));
 }

@@ -12,7 +12,7 @@
 
 
 int whichWindowPlanet = -1;
-static SDL_Rect planetDisplayedRect = {SCREEN_WIDTH / 4., SCREEN_HEIGHT / 3., 300, 300};
+static SDL_Rect planetDisplayedRect = {SCREEN_WIDTH / 8., SCREEN_HEIGHT / 3., 300, 300};
 
 void displayPlanetWindow(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planets, int planetCount) {
     if (windowOpened == PLANET_WINDOW) {  // Affichage de la fenetre

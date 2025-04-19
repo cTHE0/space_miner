@@ -16,6 +16,7 @@
 #define STEP_TRANSLATION 40
 #define SHIP_SPEED 2.f
 #define FPS 60
+#define SEED 18767
 
 #define carre(x) (x) * (x)
 

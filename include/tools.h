@@ -11,6 +11,7 @@ float distanceShipPlanet(Ship ship, Planet planet);
 float distancePlanetPlanet(Planet planet1, Planet planet2);
 float distanceShipShip(Ship ship1, Ship ship2);
 void initArrayOfSyllabes();
-void generateRandomName(char *randomString);
+void generateRandomName(char *randomString, int seed);
+void generatePlanetName(char *randomString, int x, int y);
 
 #endif

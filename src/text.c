@@ -4,6 +4,10 @@
 #include "config.h"
 #include "text.h"
 
+TTF_Font *font;
+
+SDL_Color black = {0, 0, 0, 255}; //noir opaque
+
 void init_SDL_ttf(void) {
     if (TTF_Init() == -1) {
         fprintf(stderr, "Erreur d'initialisation de SDL_ttf: %s\n", TTF_GetError());
@@ -17,13 +21,13 @@ void quit_SDL_ttf(TTF_Font *font) {  // Permet de quitter SDL_ttf et de fermer l
 }
 
 TTF_Font* loadFonts(const char* path, int size) {  // Chargement de toutes les polices utilisees dans le jeu
-    TTF_Font* font = TTF_OpenFont(path, size);
+    TTF_Font* nv_font = TTF_OpenFont(path, size);
 
-    if (!font) {
+    if (!nv_font) {
         fprintf(stderr, "Erreur de chargement de la police: %s\n", TTF_GetError());
     }
 
-    return font;
+    return nv_font;
 }
 
 SDL_Texture* createTextTexture(SDL_Renderer* renderer, TTF_Font* font, SDL_Color color, const char* text) {
@@ -42,7 +46,7 @@ SDL_Texture* createTextTexture(SDL_Renderer* renderer, TTF_Font* font, SDL_Color
 }
 
 SDL_Texture **loadTextTextures(SDL_Renderer *renderer) {  // ATENTION: ne pas oublier de modifier CST_TEXT_NUMBER
-    TTF_Font *font = loadFonts("assets/fonts/f1.ttf", 56);  // Taille optimale pour cette police : 56
+    font = loadFonts("assets/fonts/f1.ttf", 56);  // Taille optimale pour cette police : 56
     SDL_Texture **textTextures = malloc(CST_TEXT_NUMBER * sizeof(SDL_Texture*));
     TextToLoad cstTexts[CST_TEXT_NUMBER] = {{"Space Miner", {255, 255, 255, 255}, font},
                                             {"Continue", {255, 255, 255, 255}, font},
@@ -62,10 +66,10 @@ SDL_Texture **loadTextTextures(SDL_Renderer *renderer) {  // ATENTION: ne pas ou
                                             {"Tank 1", {0, 0, 0, 255}, font},
                                             {"Tank 2", {0, 0, 0, 255}, font},
                                             {"Tank 3", {0, 0, 0, 255}, font},
-                                            {"Tank 4", {0, 0, 0, 255}, font},
-                                            {"Tank 5", {0, 0, 0, 255}, font},
-                                            {"Tank 6", {0, 0, 0, 255}, font},
-                                            {"STOP", {0, 0, 0, 255}, font},
+                                            {"number", {0, 0, 0, 255}, font}, //Zone de stockage pour un numéro
+                                            {"number", {0, 0, 0, 255}, font}, //Zone de stockage pour un autre numéro
+                                            {"planet_name", {0, 0, 0, 255}, font}, //Texture qui contiendra le nom d'une planète (actualisé seulement lors de l'ouverture d'une fenêtre)
+                                            {"planet_name", {0, 0, 0, 255}, font},
                                            };
 
     for (int i = 0; i < CST_TEXT_NUMBER; i++) {
