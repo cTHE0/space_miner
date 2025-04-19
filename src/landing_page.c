@@ -32,7 +32,7 @@ void handleMenuEvents(GameState *state) {   // Gère les événements du menu
                         *state = QUIT;
                         break;
                     case SDLK_TAB:
-                        bg_button_a_afficher = (bg_button_a_afficher + 1) % 4;
+                        bg_button_a_afficher = (bg_button_a_afficher) % 3 + 1;
                         break;
                     case SDLK_RETURN:
                         if (bg_button_a_afficher == 1 || bg_button_a_afficher == 2){
