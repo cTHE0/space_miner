@@ -35,10 +35,10 @@ static SDL_Rect modifyingTankRect;
 static SDL_Rect shipConditionRect;
 static SDL_Rect shipConditionSrcRect;
 
-char *baseName;
-char *targetName;
+char baseName[64];
+char targetName[64];
 
-void initRectShipWindow(SDL_Renderer *renderer, SDL_Texture **textTextures, Ship *ships) {
+void initRectShipWindow() {
     int textureWidth, textureHeight;  // Permet de garder les proportions des textes
 
     baseDisplayedRect.x = windowRect.x + windowRect.w * 0.02;
@@ -143,16 +143,23 @@ void initRectShipWindow(SDL_Renderer *renderer, SDL_Texture **textTextures, Ship
     shipConditionSrcRect.w = 64;
     shipConditionSrcRect.h = 64;
 
+}
+
+void initTextShipWindow(){
+
     //generatePlanetName(baseName, ships[whichWindowShip].base->x, ships[whichWindowShip].base->y);
     //generatePlanetName(targetName, ships[whichWindowShip].target->x, ships[whichWindowShip].target->y);
-    
-    //updateTextTexture(renderer, textTextures, 20, baseName, black);
-    //updateTextTexture(renderer, textTextures, 21, targetName, black);
 
+    updateTextTexture(renderer, textTextures, 20, "helli", black); //updateTextTexture(renderer, textTextures, 20, baseName, black);
+    updateTextTexture(renderer, textTextures, 21, "hello", black); //updateTextTexture(renderer, textTextures, 21, targetName, black);
+}
+
+void initShipWindow(){
+    initRectShipWindow();
+    initTextShipWindow();
 }
 
 void displayShipWindow(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
-    initRectShipWindow(renderer, textTextures, ships);
 
     if (windowOpened != SHIP_WINDOW) {  // La fenetre d'information d'une fusee est-elle ouverte ?
         return;

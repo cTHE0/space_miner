@@ -20,22 +20,23 @@ SDL_Rect WindowCrossRect = {(1 + 0.8) / 2. * SCREEN_WIDTH - (SCREEN_WIDTH * 0.8)
                             (SCREEN_WIDTH * 0.8) * 0.015,
                             (SCREEN_WIDTH * 0.8) * 0.015};
 
-void openWindowGestion(int x, int y, Ship *ships, int shipCount, Planet *planets, int planetCount) {
+void openWindowGestion(int x, int y, int shipCount, Planet *planets, int planetCount) {
     SDL_Point mouse = {x, y};
 
     if (windowOpened == NO_WINDOW) {
-        clickOnShip(ships, shipCount, mouse);
+        clickOnShip(shipCount, mouse);
         clickOnPlanet(planets, planetCount, mouse);
     } else if (SDL_PointInRect(&mouse, &WindowCrossRect)){
         windowOpened = NO_WINDOW;
     }
 }
 
-void clickOnShip(Ship *ships, int shipCount, SDL_Point mouse) {
+void clickOnShip(int shipCount, SDL_Point mouse) {
     for (int i = 0; i < shipCount; i++) {
         if (SDL_PointInRect(&mouse, &ships[i].destRect)) {
             whichWindowShip = i;
             windowOpened = SHIP_WINDOW;
+            initShipWindow();
             return;
         }
     }
@@ -56,7 +57,7 @@ void clickOnPlanet(Planet *planets, int planetCount, SDL_Point mouse) {
     }
 }
 
-void displayWindow(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships, Planet *planets, int shipCount, int planetCount) {
+void displayWindow(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships, Planet *planets, int planetCount) {
     displayShipWindow(renderer, imageTextures, textTextures, ships);
     displayPlanetWindow(renderer, imageTextures, textTextures, planets, planetCount);
 }

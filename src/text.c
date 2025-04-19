@@ -8,6 +8,8 @@ TTF_Font *font;
 
 SDL_Color black = {0, 0, 0, 255}; //noir opaque
 
+SDL_Texture **textTextures;
+
 void init_SDL_ttf(void) {
     if (TTF_Init() == -1) {
         fprintf(stderr, "Erreur d'initialisation de SDL_ttf: %s\n", TTF_GetError());

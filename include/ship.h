@@ -39,4 +39,6 @@ void renderShips(SDL_Renderer *renderer, SDL_Texture ***textureShip, Ship *ships
 
 void destroyShips(Ship *ships, int shipCount);
 
+extern Ship *ships;
+
 #endif

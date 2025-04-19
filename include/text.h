@@ -20,5 +20,6 @@ void updateTextTexture(SDL_Renderer *renderer, SDL_Texture **textTextures, int i
 
 extern TTF_Font *font;
 extern SDL_Color black;
+extern SDL_Texture **textTextures;
 
 #endif

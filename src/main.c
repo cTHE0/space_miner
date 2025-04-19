@@ -21,19 +21,18 @@ int main(void) {
     srand(time(NULL));
 
     SDL_Window *window;
-    SDL_Renderer *renderer;
     initSDL(&window, &renderer);
 
     initCamera();
 
     int shipCount = INIT_SHIP_COUNT;
-    Ship* ships = NULL;
+    ships = NULL;
 
     int planetCount = INIT_PLANET_COUNT;
     Planet* planets = NULL;
 
     SDL_Texture ***imageTextures = loadTextures(renderer);
-    SDL_Texture **textTextures = loadTextTextures(renderer);
+    textTextures = loadTextTextures(renderer);
 
     // Variables pour mesurer les FPS
     Uint32 toShowFPS = SDL_GetTicks();

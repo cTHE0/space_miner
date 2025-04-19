@@ -40,7 +40,7 @@ void handleEvents(GameState *state, Ship *ships, int shipCount, Planet *planets,
             case SDL_MOUSEBUTTONUP:
                 if (event.button.button == SDL_BUTTON_LEFT) {
                     if (click) {
-                        openWindowGestion(lastMouseX, lastMouseY, ships, shipCount, planets, planetCount); // On a cliqué sur un ship donc on ouvre une nouvelle fenêtre
+                        openWindowGestion(lastMouseX, lastMouseY, shipCount, planets, planetCount); // On a cliqué sur un ship donc on ouvre une nouvelle fenêtre
                     }
                     dragging_camera = 0;
                     click = 0;

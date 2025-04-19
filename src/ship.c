@@ -5,6 +5,7 @@
 #include "camera.h"
 #include "config.h"
 
+Ship *ships;
 
 void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
     *ships = malloc(shipCount * sizeof(Ship));

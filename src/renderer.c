@@ -9,6 +9,7 @@
 #include "text.h"
 
 Window windowOpened = NO_WINDOW;
+SDL_Renderer *renderer;
 
 void initSDL(SDL_Window **window, SDL_Renderer **renderer) {
     // Initialiser SDL
@@ -58,6 +59,6 @@ void displayGame(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Textu
     renderMap(renderer, imageTextures[3][2]);
     renderPlanets(renderer, planets, imageTextures, planetCount);
     renderShips(renderer, imageTextures, ships, shipCount);
-    displayWindow(renderer, imageTextures, textTextures, ships, planets, shipCount, planetCount);
+    displayWindow(renderer, imageTextures, textTextures, ships, planets, planetCount);
     SDL_RenderPresent(renderer);
 }

@@ -11,5 +11,6 @@ void clearScreen(SDL_Renderer *renderer);
 void displayGame(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships, Planet *planets, int shipCount, int planetCount);
 
 extern Window windowOpened;
+extern SDL_Renderer *renderer;
 
 #endif

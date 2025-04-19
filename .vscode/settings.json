@@ -7,7 +7,9 @@
         "camera.h": "c",
         "stdio.h": "c",
         "sdl.h": "c",
-        "menu.h": "c"
+        "menu.h": "c",
+        "ship.h": "c",
+        "renderer.h": "c"
     },
     "makefile.configureOnOpen": false
 }

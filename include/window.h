@@ -3,9 +3,13 @@
 
 #include "ship.h"
 
-void displayWindow(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships, Planet *planets, int shipCount, int planetCount);
+void initTextShipWindow();
+void initShipWindow();
+
+
+void displayWindow(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships, Planet *planets, int planetCount);
     void displayShipWindow(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships);
-        void initRectShipWindow(SDL_Renderer * renderer, SDL_Texture **textTextures, Ship *ships);
+        void initRectShipWindow();
         void ShipWindowFondations(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures);
         void ShipWindowTravelInfo(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships);
         void ShipWindowTankManager(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships);
@@ -14,8 +18,8 @@ void displayWindow(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Tex
 
     void displayPlanetWindow(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planets, int planetCount);
 
-void openWindowGestion(int x, int y, Ship *ships, int shipCount, Planet *planets, int planetCount);
-    void clickOnShip(Ship *ships, int shipCount, SDL_Point mouse);
+void openWindowGestion(int x, int y, int shipCount, Planet *planets, int planetCount);
+    void clickOnShip(int shipCount, SDL_Point mouse);
     void clickOnPlanet(Planet *planets, int planetCount, SDL_Point mouse);
 
 extern int whichWindowShip;
