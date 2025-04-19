@@ -150,8 +150,10 @@ void initTextShipWindow(){
     //generatePlanetName(baseName, ships[whichWindowShip].base->x, ships[whichWindowShip].base->y);
     //generatePlanetName(targetName, ships[whichWindowShip].target->x, ships[whichWindowShip].target->y);
 
-    updateTextTexture(renderer, textTextures, 20, "helli", black); //updateTextTexture(renderer, textTextures, 20, baseName, black);
-    updateTextTexture(renderer, textTextures, 21, "hello", black); //updateTextTexture(renderer, textTextures, 21, targetName, black);
+    //generateRandomName(baseName, rand());
+
+    updateTextTexture(renderer, textTextures, 20, "Tobaikako", black); //updateTextTexture(renderer, textTextures, 20, baseName, black);
+    updateTextTexture(renderer, textTextures, 21, "Czytlobu", black); //updateTextTexture(renderer, textTextures, 21, targetName, black);
 }
 
 void initShipWindow(){
