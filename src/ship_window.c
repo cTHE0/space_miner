@@ -146,8 +146,8 @@ void initRectShipWindow(SDL_Renderer *renderer, SDL_Texture **textTextures, Ship
     //generatePlanetName(baseName, ships[whichWindowShip].base->x, ships[whichWindowShip].base->y);
     //generatePlanetName(targetName, ships[whichWindowShip].target->x, ships[whichWindowShip].target->y);
     
-    //textTextures[20] = createTextTexture(renderer, font, black, baseName);
-    //textTextures[21] = createTextTexture(renderer, font, black, targetName);
+    //updateTextTexture(renderer, textTextures, 20, baseName, black);
+    //updateTextTexture(renderer, textTextures, 21, targetName, black);
 
 }
 

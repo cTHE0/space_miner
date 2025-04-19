@@ -16,6 +16,7 @@ SDL_Texture* createTextTexture(SDL_Renderer* renderer, TTF_Font* font, SDL_Color
 SDL_Texture **loadTextTextures(SDL_Renderer *renderer);
 void destroyTextTextures(SDL_Texture **textTextures);
 void init_SDL_ttf(void);
+void updateTextTexture(SDL_Renderer *renderer, SDL_Texture **textTextures, int index, const char *newText, SDL_Color color);
 
 extern TTF_Font *font;
 extern SDL_Color black;

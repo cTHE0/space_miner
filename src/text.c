@@ -79,6 +79,25 @@ SDL_Texture **loadTextTextures(SDL_Renderer *renderer) {  // ATENTION: ne pas ou
     return textTextures;
 }
 
+void updateTextTexture(SDL_Renderer *renderer, SDL_Texture **textTextures, int index, const char *newText, SDL_Color color) {
+    if (index < 0 || index >= CST_TEXT_NUMBER) {
+        fprintf(stderr, "Index invalide pour updateTextTexture: %d\n", index);
+        return;
+    }
+
+    // Détruire l'ancienne texture
+    if (textTextures[index]) {
+        SDL_DestroyTexture(textTextures[index]);
+    }
+
+    // Créer et assigner la nouvelle texture
+    textTextures[index] = createTextTexture(renderer, font, color, newText);
+    if (!textTextures[index]) {
+        fprintf(stderr, "Échec de la mise à jour de la texture de texte à l'index %d\n", index);
+    }
+}
+
+
 void destroyTextTextures(SDL_Texture **textTextures) {
     for (int i = 0; i < CST_TEXT_NUMBER; i++) {
         SDL_DestroyTexture(textTextures[i]);
