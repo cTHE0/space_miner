@@ -4,6 +4,6 @@
 #include "landing_page.h"
 #include "ship.h"
 
-void handleEvents(GameState *state, Ship *ships, int shipcount, Planet *planets, int planetCount);
+void handleEvents(GameState *state, int shipcount, int planetCount);
 
 #endif

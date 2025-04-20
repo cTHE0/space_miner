@@ -1,9 +1,10 @@
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include "landing_page.h"
 #include "config.h"
 #include "text.h"
-#include "button.h"
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
+#include "renderer.h"
+
 
 lpFrameControler lpFrameController = {0, 0, 0, 0};
 
@@ -32,7 +33,7 @@ void handleMenuEvents(GameState *state) {   // Gère les événements du menu
                         *state = QUIT;
                         break;
                     case SDLK_TAB:
-                        bg_button_a_afficher = (bg_button_a_afficher) % 3 + 1;
+                        bg_button_a_afficher = bg_button_a_afficher % 3 + 1;
                         break;
                     case SDLK_RETURN:
                         if (bg_button_a_afficher == 1 || bg_button_a_afficher == 2){
@@ -84,7 +85,7 @@ void updateFrameIndex() {
     }
 }
 
-void displayMenu(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
+void displayMenu(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
     // Initialisation graphique du menu
     SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, imageTextures[4][2], NULL, NULL);

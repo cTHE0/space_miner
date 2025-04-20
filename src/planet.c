@@ -6,9 +6,13 @@
 #include "camera.h"
 #include "config.h"
 #include "solar_system.h"
+#include "renderer.h"
+#include "tools.h"
 
-void generatePlanets(Planet **planets, int planetCount) {
-    *planets = malloc(planetCount * sizeof(Planet));
+Planet* planets = NULL;
+
+void generatePlanets(int planetCount) {
+    planets = malloc(planetCount * sizeof(Planet));
 
     int nbEntityGenerated = 0;  // Nombre planètes (étoiles incluses) déjà présentes
     int nbEntityNewSS;  // Nombre de planetes (étoile incluse) a ajouter dans le prochain systeme solaire
@@ -20,16 +24,12 @@ void generatePlanets(Planet **planets, int planetCount) {
             nbEntityNewSS = planetCount - nbEntityGenerated;
         }
 
-        generateSolarSystem(planets, rand() % MAP_SIZE, rand() % MAP_SIZE, nbEntityGenerated, nbEntityNewSS);
+        generateSolarSystem(rand() % MAP_SIZE, rand() % MAP_SIZE, nbEntityGenerated, nbEntityNewSS);
         nbEntityGenerated += nbEntityNewSS;
     }
-
-    Planet originPlanet = (*planets)[1];
-    (*planets)[1] = (*planets)[0];
-    (*planets)[0] = originPlanet;
 }
 
-void renderPlanets(SDL_Renderer *renderer, Planet *planets, SDL_Texture ***texturePlanet, int planetCount) {
+void renderPlanets(SDL_Texture ***texturePlanet, int planetCount) {
     for (int i = 0; i < planetCount; i++) {
         //(screenX, screenY) = coordonnees sur l'ecran physique, du point en haut à gauche du rect de la planete
         float screenX = (planets[i].x - camera.rect.x - planets[i].radius - SCREEN_WIDTH / 2.f) * camera.scale + SCREEN_WIDTH / 2.f;  // (planets[i].x, planets[i].y) = coordonnees sur la map
@@ -41,7 +41,8 @@ void renderPlanets(SDL_Renderer *renderer, Planet *planets, SDL_Texture ***textu
         if (screenX >= -2 * screenRadius && screenX <= SCREEN_WIDTH && 
             screenY >= -2 * screenRadius && screenY <= SCREEN_HEIGHT + screenRadius) {   // On n'affiche pas les planètes situés en dehors de l'ecran  
             // Affichage planete 
-            SDL_RenderCopy(renderer, texturePlanet[5][planets[i].idPicture], NULL, &destRect);
+            int idPicture = (planets[i].planetType == SUN) ? 9 : (generateRandomNumber(currentSeed, i) % 8 + 1);
+            SDL_RenderCopy(renderer, texturePlanet[5][idPicture], NULL, &destRect);
 
             // Affichage barre* de minerais (1)      (*une seule barre, mais representant la valeur totale de minerais !?)
             destRect.h = 5 * camera.scale;

@@ -3,6 +3,6 @@
 
 #include "planet.h"
 
-void generateSolarSystem(Planet **planets,int x, int y, int i, int nb_planets_ss);
+void generateSolarSystem(int x, int y, int i, int nb_planets_ss);
 
 #endif

@@ -5,9 +5,9 @@
 #define SCREEN_HEIGHT 1080
 #define MAP_SIZE 350000
 
-#define INIT_PLANET_COUNT 1000
-#define INIT_SHIP_COUNT 1000
-#define CST_TEXT_NUMBER 22
+#define INIT_PLANET_COUNT 100
+#define INIT_SHIP_COUNT 10
+#define CST_TEXT_NUMBER 42
 
 #define SPRITE_SHEETS_DELAY 100  // En nombre de tick
 #define WAIT_TIME_SHIP 1000  // En millisecondes
@@ -16,7 +16,8 @@
 #define STEP_TRANSLATION 40
 #define SHIP_SPEED 2.f
 #define FPS 60
-#define SEED 18767
+
+extern unsigned int currentSeed;
 
 #define carre(x) (x) * (x)
 

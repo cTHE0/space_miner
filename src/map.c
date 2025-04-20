@@ -3,8 +3,9 @@
 #include "camera.h"
 #include "config.h"
 #include "assets_gestion.h"
+#include "renderer.h"
 
-void renderMap(SDL_Renderer *renderer, SDL_Texture *textureMap) {
+void renderMap(SDL_Texture *textureMap) {
     SDL_Rect destRect;
 
     if (camera.scale > 0.35 ) {

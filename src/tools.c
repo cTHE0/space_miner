@@ -2,11 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <dirent.h>
+#include "camera.h"
 #include "ship.h"
 #include "planet.h"
 #include "config.h"
-#include <dirent.h>
-#include <camera.h>
+#include "tools.h"
 
 
 void *supprElemList(void *list, int *nb_elem, int type_size, int i) {
@@ -116,11 +117,11 @@ float distanceShipShip(Ship ship1, Ship ship2) {
     return sqrt(carre(ship1.x + ship1.w / 2. - (ship2.x + ship2.w / 2.)) + carre(ship1.y + ship1.h / 2. - (ship2.y + ship2.h / 2.)));
 }
 
-static char arrayOfSyllabes[385][5] = {0};  // MODIFIER '385' SI BESOIN
-static int sizeArrayOfSyllabes = 385;  // Nombre de syllabes differentes
+static char arrayOfSyllabes[405][5] = {0};  // MODIFIER '385' SI BESOIN
+static int sizeArrayOfSyllabes = 405;  // Nombre de syllabes differentes
 
-void initArrayOfSyllabes() {
-    if (arrayOfSyllabes[0][0] != '\0') {  // Initialise une seule fois
+void initArrayOfSyllabes(void) {
+    if (arrayOfSyllabes[0][0] != '\0') {  // Initialise une seule fois arrayOfSyllabes
         return;
     }
 
@@ -165,23 +166,37 @@ void initArrayOfSyllabes() {
     }
 }
 
-void generateRandomName(char *randomString, int seed) {
+void generateRandomName(char randomString[64], unsigned int seed, int index) {
     // Creation du tableau de syllabes
     initArrayOfSyllabes();
 
     // Obtenir le nombre de syllabes dans le mot
-    int minNbSyllabes = 1;
+    int minNbSyllabes = 2;
     int maxNbSyllabes = 4;
-    int nbSyllabes = rand() % (maxNbSyllabes - minNbSyllabes + 1) + minNbSyllabes;
+    int nbSyllabes = minNbSyllabes + generateRandomNumber(seed, index) % (maxNbSyllabes - minNbSyllabes + 1);
+
+    // Pour que le mot genere ne soit pas le meme que celui avec index - 1
+    index = index * maxNbSyllabes;
 
     // Generation du nom
-    char syllabe[4];
+    strcpy(randomString, "");
+    char syllabe[5] = {0};
     for (int i = 0; i < nbSyllabes; i++) {
-        strcpy(syllabe, arrayOfSyllabes[seed % sizeArrayOfSyllabes]);  // Generer une nouvelle syllabe
+        strcpy(syllabe, arrayOfSyllabes[generateRandomNumber(seed, index + i) % sizeArrayOfSyllabes]);  // Generer une nouvelle syllabe
         strcat(randomString, syllabe);  // Ajouter une nouvelle syllabe
     }
 }
 
-void generatePlanetName(char *randomString, int x, int y) { //Par la suite mettre cette fonction dans planet.c selon la vision
-    generateRandomName(randomString, (x+y+SEED));
+unsigned int generateRandomNumber(unsigned int seed, int index) {  // linear congruential generator (LCG), parametres de Marsaglia\n
+    if (seed == 0U) {
+        printf("La seed ne doit pas etre nulle pour le generateur aleatoire de Marsaglia\n");
+        return 0U;
+    }
+
+    index += 1;  // La variable index ne doit pas être nulle
+    for (int i = 0; i < index; i++) {
+        seed *= 69069U;
+    }
+
+    return seed;  // De la forme : seed * 69069 ** (index + 1)
 }

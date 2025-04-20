@@ -2,7 +2,6 @@
 #include "ship.h"
 #include "config.h"
 #include "text.h"
-#include "button.h"
 #include "renderer.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -11,21 +10,24 @@
 #include "tools.h"
 #include "camera.h"
 
+Window windowOpened = NO_WINDOW;
+
 SDL_Rect windowRect = {(1 - 0.8) * SCREEN_WIDTH / 2., 
                        (1 - 0.8) * SCREEN_HEIGHT / 2., 
                        SCREEN_WIDTH * 0.8,
                        SCREEN_HEIGHT * 0.8};
+                       
 SDL_Rect WindowCrossRect = {(1 + 0.8) / 2. * SCREEN_WIDTH - (SCREEN_WIDTH * 0.8) * 0.03, 
                             (1 - 0.8) * SCREEN_HEIGHT / 2 + 20,
                             (SCREEN_WIDTH * 0.8) * 0.015,
                             (SCREEN_WIDTH * 0.8) * 0.015};
 
-void openWindowGestion(int x, int y, int shipCount, Planet *planets, int planetCount) {
+void openWindowGestion(int x, int y, int shipCount, int planetCount) {
     SDL_Point mouse = {x, y};
 
     if (windowOpened == NO_WINDOW) {
         clickOnShip(shipCount, mouse);
-        clickOnPlanet(planets, planetCount, mouse);
+        clickOnPlanet(planetCount, mouse);
     } else if (SDL_PointInRect(&mouse, &WindowCrossRect)){
         windowOpened = NO_WINDOW;
     }
@@ -42,7 +44,7 @@ void clickOnShip(int shipCount, SDL_Point mouse) {
     }
 }
 
-void clickOnPlanet(Planet *planets, int planetCount, SDL_Point mouse) {
+void clickOnPlanet(int planetCount, SDL_Point mouse) {
     for (int i = 0; i < planetCount; i++) {
         //(screenX, screenY) = coordonnees sur l'ecran physique, du point au milieu de la planete
         // (planets[i].x, planets[i].y) = coordonnees sur la map
@@ -57,7 +59,7 @@ void clickOnPlanet(Planet *planets, int planetCount, SDL_Point mouse) {
     }
 }
 
-void displayWindow(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships, Planet *planets, int planetCount) {
-    displayShipWindow(renderer, imageTextures, textTextures, ships);
-    displayPlanetWindow(renderer, imageTextures, textTextures, planets, planetCount);
+void displayWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, int planetCount) {
+    displayShipWindow(imageTextures, textTextures);
+    displayPlanetWindow(imageTextures, textTextures, planetCount);
 }

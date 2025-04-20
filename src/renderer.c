@@ -8,11 +8,10 @@
 #include "window.h"
 #include "text.h"
 
-Window windowOpened = NO_WINDOW;
-SDL_Renderer *renderer;
+SDL_Renderer *renderer = NULL;
 
-void initSDL(SDL_Window **window, SDL_Renderer **renderer) {
-    // Initialiser SDL
+void initSDL(SDL_Window **window) {
+    // Initialiser SDL (vidéo)
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         printf("Erreur d'initialisation de SDL : %s\n", SDL_GetError());
         return;
@@ -25,40 +24,56 @@ void initSDL(SDL_Window **window, SDL_Renderer **renderer) {
         return;
     }
 
+    // Initialiser SDL_ttf (pour les polices)
+    if (TTF_Init() == -1) {
+        printf("Erreur d'initialisation de SDL_ttf : %s\n", TTF_GetError());
+        IMG_Quit();  // Nettoyer SDL_image
+        SDL_Quit();  // Nettoyer SDL
+        return;
+    }
+
     // Créer la fenêtre
     *window = SDL_CreateWindow("SPACE MINER", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     if (*window == NULL) {
         printf("Erreur de création de la fenêtre : %s\n", SDL_GetError());
+        TTF_Quit();  // Nettoyer SDL_ttf
         IMG_Quit();  // Nettoyer SDL_image
         SDL_Quit();  // Nettoyer SDL
         return;
     }
 
     // Créer le renderer
-    *renderer = SDL_CreateRenderer(*window, -1, SDL_RENDERER_ACCELERATED);
-    if (*renderer == NULL) {
+    renderer = SDL_CreateRenderer(*window, -1, SDL_RENDERER_ACCELERATED);
+    if (renderer == NULL) {
         printf("Erreur de création du renderer : %s\n", SDL_GetError());
         SDL_DestroyWindow(*window);  // Nettoyer la fenêtre
+        TTF_Quit();  // Nettoyer SDL_ttf
         IMG_Quit();  // Nettoyer SDL_image
         SDL_Quit();  // Nettoyer SDL
         return;
     }
-
-    init_SDL_ttf();
-
-    return;
 }
 
-void clearScreen(SDL_Renderer *renderer) {
+void quitSDL(SDL_Window *window) {
+    TTF_CloseFont(uploadFont);
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    TTF_Quit();
+    IMG_Quit();
+    SDL_Quit();
+}
+
+void clearScreen(void) {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 }
 
-void displayGame(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships, Planet *planets, int shipCount, int planetCount) {
-    clearScreen(renderer);
-    renderMap(renderer, imageTextures[3][2]);
-    renderPlanets(renderer, planets, imageTextures, planetCount);
-    renderShips(renderer, imageTextures, ships, shipCount);
-    displayWindow(renderer, imageTextures, textTextures, ships, planets, planetCount);
+void displayGame(SDL_Texture ***imageTextures, SDL_Texture **textTextures, int shipCount, int planetCount) {
+    clearScreen();
+    renderMap(imageTextures[3][2]);
+    renderPlanets(imageTextures, planetCount);
+    renderShips(imageTextures, shipCount);
+    displayWindow(imageTextures, textTextures, planetCount);
     SDL_RenderPresent(renderer);
 }
+

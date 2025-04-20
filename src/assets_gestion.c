@@ -5,12 +5,13 @@
 #include "assets_gestion.h"
 #include "config.h"
 #include "tools.h"
+#include "renderer.h"
 
 
 static int nbCategories;   // Initialisation
 static int *nbPicturesPerCategory;  // Initialisation
 
-SDL_Texture* IMG_LoadTextureWithAlpha(SDL_Renderer* renderer, const char* filePath, Uint8 alpha) {
+SDL_Texture* IMG_LoadTextureWithAlpha(const char* filePath, Uint8 alpha) {
     // Charger directement la texture avec SDL_Image
     SDL_Texture* texture = IMG_LoadTexture(renderer, filePath);
     if (!texture) {
@@ -35,7 +36,7 @@ SDL_Texture* IMG_LoadTextureWithAlpha(SDL_Renderer* renderer, const char* filePa
     return texture;
 }
 
-SDL_Texture ***loadTextures(SDL_Renderer *renderer) {
+SDL_Texture ***loadTextures(void) {
     /* Pour ajouter un image, il suffit de l'ajouter dans un dossier et de la renommer comme
      * il se doit.
      */
@@ -60,8 +61,8 @@ SDL_Texture ***loadTextures(SDL_Renderer *renderer) {
 
         // Chargement des textures pour chaque image dans chaque dossier
         for (int j = 0; j < nbPicturesPerCategory[i]; j++) {
-            char pathPng[128];
-            snprintf(pathPng, sizeof(pathPng), "%s/%d.png", foldersPath[i], j);
+            char pathPng[128] = {0};
+            snprintf(pathPng, sizeof(pathPng), "%s%d.png", foldersPath[i], j);
 
             imageTextures[i][j] = IMG_LoadTexture(renderer, pathPng);
             if (!imageTextures[i][j]) {
@@ -74,9 +75,9 @@ SDL_Texture ***loadTextures(SDL_Renderer *renderer) {
     // Traitement spécifique pour 'others'
     imageTextures[indexOthers] = malloc(nbPicturesPerCategory[indexOthers] * sizeof(SDL_Texture*));
     imageTextures[indexOthers][0] = IMG_LoadTexture(renderer, "assets/img/others4/0.png");
-    imageTextures[indexOthers][1] = IMG_LoadTextureWithAlpha(renderer, "assets/img/others4/1.png", 100);
+    imageTextures[indexOthers][1] = IMG_LoadTextureWithAlpha("assets/img/others4/1.png", (Uint8)100);
     imageTextures[indexOthers][2] = IMG_LoadTexture(renderer, "assets/img/others4/2.png");
-    imageTextures[indexOthers][3] = IMG_LoadTextureWithAlpha(renderer, "assets/img/others4/3.png", 230);
+    imageTextures[indexOthers][3] = IMG_LoadTextureWithAlpha("assets/img/others4/3.png", (Uint8)230);
 
     // Libération des chemins des dossiers
     for (int i = 0; i < nbCategories; i++) {

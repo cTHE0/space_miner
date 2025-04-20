@@ -1,44 +1,73 @@
-#include "window.h"
-#include "ship.h"
-#include "config.h"
-#include "text.h"
-#include "button.h"
-#include "renderer.h"
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include "window.h"
+#include "ship.h"
+#include "planet.h"
+#include "config.h"
+#include "text.h"
+#include "assets_gestion.h"
+#include "renderer.h"
 #include "tools.h"
 
 
 int whichWindowShip = -1;
 
 // Declaration des rectangles et variables propres a la fenetre d'informations des fusees
-static SDL_Rect srcRectShip = {0, 0, 64, 64};
-static SDL_Rect targetDisplayedRect;
-static SDL_Rect baseDisplayedRect;
-static SDL_Rect destRectShip;
-static SDL_Rect narrowRect;
-static SDL_Rect windowTitleRect;
-static SDL_Rect windowLine1Rect;
-static SDL_Rect windowLine2Rect;
-static SDL_Rect windowLine3Rect;
-static SDL_Rect windowLine4Rect;
-static SDL_Rect category1TitleRect;
-static SDL_Rect category2TitleRect;
-static SDL_Rect category3TitleRect;
-static SDL_Rect category4TitleRect;
-static SDL_Rect category5TitleRect;
-static SDL_Rect baseDisplayedRect2;
-static SDL_Rect targetDisplayedRect2;
-static SDL_Rect modifyingTankRect;
-static SDL_Rect shipConditionRect;
-static SDL_Rect shipConditionSrcRect;
+static char baseName[64] = {0};
+static char targetName[64] = {0};
+static SDL_Rect srcRectShip = {0, 0, 64, 64},
+                targetDisplayedRect,
+                baseDisplayedRect,
+                destRectShip,
+                narrowRect,
+                windowTitleRect,
+                windowLine1Rect,
+                windowLine2Rect,
+                windowLine3Rect,
+                windowLine4Rect,
+                category1TitleRect,
+                category2TitleRect,
+                category3TitleRect,
+                category4TitleRect,
+                category5TitleRect,
+                baseDisplayedRect2,
+                targetDisplayedRect2,
+                modifyingTankRect,
+                shipConditionRect,
+                shipConditionSrcRect,
+                nameBaseDisplayedRect,
+                nameTargetDisplayedRect;
 
-char baseName[64];
-char targetName[64];
+void initShipWindow(void){
+    initTextShipWindow();
+    initRectShipWindow();
+}
 
-void initRectShipWindow() {
+void initTextShipWindow(void) {
+    TextToLoad newText;
+
+    // Importe le nom de la base de la fusee
+    generateRandomName(baseName, currentSeed, ships[whichWindowShip].base->id);
+    strcpy(newText.text, (const char*)baseName);
+    newText.color = BLACK;
+    newText.font = uploadFont;
+
+    // Creation de la texture de la base de la fusee
+    updateTextTexture(&textTextures[30], newText);
+
+    // Importe le nom de la cible de la fusee
+    generateRandomName(targetName, currentSeed, ships[whichWindowShip].target->id);
+    strcpy(newText.text, (const char*)targetName);
+    newText.color = BLACK;
+    newText.font = uploadFont;
+
+    // Creation de la texture de la cible de la fusee
+    updateTextTexture(&textTextures[31], newText);
+}
+
+void initRectShipWindow(void) {
     int textureWidth, textureHeight;  // Permet de garder les proportions des textes
 
     baseDisplayedRect.x = windowRect.x + windowRect.w * 0.02;
@@ -143,38 +172,33 @@ void initRectShipWindow() {
     shipConditionSrcRect.w = 64;
     shipConditionSrcRect.h = 64;
 
+    SDL_QueryTexture(textTextures[30], NULL, NULL, &textureWidth, &textureHeight);
+    nameBaseDisplayedRect.x = windowRect.x + windowRect.w * 0.03;
+    nameBaseDisplayedRect.y = windowRect.y + windowRect.h * 0.4;
+    nameBaseDisplayedRect.w = textureWidth * windowRect.w * 0.0005;
+    nameBaseDisplayedRect.h = textureHeight * windowRect.w * 0.0005;
+
+    SDL_QueryTexture(textTextures[31], NULL, NULL, &textureWidth, &textureHeight);
+    nameTargetDisplayedRect.x = windowRect.x + windowRect.w * 0.38;
+    nameTargetDisplayedRect.y = windowRect.y + windowRect.h * 0.4;
+    nameTargetDisplayedRect.w = textureWidth * windowRect.w * 0.0005;
+    nameTargetDisplayedRect.h = textureHeight * windowRect.w * 0.0005;
 }
 
-void initTextShipWindow(){
-
-    //generatePlanetName(baseName, ships[whichWindowShip].base->x, ships[whichWindowShip].base->y);
-    //generatePlanetName(targetName, ships[whichWindowShip].target->x, ships[whichWindowShip].target->y);
-
-    //generateRandomName(baseName, rand());
-
-    updateTextTexture(renderer, textTextures, 20, "Tobaikako", black); //updateTextTexture(renderer, textTextures, 20, baseName, black);
-    updateTextTexture(renderer, textTextures, 21, "Czytlobu", black); //updateTextTexture(renderer, textTextures, 21, targetName, black);
-}
-
-void initShipWindow(){
-    initRectShipWindow();
-    initTextShipWindow();
-}
-
-void displayShipWindow(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
+void displayShipWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
 
     if (windowOpened != SHIP_WINDOW) {  // La fenetre d'information d'une fusee est-elle ouverte ?
         return;
     }
 
-    ShipWindowFondations(renderer, imageTextures, textTextures);
-    ShipWindowTravelInfo(renderer, imageTextures, textTextures, ships);
-    ShipWindowTankManager(renderer, imageTextures, textTextures, ships);
-    ShipWindowShipCond(renderer, imageTextures, textTextures, ships);
-    ShipWindowTankCompo(renderer, imageTextures, textTextures, ships);
+    ShipWindowFondations(imageTextures, textTextures);
+    ShipWindowTravelInfo(imageTextures, textTextures);
+    ShipWindowTankManager(imageTextures, textTextures);
+    ShipWindowShipCond(imageTextures, textTextures);
+    ShipWindowTankCompo(imageTextures, textTextures);
 }
 
-void ShipWindowFondations(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
+void ShipWindowFondations(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
     // Affichage du bg
     SDL_RenderCopy(renderer, imageTextures[4][3], NULL, &windowRect);
 
@@ -192,13 +216,20 @@ void ShipWindowFondations(SDL_Renderer *renderer, SDL_Texture ***imageTextures, 
     SDL_RenderFillRect(renderer, &windowLine4Rect);  // Barre verticale du milieu
 }
 
-void ShipWindowTravelInfo(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
+void ShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
     // Affichage du titre "Travel information"
-    SDL_RenderCopy(renderer, textTextures[20], NULL, &category1TitleRect); //JUSTE POUR LE TEST J AI MIS NOM PLANETE ICI
+    SDL_RenderCopy(renderer, textTextures[5], NULL, &category1TitleRect);
 
     // Affichage des deux planetes
-    SDL_RenderCopy(renderer, imageTextures[5][ships[whichWindowShip].target->idPicture], NULL, &targetDisplayedRect);
-    SDL_RenderCopy(renderer, imageTextures[5][ships[whichWindowShip].base->idPicture], NULL, &baseDisplayedRect);
+    int idPicture;
+    idPicture = (ships[whichWindowShip].base->planetType == SUN) ? 9 : generateRandomNumber(currentSeed, ships[whichWindowShip].base->id) % 8 + 1;
+    SDL_RenderCopy(renderer, imageTextures[5][idPicture], NULL, &baseDisplayedRect);
+    idPicture = (ships[whichWindowShip].target->planetType == SUN) ? 9 : generateRandomNumber(currentSeed, ships[whichWindowShip].target->id) % 8 + 1;
+    SDL_RenderCopy(renderer, imageTextures[5][idPicture], NULL, &targetDisplayedRect);
+
+    // Affichage du nom des deux planetes
+    SDL_RenderCopy(renderer, textTextures[30], NULL, &nameBaseDisplayedRect);
+    SDL_RenderCopy(renderer, textTextures[31], NULL, &nameTargetDisplayedRect);
 
     // Affichage du systeme de progression de la fusee dans l'espace
     int dp = targetDisplayedRect.x - baseDisplayedRect.x - baseDisplayedRect.w;  // Distance en pixel entre 2 planètes sur fenêtre
@@ -222,7 +253,7 @@ void ShipWindowTravelInfo(SDL_Renderer *renderer, SDL_Texture ***imageTextures, 
 
         // Tracer la fusee
         destRectShip.x = baseDisplayedRect.x + baseDisplayedRect.w + f * dp - baseDisplayedRect.w * 0.3;
-        SDL_RenderCopyEx(renderer, imageTextures[6][ships[whichWindowShip].idPicture], &srcRectShip, &destRectShip, 90, NULL, SDL_FLIP_NONE);
+        SDL_RenderCopyEx(renderer, imageTextures[6][ships[whichWindowShip].idModel], &srcRectShip, &destRectShip, 90, NULL, SDL_FLIP_NONE);
 
     } else if (ships[whichWindowShip].state == MOVING_TO_BASE || ships[whichWindowShip].state == WAITING_ON_TARGET) { 
         // Fraction du chemin parcourue
@@ -242,34 +273,37 @@ void ShipWindowTravelInfo(SDL_Renderer *renderer, SDL_Texture ***imageTextures, 
 
         // Tracer la fusee
         destRectShip.x = baseDisplayedRect.x + baseDisplayedRect.w + f * dp - baseDisplayedRect.w * 0.53;
-        SDL_RenderCopyEx(renderer, imageTextures[6][ships[whichWindowShip].idPicture], &srcRectShip, &destRectShip, 270, NULL, SDL_FLIP_NONE);
+        SDL_RenderCopyEx(renderer, imageTextures[6][ships[whichWindowShip].idModel], &srcRectShip, &destRectShip, 270, NULL, SDL_FLIP_NONE);
     }
 }
 
-void ShipWindowTankManager(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
+void ShipWindowTankManager(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
     // Affichage du titre "Tank manager"
     SDL_RenderCopy(renderer, textTextures[8], NULL, &category2TitleRect);
 
     // Affichage des deux planetes
-    SDL_RenderCopy(renderer, imageTextures[5][ships[whichWindowShip].target->idPicture], NULL, &targetDisplayedRect2);
-    SDL_RenderCopy(renderer, imageTextures[5][ships[whichWindowShip].base->idPicture], NULL, &baseDisplayedRect2);
+    int idPicture;
+    idPicture = (ships[whichWindowShip].base->planetType == SUN) ? 9 : generateRandomNumber(currentSeed, ships[whichWindowShip].base->id) % 8 + 1;
+    SDL_RenderCopy(renderer, imageTextures[5][idPicture], NULL, &baseDisplayedRect2);
+    idPicture = (ships[whichWindowShip].target->planetType == SUN) ? 9 : generateRandomNumber(currentSeed, ships[whichWindowShip].target->id) % 8 + 1;
+    SDL_RenderCopy(renderer, imageTextures[5][idPicture], NULL, &targetDisplayedRect2);
 
     // Affichage du tank en cours de modification ("Tank 1")
     SDL_RenderCopy(renderer, textTextures[15], NULL, &modifyingTankRect);
 }
 
-void ShipWindowShipCond(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
+void ShipWindowShipCond(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
     // Affichage du titre "Ship condition"
     SDL_RenderCopy(renderer, textTextures[11], NULL, &category3TitleRect);
 
     // Affichage de la fusee
-    SDL_RenderCopy(renderer, imageTextures[6][ships[whichWindowShip].idPicture], &shipConditionSrcRect, &shipConditionRect);
+    SDL_RenderCopy(renderer, imageTextures[6][ships[whichWindowShip].idModel], &shipConditionSrcRect, &shipConditionRect);
 
     // Affichage du titre "Reported problemes"
     SDL_RenderCopy(renderer, textTextures[13], NULL, &category4TitleRect);
 }
 
-void ShipWindowTankCompo(SDL_Renderer *renderer, SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
+void ShipWindowTankCompo(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
     // Affichage du titre "Tank composition"
     SDL_RenderCopy(renderer, textTextures[14], NULL, &category5TitleRect);
 }

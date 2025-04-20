@@ -4,66 +4,67 @@
 #include "ship.h"
 #include "camera.h"
 #include "config.h"
+#include "renderer.h"
 
-Ship *ships;
+Ship *ships = NULL;
 
-void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
-    *ships = malloc(shipCount * sizeof(Ship));
+void initShips(int shipCount, int planetCount) {
+    ships = malloc(shipCount * sizeof(Ship));
 
-    if (*ships == NULL) {
+    if (ships == NULL) {
         printf("Erreur d'allocation mémoire pour les vaisseaux !\n");
-        return;  // Sortir de la fonction pour éviter d'utiliser *ships après un échec
+        return;  // Sortir de la fonction pour éviter d'utiliser ships après un échec
     }
 
     for (int i = 0; i < shipCount; i++) {
-        (*ships)[i].shiptype = TRANSPORTER;
-        (*ships)[i].idPicture = rand() % 12;
-        (*ships)[i].base = &planets[0];  // La première planète est la base de chaque vaisseau
-        (*ships)[i].target = &planets[rand() % (planetCount - 1)] + 1;
-        (*ships)[i].x = (*ships)[i].base->x;
-        (*ships)[i].y = (*ships)[i].base->y;
-        (*ships)[i].w = 62;
-        (*ships)[i].h = 62;
-        (*ships)[i].speed = (rand() / (float)RAND_MAX * 0.6 + 0.4) * SHIP_SPEED;
-        (*ships)[i].state = MOVING_TO_TARGET;
-        (*ships)[i].maxLife = 100;
-        (*ships)[i].currentLife = rand() % (int)(*ships)[i].maxLife;
-        (*ships)[i].fuelConsumption = 1;  // Consommation d'essence par intervalle de temps FUEL_UPDATE_INTERVAL
+        ships[i].shiptype = TRANSPORTER;
+        ships[i].id = i;
+        ships[i].idModel = rand() % 12;
+        ships[i].base = &planets[1];  // La première planète est la base de chaque vaisseau
+        ships[i].target = &planets[rand() % (planetCount - 1)] + 1;
+        ships[i].x = ships[i].base->x;
+        ships[i].y = ships[i].base->y;
+        ships[i].w = 62;
+        ships[i].h = 62;
+        ships[i].speed = (rand() / (float)RAND_MAX * 0.6 + 0.4) * SHIP_SPEED;
+        ships[i].state = MOVING_TO_TARGET;
+        ships[i].maxLife = 100;
+        ships[i].currentLife = rand() % (int)ships[i].maxLife;
+        ships[i].fuelConsumption = 1;  // Consommation d'essence par intervalle de temps FUEL_UPDATE_INTERVAL
 
-        (*ships)[i].waitStartTime = 0;
-        (*ships)[i].frameIndex = rand() % 4;  // Desynchronisation des fusees
-        (*ships)[i].lastFrameTime = 0;
-        (*ships)[i].lastRefreshFilling = SDL_GetTicks();
+        ships[i].waitStartTime = 0;
+        ships[i].frameIndex = rand() % 4;  // Desynchronisation des fusees
+        ships[i].lastFrameTime = 0;
+        ships[i].lastRefreshFilling = SDL_GetTicks();
 
-        (*ships)[i].destRect.x = 0;
-        (*ships)[i].destRect.y = 0;
-        (*ships)[i].destRect.w = 0;
-        (*ships)[i].destRect.h = 0;
+        ships[i].destRect.x = 0;
+        ships[i].destRect.y = 0;
+        ships[i].destRect.w = 0;
+        ships[i].destRect.h = 0;
 
         // Allocation des compartiments
-        (*ships)[i].cargo.compartmentsNumber = 2;
-        (*ships)[i].cargo.compartmentsList = malloc((*ships)[i].cargo.compartmentsNumber * sizeof(Compartment));
-        if ((*ships)[i].cargo.compartmentsList == NULL) {
+        ships[i].cargo.compartmentsNumber = 2;
+        ships[i].cargo.compartmentsList = malloc(ships[i].cargo.compartmentsNumber * sizeof(Compartment));
+        if (ships[i].cargo.compartmentsList == NULL) {
             printf("Erreur d'allocation mémoire pour les compartiments du vaisseau %d!\n", i);
             
             // Libérer la mémoire des vaisseaux déjà créés
             for (int j = 0; j < i; j++) {
-                free((*ships)[j].cargo.compartmentsList);
+                free(ships[j].cargo.compartmentsList);
             }
-            free(*ships);
-            *ships = NULL;
+            free(ships);
             return;
         }
-        for (int j = 0; j < (*ships)[i].cargo.compartmentsNumber; j++) {  // Ici, chaque compartiment contient de l'essence
-            (*ships)[i].cargo.compartmentsList[j].ore = FUEL;
-            (*ships)[i].cargo.compartmentsList[j].maxCapacity = 100;
-            (*ships)[i].cargo.compartmentsList[j].currentCapacity = 100;
-            (*ships)[i].cargo.compartmentsList[j].flowSpeed = 5;
+        for (int j = 0; j < ships[i].cargo.compartmentsNumber; j++) {  // Ici, chaque compartiment contient de l'essence
+            ships[i].cargo.compartmentsList[j].ore = FUEL;
+            ships[i].cargo.compartmentsList[j].maxCapacity = 100;
+            ships[i].cargo.compartmentsList[j].currentCapacity = 100;
+            ships[i].cargo.compartmentsList[j].flowSpeed = 5;
         }
     }
 }
 
-void updateShips(Ship *ships, int shipCount) { 
+void updateShips(int shipCount) { 
     Uint32 currentTime = SDL_GetTicks();
 
     for (int i = 0; i < shipCount; i++) {
@@ -165,7 +166,7 @@ void updateShipFuel(Ship *ship, Uint32 currentTime) {  // Gere la consommation d
     }
 }
 
-void renderShips(SDL_Renderer *renderer, SDL_Texture ***textureShip, Ship *ships, int shipCount) {
+void renderShips(SDL_Texture ***textureShip, int shipCount) {
     for (int i = 0; i < shipCount; i++) {
         // Calcul des coordonnees a l'ecran, du point en haut a gauche de la fusee
         SDL_Point ShipOnScreen = {(ships[i].x - camera.rect.x - SCREEN_WIDTH / 2.f) * camera.scale + SCREEN_WIDTH / 2.f,
@@ -173,8 +174,8 @@ void renderShips(SDL_Renderer *renderer, SDL_Texture ***textureShip, Ship *ships
 
         if (ShipOnScreen.x >= -ships[i].w * camera.scale && ShipOnScreen.x <= SCREEN_WIDTH && 
             ShipOnScreen.y >= -ships[i].h * camera.scale && ShipOnScreen.y <= SCREEN_HEIGHT + ships[i].h * camera.scale) {  // Si la fusee est dans l'ecran 
-            renderShipImage(renderer, textureShip[6][ships[i].idPicture], ships[i], ShipOnScreen);
-            renderShipBars(renderer, ships[i], ShipOnScreen);
+            renderShipImage(textureShip[6][ships[i].idModel], ships[i], ShipOnScreen);
+            renderShipBars(ships[i], ShipOnScreen);
             ships[i].destRect.x = ShipOnScreen.x;
             ships[i].destRect.y = ShipOnScreen.y;
             ships[i].destRect.w = ships[i].w * camera.scale;
@@ -183,7 +184,7 @@ void renderShips(SDL_Renderer *renderer, SDL_Texture ***textureShip, Ship *ships
     }
 }
 
-void renderShipImage(SDL_Renderer *renderer, SDL_Texture *textureShip, Ship ship, SDL_Point ShipOnScreen) {
+void renderShipImage(SDL_Texture *textureShip, Ship ship, SDL_Point ShipOnScreen) {
     // Calcul de l'angle en degres de l'image
     float angle = atan2(ship.target->y - (ship.y + ship.h / 2.f), ship.target->x - (ship.x + ship.w / 2.f)) * 180.0f / M_PI;
 
@@ -202,7 +203,7 @@ void renderShipImage(SDL_Renderer *renderer, SDL_Texture *textureShip, Ship ship
 }
 
 
-void renderShipBars(SDL_Renderer *renderer, Ship ship, SDL_Point ShipOnScreen) {
+void renderShipBars(Ship ship, SDL_Point ShipOnScreen) {
     // Dessin de la barre d'essence (1)
     float heightBar = 1 * camera.scale;
     float gapBar = 2 * camera.scale;
@@ -234,7 +235,7 @@ void renderShipBars(SDL_Renderer *renderer, Ship ship, SDL_Point ShipOnScreen) {
 
 }
 
-void destroyShips(Ship *ships, int shipCount) {
+void destroyShips(int shipCount) {
     for (int i = 0; i < shipCount; i++) {
         free(ships[i].cargo.compartmentsList);
     }
