@@ -3,6 +3,7 @@
 
 #include "planet.h"
 
+void solarSystemCoordinator(int *nbEntityGenerated, int planetCount);
 void generateSolarSystem(int x, int y, int i, int nb_planets_ss);
 
 #endif

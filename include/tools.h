@@ -15,6 +15,7 @@ float distanceShipShip(Ship ship1, Ship ship2);
 void initArrayOfSyllabes();
 void generateRandomName(char randomString[64], unsigned int seed, int index);
 
-unsigned int generateRandomNumber(unsigned int seed, int index);
+uint32_t generateRandNb32(uint32_t seed, int index);  // Pas efficace pour les petits entiers
+uint8_t generateRandNb8(uint32_t seed, int index);  // Alternative pour les petits entiers
 
 #endif

@@ -15,7 +15,7 @@
 #include "window.h"
 
 
-unsigned int currentSeed = 18767;  // Peut prendre des valeurs entre 1 et 2**32-1
+uint32_t currentSeed = 187;  // Peut prendre des valeurs entre 1 et 2**32-1
 
 int main(void) {
     // Initialisation 

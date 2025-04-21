@@ -11,7 +11,7 @@ SDL_Texture ***loadTextures(void);
 	char **foldersPathFunction(const char *path);
 	int *filesNbFunction(char **foldersPath);
 	int compare(const void *a, const void *b);
-void destroyImageTextures(SDL_Texture ***textures);
+void destroyImageTextures(SDL_Texture ***imageTextures);
 
 #define BLACK (SDL_Color){0, 0, 0, 255}
 #define WHITE (SDL_Color){255, 255, 255, 255}

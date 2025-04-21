@@ -222,9 +222,9 @@ void ShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextur
 
     // Affichage des deux planetes
     int idPicture;
-    idPicture = (ships[whichWindowShip].base->planetType == SUN) ? 9 : generateRandomNumber(currentSeed, ships[whichWindowShip].base->id) % 8 + 1;
+    idPicture = (ships[whichWindowShip].base->planetType == SUN) ? 9 : generateRandNb8(currentSeed, ships[whichWindowShip].base->id) % 8 + 1;
     SDL_RenderCopy(renderer, imageTextures[5][idPicture], NULL, &baseDisplayedRect);
-    idPicture = (ships[whichWindowShip].target->planetType == SUN) ? 9 : generateRandomNumber(currentSeed, ships[whichWindowShip].target->id) % 8 + 1;
+    idPicture = (ships[whichWindowShip].target->planetType == SUN) ? 9 : generateRandNb8(currentSeed, ships[whichWindowShip].target->id) % 8 + 1;
     SDL_RenderCopy(renderer, imageTextures[5][idPicture], NULL, &targetDisplayedRect);
 
     // Affichage du nom des deux planetes
@@ -283,9 +283,9 @@ void ShipWindowTankManager(SDL_Texture ***imageTextures, SDL_Texture **textTextu
 
     // Affichage des deux planetes
     int idPicture;
-    idPicture = (ships[whichWindowShip].base->planetType == SUN) ? 9 : generateRandomNumber(currentSeed, ships[whichWindowShip].base->id) % 8 + 1;
+    idPicture = (ships[whichWindowShip].base->planetType == SUN) ? 9 : generateRandNb8(currentSeed, ships[whichWindowShip].base->id) % 8 + 1;
     SDL_RenderCopy(renderer, imageTextures[5][idPicture], NULL, &baseDisplayedRect2);
-    idPicture = (ships[whichWindowShip].target->planetType == SUN) ? 9 : generateRandomNumber(currentSeed, ships[whichWindowShip].target->id) % 8 + 1;
+    idPicture = (ships[whichWindowShip].target->planetType == SUN) ? 9 : generateRandNb8(currentSeed, ships[whichWindowShip].target->id) % 8 + 1;
     SDL_RenderCopy(renderer, imageTextures[5][idPicture], NULL, &targetDisplayedRect2);
 
     // Affichage du tank en cours de modification ("Tank 1")

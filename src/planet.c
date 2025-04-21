@@ -12,20 +12,13 @@
 Planet* planets = NULL;
 
 void generatePlanets(int planetCount) {
+    // Allocation du tableau de planetes
     planets = malloc(planetCount * sizeof(Planet));
 
+    // Generations des planetes, systeme solaire par systeme solaire
     int nbEntityGenerated = 0;  // Nombre planètes (étoiles incluses) déjà présentes
-    int nbEntityNewSS;  // Nombre de planetes (étoile incluse) a ajouter dans le prochain systeme solaire
-
     while (nbEntityGenerated < planetCount) {
-        nbEntityNewSS = 3 + rand() % 15;  // Nb de planètes (étoile incluse) à rajouter ds le nouveau système solaire
-
-        if (nbEntityGenerated + nbEntityNewSS > planetCount){  // Le nouveau systeme solaire passe-t-il ?
-            nbEntityNewSS = planetCount - nbEntityGenerated;
-        }
-
-        generateSolarSystem(rand() % MAP_SIZE, rand() % MAP_SIZE, nbEntityGenerated, nbEntityNewSS);
-        nbEntityGenerated += nbEntityNewSS;
+        solarSystemCoordinator(&nbEntityGenerated, planetCount);
     }
 }
 
@@ -41,7 +34,7 @@ void renderPlanets(SDL_Texture ***texturePlanet, int planetCount) {
         if (screenX >= -2 * screenRadius && screenX <= SCREEN_WIDTH && 
             screenY >= -2 * screenRadius && screenY <= SCREEN_HEIGHT + screenRadius) {   // On n'affiche pas les planètes situés en dehors de l'ecran  
             // Affichage planete 
-            int idPicture = (planets[i].planetType == SUN) ? 9 : (generateRandomNumber(currentSeed, i) % 8 + 1);
+            int idPicture = (planets[i].planetType == SUN) ? 9 : (generateRandNb8(currentSeed, i) % 8 + 1);
             SDL_RenderCopy(renderer, texturePlanet[5][idPicture], NULL, &destRect);
 
             // Affichage barre* de minerais (1)      (*une seule barre, mais representant la valeur totale de minerais !?)

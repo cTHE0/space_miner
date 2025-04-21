@@ -173,7 +173,7 @@ void generateRandomName(char randomString[64], unsigned int seed, int index) {
     // Obtenir le nombre de syllabes dans le mot
     int minNbSyllabes = 2;
     int maxNbSyllabes = 4;
-    int nbSyllabes = minNbSyllabes + generateRandomNumber(seed, index) % (maxNbSyllabes - minNbSyllabes + 1);
+    int nbSyllabes = minNbSyllabes + generateRandNb8(seed, index) % (maxNbSyllabes - minNbSyllabes + 1);
 
     // Pour que le mot genere ne soit pas le meme que celui avec index - 1
     index = index * maxNbSyllabes;
@@ -182,12 +182,12 @@ void generateRandomName(char randomString[64], unsigned int seed, int index) {
     strcpy(randomString, "");
     char syllabe[5] = {0};
     for (int i = 0; i < nbSyllabes; i++) {
-        strcpy(syllabe, arrayOfSyllabes[generateRandomNumber(seed, index + i) % sizeArrayOfSyllabes]);  // Generer une nouvelle syllabe
+        strcpy(syllabe, arrayOfSyllabes[generateRandNb32(seed, index + i) % sizeArrayOfSyllabes]);  // Generer une nouvelle syllabe
         strcat(randomString, syllabe);  // Ajouter une nouvelle syllabe
     }
 }
 
-unsigned int generateRandomNumber(unsigned int seed, int index) {  // linear congruential generator (LCG), parametres de Marsaglia\n
+uint32_t generateRandNb32(uint32_t seed, int index) {  // linear congruential generator (LCG), parametres de Marsaglia
     if (seed == 0U) {
         printf("La seed ne doit pas etre nulle pour le generateur aleatoire de Marsaglia\n");
         return 0U;
@@ -199,4 +199,8 @@ unsigned int generateRandomNumber(unsigned int seed, int index) {  // linear con
     }
 
     return seed;  // De la forme : seed * 69069 ** (index + 1)
+}
+
+uint8_t generateRandNb8(uint32_t seed, int index) {  // Pour generer de petits entiers (LCG peu efficace dans les bits de poids faible... )
+    return (uint8_t)(generateRandNb32(seed, index) >> 24);  // On ne garde que les bits de poids fort
 }
