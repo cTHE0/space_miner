@@ -19,6 +19,7 @@ const uint32_t currentSeed = 187;  // Peut prendre des valeurs entre 1 et 2**32-
 int main(void) {
     // Initialisation 
     srand(time(NULL));
+    short gameBegun = 0;
 
     SDL_Window *window;
     initSDL(&window);
@@ -54,6 +55,7 @@ int main(void) {
                 displayMenu(imageTextures, textTextures);
 
                 if (state == GAME) {
+                    gameBegun = 1;
                     generatePlanets(&planets, planetCount);
                     initShips(&ships, shipCount, planets, planetCount);
                     initCamera(planets);
@@ -85,8 +87,11 @@ int main(void) {
     }
     
     // Fermeture du programme
-    destroyShips(ships, shipCount);
-    free(planets);
+    if (gameBegun) {
+        destroyShips(ships, shipCount);
+        free(planets);
+    }
+
     destroyImageTextures(imageTextures);
     destroyTextTextures(textTextures);
     destroyFonts(fonts);
