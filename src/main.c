@@ -1,21 +1,20 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL2_gfxPrimitives.h>
 #include <time.h>
-#include "camera.h"
 #include "planet.h"
+#include "ship.h"
+#include "camera.h"
 #include "event.h"
 #include "renderer.h"
-#include "ship.h"
 #include "assets_gestion.h"
-#include "map.h"
 #include "config.h"
 #include "landing_page.h"
 #include "text.h"
-#include "window.h"
 
 
-uint32_t currentSeed = 187;  // Peut prendre des valeurs entre 1 et 2**32-1
+const uint32_t currentSeed = 187;  // Peut prendre des valeurs entre 1 et 2**32-1
+
 
 int main(void) {
     // Initialisation 
@@ -24,15 +23,17 @@ int main(void) {
     SDL_Window *window;
     initSDL(&window);
 
-    initCamera();
-
+    Ship *ships = NULL;
     int shipCount = INIT_SHIP_COUNT;
+
+    Planet *planets = NULL;
     int planetCount = INIT_PLANET_COUNT;
 
-    loadFonts();
+    TTF_Font *fonts[FONT_NUMBER] = {0};
+    loadFonts(fonts);
 
     SDL_Texture ***imageTextures = loadTextures();
-    textTextures = loadTextTextures();
+    SDL_Texture **textTextures = loadTextTextures(fonts);
 
     // Variables pour mesurer les FPS
     Uint32 toShowFPS = SDL_GetTicks();
@@ -53,17 +54,16 @@ int main(void) {
                 displayMenu(imageTextures, textTextures);
 
                 if (state == GAME) {
-                    generatePlanets(planetCount);
-                    initShips(shipCount, planetCount);
-                    camera.rect.x = planets[1].x;
-                    camera.rect.y = planets[1].y;
+                    generatePlanets(&planets, planetCount);
+                    initShips(&ships, shipCount, planets, planetCount);
+                    initCamera(planets);
                 }
                 break;
             
             case GAME:
-                handleEvents(&state, shipCount, planetCount);
-                updateShips(shipCount);
-                displayGame(imageTextures, textTextures, shipCount, planetCount);
+                handleEvents(textTextures, fonts, &state, ships, shipCount, planets, planetCount);
+                updateShips(ships, shipCount);
+                displayGame(imageTextures, textTextures, ships, shipCount, planets, planetCount);
                 break;
             
             default:
@@ -85,10 +85,11 @@ int main(void) {
     }
     
     // Fermeture du programme
-    destroyShips(shipCount);
+    destroyShips(ships, shipCount);
     free(planets);
     destroyImageTextures(imageTextures);
     destroyTextTextures(textTextures);
+    destroyFonts(fonts);
     quitSDL(window);
     return 0;
 }

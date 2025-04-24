@@ -8,6 +8,7 @@
 #define INIT_PLANET_COUNT 10
 #define INIT_SHIP_COUNT 100
 #define CST_TEXT_NUMBER 42
+#define FONT_NUMBER 1
 
 #define SPRITE_SHEETS_DELAY 100  // En nombre de tick
 #define WAIT_TIME_SHIP 1000  // En millisecondes
@@ -17,8 +18,6 @@
 #define SHIP_SPEED 2.f
 #define FPS 60
 
-extern unsigned int currentSeed;
-
-#define carre(x) (x) * (x)
+extern const uint32_t currentSeed;
 
 #endif

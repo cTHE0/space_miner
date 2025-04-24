@@ -1,8 +1,10 @@
 #ifndef TOOLS_H
 #define TOOLS_H
 
-#include "ship.h"
 #include "planet.h"
+#include "ship.h"
+
+#define carre(x) (x) * (x)
 
 void *supprElemList(void *list, int *nb_elem, int type_size, int i);
 void *swapElements(void *list, int nb_elem, int type_size, int i, int j);
@@ -12,7 +14,7 @@ float distanceShipPlanet(Ship ship, Planet planet);
 float distancePlanetPlanet(Planet planet1, Planet planet2);
 float distanceShipShip(Ship ship1, Ship ship2);
 
-void initArrayOfSyllabes();
+void initArrayOfSyllabes(void);
 void generateRandomName(char randomString[64], unsigned int seed, int index);
 
 uint32_t generateRandNb32(uint32_t seed, int index);  // Pas efficace pour les petits entiers

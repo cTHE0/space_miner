@@ -2,8 +2,6 @@
 #define ASSETS_GESTION_H
 
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include "config.h"
 
 SDL_Texture* IMG_LoadTextureWithAlpha(const char* filePath, Uint8 alpha);
 SDL_Texture ***loadTextures(void);

@@ -1,14 +1,16 @@
+#include "renderer.h"
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include "ship.h"
 #include "planet.h"
+#include "ship.h"
 #include "map.h"
-#include "renderer.h"
 #include "config.h"
 #include "window.h"
-#include "text.h"
+
 
 SDL_Renderer *renderer = NULL;
+
 
 void initSDL(SDL_Window **window) {
     // Initialiser SDL (vidéo)
@@ -52,10 +54,10 @@ void initSDL(SDL_Window **window) {
         SDL_Quit();  // Nettoyer SDL
         return;
     }
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
 }
 
 void quitSDL(SDL_Window *window) {
-    TTF_CloseFont(uploadFont);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     TTF_Quit();
@@ -68,12 +70,12 @@ void clearScreen(void) {
     SDL_RenderClear(renderer);
 }
 
-void displayGame(SDL_Texture ***imageTextures, SDL_Texture **textTextures, int shipCount, int planetCount) {
+void displayGame(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships, int shipCount, Planet *planets, int planetCount) {
     clearScreen();
     renderMap(imageTextures[3][2]);
-    renderPlanets(imageTextures, planetCount);
-    renderShips(imageTextures, shipCount);
-    displayWindow(imageTextures, textTextures, planetCount);
+    renderPlanets(imageTextures, planets, planetCount);
+    renderShips(imageTextures, ships, shipCount);
+    displayWindow(imageTextures, textTextures, ships, planets, planetCount);
     SDL_RenderPresent(renderer);
 }
 

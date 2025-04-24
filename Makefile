@@ -27,7 +27,10 @@ clean:
 # Lancer le programme :
 #		- de la meme maniere qu'avec le Makefile :
 # 				gcc src/*.c -Wall -Wextra -O2 -I include -lm -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_gfx -o space_miner && ./space_miner
+# 		- idem Makefile mais sans les unused parameter/variable:
+#				gcc src/*.c -Wall -Wextra -O2 -Wno-unused-parameter -Wno-unused-variable -I include -lm -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_gfx -o space_miner && ./space_miner
 #		- avec valgrind (pour trouver ou ont lieu les fuits de memoires):
 # 				gcc -g src/*.c -Wall -Wextra -O2 -I include -lm -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_gfx -o space_miner && valgrind ./space_miner
 #		- en mode paranoiaque :
 # 				gcc -Wall -Wextra -O -Wwrite-strings -Wstrict-prototypes -Wuninitialized -Wunreachable-code -Wno-missing-braces  -Wno-missing-field-initializers -O2 -Wchar-subscripts -Wcomment -Wformat=2 -Wimplicit-int -Werror-implicit-function-declaration -Wmain -Wparentheses -Wsequence-point -Wreturn-type -Wswitch -Wtrigraphs -Wunused -Wuninitialized -Wunknown-pragmas -Wfloat-equal -Wundef -Wshadow -Wpointer-arith -Wbad-function-cast -Wwrite-strings -Wconversion -Wsign-compare -Waggregate-return -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wmissing-noreturn -Wformat -Wmissing-format-attribute -Wno-deprecated-declarations -Wpacked -Wredundant-decls -Wnested-externs -Winline -Wlong-long -Wunreachable-code src/*.c -I include -lm -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_gfx -o space_miner && ./space_miner
+#

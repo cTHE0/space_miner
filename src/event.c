@@ -1,13 +1,16 @@
-#include <SDL2/SDL.h>
 #include "event.h"
+
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
+#include "planet.h"
+#include "ship.h"
 #include "camera.h"
 #include "config.h"
-#include "landing_page.h"
 #include "window.h"
-#include "ship.h"
-#include "renderer.h"
+#include "landing_page.h"
 
-void handleEvents(GameState *state, int shipCount, int planetCount) {
+
+void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, GameState *state, Ship *ships, int shipCount, Planet *planets, int planetCount) {
     static int lastMouseX, lastMouseY;
     static int dragging_camera = 0;
     static int click = 0;
@@ -30,9 +33,8 @@ void handleEvents(GameState *state, int shipCount, int planetCount) {
                     lastMouseX = event.button.x;
                     lastMouseY = event.button.y;
 
-                    SDL_Point mouse = {event.button.x, event.button.y};
-                    if (!SDL_PointInRect(&mouse, &windowRect)) {
-                        windowOpened = NO_WINDOW;
+                    if (getWindowType() != NO_WINDOW && !clickOnWindow((SDL_Point){event.button.x, event.button.y})) {
+                        changeWindowType(NO_WINDOW);
                     }
                 }
                 break;
@@ -40,7 +42,7 @@ void handleEvents(GameState *state, int shipCount, int planetCount) {
             case SDL_MOUSEBUTTONUP:
                 if (event.button.button == SDL_BUTTON_LEFT) {
                     if (click) {
-                        openWindowGestion(lastMouseX, lastMouseY, shipCount, planetCount); // On a cliqué sur un ship donc on ouvre une nouvelle fenêtre
+                        openWindowGestion(textTextures, fonts, (SDL_Point){lastMouseX, lastMouseY}, ships, shipCount, planets, planetCount); // On a cliqué sur un ship donc on ouvre une nouvelle fenêtre
                     }
                     dragging_camera = 0;
                     click = 0;
@@ -51,7 +53,7 @@ void handleEvents(GameState *state, int shipCount, int planetCount) {
                 if (dragging_camera) {
                     int dx = (event.motion.x - lastMouseX);
                     int dy = (event.motion.y - lastMouseY);
-                    translateCamera(-dx / camera.scale, -dy / camera.scale);
+                    translateCamera(-dx / getCameraScale(), -dy / getCameraScale());
                     lastMouseX = event.motion.x;
                     lastMouseY = event.motion.y;
                     click = 0;
@@ -61,8 +63,8 @@ void handleEvents(GameState *state, int shipCount, int planetCount) {
             case SDL_KEYDOWN:
                 switch (event.key.keysym.sym) {
                     case SDLK_ESCAPE:
-                        if (windowOpened) {
-                            windowOpened = NO_WINDOW;
+                        if (getWindowType() != NO_WINDOW) {
+                            changeWindowType(NO_WINDOW);
                         }
                         else {
                             *state = QUIT;

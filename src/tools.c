@@ -1,13 +1,9 @@
+#include "tools.h"
+
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <math.h>
-#include <dirent.h>
-#include "camera.h"
-#include "ship.h"
 #include "planet.h"
-#include "config.h"
-#include "tools.h"
+#include "ship.h"
 
 
 void *supprElemList(void *list, int *nb_elem, int type_size, int i) {

@@ -1,10 +1,11 @@
+#include "solar_system.h"
+
 #include "planet.h"
 #include "config.h"
 #include "tools.h"
-#include "solar_system.h"
 
 
-void solarSystemCoordinator(int *nbEntityGenerated, int planetCount) {
+void solarSystemCoordinator(int *nbEntityGenerated, Planet *planets, int planetCount) {
     // Initialisation du nombre d'entites par systeme solaire
     static int maxEntity = 20;
     static int minEntity = 5;
@@ -15,13 +16,13 @@ void solarSystemCoordinator(int *nbEntityGenerated, int planetCount) {
     }
 
     // Generation du nouveau systeme solaire
-    generateSolarSystem(generateRandNb32(currentSeed, *nbEntityGenerated) % MAP_SIZE, generateRandNb32(currentSeed, *nbEntityGenerated + 1) % MAP_SIZE, *nbEntityGenerated, nbEntityNewSS);
+    generateSolarSystem(planets, generateRandNb32(currentSeed, *nbEntityGenerated) % MAP_SIZE, generateRandNb32(currentSeed, *nbEntityGenerated + 1) % MAP_SIZE, *nbEntityGenerated, nbEntityNewSS);
 
     // Actualisation du nombre d'entites deja generes
     *nbEntityGenerated += nbEntityNewSS;
 }
 
-void generateSolarSystem(int x, int y, int nbEntityGenerated, int nbEntityNewSS) { 
+void generateSolarSystem(Planet *planets, int x, int y, int nbEntityGenerated, int nbEntityNewSS) { 
     static int randIndex = 0;
 
     // Initialisation du soleil

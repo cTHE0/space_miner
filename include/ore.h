@@ -3,13 +3,11 @@
 
 typedef enum { FUEL, ORE1, ORE2, ORE3, MISSILES, EMPTY } Ore;  // Types de minerais, essence et missiles stockes
 
-
 typedef struct {  // Un seul compartiment
     Ore ore;
     int currentCapacity, maxCapacity;
     int flowSpeed;
 } Compartment;
-
 
 
 typedef struct {  // Cargaison constituée de plusieurs compartiments

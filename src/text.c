@@ -1,22 +1,19 @@
+#include "text.h"
+
+#include <stdio.h> 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
-#include <stdio.h> 
 #include "config.h"
-#include "text.h"
 #include "renderer.h"
 #include "assets_gestion.h"
 
 
-SDL_Texture **textTextures = NULL;
-TTF_Font *uploadFont = NULL;
-
-
-void loadFonts(void) {  // Utile pour un potentiel futur tableau de polices
-    uploadFont = loadFont("assets/fonts/f1.ttf", 56);  // Taille optimale pour cette police : 56
+void loadFonts(TTF_Font **fonts) {  // ATTENTION: ne pas oublier de modifier FONT_NUMBER
+    fonts[0] = loadFont("assets/fonts/f1.ttf", 56);  // Taille optimale pour cette police : 56
 }
 
 TTF_Font* loadFont(const char* path, int size) {
-    TTF_Font* newFont = TTF_OpenFont(path, size);
+    TTF_Font *newFont = TTF_OpenFont(path, size);
 
     if (!newFont) {
         fprintf(stderr, "Erreur de chargement de la police: %s\n", TTF_GetError());
@@ -26,50 +23,50 @@ TTF_Font* loadFont(const char* path, int size) {
     return newFont;
 }
 
-SDL_Texture **loadTextTextures(void) {  // ATTENTION: ne pas oublier de modifier CST_TEXT_NUMBER
+SDL_Texture **loadTextTextures(TTF_Font **fonts) {  // ATTENTION: ne pas oublier de modifier CST_TEXT_NUMBER
     SDL_Texture **textTextures = malloc(CST_TEXT_NUMBER * sizeof(SDL_Texture*));
-    TextToLoad cstTexts[CST_TEXT_NUMBER] = {{"Space Miner", WHITE, uploadFont},
-                                            {"Continue", WHITE, uploadFont},
-                                            {"New game", WHITE, uploadFont},
-                                            {"Settings", WHITE, uploadFont},
-                                            {"Ship #1,887 – Basic Rocket Model S", BLACK, uploadFont},
-                                            {"Travel information", BLACK, uploadFont},
-                                            {"NOT ENOUGH FUEL", BLACK, uploadFont},
-                                            {"STOP", BLACK, uploadFont},
-                                            {"Tank manager", BLACK, uploadFont},
-                                            {"Base:", BLACK, uploadFont},
-                                            {"Target:", BLACK, uploadFont},
-                                            {"Ship condition", BLACK, uploadFont},
-                                            {"Repair", BLACK, uploadFont},
-                                            {"Reported problems", BLACK, uploadFont},
-                                            {"Tank composition", BLACK, uploadFont},
-                                            {"Tank 1", BLACK, uploadFont},
-                                            {"Tank 2", BLACK, uploadFont},
-                                            {"Tank 3", BLACK, uploadFont},
-                                            {"dynamicNumber", BLACK, uploadFont},  // Zone de stockage pour la texture d'un nombre variable
-                                            {"dynamicNumber", BLACK, uploadFont},  // Idem
-                                            {"dynamicNumber", BLACK, uploadFont},  // Idem
-                                            {"dynamicNumber", BLACK, uploadFont},  // Idem
-                                            {"dynamicNumber", BLACK, uploadFont},  // Idem
-                                            {"dynamicNumber", BLACK, uploadFont},  // Idem
-                                            {"dynamicNumber", BLACK, uploadFont},  // Idem
-                                            {"dynamicNumber", BLACK, uploadFont},  // Idem
-                                            {"dynamicNumber", BLACK, uploadFont},  // Idem
-                                            {"dynamicNumber", BLACK, uploadFont},  // Idem
-                                            {"dynamicNumber", BLACK, uploadFont},  // Idem
-                                            {"dynamicNumber", BLACK, uploadFont},  // Idem
-                                            {"dynamiqueString", BLACK, uploadFont},  // Zone de stockage pour la texture d'un string
-                                            {"dynamiqueString", BLACK, uploadFont},  // Idem
-                                            {"dynamiqueString", BLACK, uploadFont},  // Idem
-                                            {"dynamiqueString", BLACK, uploadFont},  // Idem
-                                            {"dynamiqueString", BLACK, uploadFont},  // Idem
-                                            {"dynamiqueString", BLACK, uploadFont},  // Idem
-                                            {"dynamiqueString", BLACK, uploadFont},  // Idem
-                                            {"dynamiqueString", BLACK, uploadFont},  // Idem
-                                            {"dynamiqueString", BLACK, uploadFont},  // Idem
-                                            {"dynamiqueString", BLACK, uploadFont},  // Idem
-                                            {"dynamiqueString", BLACK, uploadFont},  // Idem
-                                            {"dynamiqueString", BLACK, uploadFont},  // Idem
+    TextToLoad cstTexts[CST_TEXT_NUMBER] = {{"Space Miner", WHITE, fonts[0]},
+                                            {"Continue", WHITE, fonts[0]},
+                                            {"New game", WHITE, fonts[0]},
+                                            {"Settings", WHITE, fonts[0]},
+                                            {"Ship #1,887 – Basic Rocket Model S", BLACK, fonts[0]},
+                                            {"Travel information", BLACK, fonts[0]},
+                                            {"NOT ENOUGH FUEL", BLACK, fonts[0]},
+                                            {"STOP", BLACK, fonts[0]},
+                                            {"Tank manager", BLACK, fonts[0]},
+                                            {"Base:", BLACK, fonts[0]},
+                                            {"Target:", BLACK, fonts[0]},
+                                            {"Ship condition", BLACK, fonts[0]},
+                                            {"Repair", BLACK, fonts[0]},
+                                            {"Reported problems", BLACK, fonts[0]},
+                                            {"Tank composition", BLACK, fonts[0]},
+                                            {"Tank 1", BLACK, fonts[0]},
+                                            {"Tank 2", BLACK, fonts[0]},
+                                            {"Tank 3", BLACK, fonts[0]},
+                                            {"dynamicNumber", BLACK, fonts[0]},  // Zone de stockage pour la texture d'un nombre variable
+                                            {"dynamicNumber", BLACK, fonts[0]},  // Idem
+                                            {"dynamicNumber", BLACK, fonts[0]},  // Idem
+                                            {"dynamicNumber", BLACK, fonts[0]},  // Idem
+                                            {"dynamicNumber", BLACK, fonts[0]},  // Idem
+                                            {"dynamicNumber", BLACK, fonts[0]},  // Idem
+                                            {"dynamicNumber", BLACK, fonts[0]},  // Idem
+                                            {"dynamicNumber", BLACK, fonts[0]},  // Idem
+                                            {"dynamicNumber", BLACK, fonts[0]},  // Idem
+                                            {"dynamicNumber", BLACK, fonts[0]},  // Idem
+                                            {"dynamicNumber", BLACK, fonts[0]},  // Idem
+                                            {"dynamicNumber", BLACK, fonts[0]},  // Idem
+                                            {"dynamiqueString", BLACK, fonts[0]},  // Zone de stockage pour la texture d'un string
+                                            {"dynamiqueString", BLACK, fonts[0]},  // Idem
+                                            {"dynamiqueString", BLACK, fonts[0]},  // Idem
+                                            {"dynamiqueString", BLACK, fonts[0]},  // Idem
+                                            {"dynamiqueString", BLACK, fonts[0]},  // Idem
+                                            {"dynamiqueString", BLACK, fonts[0]},  // Idem
+                                            {"dynamiqueString", BLACK, fonts[0]},  // Idem
+                                            {"dynamiqueString", BLACK, fonts[0]},  // Idem
+                                            {"dynamiqueString", BLACK, fonts[0]},  // Idem
+                                            {"dynamiqueString", BLACK, fonts[0]},  // Idem
+                                            {"dynamiqueString", BLACK, fonts[0]},  // Idem
+                                            {"dynamiqueString", BLACK, fonts[0]},  // Idem
                                            };
 
     for (int i = 0; i < CST_TEXT_NUMBER; i++) {
@@ -112,4 +109,10 @@ void destroyTextTextures(SDL_Texture **textTextures) {
         SDL_DestroyTexture(textTextures[i]);
     }
     free(textTextures);
+}
+
+void destroyFonts(TTF_Font **fonts) {
+    for (int i = 0; i < FONT_NUMBER; i++) {
+        TTF_CloseFont(fonts[i]);
+    }
 }

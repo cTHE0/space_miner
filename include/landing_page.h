@@ -20,7 +20,7 @@ typedef struct {
 // Affiche le menu principal i.e: landing page
 void displayMenu(SDL_Texture ***imageTextures, SDL_Texture **textTextures);
 
-void updateFrameIndex();
+void updateFrameIndex(void);
 
 // Gère les événements du menu
 void handleMenuEvents(GameState *state);

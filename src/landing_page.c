@@ -1,8 +1,7 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 #include "landing_page.h"
+
+#include <SDL2/SDL.h>
 #include "config.h"
-#include "text.h"
 #include "renderer.h"
 
 
@@ -110,8 +109,10 @@ void displayMenu(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
     SDL_QueryTexture(textTextures[0], NULL, NULL, &textureWidth, &textureHeight);
 
     SDL_Rect titleRect = {SCREEN_WIDTH * 0.42, SCREEN_HEIGHT * 0.07, textureWidth * SCREEN_HEIGHT * 0.004, textureHeight * SCREEN_HEIGHT * 0.004};
-    SDL_RenderCopy(renderer, textTextures[0], NULL, &titleRect);  // Affiche "Space Miner"
+    SDL_RenderCopy(renderer, textTextures[0], NULL, &titleRect);
 
+    // Affiche les bouton New game, Continue, Settings
+    SDL_SetTextureBlendMode(imageTextures[4][1], SDL_BLENDMODE_BLEND);
     switch (bg_button_a_afficher) {
         case 1:
             SDL_RenderCopy(renderer, imageTextures[4][1], NULL, &bgButton1Rect);  // Affiche le rectangle derriere "Continue"
@@ -125,7 +126,7 @@ void displayMenu(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
         default:
             break;
     }
-    
+SDL_SetTextureBlendMode(imageTextures[4][1], SDL_BLENDMODE_BLEND);
     SDL_QueryTexture(textTextures[1], NULL, NULL, &textureWidth, &textureHeight);  // Permet de garder les proportions du texte
     SDL_Rect text1Rect = {SCREEN_WIDTH * 0.618, SCREEN_HEIGHT * 0.35, textureWidth * SCREEN_HEIGHT * 0.0013, textureHeight * SCREEN_HEIGHT * 0.0013};
     SDL_RenderCopy(renderer, textTextures[1], NULL, &text1Rect);  // Affiche "Continue"

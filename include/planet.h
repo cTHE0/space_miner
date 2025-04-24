@@ -14,9 +14,7 @@ typedef struct {
     float regenerationTime;     // Duree pour que la planete regenere ses ressources lorsque que currentOre = 0
 } Planet;
 
-void generatePlanets(int planetCount);
-void renderPlanets(SDL_Texture ***texturePlanet, int planetCount);
-
-extern Planet* planets;
+void generatePlanets(Planet **planets, int planetCount);
+void renderPlanets(SDL_Texture ***texturePlanet, Planet *planets, int planetCount);
 
 #endif

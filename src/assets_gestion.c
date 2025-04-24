@@ -1,15 +1,15 @@
+#include "assets_gestion.h"
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <string.h>
 #include <dirent.h>
-#include "assets_gestion.h"
-#include "config.h"
-#include "tools.h"
 #include "renderer.h"
 
 
 static int nbCategories;   // Initialisation
 static int *nbPicturesPerCategory;  // Initialisation
+
 
 SDL_Texture* IMG_LoadTextureWithAlpha(const char* filePath, Uint8 alpha) {
     // Charger directement la texture avec SDL_Image
@@ -40,24 +40,25 @@ SDL_Texture ***loadTextures(void) {
     /* Pour ajouter un image, il suffit de l'ajouter dans un dossier et de la renommer comme
      * il se doit.
      */
+
+    // Obtention des variables necessaires a l'importation
     const char *path = "assets/img/";
     nbCategories = foldersNbFunction(path);  // Nombre de dossiers
     char **foldersPath = foldersPathFunction(path);  // Chemins des dossiers
     nbPicturesPerCategory = filesNbFunction(foldersPath);  // Nombre de fichiers par categorie
 
-    // Allocation pour imageTextures
+    // Construction de imageTextures
     SDL_Texture ***imageTextures = malloc(nbCategories * sizeof(SDL_Texture**));
 
-    // Indice du dossier 'others'
-    int indexOthers = -1;
-
-    // Construction de imageTextures
-    for (int i = 0; i < nbCategories; i++) {    
-        if (strcmp(foldersPath[i], "assets/img/others4/") == 0) {
-            indexOthers = i;
-            continue;
-        }
+    for (int i = 0; i < nbCategories; i++) {
         imageTextures[i] = malloc(nbPicturesPerCategory[i] * sizeof(SDL_Texture*));
+
+        if (strcmp(foldersPath[i], "assets/img/others4/") == 0) {  // Traitement spécifique pour 'others'
+            imageTextures[i][0] = IMG_LoadTexture(renderer, "assets/img/others4/0.png");
+            imageTextures[i][1] = IMG_LoadTextureWithAlpha("assets/img/others4/1.png", 100);
+            imageTextures[i][2] = IMG_LoadTexture(renderer, "assets/img/others4/2.png");
+            imageTextures[i][3] = IMG_LoadTextureWithAlpha("assets/img/others4/3.png", 100);
+        }
 
         // Chargement des textures pour chaque image dans chaque dossier
         for (int j = 0; j < nbPicturesPerCategory[i]; j++) {
@@ -71,13 +72,6 @@ SDL_Texture ***loadTextures(void) {
             }
         }
     }
-
-    // Traitement spécifique pour 'others'
-    imageTextures[indexOthers] = malloc(nbPicturesPerCategory[indexOthers] * sizeof(SDL_Texture*));
-    imageTextures[indexOthers][0] = IMG_LoadTexture(renderer, "assets/img/others4/0.png");
-    imageTextures[indexOthers][1] = IMG_LoadTextureWithAlpha("assets/img/others4/1.png", (Uint8)100);
-    imageTextures[indexOthers][2] = IMG_LoadTexture(renderer, "assets/img/others4/2.png");
-    imageTextures[indexOthers][3] = IMG_LoadTextureWithAlpha("assets/img/others4/3.png", (Uint8)230);
 
     // Libération des chemins des dossiers
     for (int i = 0; i < nbCategories; i++) {

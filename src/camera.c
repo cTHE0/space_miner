@@ -1,22 +1,32 @@
-#include <stdio.h>
-#include <SDL2/SDL_image.h>
 #include "camera.h"
+
+#include <SDL2/SDL.h>
 #include "config.h"
 #include "window.h"
-#include "renderer.h"
+#include "planet.h"
 
-Camera camera;
 
-void initCamera(void) {
-    camera.rect.x = 0;
-    camera.rect.y = 0;
+static Camera camera;
+
+
+void initCamera(Planet *planets) {
+    camera.rect.x = planets[1].x;
+    camera.rect.y = planets[1].y;
     camera.rect.h = SCREEN_HEIGHT;
     camera.rect.w = SCREEN_WIDTH;
     camera.scale = 1.0;
 }
 
+SDL_Rect getCameraRect(void) {
+    return camera.rect;
+}
+
+float getCameraScale(void) {
+    return camera.scale;
+}
+
 void zoomCamera(float zoomFactor) {
-    if (windowOpened != NO_WINDOW) {
+    if (getWindowType() != NO_WINDOW) {
         return;
     }
     
@@ -53,7 +63,7 @@ void zoomCamera(float zoomFactor) {
 }
 
 void translateCamera(float dx, float dy) {
-    if (windowOpened != NO_WINDOW) {
+    if (getWindowType() != NO_WINDOW) {
         return;
     }
 
