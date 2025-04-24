@@ -1,36 +1,64 @@
 CC      = gcc
-CFLAGS  = -I include -Wall -Wextra -O2
+CFLAGS  = -I inc -Wall -Wextra -O2
 LDFLAGS = -lm -lSDL2 -lSDL2_gfx -lSDL2_image -lSDL2_ttf
-SRC     = src/main.c            src/camera.c          src/event.c           src/renderer.c          \
-          src/ore.c             src/assets_gestion.c  src/map.c             src/text.c              \
-	      src/solar_system.c    src/landing_page.c    src/window.c          src/ship_window.c       \
-	      src/planet_window.c   src/tools.c           src/planet.c          src/ship.c 				\
-		  
-INCLUDE = include/camera.h      include/planet.h      include/event.h       include/renderer.h      \
-          include/ship.h        include/ore.h         include/map.h         include/assets_gestion.h\
-          include/text.h        include/config.h      include/tools.h       include/landing_page.h  \
-          include/window.h	    include/solar_system.h
-OBJ     = $(SRC:.c=.o)
+OBJDIR  = obj
+OBJ     = $(SRC:src/%.c=$(OBJDIR)/%.o)
 EXEC    = space_miner
+SRC     = src/main.c            src/camera.c          src/event.c           src/renderer.c        \
+          src/ore.c             src/assets_gestion.c  src/map.c             src/text.c            \
+	      src/solar_system.c    src/landing_page.c    src/window.c          src/ship_window.c     \
+	      src/planet_window.c   src/tools.c           src/planet.c          src/ship.c 			  
+	      
+INCLUDE = inc/camera.h          inc/planet.h          inc/event.h           inc/renderer.h        \
+          inc/ship.h            inc/ore.h             inc/map.h             inc/assets_gestion.h  \
+          inc/text.h            inc/config.h          inc/tools.h           inc/landing_page.h    \
+          inc/window.h	        inc/solar_system.h    
 
 all: $(EXEC)
 
 $(EXEC): $(OBJ)
-	$(CC) -o $@ $^ $(LDFLAGS)
+	@echo "Done\n"
+	@echo "======================================================================================"
+	@echo "Linking object files to create the executable '$(EXEC)'"
+	@echo "..."
+	@$(CC) -o $@ $^ $(LDFLAGS)
+	@echo "Done\n"
+	@echo "======================================================================================"
+	@echo "Run './$(EXEC)' to start the program"
+	@echo "======================================================================================"
+	@echo "\n"
 
-%.o: %.c $(INCLUDE)
-	$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJDIR):
+	@echo "======================================================================================"
+	@echo "Creating directory '$(OBJDIR)'"
+	@echo "..."
+	@mkdir -p $(OBJDIR)
+	@echo "Done\n"
+
+	@echo "======================================================================================"
+	@echo "Compilation of source files"
+	@echo "..."
+
+$(OBJDIR)/%.o: src/%.c $(INCLUDE) $(OBJDIR)
+	@echo "Compiling $<"
+	@$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJ) $(EXEC)
+	@echo "======================================================================================"
+	@echo "Cleaning up object files"
+	@echo "..."
+	@rm -rf $(OBJDIR)
+	@echo "Done\n"
+
 
 # Lancer le programme :
 #		- de la meme maniere qu'avec le Makefile :
-# 				gcc src/*.c -Wall -Wextra -O2 -I include -lm -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_gfx -o space_miner && ./space_miner
+# 				gcc src/*.c -Wall -Wextra -O2 -I inc -lm -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_gfx -o space_miner && ./space_miner
 # 		- idem Makefile mais sans les unused parameter/variable:
-#				gcc src/*.c -Wall -Wextra -O2 -Wno-unused-parameter -Wno-unused-variable -I include -lm -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_gfx -o space_miner && ./space_miner
+#				gcc src/*.c -Wall -Wextra -O2 -Wno-unused-parameter -Wno-unused-variable -I inc -lm -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_gfx -o space_miner && ./space_miner
 #		- avec valgrind (pour trouver ou ont lieu les fuits de memoires):
-# 				gcc -g src/*.c -Wall -Wextra -O2 -I include -lm -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_gfx -o space_miner && valgrind ./space_miner
+# 				gcc -g src/*.c -Wall -Wextra -O2 -I inc -lm -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_gfx -o space_miner && valgrind ./space_miner
 #		- en mode paranoiaque :
-# 				gcc -Wall -Wextra -O -Wwrite-strings -Wstrict-prototypes -Wuninitialized -Wunreachable-code -Wno-missing-braces  -Wno-missing-field-initializers -O2 -Wchar-subscripts -Wcomment -Wformat=2 -Wimplicit-int -Werror-implicit-function-declaration -Wmain -Wparentheses -Wsequence-point -Wreturn-type -Wswitch -Wtrigraphs -Wunused -Wuninitialized -Wunknown-pragmas -Wfloat-equal -Wundef -Wshadow -Wpointer-arith -Wbad-function-cast -Wwrite-strings -Wconversion -Wsign-compare -Waggregate-return -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wmissing-noreturn -Wformat -Wmissing-format-attribute -Wno-deprecated-declarations -Wpacked -Wredundant-decls -Wnested-externs -Winline -Wlong-long -Wunreachable-code src/*.c -I include -lm -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_gfx -o space_miner && ./space_miner
+# 				gcc -Wall -Wextra -O -Wwrite-strings -Wstrict-prototypes -Wuninitialized -Wunreachable-code -Wno-missing-braces  -Wno-missing-field-initializers -O2 -Wchar-subscripts -Wcomment -Wformat=2 -Wimplicit-int -Werror-implicit-function-declaration -Wmain -Wparentheses -Wsequence-point -Wreturn-type -Wswitch -Wtrigraphs -Wunused -Wuninitialized -Wunknown-pragmas -Wfloat-equal -Wundef -Wshadow -Wpointer-arith -Wbad-function-cast -Wwrite-strings -Wconversion -Wsign-compare -Waggregate-return -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wmissing-noreturn -Wformat -Wmissing-format-attribute -Wno-deprecated-declarations -Wpacked -Wredundant-decls -Wnested-externs -Winline -Wlong-long -Wunreachable-code src/*.c -I inc -lm -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_gfx -o space_miner && ./space_miner
 #
