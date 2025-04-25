@@ -1,3 +1,4 @@
+*.d
 *.o
 space_miner
 *.swp
