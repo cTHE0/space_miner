@@ -6,21 +6,23 @@ OBJ     = $(SRC:src/%.c=$(OBJDIR)/%.o)
 EXEC    = space_miner
 SRC     = src/main.c            src/camera.c          src/event.c           src/renderer.c        \
           src/ore.c             src/assets_gestion.c  src/map.c             src/text.c            \
-	      src/solar_system.c    src/landing_page.c    src/window.c          src/ship_window.c     \
-	      src/planet_window.c   src/tools.c           src/planet.c          src/ship.c 			  
+          src/solar_system.c    src/landing_page.c    src/window.c          src/ship_window.c     \
+          src/planet_window.c   src/tools.c           src/planet.c          src/ship.c 			  
 	      
 INCLUDE = inc/camera.h          inc/planet.h          inc/event.h           inc/renderer.h        \
           inc/ship.h            inc/ore.h             inc/map.h             inc/assets_gestion.h  \
           inc/text.h            inc/config.h          inc/tools.h           inc/landing_page.h    \
           inc/window.h	        inc/solar_system.h    
 
+# Dépendances automatiques
+DEPS = $(OBJ:$(OBJDIR)/%.o=$(OBJDIR)/%.d)
+
 all: $(EXEC)
 
 $(EXEC): $(OBJ)
 	@echo "Done\n"
 	@echo "======================================================================================"
-	@echo "Linking object files to create the executable '$(EXEC)'"
-	@echo "..."
+	@echo "Linking object files to create the executable '$(EXEC)'\n..."
 	@$(CC) -o $@ $^ $(LDFLAGS)
 	@echo "Done\n"
 	@echo "======================================================================================"
@@ -28,26 +30,27 @@ $(EXEC): $(OBJ)
 	@echo "======================================================================================"
 	@echo "\n"
 
-
+# Créer le dossier des objets si nécessaire
 $(OBJDIR):
 	@echo "======================================================================================"
-	@echo "Creating directory '$(OBJDIR)'"
-	@echo "..."
+	@echo "Creating directory '$(OBJDIR)'\n..."
 	@mkdir -p $(OBJDIR)
 	@echo "Done\n"
 
 	@echo "======================================================================================"
-	@echo "Compilation of source files"
-	@echo "..."
+	@echo "Compilation of source files\n..."
 
-$(OBJDIR)/%.o: src/%.c $(INCLUDE) $(OBJDIR)
+# Compilation des fichiers .c en .o, avec génération de dépendances .d
+$(OBJDIR)/%.o: src/%.c $(INCLUDE) | $(OBJDIR)
 	@echo "Compiling $<"
-	@$(CC) $(CFLAGS) -c $< -o $@
+	@$(CC) $(CFLAGS) -MMD -MP -c $< -o $@
+
+# Inclure les fichiers de dépendances générés pour chaque fichier .o
+-include $(DEPS)
 
 clean:
 	@echo "======================================================================================"
-	@echo "Cleaning up object files"
-	@echo "..."
+	@echo "Cleaning up object files\n..."
 	@rm -rf $(OBJDIR)
 	@echo "Done\n"
 

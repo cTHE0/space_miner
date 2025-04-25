@@ -22,7 +22,7 @@ void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
         (*ships)[i].id = i;
         (*ships)[i].idModel = rand() % 12;
         (*ships)[i].base = &planets[1];  // La première planète est la base de chaque vaisseau
-        (*ships)[i].target = &planets[rand() % (planetCount - 1)] + 1;
+        (*ships)[i].target = &planets[rand() % (planetCount - 2) + 2];
         (*ships)[i].x = (*ships)[i].base->x;
         (*ships)[i].y = (*ships)[i].base->y;
         (*ships)[i].w = 62;
@@ -82,7 +82,7 @@ void updateShipAnimation(Ship *ship, Uint32 currentTime) {  // Pour animation de
     }
 }
 
-void updateShipMove(Ship *ship, Uint32 currentTime) {  // Pour animation de la flamme des fusees 
+void updateShipMove(Ship *ship, Uint32 currentTime) {
     // Pour le deplacement des fusees dans l'espace
     if (ship->state == MOVING_TO_TARGET || ship->state == MOVING_TO_BASE) {
         Planet *dest = (ship->state == MOVING_TO_TARGET) ? ship->target : ship->base;
@@ -167,7 +167,7 @@ void updateShipFuel(Ship *ship, Uint32 currentTime) {  // Gere la consommation d
     }
 }
 
-void renderShips(SDL_Texture ***textureShip, Ship *ships, int shipCount) {
+void renderShips(SDL_Texture ***imageTextures, Ship *ships, int shipCount) {
     for (int i = 0; i < shipCount; i++) {
         // Calcul des coordonnees a l'ecran, du point en haut a gauche de la fusee
         SDL_Point ShipOnScreen = {(ships[i].x - getCameraRect().x - SCREEN_WIDTH / 2.f) * getCameraScale() + SCREEN_WIDTH / 2.f,
@@ -175,7 +175,7 @@ void renderShips(SDL_Texture ***textureShip, Ship *ships, int shipCount) {
 
         if (ShipOnScreen.x >= -ships[i].w * getCameraScale() && ShipOnScreen.x <= SCREEN_WIDTH && 
             ShipOnScreen.y >= -ships[i].h * getCameraScale() && ShipOnScreen.y <= SCREEN_HEIGHT + ships[i].h * getCameraScale()) {  // Si la fusee est dans l'ecran 
-            renderShipImage(textureShip[6][ships[i].idModel], ships[i], ShipOnScreen);
+            renderShipImage(imageTextures[7][ships[i].idModel], ships[i], ShipOnScreen);
             renderShipBars(ships[i], ShipOnScreen);
             ships[i].destRect.x = ShipOnScreen.x;
             ships[i].destRect.y = ShipOnScreen.y;

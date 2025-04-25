@@ -47,9 +47,9 @@ void displayPlanetWindow(SDL_Texture ***imageTextures, SDL_Texture **textTexture
         return;
     }
 
-    SDL_RenderCopy(renderer, imageTextures[4][3], NULL, &windowRect);  // Arriere plan de la fenetre d'informations
+    SDL_RenderCopy(renderer, imageTextures[5][3], NULL, &windowRect);  // Arriere plan de la fenetre d'informations
     SDL_RenderCopy(renderer, imageTextures[2][0], NULL, &WindowCrossRect);  // Croix pour fermer la fenetre
 
     int idPicture = (planets[getWindowId()].planetType == SUN) ? 9 : generateRandNb8(currentSeed, getWindowId()) % 8 + 1;
-    SDL_RenderCopy(renderer, imageTextures[5][idPicture], NULL, &planetDisplayedRect);  // Planete decrite dans cette fenetre
+    SDL_RenderCopy(renderer, imageTextures[6][idPicture], NULL, &planetDisplayedRect);  // Planete decrite dans cette fenetre
 }

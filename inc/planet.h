@@ -15,6 +15,6 @@ typedef struct {
 } Planet;
 
 void generatePlanets(Planet **planets, int planetCount);
-void renderPlanets(SDL_Texture ***texturePlanet, Planet *planets, int planetCount);
+void renderPlanets(SDL_Texture ***imageTextures, Planet *planets, int planetCount);
 
 #endif

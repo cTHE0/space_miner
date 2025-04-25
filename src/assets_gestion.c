@@ -53,11 +53,11 @@ SDL_Texture ***loadTextures(void) {
     for (int i = 0; i < nbCategories; i++) {
         imageTextures[i] = malloc(nbPicturesPerCategory[i] * sizeof(SDL_Texture*));
 
-        if (strcmp(foldersPath[i], "assets/img/others4/") == 0) {  // Traitement spécifique pour 'others'
-            imageTextures[i][0] = IMG_LoadTexture(renderer, "assets/img/others4/0.png");
-            imageTextures[i][1] = IMG_LoadTextureWithAlpha("assets/img/others4/1.png", 100);
-            imageTextures[i][2] = IMG_LoadTexture(renderer, "assets/img/others4/2.png");
-            imageTextures[i][3] = IMG_LoadTextureWithAlpha("assets/img/others4/3.png", 100);
+        if (strcmp(foldersPath[i], "assets/img/others5/") == 0) {  // Traitement spécifique pour 'others'
+            imageTextures[i][0] = IMG_LoadTexture(renderer, "assets/img/others5/0.png");
+            imageTextures[i][1] = IMG_LoadTextureWithAlpha("assets/img/others5/1.png", 100);
+            imageTextures[i][2] = IMG_LoadTexture(renderer, "assets/img/others5/2.png");
+            imageTextures[i][3] = IMG_LoadTextureWithAlpha("assets/img/others5/3.png", 100);
         }
 
         // Chargement des textures pour chaque image dans chaque dossier
