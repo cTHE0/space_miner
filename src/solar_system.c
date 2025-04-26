@@ -3,6 +3,7 @@
 #include "planet.h"
 #include "config.h"
 #include "tools.h"
+#include "config.h"
 
 
 void solarSystemCoordinator(int *nbEntityGenerated, Planet *planets, int planetCount) {
@@ -26,31 +27,37 @@ void generateSolarSystem(Planet *planets, int x, int y, int nbEntityGenerated, i
     static int randIndex = 0;
 
     // Initialisation du soleil
-    planets[nbEntityGenerated].id = nbEntityGenerated;
-    planets[nbEntityGenerated].planetType = SUN;
-    planets[nbEntityGenerated].maxOre = 1 + generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % 1000;
-    randIndex ++;
-    planets[nbEntityGenerated].currentOre = generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % (int)planets[nbEntityGenerated].maxOre;  // Les planetes ne sont pas toutes initialement remplies
-    randIndex ++;
-    planets[nbEntityGenerated].regenerationTime = generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % 10000;  // En millisecondes
-    randIndex ++;
+    Planet *newSun = &planets[nbEntityGenerated];
 
+    newSun->planetType = SUN;
+    newSun->id = nbEntityGenerated;
+    newSun->regenerationTime = generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % 10000;  // En millisecondes
+    randIndex ++;
+    for (int i = 0; i < ORE_TYPE_COUNT; i++) {
+        newSun->maxOre[i] = 1 + generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % 1000;
+        randIndex ++;
+        newSun->currentOre[i] = generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % (int)newSun->maxOre[i];  // Les planetes ne sont pas toutes initialement remplies
+        randIndex ++;
+    }
     int r = 150 + generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % 50;
     randIndex ++;
-    planets[nbEntityGenerated].radius = r;
-    planets[nbEntityGenerated].x = x;
-    planets[nbEntityGenerated].y = y;
+    newSun->radius = r;
+    newSun->x = x;
+    newSun->y = y;
 
     // Generation des planetes
     for (int j = nbEntityGenerated + 1; j < nbEntityGenerated + nbEntityNewSS; j++) {
         planets[j].id = j;
         planets[j].planetType = PLANET;
-        planets[j].maxOre = 1 + generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % 1000;  // Les planetes ne sont pas toutes rentables
-        randIndex ++;
-        planets[j].currentOre = generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % (int)planets[j].maxOre;  // Les planetes ne sont pas toutes remplies de ressources
-        randIndex ++;
         planets[j].regenerationTime = generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % 10000;  // En millisecondes
         randIndex ++;
+        
+        for (int i = 0; i < ORE_TYPE_COUNT; i++) {
+            planets[j].maxOre[i] = 1 + generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % 1000;
+            randIndex ++;
+            planets[j].currentOre[i] = generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % (int)planets[j].maxOre[i];  // Les planetes ne sont pas toutes initialement remplies
+            randIndex ++;
+        }
 
         // Recherche d'une nouvelle planete eloignee de toutes les autres
         short planetIsAlone = 0;  // 0: la nouvelle planete est proche d'une autre, 1: la nouvelle planete est eloignee

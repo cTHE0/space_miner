@@ -44,23 +44,35 @@ void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
         (*ships)[i].destRect.h = 0;
 
         // Allocation des compartiments
-        (*ships)[i].cargo.compartmentsNumber = 2;
-        (*ships)[i].cargo.compartmentsList = malloc((*ships)[i].cargo.compartmentsNumber * sizeof(Compartment));
-        if ((*ships)[i].cargo.compartmentsList == NULL) {
+        Cargo *cargo = &(*ships)[i].cargo;
+
+        cargo->compartmentsNumber = 4;
+        cargo->compartmentsList = malloc(cargo->compartmentsNumber * sizeof(Compartment));
+        if (cargo->compartmentsList == NULL) {
             printf("Erreur d'allocation mémoire pour les compartiments du vaisseau %d!\n", i);
             
             // Libérer la mémoire des vaisseaux déjà créés
             for (int j = 0; j < i; j++) {
-                free((*ships)[j].cargo.compartmentsList);
+                free(cargo->compartmentsList);
             }
             free(*ships);
             return;
         }
         for (int j = 0; j < (*ships)[i].cargo.compartmentsNumber; j++) {  // Ici, chaque compartiment contient de l'essence
-            (*ships)[i].cargo.compartmentsList[j].ore = FUEL;
-            (*ships)[i].cargo.compartmentsList[j].maxCapacity = 100;
-            (*ships)[i].cargo.compartmentsList[j].currentCapacity = 100;
-            (*ships)[i].cargo.compartmentsList[j].flowSpeed = 5;
+            cargo->compartmentsList[j].ore = rand() % 5;
+            cargo->compartmentsList[j].maxCapacity = 100;
+            cargo->compartmentsList[j].currentCapacity = 100;
+            cargo->compartmentsList[j].flowSpeed = 5;
+
+            // Pour tester le systeme de ressource
+            // Faire une interface graphique pour gerer ca proprement
+            if (cargo->compartmentsList[j].ore == FUEL) {
+                cargo->compartmentsList[j].flowBase_in = FUEL;
+                cargo->compartmentsList[j].flowTarget_in = FUEL;
+            } else {
+                cargo->compartmentsList[j].flowTarget_in = ORE1;
+                cargo->compartmentsList[j].flowTarget_out = ORE1;
+            }
         }
     }
 }

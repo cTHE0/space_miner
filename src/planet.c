@@ -43,7 +43,7 @@ void renderPlanets(SDL_Texture ***imageTextures, Planet *planets, int planetCoun
             SDL_RenderFillRect(renderer, &destRect);
 
             // Affichage barre de minerais (2)
-            destRect.w *= planets[i].currentOre / planets[i].maxOre;
+            destRect.w *= planets[i].currentOre[0] / planets[i].maxOre[0];
 
             SDL_SetRenderDrawColor(renderer, 255, 215, 0, 255);
             SDL_RenderFillRect(renderer, &destRect);
