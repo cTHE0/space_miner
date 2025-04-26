@@ -58,7 +58,6 @@ void displayPlanetWindow(SDL_Texture ***imageTextures, SDL_Texture **textTexture
     if (getWindowType() != PLANET_WINDOW) {
         return;
     }
-
     // Arriere plan de la fenetre d'informations
     SDL_RenderCopy(renderer, imageTextures[5][3], NULL, &windowRect);
 

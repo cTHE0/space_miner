@@ -7,7 +7,6 @@
 #include "map.h"
 #include "config.h"
 #include "window.h"
-#include "basic_ship_window.h"
 
 
 SDL_Renderer *renderer = NULL;
@@ -76,8 +75,7 @@ void displayGame(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship 
     renderMap(imageTextures[3][2]);
     renderPlanets(imageTextures, planets, planetCount);
     renderShips(imageTextures, ships, shipCount);
-    //displayWindow(imageTextures, textTextures, ships, planets, planetCount);
-    displayBasicShipWindow(imageTextures, ships);
+    displayWindow(imageTextures, textTextures, ships, planets, planetCount);
     SDL_RenderPresent(renderer);
 }
 

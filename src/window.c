@@ -55,8 +55,7 @@ void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, SDL_Point m
         clickOnPlanet(textTextures, fonts, planets, planetCount, mouse);
     } else if (((getWindowType() == SHIP_WINDOW) || (getWindowType() == PLANET_WINDOW)) && SDL_PointInRect(&mouse, &WindowCrossRect)){
         changeWindowType(NO_WINDOW);
-    }
-    else if((getWindowType() == BASIC_SHIP_WINDOW) && !SDL_PointInRect(&mouse, &basicShipWindowRect)){
+    } else if ((getWindowType() == BASIC_SHIP_WINDOW) && !SDL_PointInRect(&mouse, &basicShipWindowRect)){
         changeWindowType(NO_WINDOW);
     }
 }
@@ -92,4 +91,5 @@ void clickOnPlanet(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets
 void displayWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships, Planet *planets, int planetCount) {
     displayShipWindow(imageTextures, textTextures, ships);
     displayPlanetWindow(imageTextures, textTextures, planets, planetCount);
+    displayBasicShipWindow(imageTextures, ships);
 }
