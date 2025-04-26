@@ -87,12 +87,12 @@ void updateFrameIndex() {
 void displayMenu(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
     // Initialisation graphique du menu
     SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, imageTextures[4][2], NULL, NULL);
+    SDL_RenderCopy(renderer, imageTextures[5][2], NULL, NULL);
 
     // Affichage de la planetes en rotation
     SDL_Rect srcRect = {lpFrameController.frameIndex1 * 100, 0, 100, 100}; // Frame actuelle sur le sprite sheet de la planete du menu
     SDL_Rect destRect = {SCREEN_WIDTH * 0.05, SCREEN_HEIGHT * 0.2, SCREEN_WIDTH * 0.35, SCREEN_WIDTH * 0.35};  // Position et taille affichee
-    SDL_RenderCopy(renderer, imageTextures[5][0], &srcRect, &destRect);
+    SDL_RenderCopy(renderer, imageTextures[6][0], &srcRect, &destRect);
 
     // Affichages de l'asteroide 1
     SDL_Rect asteroid1Rect = {(0.0005 * lpFrameController.frameIndex2 - 0.1) * SCREEN_WIDTH, 0.0001 * lpFrameController.frameIndex2 * SCREEN_HEIGHT, SCREEN_WIDTH * 0.1, SCREEN_WIDTH * 0.1};
@@ -112,21 +112,21 @@ void displayMenu(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
     SDL_RenderCopy(renderer, textTextures[0], NULL, &titleRect);
 
     // Affiche les bouton New game, Continue, Settings
-    SDL_SetTextureBlendMode(imageTextures[4][1], SDL_BLENDMODE_BLEND);
+    SDL_SetTextureBlendMode(imageTextures[5][1], SDL_BLENDMODE_BLEND);
     switch (bg_button_a_afficher) {
         case 1:
-            SDL_RenderCopy(renderer, imageTextures[4][1], NULL, &bgButton1Rect);  // Affiche le rectangle derriere "Continue"
+            SDL_RenderCopy(renderer, imageTextures[5][1], NULL, &bgButton1Rect);  // Affiche le rectangle derriere "Continue"
             break;
         case 2:
-            SDL_RenderCopy(renderer, imageTextures[4][1], NULL, &bgButton2Rect);  // Affiche le rectangle derriere "New game"
+            SDL_RenderCopy(renderer, imageTextures[5][1], NULL, &bgButton2Rect);  // Affiche le rectangle derriere "New game"
             break;
         case 3:
-            SDL_RenderCopy(renderer, imageTextures[4][1], NULL, &bgButton3Rect);  // Affiche le rectangle derriere "Settings"
+            SDL_RenderCopy(renderer, imageTextures[5][1], NULL, &bgButton3Rect);  // Affiche le rectangle derriere "Settings"
             break;
         default:
             break;
     }
-SDL_SetTextureBlendMode(imageTextures[4][1], SDL_BLENDMODE_BLEND);
+SDL_SetTextureBlendMode(imageTextures[5][1], SDL_BLENDMODE_BLEND);
     SDL_QueryTexture(textTextures[1], NULL, NULL, &textureWidth, &textureHeight);  // Permet de garder les proportions du texte
     SDL_Rect text1Rect = {SCREEN_WIDTH * 0.618, SCREEN_HEIGHT * 0.35, textureWidth * SCREEN_HEIGHT * 0.0013, textureHeight * SCREEN_HEIGHT * 0.0013};
     SDL_RenderCopy(renderer, textTextures[1], NULL, &text1Rect);  // Affiche "Continue"

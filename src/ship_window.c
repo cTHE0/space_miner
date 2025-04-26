@@ -37,7 +37,9 @@ static SDL_Rect srcRectShip = {0, 0, 64, 64},
                 shipConditionRect,
                 shipConditionSrcRect,
                 nameBaseDisplayedRect,
-                nameTargetDisplayedRect;
+                nameTargetDisplayedRect,
+                shipFirstCompartmentRect,
+                shipFirstCompartmentLogoRect;
 
 void initShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships){
     initTextShipWindow(textTextures, fonts, ships);
@@ -69,6 +71,9 @@ void initTextShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship
 void initRectShipWindow(SDL_Texture **textTextures) {
     int textureWidth, textureHeight;  // Permet de garder les proportions des textes
 
+
+    // ShipWindowFondations(imageTextures, textTextures);
+
     windowRect.x = (1 - 0.8) * SCREEN_WIDTH / 2.;
     windowRect.y = (1 - 0.8) * SCREEN_HEIGHT / 2.;
     windowRect.w = SCREEN_WIDTH * 0.8;
@@ -78,26 +83,6 @@ void initRectShipWindow(SDL_Texture **textTextures) {
     WindowCrossRect.y = windowRect.y + windowRect.h * 0.025;
     WindowCrossRect.w = windowRect.w * 0.015;
     WindowCrossRect.h = windowRect.w * 0.015;
-
-    baseDisplayedRect.x = windowRect.x + windowRect.w * 0.02;
-    baseDisplayedRect.y = windowRect.y + windowRect.h * 0.18;
-    baseDisplayedRect.w = windowRect.w * 0.12;
-    baseDisplayedRect.h = windowRect.w * 0.12;
-
-    targetDisplayedRect.x = windowRect.x + windowRect.w * 0.42;
-    targetDisplayedRect.y = windowRect.y + windowRect.h * 0.18;
-    targetDisplayedRect.w = windowRect.w * 0.12;
-    targetDisplayedRect.h = windowRect.w * 0.12;
-
-    destRectShip.x = baseDisplayedRect.x + baseDisplayedRect.w;  
-    destRectShip.y = baseDisplayedRect.y + baseDisplayedRect.h * 0.13;
-    destRectShip.w = windowRect.w * 0.1;
-    destRectShip.h = windowRect.w * 0.1;
-
-    narrowRect.x = baseDisplayedRect.x + baseDisplayedRect.w;  
-    narrowRect.y = baseDisplayedRect.y + baseDisplayedRect.h * 0.5;
-    narrowRect.w = 4;
-    narrowRect.h = 15;
 
     SDL_QueryTexture(textTextures[4], NULL, NULL, &textureWidth, &textureHeight);
     windowTitleRect.x = windowRect.x + windowRect.w * 0.01;  
@@ -125,35 +110,55 @@ void initRectShipWindow(SDL_Texture **textTextures) {
     windowLine4Rect.w = 3;
     windowLine4Rect.h = windowRect.h * 0.93;
 
+
+    // ShipWindowTravelInfo(imageTextures, textTextures, ships);
+
     SDL_QueryTexture(textTextures[5], NULL, NULL, &textureWidth, &textureHeight);
     category1TitleRect.x = windowRect.x + windowRect.w * 0.04;  // Travel information
     category1TitleRect.y = windowRect.y + windowRect.h * 0.1;
     category1TitleRect.w = textureWidth * windowRect.w * 0.0005;
     category1TitleRect.h = textureHeight * windowRect.w * 0.0005;
 
+    baseDisplayedRect.x = windowRect.x + windowRect.w * 0.02;
+    baseDisplayedRect.y = windowRect.y + windowRect.h * 0.18;
+    baseDisplayedRect.w = windowRect.w * 0.12;
+    baseDisplayedRect.h = windowRect.w * 0.12;
+
+    targetDisplayedRect.x = windowRect.x + windowRect.w * 0.42;
+    targetDisplayedRect.y = windowRect.y + windowRect.h * 0.18;
+    targetDisplayedRect.w = windowRect.w * 0.12;
+    targetDisplayedRect.h = windowRect.w * 0.12;
+
+    SDL_QueryTexture(textTextures[30], NULL, NULL, &textureWidth, &textureHeight);
+    nameBaseDisplayedRect.x = windowRect.x + windowRect.w * 0.03;
+    nameBaseDisplayedRect.y = windowRect.y + windowRect.h * 0.4;
+    nameBaseDisplayedRect.w = textureWidth * windowRect.w * 0.0005;
+    nameBaseDisplayedRect.h = textureHeight * windowRect.w * 0.0005;
+
+    SDL_QueryTexture(textTextures[31], NULL, NULL, &textureWidth, &textureHeight);
+    nameTargetDisplayedRect.x = windowRect.x + windowRect.w * 0.38;
+    nameTargetDisplayedRect.y = windowRect.y + windowRect.h * 0.4;
+    nameTargetDisplayedRect.w = textureWidth * windowRect.w * 0.0005;
+    nameTargetDisplayedRect.h = textureHeight * windowRect.w * 0.0005;
+
+    destRectShip.x = baseDisplayedRect.x + baseDisplayedRect.w;  
+    destRectShip.y = baseDisplayedRect.y + baseDisplayedRect.h * 0.13;
+    destRectShip.w = windowRect.w * 0.1;
+    destRectShip.h = windowRect.w * 0.1;
+
+    narrowRect.x = baseDisplayedRect.x + baseDisplayedRect.w;  
+    narrowRect.y = baseDisplayedRect.y + baseDisplayedRect.h * 0.5;
+    narrowRect.w = 4;
+    narrowRect.h = 15;
+
+
+    // ShipWindowTankManager(imageTextures, textTextures, ships);
+
     SDL_QueryTexture(textTextures[8], NULL, NULL, &textureWidth, &textureHeight);
     category2TitleRect.x = windowRect.x + windowRect.w * 0.04;  // Tank manager
     category2TitleRect.y = windowRect.y + windowRect.h * 0.53;
     category2TitleRect.w = textureWidth * windowRect.w * 0.0005;
     category2TitleRect.h = textureHeight * windowRect.w * 0.0005;
-
-    SDL_QueryTexture(textTextures[11], NULL, NULL, &textureWidth, &textureHeight);
-    category3TitleRect.x = windowRect.x + windowRect.w * 0.58;  // Ship condition
-    category3TitleRect.y = windowRect.y + windowRect.h * 0.1;
-    category3TitleRect.w = textureWidth * windowRect.w * 0.0005;
-    category3TitleRect.h = textureHeight * windowRect.w * 0.0005;
-
-    SDL_QueryTexture(textTextures[13], NULL, NULL, &textureWidth, &textureHeight);
-    category4TitleRect.x = windowRect.x + windowRect.w * 0.58;  // Reported problems
-    category4TitleRect.y = windowRect.y + windowRect.h * 0.32;
-    category4TitleRect.w = textureWidth * windowRect.w * 0.0005;
-    category4TitleRect.h = textureHeight * windowRect.w * 0.0005;
-
-    SDL_QueryTexture(textTextures[14], NULL, NULL, &textureWidth, &textureHeight);
-    category5TitleRect.x = windowRect.x + windowRect.w * 0.58;  // Tank composition
-    category5TitleRect.y = windowRect.y + windowRect.h * 0.61;
-    category5TitleRect.w = textureWidth * windowRect.w * 0.0005;
-    category5TitleRect.h = textureHeight * windowRect.w * 0.0005;
 
     baseDisplayedRect2.x = windowRect.x + windowRect.w * 0.02;
     baseDisplayedRect2.y = windowRect.y + windowRect.h * 0.7;
@@ -171,6 +176,21 @@ void initRectShipWindow(SDL_Texture **textTextures) {
     modifyingTankRect.w = textureWidth * windowRect.w * 0.0005;
     modifyingTankRect.h = textureHeight * windowRect.w * 0.0005;
 
+
+    // ShipWindowShipCond(imageTextures, textTextures, ships);
+
+    SDL_QueryTexture(textTextures[11], NULL, NULL, &textureWidth, &textureHeight);
+    category3TitleRect.x = windowRect.x + windowRect.w * 0.58;  // Ship condition
+    category3TitleRect.y = windowRect.y + windowRect.h * 0.1;
+    category3TitleRect.w = textureWidth * windowRect.w * 0.0005;
+    category3TitleRect.h = textureHeight * windowRect.w * 0.0005;
+
+    SDL_QueryTexture(textTextures[13], NULL, NULL, &textureWidth, &textureHeight);
+    category4TitleRect.x = windowRect.x + windowRect.w * 0.58;  // Reported problems
+    category4TitleRect.y = windowRect.y + windowRect.h * 0.32;
+    category4TitleRect.w = textureWidth * windowRect.w * 0.0005;
+    category4TitleRect.h = textureHeight * windowRect.w * 0.0005;
+
     shipConditionRect.x = windowRect.x + windowRect.w * 0.58;
     shipConditionRect.y = windowRect.y + windowRect.h * 0.12;
     shipConditionRect.w = windowRect.w * 0.13;
@@ -181,17 +201,23 @@ void initRectShipWindow(SDL_Texture **textTextures) {
     shipConditionSrcRect.w = 64;
     shipConditionSrcRect.h = 64;
 
-    SDL_QueryTexture(textTextures[30], NULL, NULL, &textureWidth, &textureHeight);
-    nameBaseDisplayedRect.x = windowRect.x + windowRect.w * 0.03;
-    nameBaseDisplayedRect.y = windowRect.y + windowRect.h * 0.4;
-    nameBaseDisplayedRect.w = textureWidth * windowRect.w * 0.0005;
-    nameBaseDisplayedRect.h = textureHeight * windowRect.w * 0.0005;
 
-    SDL_QueryTexture(textTextures[31], NULL, NULL, &textureWidth, &textureHeight);
-    nameTargetDisplayedRect.x = windowRect.x + windowRect.w * 0.38;
-    nameTargetDisplayedRect.y = windowRect.y + windowRect.h * 0.4;
-    nameTargetDisplayedRect.w = textureWidth * windowRect.w * 0.0005;
-    nameTargetDisplayedRect.h = textureHeight * windowRect.w * 0.0005;
+    // ShipWindowTankCompo(imageTextures, textTextures);   
+    SDL_QueryTexture(textTextures[14], NULL, NULL, &textureWidth, &textureHeight);
+    category5TitleRect.x = windowRect.x + windowRect.w * 0.58;  // Tank composition
+    category5TitleRect.y = windowRect.y + windowRect.h * 0.61;
+    category5TitleRect.w = textureWidth * windowRect.w * 0.0005;
+    category5TitleRect.h = textureHeight * windowRect.w * 0.0005;
+
+    shipFirstCompartmentRect.x = windowRect.x + windowRect.w * 0.85;
+    shipFirstCompartmentRect.y = windowRect.y + windowRect.h * 0.88;
+    shipFirstCompartmentRect.w = windowRect.w * 0.07;
+    shipFirstCompartmentRect.h = windowRect.h * 0.07;
+
+    shipFirstCompartmentLogoRect.x = windowRect.x + windowRect.w * 0.93;
+    shipFirstCompartmentLogoRect.y = windowRect.y + windowRect.h * 0.89;
+    shipFirstCompartmentLogoRect.w = windowRect.w * 0.04;
+    shipFirstCompartmentLogoRect.h = windowRect.w * 0.04;
 }
 
 void displayShipWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
@@ -204,12 +230,12 @@ void displayShipWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures,
     ShipWindowTravelInfo(imageTextures, textTextures, ships);
     ShipWindowTankManager(imageTextures, textTextures, ships);
     ShipWindowShipCond(imageTextures, textTextures, ships);
-    ShipWindowTankCompo(imageTextures, textTextures);
+    ShipWindowTankCompo(imageTextures, textTextures, ships);
 }
 
 void ShipWindowFondations(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
     // Affichage du bg
-    SDL_RenderCopy(renderer, imageTextures[4][3], NULL, &windowRect);
+    SDL_RenderCopy(renderer, imageTextures[5][3], NULL, &windowRect);
 
     // Affichage de la croix pour fermer la fenetre
     SDL_RenderCopy(renderer, imageTextures[2][0], NULL, &WindowCrossRect);
@@ -232,9 +258,9 @@ void ShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextur
     // Affichage des deux planetes
     int idPicture;
     idPicture = (ships[getWindowId()].base->planetType == SUN) ? 9 : generateRandNb8(currentSeed, ships[getWindowId()].base->id) % 8 + 1;
-    SDL_RenderCopy(renderer, imageTextures[5][idPicture], NULL, &baseDisplayedRect);
+    SDL_RenderCopy(renderer, imageTextures[6][idPicture], NULL, &baseDisplayedRect);
     idPicture = (ships[getWindowId()].target->planetType == SUN) ? 9 : generateRandNb8(currentSeed, ships[getWindowId()].target->id) % 8 + 1;
-    SDL_RenderCopy(renderer, imageTextures[5][idPicture], NULL, &targetDisplayedRect);
+    SDL_RenderCopy(renderer, imageTextures[6][idPicture], NULL, &targetDisplayedRect);
 
     // Affichage du nom des deux planetes
     SDL_RenderCopy(renderer, textTextures[30], NULL, &nameBaseDisplayedRect);
@@ -262,7 +288,7 @@ void ShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextur
 
         // Tracer la fusee
         destRectShip.x = baseDisplayedRect.x + baseDisplayedRect.w + f * dp - baseDisplayedRect.w * 0.3;
-        SDL_RenderCopyEx(renderer, imageTextures[6][ships[getWindowId()].idModel], &srcRectShip, &destRectShip, 90, NULL, SDL_FLIP_NONE);
+        SDL_RenderCopyEx(renderer, imageTextures[7][ships[getWindowId()].idModel], &srcRectShip, &destRectShip, 90, NULL, SDL_FLIP_NONE);
 
     } else if (ships[getWindowId()].state == MOVING_TO_BASE || ships[getWindowId()].state == WAITING_ON_TARGET) { 
         // Fraction du chemin parcourue
@@ -282,7 +308,7 @@ void ShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextur
 
         // Tracer la fusee
         destRectShip.x = baseDisplayedRect.x + baseDisplayedRect.w + f * dp - baseDisplayedRect.w * 0.53;
-        SDL_RenderCopyEx(renderer, imageTextures[6][ships[getWindowId()].idModel], &srcRectShip, &destRectShip, 270, NULL, SDL_FLIP_NONE);
+        SDL_RenderCopyEx(renderer, imageTextures[7][ships[getWindowId()].idModel], &srcRectShip, &destRectShip, 270, NULL, SDL_FLIP_NONE);
     }
 }
 
@@ -293,9 +319,9 @@ void ShipWindowTankManager(SDL_Texture ***imageTextures, SDL_Texture **textTextu
     // Affichage des deux planetes
     int idPicture;
     idPicture = (ships[getWindowId()].base->planetType == SUN) ? 9 : generateRandNb8(currentSeed, ships[getWindowId()].base->id) % 8 + 1;
-    SDL_RenderCopy(renderer, imageTextures[5][idPicture], NULL, &baseDisplayedRect2);
+    SDL_RenderCopy(renderer, imageTextures[6][idPicture], NULL, &baseDisplayedRect2);
     idPicture = (ships[getWindowId()].target->planetType == SUN) ? 9 : generateRandNb8(currentSeed, ships[getWindowId()].target->id) % 8 + 1;
-    SDL_RenderCopy(renderer, imageTextures[5][idPicture], NULL, &targetDisplayedRect2);
+    SDL_RenderCopy(renderer, imageTextures[6][idPicture], NULL, &targetDisplayedRect2);
 
     // Affichage du tank en cours de modification ("Tank 1")
     SDL_RenderCopy(renderer, textTextures[15], NULL, &modifyingTankRect);
@@ -306,13 +332,43 @@ void ShipWindowShipCond(SDL_Texture ***imageTextures, SDL_Texture **textTextures
     SDL_RenderCopy(renderer, textTextures[11], NULL, &category3TitleRect);
 
     // Affichage de la fusee
-    SDL_RenderCopy(renderer, imageTextures[6][ships[getWindowId()].idModel], &shipConditionSrcRect, &shipConditionRect);
+    SDL_RenderCopy(renderer, imageTextures[7][ships[getWindowId()].idModel], &shipConditionSrcRect, &shipConditionRect);
 
     // Affichage du titre "Reported problemes"
     SDL_RenderCopy(renderer, textTextures[13], NULL, &category4TitleRect);
 }
 
-void ShipWindowTankCompo(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
+void ShipWindowTankCompo(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
     // Affichage du titre "Tank composition"
     SDL_RenderCopy(renderer, textTextures[14], NULL, &category5TitleRect);
+
+    // Affichage des reservoirs, l'un apres l'autre
+    Cargo cargo = ships[getWindowId()].cargo;
+    SDL_Rect currentTankRect = shipFirstCompartmentRect;
+    SDL_Rect currentLogoRect = shipFirstCompartmentLogoRect;
+    for (int i = 0; i < cargo.compartmentsNumber; i++) {
+        // Barre de fond
+        SDL_SetRenderDrawColor(renderer, 150, 150, 150, 255);
+        currentTankRect.w = shipFirstCompartmentRect.w;
+        SDL_RenderFillRect(renderer, &currentTankRect);
+
+        // Barre de niveau actuel
+        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+        currentTankRect.w = shipFirstCompartmentRect.w * cargo.compartmentsList[i].currentCapacity / cargo.compartmentsList[i].maxCapacity;
+        SDL_RenderFillRect(renderer, &currentTankRect);
+
+        // Logo du type de minerai
+        switch (cargo.compartmentsList[i].ore) {
+            case FUEL:
+                SDL_RenderCopy(renderer, imageTextures[4][0], NULL, &currentLogoRect);
+                break;
+            default:
+                SDL_RenderCopy(renderer, imageTextures[4][1], NULL, &currentLogoRect);
+                break;
+        }
+
+        // Pour afficher le prochain reservoir
+        currentTankRect.y -= 1.05 * shipFirstCompartmentRect.h;
+        currentLogoRect.y -= 1.05 * shipFirstCompartmentRect.h;
+    }
 }

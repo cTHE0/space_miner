@@ -22,7 +22,7 @@ void displayWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Shi
                 void ShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships);
                 void ShipWindowTankManager(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships);
                 void ShipWindowShipCond(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships);
-                void ShipWindowTankCompo(SDL_Texture ***imageTextures, SDL_Texture **textTextures);
+                void ShipWindowTankCompo(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships);
         void displayPlanetWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planets, int planetCount);
                 void initPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts);
                     void initRectPlanetWindow(SDL_Texture **textTextures);

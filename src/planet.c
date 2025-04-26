@@ -20,7 +20,7 @@ void generatePlanets(Planet **planets, int planetCount) {
     }
 }
 
-void renderPlanets(SDL_Texture ***texturePlanet, Planet *planets, int planetCount) {
+void renderPlanets(SDL_Texture ***imageTextures, Planet *planets, int planetCount) {
     for (int i = 0; i < planetCount; i++) {
         //(screenX, screenY) = coordonnees sur l'ecran physique, du point en haut à gauche du rect de la planete
         float screenX = (planets[i].x - getCameraRect().x - planets[i].radius - SCREEN_WIDTH / 2.f) * getCameraScale() + SCREEN_WIDTH / 2.f;  // (planets[i].x, planets[i].y) = coordonnees sur la map
@@ -33,7 +33,7 @@ void renderPlanets(SDL_Texture ***texturePlanet, Planet *planets, int planetCoun
             screenY >= -2 * screenRadius && screenY <= SCREEN_HEIGHT + screenRadius) {   // On n'affiche pas les planètes situés en dehors de l'ecran  
             // Affichage planete 
             int idPicture = (planets[i].planetType == SUN) ? 9 : (generateRandNb8(currentSeed, i) % 8 + 1);
-            SDL_RenderCopy(renderer, texturePlanet[5][idPicture], NULL, &destRect);
+            SDL_RenderCopy(renderer, imageTextures[6][idPicture], NULL, &destRect);
 
             // Affichage barre* de minerais (1)      (*une seule barre, mais representant la valeur totale de minerais !?)
             destRect.h = 5 * getCameraScale();
