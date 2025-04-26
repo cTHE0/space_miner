@@ -12,6 +12,6 @@ void displayBasicShipWindow(SDL_Texture ***imageTextures, Ship *ships);
 
 void changeButtonType(SDL_Point mouse);
 
-plotPath(SDL_Point origin, SDL_Point destination, int dashLength, int gapLength);
+void plotPath(SDL_Point origin, SDL_Point destination, int dashLength, int gapLength);
 
 #endif

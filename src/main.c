@@ -29,6 +29,8 @@ int main(void) {
 
     Planet *planets = NULL;
     int planetCount = INIT_PLANET_COUNT;
+    int pointCount = POINTS_COUNT;
+    int nbPointsPerLigne = MAP_SIZE*100/500;
 
     TTF_Font *fonts[FONT_NUMBER] = {0};
     loadFonts(fonts);
@@ -56,7 +58,7 @@ int main(void) {
 
                 if (state == GAME) {
                     gameBegun = 1;
-                    generatePlanets(&planets, planetCount);
+                    generatePlanets(&planets, planetCount, pointCount, nbPointsPerLigne);
                     initShips(&ships, shipCount, planets, planetCount);
                     initCamera(planets);
                 }
@@ -65,7 +67,7 @@ int main(void) {
             case GAME:
                 handleEvents(textTextures, fonts, &state, ships, shipCount, planets, planetCount);
                 updateShips(ships, shipCount);
-                displayGame(imageTextures, textTextures, ships, shipCount, planets, planetCount);
+                displayGame(imageTextures, textTextures, ships, shipCount, planets, planetCount, pointCount, nbPointsPerLigne);
                 break;
             
             default:
@@ -90,6 +92,7 @@ int main(void) {
     if (gameBegun) {
         destroyShips(ships, shipCount);
         free(planets);
+        planets = NULL;
     }
 
     destroyImageTextures(imageTextures);

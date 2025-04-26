@@ -4,7 +4,7 @@
 #include <SDL2/SDL.h>
 #include "config.h"
 
-typedef enum {SUN, PLANET} planetTypeEnum; 
+typedef enum {SUN, PLANET, POINT} planetTypeEnum; 
 
 typedef struct {
     int id;                          // Identifiant de la planet (permet la generation aleatoire
@@ -16,7 +16,8 @@ typedef struct {
     float regenerationTime;          // Duree pour que la planete regenere ses ressources lorsque que currentOre = 0
 } Planet;
 
-void generatePlanets(Planet **planets, int planetCount);
+void generatePlanets(Planet **planets, int planetCount, int pointCount, int nbPointsPerLigne);
 void renderPlanets(SDL_Texture ***imageTextures, Planet *planets, int planetCount);
+void renderPoints(SDL_Texture ***imageTextures, Planet *planets, int planetCount, int pointCount, int nbPointsPerLigne);
 
 #endif
