@@ -32,6 +32,7 @@ void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, SDL_Point m
     void clickOnShip(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, int shipCount, SDL_Point mouse);
     void clickOnPlanet(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets, int planetCount, SDL_Point mouse);
     int clickOnWindow(SDL_Point mouse);
+    int clickOnBasicShipWindow(SDL_Point mouse);
 
 WindowType getWindowType(void);
 int getWindowId(void);
