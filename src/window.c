@@ -7,6 +7,7 @@
 #include "ship.h"
 #include "config.h"
 #include "camera.h"
+#include "basic_ship_window.h"
 
 
 static Window windowInfo = {NO_WINDOW, 0};
@@ -55,8 +56,9 @@ void clickOnShip(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, int 
     for (int i = 0; i < shipCount; i++) {
         if (SDL_PointInRect(&mouse, &ships[i].destRect)) {
             changeWindowId(i);
-            changeWindowType(SHIP_WINDOW);
-            initShipWindow(textTextures, fonts, ships);
+            changeWindowType(BASIC_SHIP_WINDOW); 
+            initBasicShipWindow(i);
+            //initShipWindow(textTextures, fonts, ships);//Ne s'ouvrira que ds un 2ème temps selon action joueur
             return;
         }
     }

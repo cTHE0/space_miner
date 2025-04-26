@@ -8,6 +8,12 @@
 #include "config.h"
 #include "renderer.h"
 
+SDL_Rect getShipOnScreen(Ship ship){
+    return (SDL_Rect){(ship.x - getCameraRect().x - SCREEN_WIDTH / 2.f) * getCameraScale() + SCREEN_WIDTH / 2.f,
+                        (ship.y - getCameraRect().y - SCREEN_HEIGHT / 2.f) * getCameraScale() + SCREEN_HEIGHT / 2.f,
+                        ship.w * getCameraScale(),
+                        ship.h * getCameraScale()};
+}
 
 void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
     *ships = malloc(shipCount * sizeof(Ship));
@@ -32,6 +38,7 @@ void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
         (*ships)[i].maxLife = 100;
         (*ships)[i].currentLife = rand() % (int)(*ships)[i].maxLife;
         (*ships)[i].fuelConsumption = 1;  // Consommation d'essence par intervalle de temps FUEL_UPDATE_INTERVAL
+        (*ships)[i].range = 300;
 
         (*ships)[i].waitStartTime = 0;
         (*ships)[i].frameIndex = rand() % 4;  // Desynchronisation des fusees
@@ -170,7 +177,7 @@ void updateShipFuel(Ship *ship, Uint32 currentTime) {  // Gere la consommation d
 void renderShips(SDL_Texture ***textureShip, Ship *ships, int shipCount) {
     for (int i = 0; i < shipCount; i++) {
         // Calcul des coordonnees a l'ecran, du point en haut a gauche de la fusee
-        SDL_Point ShipOnScreen = {(ships[i].x - getCameraRect().x - SCREEN_WIDTH / 2.f) * getCameraScale() + SCREEN_WIDTH / 2.f,
+        SDL_Point ShipOnScreen = (SDL_Point){(ships[i].x - getCameraRect().x - SCREEN_WIDTH / 2.f) * getCameraScale() + SCREEN_WIDTH / 2.f,
                                   (ships[i].y - getCameraRect().y - SCREEN_HEIGHT / 2.f) * getCameraScale() + SCREEN_HEIGHT / 2.f};
 
         if (ShipOnScreen.x >= -ships[i].w * getCameraScale() && ShipOnScreen.x <= SCREEN_WIDTH && 

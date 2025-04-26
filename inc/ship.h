@@ -24,6 +24,7 @@ typedef struct {
     Cargo cargo;                // Cargaison de la fusee (qui contient les compartiments)
     Uint32 lastRefreshFilling;  // Dernier instant ou la fusee a actualisee sa consommation d'essence
     int fuelConsumption;        // Dernier instant ou la fusee a actualisee sa consommation d'essence
+    int range;                   // Portée (d'attaque, de vision) du ship
 
     Uint32 waitStartTime;       // Temps d’attente à destination  (a remplacer par le temps de minage/depot !!-> besoin d'ameliorer les stats des fusees)
     int frameIndex;             // Numero de l'image prise dans le spritesheet
@@ -41,5 +42,7 @@ void renderShips(SDL_Texture ***textureShip, Ship *ships, int shipCount);
     void renderShipBars(Ship ship, SDL_Point ShipOnScreen);
 
 void destroyShips(Ship *ships, int shipCount);
+
+SDL_Rect getShipOnScreen(Ship ship);
 
 #endif
