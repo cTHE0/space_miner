@@ -93,4 +93,5 @@ void clickOnPlanet(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets
 void displayWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships, Planet *planets, int planetCount) {
     displayShipWindow(imageTextures, textTextures, ships);
     displayPlanetWindow(imageTextures, textTextures, planets, planetCount);
+    displayBasicShipWindow(imageTextures, ships);
 }

@@ -5,8 +5,13 @@ typedef enum { FUEL, ORE1, ORE2, ORE3, MISSILES, EMPTY } Ore;  // Types de miner
 
 typedef struct {  // Un seul compartiment
     Ore ore;
+    Ore flowBase_in;    // Permet au joueur de gerer les entrees et sorties dans les transporteurs
+    Ore flowBase_out;
+    Ore flowTarget_in;
+    Ore flowTarget_out;
     int currentCapacity, maxCapacity;
     int flowSpeed;
+
 } Compartment;
 
 

@@ -44,6 +44,8 @@ void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, GameState *state
                                 changeWindowType(NO_WINDOW);
                             }
                             break;
+                        default:
+                            break;
                     }
                 }
                 break;
