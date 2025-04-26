@@ -80,6 +80,8 @@ void initBasicShipWindow(int i){
     idShip = i;
 }
 
+BasicShipWindowButton buttonSelected = NO_BUTTON; // Lequel des 3 boutons est sélectionné ? AU début, aucun des boutons n'est sélectionné
+
 void displayBasicShipWindow(SDL_Texture ***imageTextures, Ship *ships){
     if (getWindowType() != BASIC_SHIP_WINDOW) {  // La fenetre d'informations [basiques] d'une fusee est-elle ouverte ?
         return;
@@ -108,8 +110,23 @@ void displayBasicShipWindow(SDL_Texture ***imageTextures, Ship *ships){
 
     SDL_RenderCopy(renderer, imageTextures[2][3], NULL, &button3Rect);
 
-    SDL_Point centerShipCoord = {shipDestRect.x + shipDestRect.w/2, shipDestRect.y + shipDestRect.h/2};
-    plotPath(centerShipCoord, getMouseCoordinates(), 10, 5);
+    if (buttonSelected == MOVING_BUTTON){
+        SDL_Point centerShipCoord = {shipDestRect.x + shipDestRect.w/2, shipDestRect.y + shipDestRect.h/2};
+        plotPath(centerShipCoord, getMouseCoordinates(), 10, 5);
+    }
+    
+}
+
+void changeButtonType(SDL_Point mouse) {
+    if (SDL_PointInRect(&mouse, &button1Rect)){
+        printf("click");
+        if (buttonSelected == MOVING_BUTTON){
+            buttonSelected = NO_BUTTON;
+        }
+        else{
+            buttonSelected = MOVING_BUTTON;
+        }
+    }
 }
 
 void plotPath(SDL_Point origin, SDL_Point destination, int dashLength, int gapLength){

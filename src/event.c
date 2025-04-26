@@ -8,6 +8,7 @@
 #include "config.h"
 #include "window.h"
 #include "landing_page.h"
+#include "basic_ship_window.h"
 
 SDL_Point mouse;
 
@@ -48,6 +49,9 @@ void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, GameState *state
                             if (!clickOnWindow((SDL_Point){event.button.x, event.button.y})){
                                 changeWindowType(NO_WINDOW);
                             }
+                            break;
+                        case BASIC_SHIP_WINDOW:
+                            changeButtonType((SDL_Point){event.button.x, event.button.y});
                             break;
                         default:
                             break;
