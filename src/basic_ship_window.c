@@ -50,6 +50,27 @@ static SDL_Rect crossRect = {
                                 SCREEN_HEIGHT/64
                             };
 
+static SDL_Rect button1Rect = {
+                                    SCREEN_WIDTH/2 - SCREEN_HEIGHT/8, 
+                                    3*SCREEN_HEIGHT/4 - SCREEN_HEIGHT/16, 
+                                    SCREEN_HEIGHT/16, 
+                                    SCREEN_HEIGHT/32
+                                };
+                        
+static SDL_Rect button2Rect = {
+                                    SCREEN_WIDTH/2 - SCREEN_HEIGHT/32, 
+                                    3*SCREEN_HEIGHT/4 - SCREEN_HEIGHT/16, 
+                                    SCREEN_HEIGHT/16, 
+                                    SCREEN_HEIGHT/32
+                                };
+
+static SDL_Rect button3Rect = {
+                                    SCREEN_WIDTH/2 + SCREEN_HEIGHT/16, 
+                                    3*SCREEN_HEIGHT/4 - SCREEN_HEIGHT/16, 
+                                    SCREEN_HEIGHT/16, 
+                                    SCREEN_HEIGHT/32
+                                };
+
 int idShip; //identifiant du ship dont la basic window est à afficher
 float cameraScale;
 
@@ -75,4 +96,11 @@ void displayBasicShipWindow(SDL_Texture ***imageTextures, Ship *ships){
     SDL_RenderCopy(renderer, imageTextures[2][0], NULL, &crossRect);
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderFillRect(renderer, &line1Rect);                                                           // Ligne horizontale sous nom fusée
+
+    //Affichage boutons au-dessus fenêtre
+    SDL_RenderCopy(renderer, imageTextures[2][3], NULL, &button1Rect);
+    SDL_RenderCopy(renderer, imageTextures[2][4], NULL, &button1Rect);
+    
+    SDL_RenderCopy(renderer, imageTextures[2][3], NULL, &button2Rect);
+    SDL_RenderCopy(renderer, imageTextures[2][3], NULL, &button3Rect);
 }
