@@ -7,6 +7,7 @@
 #include "ship.h"
 #include "config.h"
 #include "camera.h"
+#include "basic_ship_window.h"
 
 
 static Window windowInfo = {NO_WINDOW, 0};
@@ -21,9 +22,15 @@ static const SDL_Rect WindowCrossRect = {(1 + 0.8) / 2. * SCREEN_WIDTH - (SCREEN
                             (SCREEN_WIDTH * 0.8) * 0.015,
                             (SCREEN_WIDTH * 0.8) * 0.015};
 
+static const SDL_Rect basicShipWindowRect = {SCREEN_WIDTH/12, 3*SCREEN_HEIGHT/4, 5*SCREEN_WIDTH/6, SCREEN_HEIGHT/4};
+
 
 int clickOnWindow(SDL_Point mouse) {
     return SDL_PointInRect(&mouse, &windowRect);
+}
+
+int clickOnBasicShipWindow(SDL_Point mouse){
+    return SDL_PointInRect(&mouse, &basicShipWindowRect);
 }
 
 WindowType getWindowType(void) {
@@ -46,7 +53,10 @@ void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, SDL_Point m
     if (getWindowType() == NO_WINDOW) {
         clickOnShip(textTextures, fonts, ships, shipCount, mouse);
         clickOnPlanet(textTextures, fonts, planets, planetCount, mouse);
-    } else if (SDL_PointInRect(&mouse, &WindowCrossRect)){
+    } else if (((getWindowType() == SHIP_WINDOW) || (getWindowType() == PLANET_WINDOW)) && SDL_PointInRect(&mouse, &WindowCrossRect)){
+        changeWindowType(NO_WINDOW);
+    }
+    else if((getWindowType() == BASIC_SHIP_WINDOW) && !SDL_PointInRect(&mouse, &basicShipWindowRect)){
         changeWindowType(NO_WINDOW);
     }
 }
@@ -55,8 +65,9 @@ void clickOnShip(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, int 
     for (int i = 0; i < shipCount; i++) {
         if (SDL_PointInRect(&mouse, &ships[i].destRect)) {
             changeWindowId(i);
-            changeWindowType(SHIP_WINDOW);
-            initShipWindow(textTextures, fonts, ships);
+            changeWindowType(BASIC_SHIP_WINDOW); 
+            initBasicShipWindow(i);
+            //initShipWindow(textTextures, fonts, ships);//Ne s'ouvrira que ds un 2ème temps selon action joueur
             return;
         }
     }

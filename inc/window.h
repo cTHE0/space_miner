@@ -6,7 +6,7 @@
 #include "planet.h"
 #include "ship.h"
 
-typedef enum {NO_WINDOW, SHIP_WINDOW, PLANET_WINDOW, DEFENDER_WINDOW, ENNEMY_WINDOW} WindowType;
+typedef enum {NO_WINDOW, SHIP_WINDOW, PLANET_WINDOW, DEFENDER_WINDOW, ENNEMY_WINDOW, BASIC_SHIP_WINDOW} WindowType;
 
 typedef struct {
     WindowType type;  // Type de fenetre afiche (d'une fusee, planete, attaquant, etc)
@@ -32,6 +32,7 @@ void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, SDL_Point m
     void clickOnShip(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, int shipCount, SDL_Point mouse);
     void clickOnPlanet(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets, int planetCount, SDL_Point mouse);
     int clickOnWindow(SDL_Point mouse);
+    int clickOnBasicShipWindow(SDL_Point mouse);
 
 WindowType getWindowType(void);
 int getWindowId(void);

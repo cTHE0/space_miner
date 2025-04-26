@@ -33,8 +33,19 @@ void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, GameState *state
                     lastMouseX = event.button.x;
                     lastMouseY = event.button.y;
 
-                    if (getWindowType() != NO_WINDOW && !clickOnWindow((SDL_Point){event.button.x, event.button.y})) {
-                        changeWindowType(NO_WINDOW);
+                    switch (getWindowType()) {
+                        case SHIP_WINDOW:
+                            if (!clickOnWindow((SDL_Point){event.button.x, event.button.y})){
+                                changeWindowType(NO_WINDOW);
+                            }
+                        case PLANET_WINDOW:
+                            if (!clickOnWindow((SDL_Point){event.button.x, event.button.y})){
+                                changeWindowType(NO_WINDOW);
+                            }
+                        case BASIC_SHIP_WINDOW:
+                            if (!clickOnBasicShipWindow((SDL_Point){event.button.x, event.button.y})){
+                                changeWindowType(NO_WINDOW);
+                            }
                     }
                 }
                 break;

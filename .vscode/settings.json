@@ -9,7 +9,9 @@
         "sdl.h": "c",
         "menu.h": "c",
         "ship.h": "c",
-        "renderer.h": "c"
+        "renderer.h": "c",
+        "window.h": "c",
+        "basic_ship_window.h": "c"
     },
     "makefile.configureOnOpen": false
 }
