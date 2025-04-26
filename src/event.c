@@ -38,14 +38,12 @@ void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, GameState *state
                             if (!clickOnWindow((SDL_Point){event.button.x, event.button.y})){
                                 changeWindowType(NO_WINDOW);
                             }
+                            break;
                         case PLANET_WINDOW:
                             if (!clickOnWindow((SDL_Point){event.button.x, event.button.y})){
                                 changeWindowType(NO_WINDOW);
                             }
-                        case BASIC_SHIP_WINDOW:
-                            if (!clickOnBasicShipWindow((SDL_Point){event.button.x, event.button.y})){
-                                changeWindowType(NO_WINDOW);
-                            }
+                            break;
                     }
                 }
                 break;

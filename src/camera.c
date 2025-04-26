@@ -26,7 +26,7 @@ float getCameraScale(void) {
 }
 
 void zoomCamera(float zoomFactor) {
-    if (getWindowType() != NO_WINDOW) {
+    if ((getWindowType() != NO_WINDOW) && (getWindowType() != BASIC_SHIP_WINDOW)) {
         return;
     }
     
@@ -63,7 +63,7 @@ void zoomCamera(float zoomFactor) {
 }
 
 void translateCamera(float dx, float dy) {
-    if (getWindowType() != NO_WINDOW) {
+    if ((getWindowType() != NO_WINDOW) && (getWindowType() != BASIC_SHIP_WINDOW)){
         return;
     }
 

@@ -22,15 +22,16 @@ static const SDL_Rect WindowCrossRect = {(1 + 0.8) / 2. * SCREEN_WIDTH - (SCREEN
                             (SCREEN_WIDTH * 0.8) * 0.015,
                             (SCREEN_WIDTH * 0.8) * 0.015};
 
-static const SDL_Rect basicShipWindowRect = {SCREEN_WIDTH/12, 3*SCREEN_HEIGHT/4, 5*SCREEN_WIDTH/6, SCREEN_HEIGHT/4};
+static const SDL_Rect basicShipWindowCrossRect = {
+                                                    11*SCREEN_WIDTH/12 - 3*SCREEN_HEIGHT/128, 
+                                                    3*SCREEN_HEIGHT/4 + SCREEN_HEIGHT/128, 
+                                                    SCREEN_HEIGHT/64, 
+                                                    SCREEN_HEIGHT/64
+                                                };
 
 
 int clickOnWindow(SDL_Point mouse) {
     return SDL_PointInRect(&mouse, &windowRect);
-}
-
-int clickOnBasicShipWindow(SDL_Point mouse){
-    return SDL_PointInRect(&mouse, &basicShipWindowRect);
 }
 
 WindowType getWindowType(void) {
@@ -56,7 +57,7 @@ void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, SDL_Point m
     } else if (((getWindowType() == SHIP_WINDOW) || (getWindowType() == PLANET_WINDOW)) && SDL_PointInRect(&mouse, &WindowCrossRect)){
         changeWindowType(NO_WINDOW);
     }
-    else if((getWindowType() == BASIC_SHIP_WINDOW) && !SDL_PointInRect(&mouse, &basicShipWindowRect)){
+    else if((getWindowType() == BASIC_SHIP_WINDOW) && SDL_PointInRect(&mouse, &basicShipWindowCrossRect)){
         changeWindowType(NO_WINDOW);
     }
 }
