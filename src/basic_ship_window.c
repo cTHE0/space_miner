@@ -6,6 +6,7 @@
 #include "window.h"
 #include "config.h"
 #include "camera.h"
+#include "event.h"
 
 SDL_Rect rangeCircle;
 static SDL_Rect bgRect = {
@@ -71,6 +72,7 @@ static SDL_Rect button3Rect = {
                                     SCREEN_HEIGHT/32
                                 };
 
+SDL_Rect pathRect;
 int idShip; //identifiant du ship dont la basic window est à afficher
 float cameraScale;
 
@@ -100,7 +102,34 @@ void displayBasicShipWindow(SDL_Texture ***imageTextures, Ship *ships){
     //Affichage boutons au-dessus fenêtre
     SDL_RenderCopy(renderer, imageTextures[2][3], NULL, &button1Rect);
     SDL_RenderCopy(renderer, imageTextures[2][4], NULL, &button1Rect);
-    
+
     SDL_RenderCopy(renderer, imageTextures[2][3], NULL, &button2Rect);
+
+
     SDL_RenderCopy(renderer, imageTextures[2][3], NULL, &button3Rect);
+
+    SDL_Point centerShipCoord = {shipDestRect.x + shipDestRect.w/2, shipDestRect.y + shipDestRect.h/2};
+    plotPath(centerShipCoord, getMouseCoordinates(), 10, 5);
+}
+
+void plotPath(SDL_Point origin, SDL_Point destination, int dashLength, int gapLength){
+    int x1 = origin.x, y1 = origin.y, x2 = destination.x, y2 = destination.y;
+    float deltaX = x2 - x1;
+    float deltaY = y2 - y1;
+    float distance = sqrt(deltaX * deltaX + deltaY * deltaY);
+    float dashAndGap = dashLength + gapLength;
+    float nbDashes = distance / dashAndGap;
+
+    float unitX = deltaX / distance;
+    float unitY = deltaY / distance;
+
+    for (int i = 0; i < nbDashes; i++) {
+        float startX = x1 + (i * dashAndGap) * unitX;
+        float startY = y1 + (i * dashAndGap) * unitY;
+        float endX = startX + dashLength * unitX;
+        float endY = startY + dashLength * unitY;
+        
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        SDL_RenderDrawLine(renderer, (int)startX, (int)startY, (int)endX, (int)endY);
+    }  
 }

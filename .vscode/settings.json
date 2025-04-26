@@ -11,7 +11,8 @@
         "ship.h": "c",
         "renderer.h": "c",
         "window.h": "c",
-        "basic_ship_window.h": "c"
+        "basic_ship_window.h": "c",
+        "landing_page.h": "c"
     },
     "makefile.configureOnOpen": false
 }

@@ -9,6 +9,11 @@
 #include "window.h"
 #include "landing_page.h"
 
+SDL_Point mouse;
+
+SDL_Point getMouseCoordinates(){
+    return mouse;
+}
 
 void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, GameState *state, Ship *ships, int shipCount, Planet *planets, int planetCount) {
     static int lastMouseX, lastMouseY;
@@ -61,6 +66,8 @@ void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, GameState *state
                 break;
 
             case SDL_MOUSEMOTION:
+                mouse.x = event.button.x;
+                mouse.y = event.button.y;
                 if (dragging_camera) {
                     int dx = (event.motion.x - lastMouseX);
                     int dy = (event.motion.y - lastMouseY);

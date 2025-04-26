@@ -8,5 +8,6 @@
 #include "ship.h"
 
 void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, GameState *state, Ship *ships, int shipcount, Planet *planets, int planetCount);
+SDL_Point getMouseCoordinates();
 
 #endif
