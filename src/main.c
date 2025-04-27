@@ -13,7 +13,7 @@
 #include "text.h"
 
 
-const uint32_t currentSeed = 1;  // Peut prendre des valeurs entre 1 et 2**32-1
+const uint32_t currentSeed = 2;  // Peut prendre des valeurs entre 1 et 2**32-1
 
 
 int main(void) {

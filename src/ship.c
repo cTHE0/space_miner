@@ -32,7 +32,7 @@ void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
         (*ships)[i].state = MOVING_TO_TARGET;
         (*ships)[i].maxLife = 100;
         (*ships)[i].currentLife = rand() % (int)(*ships)[i].maxLife;
-        (*ships)[i].fuelConsumption = 1;  // Consommation d'essence par intervalle de temps FUEL_UPDATE_INTERVAL
+        (*ships)[i].fuelConsumption = 1;  // Consommation d'essence par intervalle de temps TANKS_UPDATE_INTERVAL
         (*ships)[i].range = 300;
 
         (*ships)[i].waitStartTime = 0;
@@ -70,10 +70,14 @@ void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
             // Faire une interface graphique pour gerer ca proprement
             if (cargo->compartmentsList[j].ore == FUEL) {
                 cargo->compartmentsList[j].flowBase_in = FUEL;
+                cargo->compartmentsList[j].flowBase_out = EMPTY;
                 cargo->compartmentsList[j].flowTarget_in = FUEL;
+                cargo->compartmentsList[j].flowTarget_out = EMPTY;
             } else {
-                cargo->compartmentsList[j].flowTarget_in = ORE1;
-                cargo->compartmentsList[j].flowTarget_out = ORE1;
+                cargo->compartmentsList[j].flowBase_in = EMPTY;
+                cargo->compartmentsList[j].flowBase_out = cargo->compartmentsList[j].ore;
+                cargo->compartmentsList[j].flowTarget_in = cargo->compartmentsList[j].ore;
+                cargo->compartmentsList[j].flowTarget_out = EMPTY;
             }
         }
     }
@@ -84,8 +88,8 @@ void updateShips(Ship *ships, int shipCount) {
 
     for (int i = 0; i < shipCount; i++) {
         updateShipAnimation(&ships[i], currentTime);  // Permet de changer de frame du sprite sheet de la fusee i
-        updateShipMove(&ships[i], currentTime);  // Actualise le mouvement de la fusee i
-        updateShipFuel(&ships[i], currentTime);  // Gère la consommation d'essence de la fusee i
+        updateShipMove(&ships[i], currentTime);
+        updateShipTanks(&ships[i], currentTime);
     }
 }
 
@@ -127,9 +131,9 @@ void updateShipMove(Ship *ship, Uint32 currentTime) {
     }
 }
 
-void updateShipFuel(Ship *ship, Uint32 currentTime) {  // Gere la consommation d'essence
-    if (currentTime - ship->lastRefreshFilling >= FUEL_UPDATE_INTERVAL) {  // Actualisation chaque seconde
-        ship->lastRefreshFilling += FUEL_UPDATE_INTERVAL;
+void updateShipTanks(Ship *ship, Uint32 currentTime) {  // Gere la consommation d'essence
+    if (currentTime - ship->lastRefreshFilling >= TANKS_UPDATE_INTERVAL) {  // Actualisation chaque seconde
+        ship->lastRefreshFilling += TANKS_UPDATE_INTERVAL;
         if ((ship->state == MOVING_TO_TARGET || ship->state == MOVING_TO_BASE)) {  // Cas ou la fusee est en mouvement
             int i = 0;
             int HaveFuel = 0;  // 1: La fusee a de l'essence, 0: la fusee n'en a plus
@@ -188,6 +192,28 @@ void updateShipFuel(Ship *ship, Uint32 currentTime) {  // Gere la consommation d
         }
     }
 }
+
+/*
+void updateShipTanks(Ship *ship, Uint32 currentTime) {
+    SDL_Bool test = 0;  // Y a-t-il eu transfert de matiere, de la fusee a la planet (1) ? sinon decollage (0)
+    switch (ship->state) {
+        case WAITING_ON_BASE: 
+            for (int i = 0; ship->cargo.compartmentsNumber; i++) {
+                if (ship->cargo.compartmentsList[i].flowBase_in == ) {
+                    break;
+                }
+            }
+            break;
+        case WAITING_ON_TARGET:
+        default:
+            return;
+    }
+
+    if (!test) {
+        ship->state = (ship->state == WAITING_ON_BASE) ? MOVING_TO_TARGET : MOVING_TO_BASE;
+    }
+}
+*/
 
 void renderShips(SDL_Texture ***imageTextures, Ship *ships, int shipCount) {
     for (int i = 0; i < shipCount; i++) {

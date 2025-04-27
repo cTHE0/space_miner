@@ -202,7 +202,8 @@ void initRectShipWindow(SDL_Texture **textTextures) {
     shipConditionSrcRect.h = 64;
 
 
-    // ShipWindowTankCompo(imageTextures, textTextures);   
+    // ShipWindowTankCompo(imageTextures, textTextures);
+       
     SDL_QueryTexture(textTextures[14], NULL, NULL, &textureWidth, &textureHeight);
     category5TitleRect.x = windowRect.x + windowRect.w * 0.58;  // Tank composition
     category5TitleRect.y = windowRect.y + windowRect.h * 0.61;

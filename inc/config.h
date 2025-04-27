@@ -13,7 +13,7 @@
 
 #define SPRITE_SHEETS_DELAY 100  // En nombre de tick
 #define WAIT_TIME_SHIP 1000  // En millisecondes
-#define FUEL_UPDATE_INTERVAL 200  // En millisecondes
+#define TANKS_UPDATE_INTERVAL 200  // En millisecondes
 
 #define STEP_TRANSLATION 40
 #define SHIP_SPEED 2.f

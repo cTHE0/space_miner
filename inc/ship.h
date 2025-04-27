@@ -10,12 +10,7 @@ typedef enum { MOVING_TO_TARGET, MOVING_TO_BASE, WAITING_ON_TARGET, WAITING_ON_B
 
 typedef enum { TRANSPORTER, EXPLORER, DEFENDER } ShipType;
 
-typedef enum {  // Vers quel genre se destination se dirige-t-on ?
-    TARGET_NONE,
-    TARGET_PLANET,
-    TARGET_POINT,
-    TARGET_SHIP,
-} TargetType;
+typedef enum {TARGET_NONE, TARGET_PLANET, TARGET_POINT, TARGET_SHIP} TargetType;  // Vers quel genre se destination se dirige-t-on ?
 
 typedef struct Ship Ship;  // Declaration anticipee (car sinon cercle de dépendance)
 
@@ -53,7 +48,7 @@ void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount);
 void updateShips(Ship *ships, int shipCount);
     void updateShipAnimation(Ship *ship, Uint32 currentTime);
     void updateShipMove(Ship *ship, Uint32 currentTime);
-    void updateShipFuel(Ship *ship, Uint32 currentTime);
+    void updateShipTanks(Ship *ship, Uint32 currentTime);
     
 void renderShips(SDL_Texture ***textureShip, Ship *ships, int shipCount);
     void renderShipImage(SDL_Texture *spriteSheet, Ship ship, SDL_Point ShipOnScreen);
