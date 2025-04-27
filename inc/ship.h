@@ -10,26 +10,49 @@ typedef enum { MOVING_TO_TARGET, MOVING_TO_BASE, WAITING_ON_TARGET, WAITING_ON_B
 
 typedef enum { TRANSPORTER, EXPLORER, DEFENDER } ShipType;
 
-typedef struct {
-    ShipType shiptype;          // Type de vaisseau (utile pr définir ensuite son comportement, stats, render)
-    int id;                     // Identifiant propre a chaque fusee
-    int idModel;                // Il existe plusieurs ameliorations de fusees, systeme d'achat
-    float x, y, w, h;           // Rect de la fusee sur la map
-    SDL_Rect destRect;          // Rect de la fusee sur l'ecran physique
-    Planet *base;               // Planète de départ
-    Planet *target;             // Planète ciblee
-    float speed;                // Vitesse de la fusee
-    ShipState state;            // Etat de la fusee
-    int maxLife, currentLife;   // Vie de la fusee
-    Cargo cargo;                // Cargaison de la fusee (qui contient les compartiments)
-    Uint32 lastRefreshFilling;  // Dernier instant ou la fusee a actualisee sa consommation d'essence
-    int fuelConsumption;        // Dernier instant ou la fusee a actualisee sa consommation d'essence
-    int range;                   // Portée (d'attaque, de vision) du ship
+typedef enum { // Vers quel genre se destination se dirige-t-on ?
+    TARGET_NONE,
+    TARGET_PLANET,
+    TARGET_POINT,
+    TARGET_STATION,
+} TargetType;
 
-    Uint32 waitStartTime;       // Temps d’attente à destination  (a remplacer par le temps de minage/depot !!-> besoin d'ameliorer les stats des fusees)
-    int frameIndex;             // Numero de l'image prise dans le spritesheet
-    Uint32 lastFrameTime;       // Date au dernier changement de frame du spritesheet
-} Ship;
+// Déclaration anticipée (car sinon cercle de dépendance)
+struct Ship;
+typedef struct Ship Ship;
+
+typedef struct { // Notre destination
+    TargetType type;
+    union {
+        Planet *planet;    // Si c'est une planète
+        Ship *ship;        // Si c'est un ship, par ex une station spatiale
+        struct {
+            int x, y;      // Si c'est un point libre sur la map, par ex pour partir en exploration
+        } point;
+    };
+} Target;
+
+
+struct Ship {
+    ShipType shiptype;
+    int id;
+    int idModel;
+    float x, y, w, h;
+    SDL_Rect destRect;
+    Planet *base;
+    Target target;
+    float speed;
+    ShipState state;
+    int maxLife, currentLife;
+    Cargo cargo;
+    Uint32 lastRefreshFilling;
+    int fuelConsumption;
+    int range;
+    Uint32 waitStartTime;
+    int frameIndex;
+    Uint32 lastFrameTime;
+};
+
 
 void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount);
 void updateShips(Ship *ships, int shipCount);
