@@ -58,11 +58,14 @@ void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, SDL_Point m
             clickOnPlanet(textTextures, fonts, planets, planetCount, mouse);
             break;
 
-        case SHIP_WINDOW:  // Ce cas doit fusionne avec le prochain (<=> (SHIP_WINDOW || PLANET_WINDOW) )
-            if (SDL_PointInRect(&mouse, &WindowCrossRect) || !clickOnWindow(mouse)) {
-                changeWindowType(NO_WINDOW);
-            }
-            break;
+        case SHIP_WINDOW:  // Ce cas doit fusionner avec le prochain (<=> (SHIP_WINDOW || PLANET_WINDOW) )
+            /* 
+                Lorsque l'on ne met rien dans un case, tres cher Theo, cela equivaut a 
+                l'operateur || avec le prochain case. Dans notre cas, cela donne :
+                    if (getWindowType() == SHIP_WINDOW || getWindowType() == PLANET_WINDOW) {...}
+                Je te laisse supprimer ce present commentaire si tu as compris :)
+            */
+
         case PLANET_WINDOW:
             if (SDL_PointInRect(&mouse, &WindowCrossRect) || !clickOnWindow(mouse)) {
                 changeWindowType(NO_WINDOW);
@@ -72,8 +75,9 @@ void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, SDL_Point m
         case BASIC_SHIP_WINDOW:
             if (SDL_PointInRect(&mouse, &basicShipWindowCrossRect)) {
                 changeWindowType(NO_WINDOW);
+            } else {
+                basicShipWindowGestion(ships, shipCount, planets, planetCount, mouse); 
             }
-            basicShipWindowGestion(ships, shipCount, planets, planetCount, mouse); 
             break;
 
         default:
@@ -81,7 +85,7 @@ void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, SDL_Point m
     }
 }
 
-int whichShipIsClicked(Ship *ships, int shipCount, SDL_Point mouse){
+int whichShipIsClicked(Ship *ships, int shipCount, SDL_Point mouse) {
     // Renvoie l'id du ship selectionne ou -1 sinon
     for (int i = 0; i < shipCount; i++) {
         if (SDL_PointInRect(&mouse, &ships[i].destRect)) {
@@ -94,15 +98,14 @@ int whichShipIsClicked(Ship *ships, int shipCount, SDL_Point mouse){
 void clickOnShip(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, int shipCount, SDL_Point mouse) {
     int id = whichShipIsClicked(ships, shipCount, mouse); // // id du ship selectionne ou -1 sinon
 
-    if (id != -1){ // Si un ship a etait clique...
+    if (id != -1) {  // Si un ship a etait clique...
         changeWindowId(id);
         changeWindowType(BASIC_SHIP_WINDOW); 
-        changeWindowId(id);
-        //initShipWindow(textTextures, fonts, ships);//Ne s'ouvrira que ds un 2ème temps selon action joueur
+        initShipWindow(textTextures, fonts, ships);
     }
 }
 
-int whichPlanetIsClicked(Planet *planets, int planetCount, SDL_Point mouse){
+int whichPlanetIsClicked(Planet *planets, int planetCount, SDL_Point mouse) {
     // Renvoie la planète sur lequelle user a cliqué ou -1 sinon
     for (int i = 0; i < planetCount; i++) {
         //(screenX, screenY) = coordonnees sur l'ecran physique, du point au milieu de la planete
@@ -118,16 +121,30 @@ int whichPlanetIsClicked(Planet *planets, int planetCount, SDL_Point mouse){
 }
 
 void clickOnPlanet(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets, int planetCount, SDL_Point mouse) {
-    int i = whichPlanetIsClicked(planets, planetCount, mouse);
-    if (i != -1){
-        changeWindowId(i);
+    int id = whichPlanetIsClicked(planets, planetCount, mouse);
+
+    if (id != -1) {
+        changeWindowId(id);
         changeWindowType(PLANET_WINDOW);
         initPlanetWindow(textTextures, fonts);
     }
 }
 
 void displayWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships, Planet *planets, int planetCount) {
-    displayShipWindow(imageTextures, textTextures, ships);
-    displayPlanetWindow(imageTextures, textTextures, planets, planetCount);
-    displayBasicShipWindow(imageTextures, ships);
+    switch (getWindowType()) {
+        case PLANET_WINDOW:
+            displayPlanetWindow(imageTextures, textTextures, planets, planetCount);
+            break;
+            
+        case BASIC_SHIP_WINDOW:
+            displayBasicShipWindow(imageTextures, ships);
+            break;
+            
+        case SHIP_WINDOW:
+            displayShipWindow(imageTextures, textTextures, ships);
+            break;
+            
+        default:
+            break;
+    }
 }

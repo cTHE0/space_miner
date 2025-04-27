@@ -66,8 +66,7 @@ void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, GameState *state
                     case SDLK_ESCAPE:
                         if (getWindowType() != NO_WINDOW) {
                             changeWindowType(NO_WINDOW);
-                        }
-                        else {
+                        } else {
                             *state = QUIT;
                         }
                         click = 0;

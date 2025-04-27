@@ -50,7 +50,7 @@ void initTextShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship
     TextToLoad newText;
 
     // Importe le nom de la base de la fusee
-    generateRandomName(baseName, currentSeed, ships[getWindowType()].base->id);
+    generateRandomName(baseName, currentSeed, ships[getWindowId()].base->id);
     strcpy(newText.text, (const char*)baseName);
     newText.color = BLACK;
     newText.font = fonts[0];
@@ -59,7 +59,7 @@ void initTextShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship
     updateTextTexture(&textTextures[30], newText);
 
     // Importe le nom de la cible de la fusee
-    generateRandomName(targetName, currentSeed, ships[getWindowType()].target.planet->id);
+    generateRandomName(targetName, currentSeed, ships[getWindowId()].target.planet->id);
     strcpy(newText.text, (const char*)targetName);
     newText.color = BLACK;
     newText.font = fonts[0];
@@ -221,11 +221,6 @@ void initRectShipWindow(SDL_Texture **textTextures) {
 }
 
 void displayShipWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
-    
-    if (getWindowType() != SHIP_WINDOW) {  // La fenetre d'information d'une fusee est-elle ouverte ?
-        return;
-    }
-
     ShipWindowFondations(imageTextures, textTextures);
     ShipWindowTravelInfo(imageTextures, textTextures, ships);
     ShipWindowTankManager(imageTextures, textTextures, ships);

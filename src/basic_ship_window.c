@@ -76,10 +76,6 @@ static SDL_Rect button3Rect = {
 
 
 void displayBasicShipWindow(SDL_Texture ***imageTextures, Ship *ships){
-    if (getWindowType() != BASIC_SHIP_WINDOW) {  // La fenetre d'informations basiques d'une fusee est-elle ouverte ?
-        return;
-    }
-
     // Afficher la portee de la fusee
     SDL_Rect rangeCircle = (SDL_Rect){ships[getWindowId()].destRect.x - getCameraScale() * ships[getWindowId()].range, 
                              ships[getWindowId()].destRect.y - getCameraScale() * ships[getWindowId()].range, 
@@ -115,27 +111,24 @@ void displayBasicShipWindow(SDL_Texture ***imageTextures, Ship *ships){
 void basicShipWindowGestion(Ship *ships, int shipCount, Planet *planets, int planetCount, SDL_Point mouse){
     if (SDL_PointInRect(&mouse, &button1Rect)) {
         buttonSelected = (buttonSelected == MOVING_BUTTON) ? NO_BUTTON : MOVING_BUTTON;
-        return; // On s'arrete là, une seule action à la fois
-    }
-    else if (SDL_PointInRect(&mouse, &button2Rect)) {
-        buttonSelected = NO_BUTTON;
+        return;
+    } else if (SDL_PointInRect(&mouse, &button2Rect)) {
         changeWindowType(SHIP_WINDOW);
-    }
-    else if (SDL_PointInRect(&mouse, &button3Rect)){
+        buttonSelected = NO_BUTTON;
+        return;
+    } else if (SDL_PointInRect(&mouse, &button3Rect)) {
         buttonSelected = (buttonSelected == ATTACK_BUTTON) ? NO_BUTTON : ATTACK_BUTTON;
         return;
     }
 
     // Si aucun des boutons n'a était activé, on fait les actions correspondantes en fonction de la situation
-    switch (buttonSelected)
-    {
-    case MOVING_BUTTON:
-        // On est ds menu déplacement donc on choisi la nouvelle target
-        choosingNewTarget(ships, shipCount, planets, planetCount, mouse);
-        break;
-    
-    default:
-        break;
+    switch (buttonSelected) {
+        case MOVING_BUTTON:  // On est ds menu déplacement donc on choisi la nouvelle target
+            choosingNewTarget(ships, shipCount, planets, planetCount, mouse);
+            break;
+        
+        default:
+            break;
     }
     
 }
