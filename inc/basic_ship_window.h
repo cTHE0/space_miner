@@ -10,7 +10,7 @@ void initBasicShipWindow(int i);
 
 void displayBasicShipWindow(SDL_Texture ***imageTextures, Ship *ships);
 
-void changeButtonType(SDL_Point mouse);
+int changeButtonType(SDL_Point mouse);
 
 void plotPath(SDL_Point origin, SDL_Point destination, int dashLength, int gapLength);
 

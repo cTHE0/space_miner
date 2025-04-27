@@ -51,7 +51,12 @@ void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, GameState *state
                             }
                             break;
                         case BASIC_SHIP_WINDOW:
-                            changeButtonType((SDL_Point){event.button.x, event.button.y});
+                            // Si aucun des bouton au-dessus fenêtre n'a était touché alors on peu choisir nouvelle target 
+                            // (évite bug en sélectionnant planète, ship ou point sous le bouton en question)
+                            if (!changeButtonType((SDL_Point){event.button.x, event.button.y})){
+                                choosingNewTarget(ships, shipCount, planets, planetCount, mouse);
+                            };
+                            
                             break;
                         default:
                             break;
@@ -62,7 +67,8 @@ void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, GameState *state
             case SDL_MOUSEBUTTONUP:
                 if (event.button.button == SDL_BUTTON_LEFT) {
                     if (click) {
-                        openWindowGestion(textTextures, fonts, (SDL_Point){lastMouseX, lastMouseY}, ships, shipCount, planets, planetCount); // On a cliqué sur un ship donc on ouvre une nouvelle fenêtre
+                        // On a cliqué sur un ship donc on ouvre une nouvelle fenêtre
+                        openWindowGestion(textTextures, fonts, (SDL_Point){lastMouseX, lastMouseY}, ships, shipCount, planets, planetCount);
                     }
                     dragging_camera = 0;
                     click = 0;

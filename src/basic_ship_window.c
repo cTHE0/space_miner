@@ -117,16 +117,18 @@ void displayBasicShipWindow(SDL_Texture ***imageTextures, Ship *ships){
     
 }
 
-void changeButtonType(SDL_Point mouse) {
+int changeButtonType(SDL_Point mouse) {
     if (SDL_PointInRect(&mouse, &button1Rect)){
-        printf("click");
         if (buttonSelected == MOVING_BUTTON){
             buttonSelected = NO_BUTTON;
         }
         else{
             buttonSelected = MOVING_BUTTON;
         }
+        // Permet de savoir si on a cliqué sur bouton pour ne pas appeler choosingNewTarget ensuite dans event.c
+        return 1;
     }
+    return 0;
 }
 
 void plotPath(SDL_Point origin, SDL_Point destination, int dashLength, int gapLength){
@@ -152,6 +154,10 @@ void plotPath(SDL_Point origin, SDL_Point destination, int dashLength, int gapLe
 }
 
 void choosingNewTarget(Ship *ships, int shipCount, Planet *planets, int planetCount, SDL_Point mouse){
+    //On verifie si on est bien dans le mode déplacement et si oui on peut continuer
+    if (buttonSelected != MOVING_BUTTON){ 
+        return;
+    }
     int planetChosen = whichPlanetIsClicked(planets, planetCount, mouse);
     int shipChosen = whichShipIsClicked(ships, shipCount, mouse);
 
