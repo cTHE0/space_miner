@@ -8,7 +8,9 @@
 #include "camera.h"
 #include "event.h"
 
-SDL_Rect rangeCircle;
+
+static BasicShipWindowButton buttonSelected = NO_BUTTON; // Lequel des 3 boutons est sélectionné ? AU début, aucun des boutons n'est sélectionné
+
 static SDL_Rect bgRect = {
                             SCREEN_WIDTH/12, 
                             3*SCREEN_HEIGHT/4, 
@@ -72,27 +74,20 @@ static SDL_Rect button3Rect = {
                                     SCREEN_HEIGHT/32
                                 };
 
-SDL_Rect pathRect;
-int idShip; //identifiant du ship dont la basic window est à afficher
-float cameraScale;
-
-void initBasicShipWindow(int id){
-    idShip = id;
-}
-
-BasicShipWindowButton buttonSelected = NO_BUTTON; // Lequel des 3 boutons est sélectionné ? AU début, aucun des boutons n'est sélectionné
 
 void displayBasicShipWindow(SDL_Texture ***imageTextures, Ship *ships){
-    if (getWindowType() != BASIC_SHIP_WINDOW) {  // La fenetre d'informations [basiques] d'une fusee est-elle ouverte ?
+    if (getWindowType() != BASIC_SHIP_WINDOW) {  // La fenetre d'informations basiques d'une fusee est-elle ouverte ?
         return;
     }
-    SDL_Rect shipDestRect = getShipOnScreen(ships[idShip]);
-    cameraScale = getCameraScale();
 
-    rangeCircle = (SDL_Rect){shipDestRect.x - cameraScale * ships[idShip].range, shipDestRect.y - cameraScale * ships[idShip].range, 2*cameraScale*ships[idShip].range, 2*cameraScale*ships[idShip].range};
+    // Afficher la portee de la fusee
+    SDL_Rect rangeCircle = (SDL_Rect){ships[getWindowId()].destRect.x - getCameraScale() * ships[getWindowId()].range, 
+                             ships[getWindowId()].destRect.y - getCameraScale() * ships[getWindowId()].range, 
+                             2 * getCameraScale() * ships[getWindowId()].range, 
+                             2 * getCameraScale() * ships[getWindowId()].range};
     SDL_RenderCopy(renderer, imageTextures[5][4], NULL, &rangeCircle);
 
-    //Afficher fenetre du bas
+    // Afficher fenetre du bas
     SDL_RenderCopy(renderer, imageTextures[5][3], NULL, &bgRect);                                       //Afficher fond
     SDL_RenderCopy(renderer, imageTextures[8][0], NULL, &shipPictureRect);                              //Afficher "photo" du ship
     SDL_RenderCopy(renderer, imageTextures[2][2], NULL, &leftArrowRect);                                //Afficher flèche gauche
@@ -101,30 +96,28 @@ void displayBasicShipWindow(SDL_Texture ***imageTextures, Ship *ships){
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderFillRect(renderer, &line1Rect);                                                           // Ligne horizontale sous nom fusée
 
-    //Affichage boutons au-dessus fenêtre
+    // Affichage boutons au-dessus fenêtre
     SDL_RenderCopy(renderer, imageTextures[2][3], NULL, &button1Rect);
     SDL_RenderCopy(renderer, imageTextures[2][4], NULL, &button1Rect);
 
     SDL_RenderCopy(renderer, imageTextures[2][3], NULL, &button2Rect);
 
-
     SDL_RenderCopy(renderer, imageTextures[2][3], NULL, &button3Rect);
 
-    if (buttonSelected == MOVING_BUTTON){
-        SDL_Point centerShipCoord = {shipDestRect.x + shipDestRect.w/2, shipDestRect.y + shipDestRect.h/2};
+    // Afficher la ligne en pointillees 
+    if (buttonSelected == MOVING_BUTTON) {
+        SDL_Point centerShipCoord = {ships[getWindowId()].destRect.x + ships[getWindowId()].destRect.w / 2,
+                                     ships[getWindowId()].destRect.y + ships[getWindowId()].destRect.h / 2};
         plotPath(centerShipCoord, getMouseCoordinates(), 10, 5);
     }
-    
 }
 
-void changeButtonType(SDL_Point mouse) {
+int changeButtonType(SDL_Point mouse) {
     if (SDL_PointInRect(&mouse, &button1Rect)) {
-        if (buttonSelected == MOVING_BUTTON) {
-            buttonSelected = NO_BUTTON;
-        } else {
-            buttonSelected = MOVING_BUTTON;
-        }
+        buttonSelected = (buttonSelected == MOVING_BUTTON) ? NO_BUTTON : MOVING_BUTTON;
+        return 1;
     }
+    return 0;
 }
 
 void plotPath(SDL_Point origin, SDL_Point destination, int dashLength, int gapLength){
@@ -147,4 +140,24 @@ void plotPath(SDL_Point origin, SDL_Point destination, int dashLength, int gapLe
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         SDL_RenderDrawLine(renderer, (int)startX, (int)startY, (int)endX, (int)endY);
     }  
+}
+
+void choosingNewTarget(Ship *ships, int shipCount, Planet *planets, int planetCount, SDL_Point mouse){
+    if (buttonSelected != MOVING_BUTTON) {  // Sommes-nous en mode deplacement. Si oui, continuer.
+        return;
+    }
+
+    int planetChosen = whichPlanetIsClicked(planets, planetCount, mouse);
+    int shipChosen = whichShipIsClicked(ships, shipCount, mouse);
+
+    if (planetChosen != -1) {  // La nouvelle cible est une planète
+        ships[getWindowId()].target.type = TARGET_PLANET;
+        ships[getWindowId()].target.planet = &planets[planetChosen];
+    } else if (shipChosen != -1) {  // La nouvelle cible est un ship (par ex. une station spatiale, orbitale ou un vaisseau de ravitaillement)
+        ships[getWindowId()].target.type = TARGET_SHIP;
+        ships[getWindowId()].target.ship = &ships[shipChosen];
+    } else {  // La nouvelle target est un point random de l'espace
+        ships[getWindowId()].target.type = TARGET_POINT;
+        ships[getWindowId()].target.point = (SDL_Point){mouse.x, mouse.y};
+    }
 }

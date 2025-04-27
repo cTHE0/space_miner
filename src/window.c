@@ -67,30 +67,44 @@ void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, SDL_Point m
             break;
 
         case BASIC_SHIP_WINDOW:
-            changeButtonType(mouse);
             if (SDL_PointInRect(&mouse, &basicShipWindowCrossRect)) {
                 changeWindowType(NO_WINDOW);
             }
+            // Si aucun des bouton au-dessus fenêtre n'a était touché alors on peu choisir nouvelle target 
+            // (évite bug en sélectionnant planète, ship ou point sous le bouton en question)
+            if (!changeButtonType(mouse)) {
+                choosingNewTarget(ships, shipCount, planets, planetCount, mouse);
+            };      
             break;
 
         default:
-            break;  
+            break;
     }
+}
+
+int whichShipIsClicked(Ship *ships, int shipCount, SDL_Point mouse){
+    // Renvoie l'id du ship selectionne ou -1 sinon
+    for (int i = 0; i < shipCount; i++) {
+        if (SDL_PointInRect(&mouse, &ships[i].destRect)) {
+            return i;
+        }
+    }
+    return -1;
 }
 
 void clickOnShip(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, int shipCount, SDL_Point mouse) {
-    for (int i = 0; i < shipCount; i++) {
-        if (SDL_PointInRect(&mouse, &ships[i].destRect)) {
-            changeWindowId(i);
-            changeWindowType(BASIC_SHIP_WINDOW); 
-            initBasicShipWindow(i);
-            //initShipWindow(textTextures, fonts, ships);//Ne s'ouvrira que ds un 2ème temps selon action joueur
-            return;
-        }
+    int id = whichShipIsClicked(ships, shipCount, mouse); // // id du ship selectionne ou -1 sinon
+
+    if (id != -1){ // Si un ship a etait clique...
+        changeWindowId(id);
+        changeWindowType(BASIC_SHIP_WINDOW); 
+        changeWindowId(id);
+        //initShipWindow(textTextures, fonts, ships);//Ne s'ouvrira que ds un 2ème temps selon action joueur
     }
 }
 
-void clickOnPlanet(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets, int planetCount, SDL_Point mouse) {
+int whichPlanetIsClicked(Planet *planets, int planetCount, SDL_Point mouse){
+    // Renvoie la planète sur lequelle user a cliqué ou -1 sinon
     for (int i = 0; i < planetCount; i++) {
         //(screenX, screenY) = coordonnees sur l'ecran physique, du point au milieu de la planete
         // (planets[i].x, planets[i].y) = coordonnees sur la map
@@ -98,11 +112,18 @@ void clickOnPlanet(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets
         float screenY = (planets[i].y - getCameraRect().y - SCREEN_HEIGHT / 2.f) * getCameraScale() + SCREEN_HEIGHT / 2.f;  
         float screenRadius = planets[i].radius * getCameraScale();  
         if (fabs(screenX - mouse.x) < screenRadius && fabs(screenY - mouse.y) < screenRadius) {
-            changeWindowId(i);
-            changeWindowType(PLANET_WINDOW);
-            initPlanetWindow(textTextures, fonts);
-            return;
+            return i;
         }
+    }
+    return -1;
+}
+
+void clickOnPlanet(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets, int planetCount, SDL_Point mouse) {
+    int i = whichPlanetIsClicked(planets, planetCount, mouse);
+    if (i != -1){
+        changeWindowId(i);
+        changeWindowType(PLANET_WINDOW);
+        initPlanetWindow(textTextures, fonts);
     }
 }
 

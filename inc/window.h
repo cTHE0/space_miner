@@ -29,7 +29,9 @@ void displayWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Shi
                     void initTextPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts);
 
 void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, SDL_Point mouse, Ship *ships, int shipCount, Planet *planets, int planetCount);
+    int whichShipIsClicked(Ship *ships, int shipCount, SDL_Point mouse);
     void clickOnShip(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, int shipCount, SDL_Point mouse);
+    int whichPlanetIsClicked(Planet *planets, int planetCount, SDL_Point mouse);
     void clickOnPlanet(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets, int planetCount, SDL_Point mouse);
     int clickOnWindow(SDL_Point mouse);
 

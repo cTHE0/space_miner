@@ -8,12 +8,6 @@
 #include "config.h"
 #include "renderer.h"
 
-SDL_Rect getShipOnScreen(Ship ship){
-    return (SDL_Rect){(ship.x - getCameraRect().x - SCREEN_WIDTH / 2.f) * getCameraScale() + SCREEN_WIDTH / 2.f,
-                        (ship.y - getCameraRect().y - SCREEN_HEIGHT / 2.f) * getCameraScale() + SCREEN_HEIGHT / 2.f,
-                        ship.w * getCameraScale(),
-                        ship.h * getCameraScale()};
-}
 
 void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
     *ships = malloc(shipCount * sizeof(Ship));
@@ -28,7 +22,8 @@ void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
         (*ships)[i].id = i;
         (*ships)[i].idModel = rand() % 12;
         (*ships)[i].base = &planets[1];  // La première planète est la base de chaque vaisseau
-        (*ships)[i].target = &planets[rand() % (planetCount - 2) + 2];
+        (*ships)[i].target.type = TARGET_PLANET;
+        (*ships)[i].target.planet = &planets[rand() % (planetCount - 2) + 2];
         (*ships)[i].x = (*ships)[i].base->x;
         (*ships)[i].y = (*ships)[i].base->y;
         (*ships)[i].w = 62;
@@ -102,25 +97,33 @@ void updateShipAnimation(Ship *ship, Uint32 currentTime) {  // Pour animation de
 }
 
 void updateShipMove(Ship *ship, Uint32 currentTime) {
-    // Pour le deplacement des fusees dans l'espace
-    if (ship->state == MOVING_TO_TARGET || ship->state == MOVING_TO_BASE) {
-        Planet *dest = (ship->state == MOVING_TO_TARGET) ? ship->target : ship->base;
-        float dx = dest->x - (ship->x + ship->w / 2.);
-        float dy = dest->y - (ship->y + ship->h / 2.);
-        float distance = sqrt(dx * dx + dy * dy);
+    switch (ship->target.type)
+    {
+    case TARGET_PLANET:
+        // Pour le deplacement des fusees dans l'espace
+        if (ship->state == MOVING_TO_TARGET || ship->state == MOVING_TO_BASE) {
+            Planet *dest = (ship->state == MOVING_TO_TARGET) ? ship->target.planet : ship->base;
+            float dx = dest->x - (ship->x + ship->w / 2.);
+            float dy = dest->y - (ship->y + ship->h / 2.);
+            float distance = sqrt(dx * dx + dy * dy);
 
-        if (distance - ship->speed >= dest->radius) {
-            ship->x += dx * ship->speed / distance;
-            ship->y += dy * ship->speed / distance;
-        } else {
-            ship->waitStartTime = currentTime;
-            ship->state = (ship->state == MOVING_TO_BASE) ? WAITING_ON_BASE : WAITING_ON_TARGET;
+            if (distance - ship->speed >= dest->radius) {
+                ship->x += dx * ship->speed / distance;
+                ship->y += dy * ship->speed / distance;
+            } else {
+                ship->waitStartTime = currentTime;
+                ship->state = (ship->state == MOVING_TO_BASE) ? WAITING_ON_BASE : WAITING_ON_TARGET;
+            }
+        } else if (ship->state == WAITING_ON_TARGET) {  // Partie a supprimer qd les fusees pourront miner
+            if (currentTime - ship->waitStartTime > WAIT_TIME_SHIP) {
+                ship->state = MOVING_TO_BASE; 
+                ship->lastRefreshFilling = currentTime;
+            }
         }
-    } else if (ship->state == WAITING_ON_TARGET) {  // Partie a supprimer qd les fusees pourront miner
-        if (currentTime - ship->waitStartTime > WAIT_TIME_SHIP) {
-            ship->state = MOVING_TO_BASE; 
-            ship->lastRefreshFilling = currentTime;
-        }
+        break;
+    
+    default:
+        break;
     }
 }
 
@@ -190,7 +193,7 @@ void renderShips(SDL_Texture ***imageTextures, Ship *ships, int shipCount) {
     for (int i = 0; i < shipCount; i++) {
         // Calcul des coordonnees a l'ecran, du point en haut a gauche de la fusee
         SDL_Point ShipOnScreen = (SDL_Point){(ships[i].x - getCameraRect().x - SCREEN_WIDTH / 2.f) * getCameraScale() + SCREEN_WIDTH / 2.f,
-                                  (ships[i].y - getCameraRect().y - SCREEN_HEIGHT / 2.f) * getCameraScale() + SCREEN_HEIGHT / 2.f};
+                                             (ships[i].y - getCameraRect().y - SCREEN_HEIGHT / 2.f) * getCameraScale() + SCREEN_HEIGHT / 2.f};
 
         if (ShipOnScreen.x >= -ships[i].w * getCameraScale() && ShipOnScreen.x <= SCREEN_WIDTH && 
             ShipOnScreen.y >= -ships[i].h * getCameraScale() && ShipOnScreen.y <= SCREEN_HEIGHT + ships[i].h * getCameraScale()) {  // Si la fusee est dans l'ecran 
@@ -205,15 +208,32 @@ void renderShips(SDL_Texture ***imageTextures, Ship *ships, int shipCount) {
 }
 
 void renderShipImage(SDL_Texture *textureShip, Ship ship, SDL_Point ShipOnScreen) {
-    // Calcul de l'angle en degres de l'image
-    float angle = atan2(ship.target->y - (ship.y + ship.h / 2.f), ship.target->x - (ship.x + ship.w / 2.f)) * 180.0f / M_PI;
+    // Calcul de l'angle en degres de l'image de la fusee
+    float angle;
+    switch (ship.target.type)
+    {
+        case TARGET_PLANET:
+            angle = atan2(ship.target.planet->y - (ship.y + ship.h / 2.f), ship.target.planet->x - (ship.x + ship.w / 2.f)) * 180.0f / M_PI;
+            break;
+        case TARGET_SHIP:
+            angle = atan2(ship.target.ship->y - (ship.y + ship.h / 2.f), ship.target.ship->x - (ship.x + ship.w / 2.f)) * 180.0f / M_PI;
+            break;
+        case TARGET_POINT:
+            angle = atan2(ship.target.point.y - (ship.y + ship.h / 2.f), ship.target.point.x - (ship.x + ship.w / 2.f)) * 180.0f / M_PI;
+            break;
+        default:
+            angle = 0;
+            break;
+    }
 
+    // Ajuste cet angle en fonction du sens de deplacement
     if (ship.state == MOVING_TO_TARGET || ship.state == WAITING_ON_BASE) {  // Pour que les fusees atterissent dans le bon sens
         angle += 90;
     } else if (ship.state == MOVING_TO_BASE || ship.state == WAITING_ON_TARGET) {
         angle -= 90;
     }
 
+    // Creation des variables necessaires a l'affichage
     SDL_Rect srcRect = {ship.frameIndex * 64, 0, 64, 64};  // Frame actuelle sur le sprite sheet
     SDL_Rect destRect = {ShipOnScreen.x, ShipOnScreen.y, ship.w * getCameraScale(), ship.h * getCameraScale()};  // Position et taille affichee
     SDL_Point center = {destRect.w / 2, destRect.h / 2};  // Définition du point de rotation (au centre du sprite)
