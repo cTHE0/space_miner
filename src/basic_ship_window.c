@@ -150,3 +150,28 @@ void plotPath(SDL_Point origin, SDL_Point destination, int dashLength, int gapLe
         SDL_RenderDrawLine(renderer, (int)startX, (int)startY, (int)endX, (int)endY);
     }  
 }
+
+void choosingNewTarget(Ship *ships, int shipCount, Planet *planets, int planetCount, SDL_Point mouse){
+    int planetChosen = whichPlanetIsClicked(planets, planetCount, mouse);
+    int shipChosen = whichShipIsClicked(ships, shipCount, mouse);
+
+    if (planetChosen != -1){
+        // La nouvelle target est une planète
+        ships[idShip].target.type = TARGET_PLANET;
+        // Et on indique exactement vers quelle planète le ship doit-il se diriger
+        ships[idShip].target.planet = &planets[planetChosen];
+    }
+    else if (shipChosen != -1){
+        // La nouvelle target est un ship [ex une station spatiale, orbitale ou un vaisseau de ravitaillement]
+        ships[idShip].target.type = TARGET_SHIP;
+        // Et on indique exactement vers quel ship le ship doit-il se diriger
+        ships[idShip].target.ship = &ships[shipChosen];
+    }
+    else { // Si le joueur clique à un endroit random sans rien
+        // La nouvelle target est un point random de l'espace
+        ships[idShip].target.type = TARGET_POINT;
+        // On rendre les coordonnées exactes du point target
+        ships[idShip].target.point.x = mouse.x;
+        ships[idShip].target.point.y = mouse.y;
+    }
+}

@@ -14,7 +14,7 @@ typedef enum { // Vers quel genre se destination se dirige-t-on ?
     TARGET_NONE,
     TARGET_PLANET,
     TARGET_POINT,
-    TARGET_STATION,
+    TARGET_SHIP,
 } TargetType;
 
 // Déclaration anticipée (car sinon cercle de dépendance)
