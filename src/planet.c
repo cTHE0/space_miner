@@ -7,45 +7,16 @@
 #include "solar_system.h"
 #include "renderer.h"
 #include "tools.h"
-int id;                          // Identifiant de la planet (permet la generation aleatoire
-planetTypeEnum planetType;       // Type de planete : soleil, planete gazeuse, planete rocheuse, ...
-float x, y;                      // Position du centre de la planete sur la map
-float radius;
-float maxOre[ORE_TYPE_COUNT];    // Quantité maximale et actuelle de minerais
-float currentOre[ORE_TYPE_COUNT];
-float regenerationTime;
-
-void generatePoints(Planet *planets, int planetCount, int nbPointsPerLigne) {
-    for (int i = 0; i < nbPointsPerLigne * nbPointsPerLigne; i++) {
-        planets[planetCount + i].radius = 20;
-        planets[planetCount + i].x = (i % nbPointsPerLigne) * 500;
-        planets[planetCount + i].y = (i / nbPointsPerLigne) * 500;
-        planets[planetCount + i].planetType = POINT;
-    }
-}
 
 
-
-void generatePlanets(Planet **planets, int planetCount, int pointCount, int nbPointsPerLigne) {
+void generatePlanets(Planet **planets, int planetCount) {
     // Allocation du tableau de planetes
-    *planets = malloc((planetCount + pointCount) * sizeof(Planet)); // Les points sont gérés comme des planètes
+    *planets = malloc(planetCount * sizeof(Planet));
 
     // Generations des planetes, systeme solaire par systeme solaire
     int nbEntityGenerated = 0;  // Nombre planètes (étoiles incluses) déjà présentes
     while (nbEntityGenerated < planetCount) {
         solarSystemCoordinator(&nbEntityGenerated, *planets, planetCount);
-    }
-    
-    generatePoints(*planets, planetCount, nbPointsPerLigne);
-}
-
-void renderPoints(SDL_Texture ***imageTextures, Planet *planets, int planetCount, int pointCount, int nbPointsPerLigne){
-    SDL_Rect pointRect;
-    for (int i=0; i<nbPointsPerLigne; i++){
-        for (int j=0; j<nbPointsPerLigne; j++){
-            pointRect = (SDL_Rect){i*500, j*500, 20, 20};
-            SDL_RenderCopy(renderer, imageTextures[5][5], NULL, &pointRect);
-        }
     }
 }
 
