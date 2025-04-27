@@ -10,14 +10,14 @@
 #include "landing_page.h"
 #include "basic_ship_window.h"
 
-SDL_Point mouse;
+static SDL_Point mouse;
 
-SDL_Point getMouseCoordinates(){
+SDL_Point getMouseCoordinates(void) {
     return mouse;
 }
 
 void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, GameState *state, Ship *ships, int shipCount, Planet *planets, int planetCount) {
-    static int lastMouseX, lastMouseY;
+    static SDL_Point lastMouse;
     static int dragging_camera = 0;
     static int click = 0;
     SDL_Event event;
@@ -36,33 +36,14 @@ void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, GameState *state
                 if (event.button.button == SDL_BUTTON_LEFT) {
                     dragging_camera = 1;
                     click = 1;
-                    lastMouseX = event.button.x;
-                    lastMouseY = event.button.y;
-
-                    switch (getWindowType()) {
-                        case SHIP_WINDOW:
-                            if (!clickOnWindow((SDL_Point){event.button.x, event.button.y})){
-                                changeWindowType(NO_WINDOW);
-                            }
-                            break;
-                        case PLANET_WINDOW:
-                            if (!clickOnWindow((SDL_Point){event.button.x, event.button.y})){
-                                changeWindowType(NO_WINDOW);
-                            }
-                            break;
-                        case BASIC_SHIP_WINDOW:
-                            changeButtonType((SDL_Point){event.button.x, event.button.y});
-                            break;
-                        default:
-                            break;
-                    }
+                    lastMouse = (SDL_Point){event.button.x, event.button.y};
                 }
                 break;
 
             case SDL_MOUSEBUTTONUP:
                 if (event.button.button == SDL_BUTTON_LEFT) {
-                    if (click) {
-                        openWindowGestion(textTextures, fonts, (SDL_Point){lastMouseX, lastMouseY}, ships, shipCount, planets, planetCount); // On a cliqué sur un ship donc on ouvre une nouvelle fenêtre
+                    if (click) { // Ou a-t-on lache le clic gauche ?
+                        openWindowGestion(textTextures, fonts, lastMouse, ships, shipCount, planets, planetCount);
                     }
                     dragging_camera = 0;
                     click = 0;
@@ -70,14 +51,12 @@ void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, GameState *state
                 break;
 
             case SDL_MOUSEMOTION:
-                mouse.x = event.button.x;
-                mouse.y = event.button.y;
+                mouse = (SDL_Point){event.button.x, event.button.y};
                 if (dragging_camera) {
-                    int dx = (event.motion.x - lastMouseX);
-                    int dy = (event.motion.y - lastMouseY);
+                    int dx = (event.motion.x - lastMouse.x);
+                    int dy = (event.motion.y - lastMouse.y);
                     translateCamera(-dx / getCameraScale(), -dy / getCameraScale());
-                    lastMouseX = event.motion.x;
-                    lastMouseY = event.motion.y;
+                    lastMouse = (SDL_Point){event.motion.x, event.motion.y};
                     click = 0;
                 }
                 break;
@@ -91,6 +70,7 @@ void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, GameState *state
                         else {
                             *state = QUIT;
                         }
+                        click = 0;
                         break;
                     case SDLK_o:
                         zoomCamera(1.1f);

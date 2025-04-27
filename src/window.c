@@ -51,14 +51,30 @@ void changeWindowId(int newId) {
 }
 
 void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, SDL_Point mouse, Ship *ships, int shipCount, Planet *planets, int planetCount) {
-    if (getWindowType() == NO_WINDOW) {
-        clickOnShip(textTextures, fonts, ships, shipCount, mouse);
-        clickOnPlanet(textTextures, fonts, planets, planetCount, mouse);
-    } else if (((getWindowType() == SHIP_WINDOW) || (getWindowType() == PLANET_WINDOW)) && SDL_PointInRect(&mouse, &WindowCrossRect)){
-        changeWindowType(NO_WINDOW);
-    }
-    else if((getWindowType() == BASIC_SHIP_WINDOW) && SDL_PointInRect(&mouse, &basicShipWindowCrossRect)){
-        changeWindowType(NO_WINDOW);
+    switch (getWindowType()) {
+
+        case NO_WINDOW:
+            clickOnShip(textTextures, fonts, ships, shipCount, mouse);
+            clickOnPlanet(textTextures, fonts, planets, planetCount, mouse);
+            break;
+
+        case SHIP_WINDOW:  // Ce cas est fusionne avec le prochain (<=> (SHIP_WINDOW || PLANET_WINDOW) )
+
+        case PLANET_WINDOW:
+            if (SDL_PointInRect(&mouse, &WindowCrossRect) || !clickOnWindow(mouse)) {
+                changeWindowType(NO_WINDOW);
+            }
+            break;
+
+        case BASIC_SHIP_WINDOW:
+            changeButtonType(mouse);
+            if (SDL_PointInRect(&mouse, &basicShipWindowCrossRect)) {
+                changeWindowType(NO_WINDOW);
+            }
+            break;
+
+        default:
+            break;  
     }
 }
 

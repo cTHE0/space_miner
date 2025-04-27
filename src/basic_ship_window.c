@@ -76,8 +76,8 @@ SDL_Rect pathRect;
 int idShip; //identifiant du ship dont la basic window est à afficher
 float cameraScale;
 
-void initBasicShipWindow(int i){
-    idShip = i;
+void initBasicShipWindow(int id){
+    idShip = id;
 }
 
 BasicShipWindowButton buttonSelected = NO_BUTTON; // Lequel des 3 boutons est sélectionné ? AU début, aucun des boutons n'est sélectionné
@@ -118,12 +118,10 @@ void displayBasicShipWindow(SDL_Texture ***imageTextures, Ship *ships){
 }
 
 void changeButtonType(SDL_Point mouse) {
-    if (SDL_PointInRect(&mouse, &button1Rect)){
-        printf("click");
-        if (buttonSelected == MOVING_BUTTON){
+    if (SDL_PointInRect(&mouse, &button1Rect)) {
+        if (buttonSelected == MOVING_BUTTON) {
             buttonSelected = NO_BUTTON;
-        }
-        else{
+        } else {
             buttonSelected = MOVING_BUTTON;
         }
     }
