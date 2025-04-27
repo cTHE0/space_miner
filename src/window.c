@@ -58,8 +58,11 @@ void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, SDL_Point m
             clickOnPlanet(textTextures, fonts, planets, planetCount, mouse);
             break;
 
-        case SHIP_WINDOW:  // Ce cas est fusionne avec le prochain (<=> (SHIP_WINDOW || PLANET_WINDOW) )
-
+        case SHIP_WINDOW:  // Ce cas doit fusionne avec le prochain (<=> (SHIP_WINDOW || PLANET_WINDOW) )
+            if (SDL_PointInRect(&mouse, &WindowCrossRect) || !clickOnWindow(mouse)) {
+                changeWindowType(NO_WINDOW);
+            }
+            break;
         case PLANET_WINDOW:
             if (SDL_PointInRect(&mouse, &WindowCrossRect) || !clickOnWindow(mouse)) {
                 changeWindowType(NO_WINDOW);
@@ -70,11 +73,7 @@ void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, SDL_Point m
             if (SDL_PointInRect(&mouse, &basicShipWindowCrossRect)) {
                 changeWindowType(NO_WINDOW);
             }
-            // Si aucun des bouton au-dessus fenêtre n'a était touché alors on peu choisir nouvelle target 
-            // (évite bug en sélectionnant planète, ship ou point sous le bouton en question)
-            if (!changeButtonType(mouse)) {
-                choosingNewTarget(ships, shipCount, planets, planetCount, mouse);
-            };      
+            basicShipWindowGestion(ships, shipCount, planets, planetCount, mouse); 
             break;
 
         default:

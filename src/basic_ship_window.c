@@ -112,12 +112,32 @@ void displayBasicShipWindow(SDL_Texture ***imageTextures, Ship *ships){
     }
 }
 
-int changeButtonType(SDL_Point mouse) {
+void basicShipWindowGestion(Ship *ships, int shipCount, Planet *planets, int planetCount, SDL_Point mouse){
     if (SDL_PointInRect(&mouse, &button1Rect)) {
         buttonSelected = (buttonSelected == MOVING_BUTTON) ? NO_BUTTON : MOVING_BUTTON;
-        return 1;
+        return; // On s'arrete là, une seule action à la fois
     }
-    return 0;
+    else if (SDL_PointInRect(&mouse, &button2Rect)) {
+        buttonSelected = NO_BUTTON;
+        changeWindowType(SHIP_WINDOW);
+    }
+    else if (SDL_PointInRect(&mouse, &button3Rect)){
+        buttonSelected = (buttonSelected == ATTACK_BUTTON) ? NO_BUTTON : ATTACK_BUTTON;
+        return;
+    }
+
+    // Si aucun des boutons n'a était activé, on fait les actions correspondantes en fonction de la situation
+    switch (buttonSelected)
+    {
+    case MOVING_BUTTON:
+        // On est ds menu déplacement donc on choisi la nouvelle target
+        choosingNewTarget(ships, shipCount, planets, planetCount, mouse);
+        break;
+    
+    default:
+        break;
+    }
+    
 }
 
 void plotPath(SDL_Point origin, SDL_Point destination, int dashLength, int gapLength){
@@ -143,9 +163,6 @@ void plotPath(SDL_Point origin, SDL_Point destination, int dashLength, int gapLe
 }
 
 void choosingNewTarget(Ship *ships, int shipCount, Planet *planets, int planetCount, SDL_Point mouse){
-    if (buttonSelected != MOVING_BUTTON) {  // Sommes-nous en mode deplacement. Si oui, continuer.
-        return;
-    }
 
     int planetChosen = whichPlanetIsClicked(planets, planetCount, mouse);
     int shipChosen = whichShipIsClicked(ships, shipCount, mouse);
