@@ -10,18 +10,18 @@ typedef enum { MOVING_TO_TARGET, MOVING_TO_BASE, WAITING_ON_TARGET, WAITING_ON_B
 
 typedef enum { TRANSPORTER, EXPLORER, DEFENDER } ShipType;
 
-typedef enum {TARGET_NONE, TARGET_PLANET, TARGET_POINT, TARGET_SHIP} TargetType;  // Vers quel genre se destination se dirige-t-on ?
+typedef enum {SPOT_NONE, SPOT_PLANET, SPOT_POINT, SPOT_SHIP} SpotType;  // Vers quel genre se destination se dirige-t-on ?
 
 typedef struct Ship Ship;  // Declaration anticipee (car sinon cercle de dépendance)
 
 typedef struct {  // Notre destination
-    TargetType type;
+    SpotType type;
     union {
         Planet *planet;    // Si c'est une planète
         Ship *ship;        // Si c'est une fusee, par ex une station spatiale
         SDL_Point point;   // Si c'est un point libre sur la map, par ex pour partir en exploration
     };
-} Target;
+} Spot;
 
 struct Ship {
     ShipType shiptype;
@@ -29,8 +29,8 @@ struct Ship {
     int idModel;
     float x, y, w, h;      // Rect de la fusee sur la map
     SDL_Rect destRect;     // Rect de la fusee sur l'ecran physique
-    Planet *base;
-    Target target;
+    Spot base;
+    Spot target;
     float speed;
     ShipState state;
     int maxLife, currentLife;

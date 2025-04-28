@@ -101,7 +101,7 @@ void displayBasicShipWindow(SDL_Texture ***imageTextures, Ship *ships){
     SDL_RenderCopy(renderer, imageTextures[2][3], NULL, &button3Rect);
 
     // Afficher la ligne en pointillees 
-    if (buttonSelected == MOVING_BUTTON) {
+    if (buttonSelected == BASE_BUTTON || buttonSelected == TARGET_BUTTON) {
         SDL_Point centerShipCoord = {ships[getWindowId()].destRect.x + ships[getWindowId()].destRect.w / 2,
                                      ships[getWindowId()].destRect.y + ships[getWindowId()].destRect.h / 2};
         plotPath(centerShipCoord, getMouseCoordinates(), 10, 5);
@@ -110,27 +110,15 @@ void displayBasicShipWindow(SDL_Texture ***imageTextures, Ship *ships){
 
 void basicShipWindowGestion(Ship *ships, int shipCount, Planet *planets, int planetCount, SDL_Point mouse){
     if (SDL_PointInRect(&mouse, &button1Rect)) {
-        buttonSelected = (buttonSelected == MOVING_BUTTON) ? NO_BUTTON : MOVING_BUTTON;
-        return;
-    } else if (SDL_PointInRect(&mouse, &button2Rect)) {
         changeWindowType(SHIP_WINDOW);
         buttonSelected = NO_BUTTON;
-        return;
+    } else if (SDL_PointInRect(&mouse, &button2Rect)) {
+        buttonSelected = (buttonSelected == BASE_BUTTON) ? NO_BUTTON : BASE_BUTTON;
     } else if (SDL_PointInRect(&mouse, &button3Rect)) {
-        buttonSelected = (buttonSelected == ATTACK_BUTTON) ? NO_BUTTON : ATTACK_BUTTON;
-        return;
-    }
-
-    // Si aucun des boutons n'a était activé, on fait les actions correspondantes en fonction de la situation
-    switch (buttonSelected) {
-        case MOVING_BUTTON:  // On est ds menu déplacement donc on choisi la nouvelle target
-            choosingNewTarget(ships, shipCount, planets, planetCount, mouse);
-            break;
-        
-        default:
-            break;
-    }
-    
+        buttonSelected = (buttonSelected == TARGET_BUTTON) ? NO_BUTTON : TARGET_BUTTON;
+    } else {  // Si l'on est la, on modifie forcement la base ou la cible
+        choosingNewBaseOrTarget(ships, shipCount, planets, planetCount, mouse);
+    }    
 }
 
 void plotPath(SDL_Point origin, SDL_Point destination, int dashLength, int gapLength){
@@ -155,19 +143,19 @@ void plotPath(SDL_Point origin, SDL_Point destination, int dashLength, int gapLe
     }  
 }
 
-void choosingNewTarget(Ship *ships, int shipCount, Planet *planets, int planetCount, SDL_Point mouse){
-
+void choosingNewBaseOrTarget(Ship *ships, int shipCount, Planet *planets, int planetCount, SDL_Point mouse){
     int planetChosen = whichPlanetIsClicked(planets, planetCount, mouse);
     int shipChosen = whichShipIsClicked(ships, shipCount, mouse);
+    Spot *spotDest = ((buttonSelected == BASE_BUTTON) ? &ships[getWindowId()].base : &ships[getWindowId()].target);
 
     if (planetChosen != -1) {  // La nouvelle cible est une planète
-        ships[getWindowId()].target.type = TARGET_PLANET;
-        ships[getWindowId()].target.planet = &planets[planetChosen];
+        spotDest->type = SPOT_PLANET;
+        spotDest->planet = &planets[planetChosen];
     } else if (shipChosen != -1) {  // La nouvelle cible est un ship (par ex. une station spatiale, orbitale ou un vaisseau de ravitaillement)
-        ships[getWindowId()].target.type = TARGET_SHIP;
-        ships[getWindowId()].target.ship = &ships[shipChosen];
+        spotDest->type = SPOT_SHIP;
+        spotDest->ship = &ships[shipChosen];
     } else {  // La nouvelle target est un point random de l'espace
-        ships[getWindowId()].target.type = TARGET_POINT;
-        ships[getWindowId()].target.point = (SDL_Point){mouse.x, mouse.y};
+        spotDest->type = SPOT_POINT;
+        spotDest->point = (SDL_Point){mouse.x, mouse.y};
     }
 }

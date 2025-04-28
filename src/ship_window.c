@@ -50,7 +50,7 @@ void initTextShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship
     TextToLoad newText;
 
     // Importe le nom de la base de la fusee
-    generateRandomName(baseName, currentSeed, ships[getWindowId()].base->id);
+    generateRandomName(baseName, currentSeed, ships[getWindowId()].base.planet->id);
     strcpy(newText.text, (const char*)baseName);
     newText.color = BLACK;
     newText.font = fonts[0];
@@ -253,7 +253,7 @@ void ShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextur
 
     // Affichage des deux planetes
     int idPicture;
-    idPicture = (ships[getWindowId()].base->planetType == SUN) ? 9 : generateRandNb8(currentSeed, ships[getWindowId()].base->id) % 8 + 1;
+    idPicture = (ships[getWindowId()].base.planet->planetType == SUN) ? 9 : generateRandNb8(currentSeed, ships[getWindowId()].base.planet->id) % 8 + 1;
     SDL_RenderCopy(renderer, imageTextures[6][idPicture], NULL, &baseDisplayedRect);
     idPicture = (ships[getWindowId()].target.planet->planetType == SUN) ? 9 : generateRandNb8(currentSeed, ships[getWindowId()].target.planet->id) % 8 + 1;
     SDL_RenderCopy(renderer, imageTextures[6][idPicture], NULL, &targetDisplayedRect);
@@ -268,8 +268,8 @@ void ShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextur
 
     if (ships[getWindowId()].state == MOVING_TO_TARGET || ships[getWindowId()].state == WAITING_ON_BASE) {  
         // Fraction du chemin parcourue
-        f = distanceShipPlanet(ships[getWindowId()], *ships[getWindowId()].base)
-            / (distancePlanetPlanet(*ships[getWindowId()].target.planet, *ships[getWindowId()].base) - ships[getWindowId()].base->radius - ships[getWindowId()].target.planet->radius);
+        f = distanceShipPlanet(ships[getWindowId()], *ships[getWindowId()].base.planet)
+            / (distancePlanetPlanet(*ships[getWindowId()].target.planet, *ships[getWindowId()].base.planet) - ships[getWindowId()].base.planet->radius - ships[getWindowId()].target.planet->radius);
 
         // Tracer la fleche
         narrowRect.x = baseDisplayedRect.x + baseDisplayedRect.w;
@@ -288,8 +288,8 @@ void ShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextur
 
     } else if (ships[getWindowId()].state == MOVING_TO_BASE || ships[getWindowId()].state == WAITING_ON_TARGET) { 
         // Fraction du chemin parcourue
-        f = distanceShipPlanet(ships[getWindowId()], *ships[getWindowId()].base)
-            / (distancePlanetPlanet(*ships[getWindowId()].target.planet, *ships[getWindowId()].base) - ships[getWindowId()].base->radius - ships[getWindowId()].target.planet->radius);
+        f = distanceShipPlanet(ships[getWindowId()], *ships[getWindowId()].base.planet)
+            / (distancePlanetPlanet(*ships[getWindowId()].target.planet, *ships[getWindowId()].base.planet) - ships[getWindowId()].base.planet->radius - ships[getWindowId()].target.planet->radius);
 
         // Tracer la fleche
         narrowRect.x = baseDisplayedRect.x + baseDisplayedRect.w;
@@ -314,7 +314,7 @@ void ShipWindowTankManager(SDL_Texture ***imageTextures, SDL_Texture **textTextu
 
     // Affichage des deux planetes
     int idPicture;
-    idPicture = (ships[getWindowId()].base->planetType == SUN) ? 9 : generateRandNb8(currentSeed, ships[getWindowId()].base->id) % 8 + 1;
+    idPicture = (ships[getWindowId()].base.planet->planetType == SUN) ? 9 : generateRandNb8(currentSeed, ships[getWindowId()].base.planet->id) % 8 + 1;
     SDL_RenderCopy(renderer, imageTextures[6][idPicture], NULL, &baseDisplayedRect2);
     idPicture = (ships[getWindowId()].target.planet->planetType == SUN) ? 9 : generateRandNb8(currentSeed, ships[getWindowId()].target.planet->id) % 8 + 1;
     SDL_RenderCopy(renderer, imageTextures[6][idPicture], NULL, &targetDisplayedRect2);
