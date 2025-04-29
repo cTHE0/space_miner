@@ -143,7 +143,12 @@ void plotPath(SDL_Point origin, SDL_Point destination, int dashLength, int gapLe
     }  
 }
 
-void choosingNewBaseOrTarget(Ship *ships, int shipCount, Planet *planets, int planetCount, SDL_Point mouse){
+void choosingNewBaseOrTarget(Ship *ships, int shipCount, Planet *planets, int planetCount, SDL_Point mouse) {
+    if ((buttonSelected == BASE_BUTTON && ships[getWindowId()].state == WAITING_ON_BASE) ||
+        (buttonSelected == TARGET_BUTTON && ships[getWindowId()].state == WAITING_ON_TARGET)) {  // Pour eviter ces cas illogiques
+        return;
+    }
+
     int planetChosen = whichPlanetIsClicked(planets, planetCount, mouse);
     int shipChosen = whichShipIsClicked(ships, shipCount, mouse);
     Spot *spotDest = ((buttonSelected == BASE_BUTTON) ? &ships[getWindowId()].base : &ships[getWindowId()].target);
@@ -156,6 +161,7 @@ void choosingNewBaseOrTarget(Ship *ships, int shipCount, Planet *planets, int pl
         spotDest->ship = &ships[shipChosen];
     } else {  // La nouvelle target est un point random de l'espace
         spotDest->type = SPOT_POINT;
-        spotDest->point = (SDL_Point){mouse.x, mouse.y};
+        spotDest->point = (SDL_Point){(mouse.x - SCREEN_WIDTH / 2.f) / getCameraScale() + getCameraRect().x + SCREEN_WIDTH / 2.f,
+                                      (mouse.y - SCREEN_HEIGHT / 2.f) / getCameraScale() + getCameraRect().y + SCREEN_HEIGHT / 2.f};
     }
 }

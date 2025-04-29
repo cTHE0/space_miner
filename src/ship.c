@@ -160,7 +160,7 @@ void updateShipMove(Ship *ship, Uint32 currentTime) {
     }
 }
 
-void updateShipTanks(Ship *ship, Uint32 currentTime) {  // Gere la consommation d'essence
+void updateShipTanks(Ship *ship, Uint32 currentTime) {  // Gere depot/recuperation des minerais/essence, et consommation essence
     if (currentTime - ship->lastRefreshFilling < TANKS_UPDATE_INTERVAL) {  // Actualisation chaque seconde
         return;
     }
@@ -267,14 +267,14 @@ void renderShips(SDL_Texture ***imageTextures, Ship *ships, int shipCount) {
 void renderShipImage(SDL_Texture *textureShip, Ship ship, SDL_Point ShipOnScreen) {
     // Calcul de l'angle en degres de l'image de la fusee
     float angle;
-    Spot spotDest = (ship.state == MOVING_TO_BASE || WAITING_ON_BASE) ? ship.target : ship.base;
+    Spot spotDest = (ship.state == WAITING_ON_BASE || ship.state == MOVING_TO_BASE) ? ship.base : ship.target;
 
     switch (spotDest.type) {
         case SPOT_PLANET:
             angle = atan2(spotDest.planet->y - (ship.y + ship.h / 2.f), spotDest.planet->x - (ship.x + ship.w / 2.f)) * 180.0f / M_PI;
             break;
         case SPOT_SHIP:
-            angle = atan2(spotDest.ship->y - (ship.y + ship.h / 2.f), spotDest.ship->x - (ship.x + ship.w / 2.f)) * 180.0f / M_PI;
+            angle = atan2((spotDest.ship->y - spotDest.ship->h / 2.f) - (ship.y + ship.h / 2.f), (spotDest.ship->x - spotDest.ship->w) - (ship.x + ship.w / 2.f)) * 180.0f / M_PI;
             break;
         case SPOT_POINT:
             angle = atan2(spotDest.point.y - (ship.y + ship.h / 2.f), spotDest.point.x - (ship.x + ship.w / 2.f)) * 180.0f / M_PI;
@@ -284,8 +284,8 @@ void renderShipImage(SDL_Texture *textureShip, Ship ship, SDL_Point ShipOnScreen
             break;
     }
 
-    // Ajuste cet angle en fonction du sens de deplacement
-    angle += (ship.state == MOVING_TO_TARGET || ship.state == WAITING_ON_BASE) ? 90 : -90;
+    // Ajuste l'angle en fonction du sens de deplacement
+    angle +=(ship.state == MOVING_TO_BASE || ship.state == MOVING_TO_TARGET) ? 90 : -90;
 
     // Creation des variables necessaires a l'affichage
     SDL_Rect srcRect = {ship.frameIndex * 64, 0, 64, 64};  // Frame actuelle sur le sprite sheet
@@ -309,20 +309,20 @@ void renderShipBars(Ship ship, SDL_Point ShipOnScreen) {
     // Dessin de la barre d'essence (2)
     int fuelRemaining = 0;  // O: Il n'y a plus d'essence dans les reservoirs, 1 sinon
     int CompartmentToDisplay = -1;  // Permet d'afficher celui qui varie
-    int i;
-    for (i = 0; i < ship.cargo.compartmentsNumber; i++) {
-        if (ship.cargo.compartmentsList[i].ore == FUEL &&
-            ship.cargo.compartmentsList[i].currentCapacity > 0) {   
+    Cargo cargo = ship.cargo;
+    for (int i = 0; i < cargo.compartmentsNumber; i++) {
+        if (cargo.compartmentsList[i].ore == FUEL &&
+            cargo.compartmentsList[i].currentCapacity > 0) {   
             fuelRemaining = 1;                 
             CompartmentToDisplay = i;
-            if (ship.cargo.compartmentsList[i].currentCapacity < ship.cargo.compartmentsList[i].maxCapacity) {
+            if (cargo.compartmentsList[i].currentCapacity < cargo.compartmentsList[i].maxCapacity) {
                 break;
             }
         }
     }
 
     if (fuelRemaining == 1) {
-        destRect.w *= ship.cargo.compartmentsList[CompartmentToDisplay].currentCapacity / (float)ship.cargo.compartmentsList[CompartmentToDisplay].maxCapacity;
+        destRect.w *= cargo.compartmentsList[CompartmentToDisplay].currentCapacity / (float)cargo.compartmentsList[CompartmentToDisplay].maxCapacity;
         SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
         SDL_RenderFillRect(renderer, &destRect);
     }
