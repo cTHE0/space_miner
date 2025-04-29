@@ -34,7 +34,7 @@ void generateSolarSystem(Planet *planets, int x, int y, int nbEntityGenerated, i
     newSun->regenerationTime = generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % 10000;  // En millisecondes
     randIndex ++;
     for (int i = 0; i < ORE_TYPE_COUNT; i++) {
-        newSun->maxOre[i] = 1 + generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % 1000;
+        newSun->maxOre[i] = 1 + generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % 10000;
         randIndex ++;
         newSun->currentOre[i] = generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % (int)newSun->maxOre[i];  // Les planetes ne sont pas toutes initialement remplies
         randIndex ++;
@@ -53,7 +53,7 @@ void generateSolarSystem(Planet *planets, int x, int y, int nbEntityGenerated, i
         randIndex ++;
         
         for (int i = 0; i < ORE_TYPE_COUNT; i++) {
-            planets[j].maxOre[i] = 1 + generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % 1000;
+            planets[j].maxOre[i] = 1 + generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % 10000;
             randIndex ++;
             planets[j].currentOre[i] = generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % (int)planets[j].maxOre[i];  // Les planetes ne sont pas toutes initialement remplies
             randIndex ++;

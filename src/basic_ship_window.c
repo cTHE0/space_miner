@@ -116,7 +116,7 @@ void basicShipWindowGestion(Ship *ships, int shipCount, Planet *planets, int pla
         buttonSelected = (buttonSelected == BASE_BUTTON) ? NO_BUTTON : BASE_BUTTON;
     } else if (SDL_PointInRect(&mouse, &button3Rect)) {
         buttonSelected = (buttonSelected == TARGET_BUTTON) ? NO_BUTTON : TARGET_BUTTON;
-    } else {  // Si l'on est la, on modifie forcement la base ou la cible
+    } else {  // Si l'on est la, c'est que l'on a pas clique sur un bouton
         choosingNewBaseOrTarget(ships, shipCount, planets, planetCount, mouse);
     }    
 }
@@ -144,6 +144,10 @@ void plotPath(SDL_Point origin, SDL_Point destination, int dashLength, int gapLe
 }
 
 void choosingNewBaseOrTarget(Ship *ships, int shipCount, Planet *planets, int planetCount, SDL_Point mouse) {
+    if (buttonSelected == NO_BUTTON) {
+        return;
+    }
+    
     if ((buttonSelected == BASE_BUTTON && ships[getWindowId()].state == WAITING_ON_BASE) ||
         (buttonSelected == TARGET_BUTTON && ships[getWindowId()].state == WAITING_ON_TARGET)) {  // Pour eviter ces cas illogiques
         return;

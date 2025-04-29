@@ -102,61 +102,56 @@ void updateShipAnimation(Ship *ship, Uint32 currentTime) {  // Pour animation de
 }
 
 void updateShipMove(Ship *ship, Uint32 currentTime) {
+    if (ship->state != MOVING_TO_BASE && ship->state != MOVING_TO_TARGET) { // La fusee bouge-t-elle ?
+        return;
+    }
+
     float dx;
     float dy;
     float distance;
+    Spot spotDest = (ship->state == MOVING_TO_BASE) ? ship->base : ship->target;
+    switch ((ship->state == MOVING_TO_BASE) ? ship->base.type : ship->target.type) {
+        case SPOT_PLANET:
+            dx = spotDest.planet->x - (ship->x + ship->w / 2.);
+            dy = spotDest.planet->y - (ship->y + ship->h / 2.);
+            distance = sqrt(dx * dx + dy * dy);
 
-    if (ship->state == MOVING_TO_BASE || ship->state == MOVING_TO_TARGET) {
-        Spot spotDest = (ship->state == MOVING_TO_BASE) ? ship->base : ship->target;
-        switch ((ship->state == MOVING_TO_BASE) ? ship->base.type : ship->target.type) {
-            case SPOT_PLANET:
-                dx = spotDest.planet->x - (ship->x + ship->w / 2.);
-                dy = spotDest.planet->y - (ship->y + ship->h / 2.);
-                distance = sqrt(dx * dx + dy * dy);
+            if (distance - ship->speed >= spotDest.planet->radius) {
+                ship->x += dx * ship->speed / distance;
+                ship->y += dy * ship->speed / distance;
+            } else {
+                ship->waitStartTime = currentTime;
+                ship->state = (ship->state == MOVING_TO_BASE) ? WAITING_ON_BASE : WAITING_ON_TARGET;
+            }
+            break;
+        case SPOT_SHIP:
+            dx = spotDest.ship->x - (ship->x + ship->w / 2.);
+            dy = spotDest.ship->y - (ship->y + ship->h / 2.);
+            distance = sqrt(dx * dx + dy * dy);
 
-                if (distance - ship->speed >= spotDest.planet->radius) {
-                    ship->x += dx * ship->speed / distance;
-                    ship->y += dy * ship->speed / distance;
-                } else {
-                    ship->waitStartTime = currentTime;
-                    ship->state = (ship->state == MOVING_TO_BASE) ? WAITING_ON_BASE : WAITING_ON_TARGET;
-                }
-                break;
-            case SPOT_SHIP:
-                dx = spotDest.ship->x - (ship->x + ship->w / 2.);
-                dy = spotDest.ship->y - (ship->y + ship->h / 2.);
-                distance = sqrt(dx * dx + dy * dy);
+            if (distance - ship->speed >= spotDest.ship->h / 2) {
+                ship->x += dx * ship->speed / distance;
+                ship->y += dy * ship->speed / distance;
+            } else {
+                ship->waitStartTime = currentTime;
+                ship->state = (ship->state == MOVING_TO_BASE) ? WAITING_ON_BASE : WAITING_ON_TARGET;
+            }
+            break;
+        case SPOT_POINT:
+            dx = spotDest.point.x - (ship->x + ship->w / 2.);
+            dy = spotDest.point.y - (ship->y + ship->h / 2.);
+            distance = sqrt(dx * dx + dy * dy);
 
-                if (distance - ship->speed >= spotDest.ship->h / 2) {
-                    ship->x += dx * ship->speed / distance;
-                    ship->y += dy * ship->speed / distance;
-                } else {
-                    ship->waitStartTime = currentTime;
-                    ship->state = (ship->state == MOVING_TO_BASE) ? WAITING_ON_BASE : WAITING_ON_TARGET;
-                }
-                break;
-            case SPOT_POINT:
-                dx = spotDest.point.x - (ship->x + ship->w / 2.);
-                dy = spotDest.point.y - (ship->y + ship->h / 2.);
-                distance = sqrt(dx * dx + dy * dy);
-
-                if (distance - ship->speed > 0) {
-                    ship->x += dx * ship->speed / distance;
-                    ship->y += dy * ship->speed / distance;
-                } else {
-                    ship->waitStartTime = currentTime;
-                    ship->state = (ship->state == MOVING_TO_BASE) ? WAITING_ON_BASE : WAITING_ON_TARGET;
-                }
-                break;
-            default:
-                break;
-        }
-
-    } else if (ship->state == WAITING_ON_TARGET) {  // Partie a supprimer qd les fusees pourront miner
-        if (currentTime - ship->waitStartTime > WAIT_TIME_SHIP) {
-            ship->state = MOVING_TO_BASE; 
-            ship->lastRefreshFilling = currentTime;
-        }
+            if (distance - ship->speed > 0) {
+                ship->x += dx * ship->speed / distance;
+                ship->y += dy * ship->speed / distance;
+            } else {
+                ship->waitStartTime = currentTime;
+                ship->state = (ship->state == MOVING_TO_BASE) ? WAITING_ON_BASE : WAITING_ON_TARGET;
+            }
+            break;
+        default:
+            break;
     }
 }
 
@@ -167,84 +162,184 @@ void updateShipTanks(Ship *ship, Uint32 currentTime) {  // Gere depot/recuperati
 
     ship->lastRefreshFilling += TANKS_UPDATE_INTERVAL;
     if ((ship->state == MOVING_TO_TARGET || ship->state == MOVING_TO_BASE)) {  // Cas ou la fusee est en mouvement
-        int i = 0;
-        int HaveFuel = 0;  // 1: La fusee a de l'essence, 0: la fusee n'en a plus
-        while (i < ship->cargo.compartmentsNumber) {
-            if (ship->cargo.compartmentsList[i].ore == FUEL &&
-                ship->cargo.compartmentsList[i].currentCapacity > 0) {
-                HaveFuel = 1;
-                ship->cargo.compartmentsList[i].currentCapacity -= ship->fuelConsumption;
-                if (ship->cargo.compartmentsList[i].currentCapacity < 0) {
-                    ship->cargo.compartmentsList[i].currentCapacity = 0;
+        fuelConsumption(ship);
+    } else if (ship->state == WAITING_ON_BASE || ship->state == WAITING_ON_TARGET) {
+        if (!fuelFilling(ship)) {  // La fusee s'est-elle remplie d'essence ? (essence remplie en priorite)
+            OreFillingOrEmptying(ship);
+        }
+    }
+}
+
+void fuelConsumption(Ship *ship) {
+    int HaveFuel = 0;  // 1: La fusee a de l'essence, 0: la fusee n'en a plus
+
+    for (int i = 0; i < ship->cargo.compartmentsNumber; i++) {
+        if (ship->cargo.compartmentsList[i].ore == FUEL &&
+            ship->cargo.compartmentsList[i].currentCapacity > 0) {
+            HaveFuel = 1;
+            ship->cargo.compartmentsList[i].currentCapacity -= ship->fuelConsumption;
+            if (ship->cargo.compartmentsList[i].currentCapacity < 0) {
+                ship->cargo.compartmentsList[i].currentCapacity = 0;
+            }
+            break;
+        }
+    }
+    
+    if (HaveFuel == 0) {
+        ship->state = OUT_OF_FUEL;
+    }
+}
+
+int fuelFilling(Ship *ship) {
+    if ((ship->state == WAITING_ON_BASE && ship->base.type != SPOT_PLANET) ||
+        (ship->state == WAITING_ON_TARGET && ship->target.type != SPOT_PLANET)) {  // La fusee est-elle sur une planete ?
+        return 0;
+    }
+
+    if ((ship->state == WAITING_ON_BASE && ship->base.planet->currentOre[FUEL] == 0.f) ||
+        (ship->state == WAITING_ON_TARGET && ship->target.planet->currentOre[FUEL] == 0.f)) {  // La planete a-t-elle de l'essence ?
+        return 0;
+    }
+
+    // Remplissage des reservoirs d'essence de la fusee (et inversement pour la planete)
+    int lastEmptyFuelCompartment = -1;  // Permet de ne remplir que le dernier réservoir vide
+    int fuelGiven = 0;  // Vérifie si de l'essence a été donnée (1:oui, 0:non)
+    Cargo *cargo = &ship->cargo;
+
+    for (int i = 0; i < cargo->compartmentsNumber; i++) {
+        if (((ship->state == WAITING_ON_BASE && cargo->compartmentsList[i].flowBase_in == FUEL) || (ship->state == WAITING_ON_TARGET && cargo->compartmentsList[i].flowTarget_in == FUEL)) &&
+            (cargo->compartmentsList[i].ore == EMPTY || cargo->compartmentsList[i].ore == FUEL) &&
+            cargo->compartmentsList[i].currentCapacity < cargo->compartmentsList[i].maxCapacity) {
+            lastEmptyFuelCompartment = i;
+            if (cargo->compartmentsList[i].currentCapacity > 0) {
+                fuelGiven = 1;
+
+                // Remplissage reservoir d'essence fusee
+                cargo->compartmentsList[i].currentCapacity += cargo->compartmentsList[i].flowSpeed;
+                if (cargo->compartmentsList[i].currentCapacity >= cargo->compartmentsList[i].maxCapacity) {
+                    cargo->compartmentsList[i].currentCapacity = cargo->compartmentsList[i].maxCapacity;
                 }
                 break;
             }
-            i ++;
-        }
-        if (HaveFuel == 0) {
-            ship->state = OUT_OF_FUEL;
-        }
-    } else if (ship->state == WAITING_ON_BASE) {
-        int fullyFuelFilled = 1;  // 1: La fusée a fait le plein, 0: plein en cours
-        int lastEmptyFuelCompartment = -1;  // Permet de ne remplir que le dernier réservoir vide
-        int fuelGiven = 0;  // Vérifie si de l'essence a été donnée (1:oui, 0:non)
-        for (int i = 0; i < ship->cargo.compartmentsNumber; i++) {
-            if (ship->cargo.compartmentsList[i].ore == FUEL &&
-                ship->cargo.compartmentsList[i].currentCapacity < ship->cargo.compartmentsList[i].maxCapacity) {
-                lastEmptyFuelCompartment = i;
-                fullyFuelFilled = 0;
-                if (ship->cargo.compartmentsList[i].currentCapacity > 0) {
-                    ship->cargo.compartmentsList[i].currentCapacity += ship->cargo.compartmentsList[i].flowSpeed;
-                    fuelGiven = 1;
-                    if (ship->cargo.compartmentsList[i].currentCapacity >= ship->cargo.compartmentsList[i].maxCapacity) {
-                        ship->cargo.compartmentsList[i].currentCapacity = ship->cargo.compartmentsList[i].maxCapacity;
-                    }
-                    break;
-                }
-            }
-        }
-
-        // Si aucune essence n'a été donnée, remplir le dernier compartiment vide
-        if (!fuelGiven && lastEmptyFuelCompartment != -1) {
-            ship->cargo.compartmentsList[lastEmptyFuelCompartment].currentCapacity += ship->cargo.compartmentsList[lastEmptyFuelCompartment].flowSpeed;
-        }
-
-        // Vérifier si tous les compartiments sont pleins
-        for (int i = 0; i < ship->cargo.compartmentsNumber && fullyFuelFilled; i++) {
-            if (ship->cargo.compartmentsList[i].ore == FUEL &&
-                ship->cargo.compartmentsList[i].currentCapacity < ship->cargo.compartmentsList[i].maxCapacity) {
-                fullyFuelFilled = 0;
-            }
-        }
-
-        // Si tous les réservoirs sont pleins, changer l'état du vaisseau
-        if (fullyFuelFilled) {
-            ship->state = MOVING_TO_TARGET;
         }
     }
+
+    // Si aucune essence n'a été donnée, remplir le dernier compartiment vide
+    if (!fuelGiven && lastEmptyFuelCompartment != -1) {
+        cargo->compartmentsList[lastEmptyFuelCompartment].currentCapacity += cargo->compartmentsList[lastEmptyFuelCompartment].flowSpeed;
+        fuelGiven = 1;
+    }
+
+    // Vidange reservoir d'essence planete
+    Spot spotDest = (ship->state == WAITING_ON_BASE) ? ship->base : ship->target;
+
+    if (fuelGiven) {
+        spotDest.planet->currentOre[FUEL] -= cargo->compartmentsList[lastEmptyFuelCompartment].flowSpeed;
+        if (spotDest.planet->currentOre[FUEL] < 0) {
+            spotDest.planet->currentOre[FUEL] = 0.f;
+        }
+    }
+
+    return fuelGiven;
 }
 
-/*
-void updateShipTanks(Ship *ship, Uint32 currentTime) {
-    SDL_Bool test = 0;  // Y a-t-il eu transfert de matiere, de la fusee a la planet (1) ? sinon decollage (0)
-    switch (ship->state) {
-        case WAITING_ON_BASE: 
-            for (int i = 0; ship->cargo.compartmentsNumber; i++) {
-                if (ship->cargo.compartmentsList[i].flowBase_in == ) {
-                    break;
-                }
-            }
-            break;
-        case WAITING_ON_TARGET:
-        default:
-            return;
+void OreFillingOrEmptying(Ship *ship) {
+    if ((ship->state == WAITING_ON_BASE && ship->base.type != SPOT_PLANET) ||
+        (ship->state == WAITING_ON_TARGET && ship->target.type != SPOT_PLANET)) {  // La fusee est-elle sur une planete ?
+        return;
     }
 
-    if (!test) {
+    int modified = 0;  // Vérifie s'il s'est passé qch (1:oui, 0:non)
+    Cargo *cargo = &ship->cargo;
+    Planet *landingPlanet = (ship->state == WAITING_ON_BASE) ? ship->base.planet : ship->target.planet;
+
+    for (int i = 0; i < cargo->compartmentsNumber; i++) {
+        if (ship->state == WAITING_ON_BASE) {
+            // Remplissage de la fusee
+            if (cargo->compartmentsList[i].flowBase_in != EMPTY &&  // Eviter ce cas illogique
+                cargo->compartmentsList[i].flowBase_in != FUEL &&  // Les reservoirs d'essence de la fusee sont remplis avant
+                landingPlanet->currentOre[cargo->compartmentsList[i].flowBase_in] > 0.f &&  // La planete a des stocks
+                (cargo->compartmentsList[i].ore == EMPTY || cargo->compartmentsList[i].ore == cargo->compartmentsList[i].flowBase_in)) {  // La fusee peut recuperer les ressources
+                // Actualisation fusee
+                cargo->compartmentsList[i].currentCapacity += cargo->compartmentsList[i].flowSpeed;
+                if (cargo->compartmentsList[i].currentCapacity > cargo->compartmentsList[i].maxCapacity) {
+                    cargo->compartmentsList[i].currentCapacity = cargo->compartmentsList[i].maxCapacity;
+                }
+                // Actualisation planete
+                landingPlanet->currentOre[cargo->compartmentsList[i].flowBase_in] -= cargo->compartmentsList[i].flowSpeed;
+                if (landingPlanet->currentOre[cargo->compartmentsList[i].flowBase_in] < 0.f) {
+                    landingPlanet->currentOre[cargo->compartmentsList[i].flowBase_in] = 0.f;
+                }
+                modified = 1;
+                break;
+            }
+
+             // Vidange de la fusee
+            if (cargo->compartmentsList[i].flowBase_out != EMPTY &&  // Eviter ce cas illogique
+                landingPlanet->currentOre[cargo->compartmentsList[i].flowBase_out] < landingPlanet->maxOre[cargo->compartmentsList[i].flowBase_out] &&  // La planete a de la place
+                cargo->compartmentsList[i].currentCapacity > 0.f &&  // La fusee a des ressources a deposer
+                cargo->compartmentsList[i].ore == cargo->compartmentsList[i].flowBase_out) {  // Le compartiment a le bon contenu
+                // Actualisation fusee
+                cargo->compartmentsList[i].currentCapacity -= cargo->compartmentsList[i].flowSpeed;
+                if (cargo->compartmentsList[i].currentCapacity < 0) {
+                    cargo->compartmentsList[i].currentCapacity = 0;
+                }
+                // Actualisation planete
+                landingPlanet->currentOre[cargo->compartmentsList[i].flowBase_out] += cargo->compartmentsList[i].flowSpeed;
+                if (landingPlanet->currentOre[cargo->compartmentsList[i].flowBase_out] < landingPlanet->maxOre[cargo->compartmentsList[i].flowBase_out]) {
+                    landingPlanet->currentOre[cargo->compartmentsList[i].flowBase_in] = landingPlanet->maxOre[cargo->compartmentsList[i].flowBase_out];
+                }
+                modified = 1;
+                break;
+            }
+
+        } else if (ship->state == WAITING_ON_TARGET) {
+            // Remplissage de la fusee
+            if (cargo->compartmentsList[i].flowTarget_in != EMPTY &&  // Eviter ce cas illogique
+                cargo->compartmentsList[i].flowBase_in != FUEL &&  // Les reservoirs d'essence de la fusee sont remplis avant
+                cargo->compartmentsList[i].currentCapacity < cargo->compartmentsList[i].maxCapacity &&  // Les reservoirs d'essence de la fusee sont remplis avant
+                landingPlanet->currentOre[cargo->compartmentsList[i].flowTarget_in] > 0.f &&  // La planete a des stocks
+                (cargo->compartmentsList[i].ore == EMPTY || cargo->compartmentsList[i].ore == cargo->compartmentsList[i].flowTarget_in)) {  // La fusee peut recuperer les ressources
+                // Actualisation fusee
+                cargo->compartmentsList[i].currentCapacity += cargo->compartmentsList[i].flowSpeed;
+                if (cargo->compartmentsList[i].currentCapacity > cargo->compartmentsList[i].maxCapacity) {
+                    cargo->compartmentsList[i].currentCapacity = cargo->compartmentsList[i].maxCapacity;
+                }
+                // Actualisation planete
+                landingPlanet->currentOre[cargo->compartmentsList[i].flowTarget_in] -= cargo->compartmentsList[i].flowSpeed;
+                if (landingPlanet->currentOre[cargo->compartmentsList[i].flowTarget_in] < 0.f) {
+                    landingPlanet->currentOre[cargo->compartmentsList[i].flowTarget_in] = 0.f;
+                }
+                modified = 1;
+                break;
+            }
+
+             // Vidange de la fusee
+            if (cargo->compartmentsList[i].flowTarget_out != EMPTY &&  // Eviter ce cas illogique
+                landingPlanet->currentOre[cargo->compartmentsList[i].flowTarget_out] < landingPlanet->maxOre[cargo->compartmentsList[i].flowTarget_out] &&  // La planete a de la place
+                cargo->compartmentsList[i].currentCapacity > 0.f &&  // La fusee a des ressources a deposer
+                cargo->compartmentsList[i].ore == cargo->compartmentsList[i].flowTarget_out) {  // Le compartiment a le bon contenu
+                // Actualisation fusee
+                cargo->compartmentsList[i].currentCapacity -= cargo->compartmentsList[i].flowSpeed;
+                if (cargo->compartmentsList[i].currentCapacity < 0) {
+                    cargo->compartmentsList[i].currentCapacity = 0;
+                }
+                // Actualisation planete
+                landingPlanet->currentOre[cargo->compartmentsList[i].flowTarget_out] += cargo->compartmentsList[i].flowSpeed;
+                if (landingPlanet->currentOre[cargo->compartmentsList[i].flowTarget_out] < landingPlanet->maxOre[cargo->compartmentsList[i].flowTarget_out]) {
+                    landingPlanet->currentOre[cargo->compartmentsList[i].flowTarget_in] = landingPlanet->maxOre[cargo->compartmentsList[i].flowTarget_out];
+                }
+                modified = 1;
+                break;
+            }
+        }
+    }
+
+    // Si les transferts de matieres sont finis, changer l'etat de la fusee
+    if (!modified) {
         ship->state = (ship->state == WAITING_ON_BASE) ? MOVING_TO_TARGET : MOVING_TO_BASE;
-    }
+    }       
 }
-*/
 
 void renderShips(SDL_Texture ***imageTextures, Ship *ships, int shipCount) {
     for (int i = 0; i < shipCount; i++) {
