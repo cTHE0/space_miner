@@ -125,7 +125,7 @@ void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *
         buttonSelected = (buttonSelected == BASE_BUTTON) ? NO_BUTTON : BASE_BUTTON;
     } else if (SDL_PointInRect(&mouse, &button3Rect)) {
         buttonSelected = (buttonSelected == TARGET_BUTTON) ? NO_BUTTON : TARGET_BUTTON;
-    } else {
+    } else { // Le bouton selectionne n'a pas ete modifie
 
         // Gestion des actions en fonction du bouton appuye
         switch (buttonSelected) {
@@ -148,7 +148,7 @@ void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *
             default:
                 break;
         }
-        
+
     }  
 }
 
@@ -195,6 +195,16 @@ void choosingNewBaseOrTarget(Ship *ships, int shipCount, Planet *planets, int pl
         spotDest->point = (SDL_Point){(mouse.x - SCREEN_WIDTH / 2.f) / getCameraScale() + getCameraRect().x + SCREEN_WIDTH / 2.f,
                                       (mouse.y - SCREEN_HEIGHT / 2.f) / getCameraScale() + getCameraRect().y + SCREEN_HEIGHT / 2.f};
     }
+
+    // Si la fusee attend sans rien faire, redemarrage
+    Ship *ship = &ships[getWindowId()];
+    if ((ship->state == WAITING_ON_BASE && buttonSelected == TARGET_BUTTON && ship->base.type != SPOT_PLANET) ||
+        (ship->state == WAITING_ON_TARGET && buttonSelected == BASE_BUTTON && ship->target.type != SPOT_PLANET)) {
+        ship->state = (ship->state == WAITING_ON_BASE) ? MOVING_TO_TARGET : MOVING_TO_BASE;
+    }
+
+    // Le choix a ete fait, retour a l'etat neutre du bouton
+    buttonSelected = NO_BUTTON;
 }
 
 int clickOnBasicShipWindow(SDL_Point mouse) {

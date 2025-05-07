@@ -160,10 +160,17 @@ void updateShipTanks(Ship *ship, Uint32 currentTime) {  // Gere depot/recuperati
         return;
     }
 
+
+
     ship->lastRefreshFilling += TANKS_UPDATE_INTERVAL;
     if ((ship->state == MOVING_TO_TARGET || ship->state == MOVING_TO_BASE)) {  // Cas ou la fusee est en mouvement
         fuelConsumption(ship);
     } else if (ship->state == WAITING_ON_BASE || ship->state == WAITING_ON_TARGET) {
+        if ((ship->state == WAITING_ON_BASE && ship->base.type != SPOT_PLANET) || 
+            (ship->state == WAITING_ON_TARGET && ship->target.type != SPOT_PLANET)) {  // Pas de transfert de ressource ailleurs que sur une planet (actuellement !)
+            return;
+        }
+
         if (!fuelFilling(ship)) {  // La fusee s'est-elle remplie d'essence ? (essence remplie en priorite)
             OreFillingOrEmptying(ship);
         }
