@@ -1,6 +1,7 @@
 #include "basic_ship_window.h"
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include "renderer.h"
 #include "ship.h"
 #include "window.h"
@@ -74,6 +75,13 @@ static SDL_Rect button3Rect = {
                                     SCREEN_HEIGHT/32
                                 };
 
+static const SDL_Rect basicShipWindowCrossRect = {
+                                                    11*SCREEN_WIDTH/12 - 3*SCREEN_HEIGHT/128, 
+                                                    3*SCREEN_HEIGHT/4 + SCREEN_HEIGHT/128, 
+                                                    SCREEN_HEIGHT/64, 
+                                                    SCREEN_HEIGHT/64
+                                                };
+
 
 void displayBasicShipWindow(SDL_Texture ***imageTextures, Ship *ships){
     // Afficher la portee de la fusee
@@ -108,7 +116,8 @@ void displayBasicShipWindow(SDL_Texture ***imageTextures, Ship *ships){
     }
 }
 
-void basicShipWindowGestion(Ship *ships, int shipCount, Planet *planets, int planetCount, SDL_Point mouse){
+void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, int shipCount, Planet *planets, int planetCount, SDL_Point mouse) {
+    // Changement du bouton selectionne dans la fenettre basique d'information
     if (SDL_PointInRect(&mouse, &button1Rect)) {
         changeWindowType(SHIP_WINDOW);
         buttonSelected = NO_BUTTON;
@@ -116,9 +125,31 @@ void basicShipWindowGestion(Ship *ships, int shipCount, Planet *planets, int pla
         buttonSelected = (buttonSelected == BASE_BUTTON) ? NO_BUTTON : BASE_BUTTON;
     } else if (SDL_PointInRect(&mouse, &button3Rect)) {
         buttonSelected = (buttonSelected == TARGET_BUTTON) ? NO_BUTTON : TARGET_BUTTON;
-    } else {  // Si l'on est la, c'est que l'on a pas clique sur un bouton
-        choosingNewBaseOrTarget(ships, shipCount, planets, planetCount, mouse);
-    }    
+    } else {
+
+        // Gestion des actions en fonction du bouton appuye
+        switch (buttonSelected) {
+            case BASE_BUTTON:  // Equivaut a faire if (BASE_BUTTON || TARGET_BUTTON) {...}
+            case TARGET_BUTTON:
+                choosingNewBaseOrTarget(ships, shipCount, planets, planetCount, mouse);
+                break;
+
+            case NO_BUTTON:
+                if (!clickOnShip(textTextures, fonts, ships, shipCount, mouse) && 
+                    !clickOnPlanet(textTextures, fonts, planets, planetCount, mouse)) {
+                    if (SDL_PointInRect(&mouse, &basicShipWindowCrossRect) || !clickOnBasicShipWindow(mouse)) {
+                        changeWindowType(NO_WINDOW);
+                    }
+                } else {  // Initialisation de buttonSelected si l'on clic sur une fusee/planet
+                    buttonSelected = NO_BUTTON;
+                }
+                break;
+
+            default:
+                break;
+        }
+        
+    }  
 }
 
 void plotPath(SDL_Point origin, SDL_Point destination, int dashLength, int gapLength){
@@ -144,10 +175,6 @@ void plotPath(SDL_Point origin, SDL_Point destination, int dashLength, int gapLe
 }
 
 void choosingNewBaseOrTarget(Ship *ships, int shipCount, Planet *planets, int planetCount, SDL_Point mouse) {
-    if (buttonSelected == NO_BUTTON) {
-        return;
-    }
-    
     if ((buttonSelected == BASE_BUTTON && ships[getWindowId()].state == WAITING_ON_BASE) ||
         (buttonSelected == TARGET_BUTTON && ships[getWindowId()].state == WAITING_ON_TARGET)) {  // Pour eviter ces cas illogiques
         return;
@@ -168,4 +195,8 @@ void choosingNewBaseOrTarget(Ship *ships, int shipCount, Planet *planets, int pl
         spotDest->point = (SDL_Point){(mouse.x - SCREEN_WIDTH / 2.f) / getCameraScale() + getCameraRect().x + SCREEN_WIDTH / 2.f,
                                       (mouse.y - SCREEN_HEIGHT / 2.f) / getCameraScale() + getCameraRect().y + SCREEN_HEIGHT / 2.f};
     }
+}
+
+int clickOnBasicShipWindow(SDL_Point mouse) {
+    return SDL_PointInRect(&mouse, &bgRect);
 }

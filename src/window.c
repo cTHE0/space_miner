@@ -22,13 +22,6 @@ static const SDL_Rect WindowCrossRect = {(1 + 0.8) / 2. * SCREEN_WIDTH - (SCREEN
                             (SCREEN_WIDTH * 0.8) * 0.015,
                             (SCREEN_WIDTH * 0.8) * 0.015};
 
-static const SDL_Rect basicShipWindowCrossRect = {
-                                                    11*SCREEN_WIDTH/12 - 3*SCREEN_HEIGHT/128, 
-                                                    3*SCREEN_HEIGHT/4 + SCREEN_HEIGHT/128, 
-                                                    SCREEN_HEIGHT/64, 
-                                                    SCREEN_HEIGHT/64
-                                                };
-
 
 int clickOnWindow(SDL_Point mouse) {
     return SDL_PointInRect(&mouse, &windowRect);
@@ -54,8 +47,9 @@ void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, SDL_Point m
     switch (getWindowType()) {
 
         case NO_WINDOW:
-            clickOnShip(textTextures, fonts, ships, shipCount, mouse);
-            clickOnPlanet(textTextures, fonts, planets, planetCount, mouse);
+            if (!clickOnShip(textTextures, fonts, ships, shipCount, mouse)) {
+                clickOnPlanet(textTextures, fonts, planets, planetCount, mouse);
+            }
             break;
 
         case SHIP_WINDOW:  // Ce cas doit fusionner avec le prochain (<=> (SHIP_WINDOW || PLANET_WINDOW) )
@@ -73,11 +67,7 @@ void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, SDL_Point m
             break;
 
         case BASIC_SHIP_WINDOW:
-            if (SDL_PointInRect(&mouse, &basicShipWindowCrossRect)) {
-                changeWindowType(NO_WINDOW);
-            } else {
-                basicShipWindowGestion(ships, shipCount, planets, planetCount, mouse); 
-            }
+            basicShipWindowGestion(textTextures, fonts, ships, shipCount, planets, planetCount, mouse); 
             break;
 
         default:
@@ -95,7 +85,7 @@ int whichShipIsClicked(Ship *ships, int shipCount, SDL_Point mouse) {
     return -1;
 }
 
-void clickOnShip(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, int shipCount, SDL_Point mouse) {
+int clickOnShip(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, int shipCount, SDL_Point mouse) {
     int id = whichShipIsClicked(ships, shipCount, mouse); // // id du ship selectionne ou -1 sinon
 
     if (id != -1) {  // Si un ship a etait clique...
@@ -103,6 +93,8 @@ void clickOnShip(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, int 
         changeWindowType(BASIC_SHIP_WINDOW); 
         initShipWindow(textTextures, fonts, ships);
     }
+
+    return id != -1;
 }
 
 int whichPlanetIsClicked(Planet *planets, int planetCount, SDL_Point mouse) {
@@ -120,7 +112,7 @@ int whichPlanetIsClicked(Planet *planets, int planetCount, SDL_Point mouse) {
     return -1;
 }
 
-void clickOnPlanet(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets, int planetCount, SDL_Point mouse) {
+int clickOnPlanet(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets, int planetCount, SDL_Point mouse) {
     int id = whichPlanetIsClicked(planets, planetCount, mouse);
 
     if (id != -1) {
@@ -128,6 +120,8 @@ void clickOnPlanet(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets
         changeWindowType(PLANET_WINDOW);
         initPlanetWindow(textTextures, fonts);
     }
+
+    return id != -1;
 }
 
 void displayWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships, Planet *planets, int planetCount) {

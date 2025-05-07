@@ -6,7 +6,7 @@
 #define MAP_SIZE 350000
 
 #define INIT_PLANET_COUNT 4
-#define INIT_SHIP_COUNT 1
+#define INIT_SHIP_COUNT 2
 #define ORE_TYPE_COUNT 5
 #define CST_TEXT_NUMBER 42
 #define FONT_NUMBER 1
