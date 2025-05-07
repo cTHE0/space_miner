@@ -110,7 +110,7 @@ void updateShipMove(Ship *ship, Uint32 currentTime) {
     float dy;
     float distance;
     Spot spotDest = (ship->state == MOVING_TO_BASE) ? ship->base : ship->target;
-    switch ((ship->state == MOVING_TO_BASE) ? ship->base.type : ship->target.type) {
+    switch (spotDest.type) {
         case SPOT_PLANET:
             dx = spotDest.planet->x - (ship->x + ship->w / 2.);
             dy = spotDest.planet->y - (ship->y + ship->h / 2.);
@@ -125,11 +125,11 @@ void updateShipMove(Ship *ship, Uint32 currentTime) {
             }
             break;
         case SPOT_SHIP:
-            dx = spotDest.ship->x - (ship->x + ship->w / 2.);
-            dy = spotDest.ship->y - (ship->y + ship->h / 2.);
+            dx = spotDest.ship->x + spotDest.ship->w / 2. - (ship->x + ship->w / 2.);
+            dy = spotDest.ship->y + spotDest.ship->h / 2. - (ship->y + ship->h / 2.);
             distance = sqrt(dx * dx + dy * dy);
 
-            if (distance - ship->speed >= spotDest.ship->h / 2) {
+            if (distance - ship->speed >= (spotDest.ship->h + ship->h) / 2) {
                 ship->x += dx * ship->speed / distance;
                 ship->y += dy * ship->speed / distance;
             } else {
@@ -159,8 +159,6 @@ void updateShipTanks(Ship *ship, Uint32 currentTime) {  // Gere depot/recuperati
     if (currentTime - ship->lastRefreshFilling < TANKS_UPDATE_INTERVAL) {  // Actualisation chaque seconde
         return;
     }
-
-
 
     ship->lastRefreshFilling += TANKS_UPDATE_INTERVAL;
     if ((ship->state == MOVING_TO_TARGET || ship->state == MOVING_TO_BASE)) {  // Cas ou la fusee est en mouvement
@@ -376,7 +374,7 @@ void renderShipImage(SDL_Texture *textureShip, Ship ship, SDL_Point ShipOnScreen
             angle = atan2(spotDest.planet->y - (ship.y + ship.h / 2.f), spotDest.planet->x - (ship.x + ship.w / 2.f)) * 180.0f / M_PI;
             break;
         case SPOT_SHIP:
-            angle = atan2((spotDest.ship->y - spotDest.ship->h / 2.f) - (ship.y + ship.h / 2.f), (spotDest.ship->x - spotDest.ship->w) - (ship.x + ship.w / 2.f)) * 180.0f / M_PI;
+            angle = atan2((spotDest.ship->y + spotDest.ship->h / 2.f) - (ship.y + ship.h / 2.f), (spotDest.ship->x + spotDest.ship->w) - (ship.x + ship.w / 2.f)) * 180.0f / M_PI;
             break;
         case SPOT_POINT:
             angle = atan2(spotDest.point.y - (ship.y + ship.h / 2.f), spotDest.point.x - (ship.x + ship.w / 2.f)) * 180.0f / M_PI;
