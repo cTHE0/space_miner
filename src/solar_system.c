@@ -51,6 +51,7 @@ void generateSolarSystem(Planet *planets, int x, int y, int nbEntityGenerated, i
     for (int j = nbEntityGenerated + 1; j < nbEntityGenerated + nbEntityNewSS; j++) {
         planets[j].id = j;
         planets[j].planetType = PLANET;
+        planets[j].buildingCounter = 1;
         planets[j].buildings = malloc(planets[j].buildingCounter * sizeof(Building));
         planets[j].regenerationTime = generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % 10000;  // En millisecondes
         randIndex ++;
