@@ -50,3 +50,10 @@ void renderPlanets(SDL_Texture ***imageTextures, Planet *planets, int planetCoun
         }
     }
 }
+
+void destroyPlanets(Planet *planets, int planetCount) {
+    for (int i = 0; i < planetCount; i++) {
+        free(planets[i].buildings);
+    }
+    free(planets);
+}

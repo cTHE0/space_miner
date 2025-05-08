@@ -89,7 +89,7 @@ int main(void) {
     // Fermeture du programme
     if (gameBegun) {
         destroyShips(ships, shipCount);
-        free(planets);
+        destroyPlanets(planets, planetCount);
     }
 
     destroyImageTextures(imageTextures);

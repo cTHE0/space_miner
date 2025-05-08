@@ -44,11 +44,14 @@ void generateSolarSystem(Planet *planets, int x, int y, int nbEntityGenerated, i
     newSun->radius = r;
     newSun->x = x;
     newSun->y = y;
+    newSun->buildingCounter = 1;
+    newSun->buildings = malloc(newSun->buildingCounter * sizeof(Building));
 
     // Generation des planetes
     for (int j = nbEntityGenerated + 1; j < nbEntityGenerated + nbEntityNewSS; j++) {
         planets[j].id = j;
         planets[j].planetType = PLANET;
+        planets[j].buildings = malloc(planets[j].buildingCounter * sizeof(Building));
         planets[j].regenerationTime = generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % 10000;  // En millisecondes
         randIndex ++;
         
