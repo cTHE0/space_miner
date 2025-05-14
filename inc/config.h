@@ -16,7 +16,7 @@
 #define TANKS_UPDATE_INTERVAL 200  // En millisecondes
 
 #define STEP_TRANSLATION 40
-#define SHIP_SPEED 2.f
+#define SHIP_SPEED 10.f
 #define FPS 60
 
 extern const uint32_t currentSeed;
