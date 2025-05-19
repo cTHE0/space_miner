@@ -105,8 +105,10 @@ void displayBasicShipWindow(SDL_Texture ***imageTextures, Ship *ships){
     SDL_RenderCopy(renderer, imageTextures[2][4], NULL, &button1Rect);
 
     SDL_RenderCopy(renderer, imageTextures[2][3], NULL, &button2Rect);
+    SDL_RenderCopy(renderer, imageTextures[2][5], NULL, &button2Rect);
 
     SDL_RenderCopy(renderer, imageTextures[2][3], NULL, &button3Rect);
+    SDL_RenderCopy(renderer, imageTextures[2][6], NULL, &button3Rect);
 
     // Afficher la ligne en pointillees 
     if (buttonSelected == BASE_BUTTON || buttonSelected == TARGET_BUTTON) {
@@ -122,9 +124,9 @@ void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *
         changeWindowType(SHIP_WINDOW);
         buttonSelected = NO_BUTTON;
     } else if (SDL_PointInRect(&mouse, &button2Rect)) {
-        buttonSelected = (buttonSelected == BASE_BUTTON) ? NO_BUTTON : BASE_BUTTON;
+        buttonSelected = BASE_BUTTON;
     } else if (SDL_PointInRect(&mouse, &button3Rect)) {
-        buttonSelected = (buttonSelected == TARGET_BUTTON) ? NO_BUTTON : TARGET_BUTTON;
+        buttonSelected = ATTACK_BUTTON;
     } else { // Le bouton selectionne n'a pas ete modifie
 
         // Gestion des actions en fonction du bouton appuye
@@ -175,11 +177,6 @@ void plotPath(SDL_Point origin, SDL_Point destination, int dashLength, int gapLe
 }
 
 void choosingNewBaseOrTarget(Ship *ships, int shipCount, Planet *planets, int planetCount, SDL_Point mouse) {
-    if ((buttonSelected == BASE_BUTTON && ships[getWindowId()].state == WAITING_ON_BASE) ||
-        (buttonSelected == TARGET_BUTTON && ships[getWindowId()].state == WAITING_ON_TARGET)) {  // Pour eviter ces cas illogiques
-        return;
-    }
-
     int planetChosen = whichPlanetIsClicked(planets, planetCount, mouse);
     int shipChosen = whichShipIsClicked(ships, shipCount, mouse);
     Spot *spotDest = ((buttonSelected == BASE_BUTTON) ? &ships[getWindowId()].base : &ships[getWindowId()].target);
@@ -198,13 +195,13 @@ void choosingNewBaseOrTarget(Ship *ships, int shipCount, Planet *planets, int pl
 
     // Si la fusee attend sans rien faire, redemarrage
     Ship *ship = &ships[getWindowId()];
-    if ((ship->state == WAITING_ON_BASE && buttonSelected == TARGET_BUTTON && ship->base.type != SPOT_PLANET) ||
-        (ship->state == WAITING_ON_TARGET && buttonSelected == BASE_BUTTON && ship->target.type != SPOT_PLANET)) {
+    if ((ship->state == WAITING_ON_BASE && ship->base.type != SPOT_PLANET) ||
+        (ship->state == WAITING_ON_TARGET && ship->target.type != SPOT_PLANET)) {
         ship->state = (ship->state == WAITING_ON_BASE) ? MOVING_TO_TARGET : MOVING_TO_BASE;
     }
 
-    // Le choix a ete fait, retour a l'etat neutre du bouton
-    buttonSelected = NO_BUTTON;
+    // Le choix a ete fait, actualisation de l'etat du bouton
+    buttonSelected = (buttonSelected == BASE_BUTTON) ? TARGET_BUTTON : NO_BUTTON;
 }
 
 int clickOnBasicShipWindow(SDL_Point mouse) {
