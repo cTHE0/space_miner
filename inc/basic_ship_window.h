@@ -9,7 +9,6 @@ typedef enum { NO_BUTTON, SHIP_WINDOW_BUTTON, BASE_BUTTON, TARGET_BUTTON, ATTACK
 
 void displayBasicShipWindow(SDL_Texture ***imageTextures, Ship *ships);
 void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, int shipCount, Planet *planets, int planetCount, SDL_Point mouse);
-void plotPath(SDL_Point origin, SDL_Point destination, int dashLength, int gapLength);
 void choosingNewBaseOrTarget(Ship *ships, int shipCount, Planet *planets, int planetCount, SDL_Point mouse);
 int clickOnBasicShipWindow(SDL_Point mouse);
 

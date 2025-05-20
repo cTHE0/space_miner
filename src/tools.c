@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include "planet.h"
 #include "ship.h"
+#include "renderer.h"
 
 
 void *supprElemList(void *list, int *nb_elem, int type_size, int i) {
@@ -199,4 +200,27 @@ uint32_t generateRandNb32(uint32_t seed, int index) {  // linear congruential ge
 
 uint8_t generateRandNb8(uint32_t seed, int index) {  // Pour generer de petits entiers (LCG peu efficace dans les bits de poids faible... )
     return (uint8_t)(generateRandNb32(seed, index) >> 24);  // On ne garde que les bits de poids fort
+}
+
+void plotPath(SDL_Point origin, SDL_Point destination, int dashLength, int gapLength, SDL_Color color) {
+    int x1 = origin.x, 
+        y1 = origin.y, 
+        x2 = destination.x, 
+        y2 = destination.y;
+    float distance = sqrt(carre(x2 - x1) + carre(y2 - y1));
+    float dashAndGap = dashLength + gapLength;
+    float nbDashes = distance / dashAndGap;
+
+    float unitX = (x2 - x1) / distance;
+    float unitY = (y2 - y1) / distance;
+
+    for (int i = 0; i < nbDashes; i++) {
+        float startX = x1 + (i * dashAndGap) * unitX;
+        float startY = y1 + (i * dashAndGap) * unitY;
+        float endX = startX + dashLength * unitX;
+        float endY = startY + dashLength * unitY;
+        
+        SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+        SDL_RenderDrawLine(renderer, (int)startX, (int)startY, (int)endX, (int)endY);
+    }  
 }

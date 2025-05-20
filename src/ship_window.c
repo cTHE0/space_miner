@@ -371,6 +371,10 @@ void ShipWindowTankManager(SDL_Texture ***imageTextures, SDL_Texture **textTextu
     SDL_RenderCopy(renderer, imageTextures[7][13], &shipConditionSrcRect, &shipRightRect);
     SDL_RenderCopy(renderer, imageTextures[7][13], &shipConditionSrcRect, &shipLeftRect);
 
+    // Affiche les deux lignes separatrices entre les deux fusees
+    plotPath((SDL_Point){600, 670}, (SDL_Point){600, 950}, 10, 5, BLACK);
+    plotPath((SDL_Point){650, 670}, (SDL_Point){650, 950}, 10, 5, BLACK);
+
 }
 
 void ShipWindowShipCond(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {

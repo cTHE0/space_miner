@@ -20,4 +20,6 @@ void generateRandomName(char randomString[64], unsigned int seed, int index);
 uint32_t generateRandNb32(uint32_t seed, int index);  // Pas efficace pour les petits entiers
 uint8_t generateRandNb8(uint32_t seed, int index);  // Alternative pour les petits entiers
 
+void plotPath(SDL_Point origin, SDL_Point destination, int dashLength, int gapLength, SDL_Color color);
+
 #endif

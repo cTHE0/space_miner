@@ -8,6 +8,8 @@
 #include "config.h"
 #include "camera.h"
 #include "event.h"
+#include "tools.h"
+#include "assets_gestion.h"
 
 
 static BasicShipWindowButton buttonSelected = NO_BUTTON; // Lequel des 3 boutons est sélectionné ? AU début, aucun des boutons n'est sélectionné
@@ -114,7 +116,7 @@ void displayBasicShipWindow(SDL_Texture ***imageTextures, Ship *ships){
     if (buttonSelected == BASE_BUTTON || buttonSelected == TARGET_BUTTON) {
         SDL_Point centerShipCoord = {ships[getWindowId()].destRect.x + ships[getWindowId()].destRect.w / 2,
                                      ships[getWindowId()].destRect.y + ships[getWindowId()].destRect.h / 2};
-        plotPath(centerShipCoord, getMouseCoordinates(), 10, 5);
+        plotPath(centerShipCoord, getMouseCoordinates(), 10, 5, WHITE);
     }
 }
 
@@ -151,28 +153,6 @@ void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *
                 break;
         }
 
-    }  
-}
-
-void plotPath(SDL_Point origin, SDL_Point destination, int dashLength, int gapLength){
-    int x1 = origin.x, y1 = origin.y, x2 = destination.x, y2 = destination.y;
-    float deltaX = x2 - x1;
-    float deltaY = y2 - y1;
-    float distance = sqrt(deltaX * deltaX + deltaY * deltaY);
-    float dashAndGap = dashLength + gapLength;
-    float nbDashes = distance / dashAndGap;
-
-    float unitX = deltaX / distance;
-    float unitY = deltaY / distance;
-
-    for (int i = 0; i < nbDashes; i++) {
-        float startX = x1 + (i * dashAndGap) * unitX;
-        float startY = y1 + (i * dashAndGap) * unitY;
-        float endX = startX + dashLength * unitX;
-        float endY = startY + dashLength * unitY;
-        
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-        SDL_RenderDrawLine(renderer, (int)startX, (int)startY, (int)endX, (int)endY);
     }  
 }
 
