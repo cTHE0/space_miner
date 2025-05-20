@@ -65,7 +65,7 @@ void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
             cargo->compartmentsList[j].ore = rand() % 5;
             cargo->compartmentsList[j].maxCapacity = 1000;
             cargo->compartmentsList[j].currentCapacity = 1000;
-            cargo->compartmentsList[j].flowSpeed = 5;
+            cargo->compartmentsList[j].flowSpeed = 20;
 
             // Pour tester le systeme de ressource
             // Faire une interface graphique pour gerer ca proprement
@@ -147,7 +147,7 @@ void updateShipMove(Ship *ship, Uint32 currentTime) {
                 ship->y += dy * ship->speed / distance;
             } else {
                 ship->waitStartTime = currentTime;
-                ship->state = (ship->state == MOVING_TO_BASE) ? WAITING_ON_BASE : WAITING_ON_TARGET;
+                ship->state = (ship->state == MOVING_TO_BASE) ? MOVING_TO_TARGET : MOVING_TO_BASE;
             }
             break;
         default:

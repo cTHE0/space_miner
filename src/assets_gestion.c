@@ -59,6 +59,7 @@ SDL_Texture ***loadTextures(void) {
             imageTextures[i][2] = IMG_LoadTexture(renderer, "assets/img/5_others/2.png");
             imageTextures[i][3] = IMG_LoadTextureWithAlpha("assets/img/5_others/3.png", 100);
             imageTextures[i][4] = IMG_LoadTexture(renderer, "assets/img/5_others/4.png");
+            imageTextures[i][5] = IMG_LoadTexture(renderer, "assets/img/5_others/5.png");
         }
 
         // Chargement des textures pour chaque image dans chaque dossier

@@ -39,7 +39,11 @@ static SDL_Rect srcRectShip = {0, 0, 64, 64},
                 nameBaseDisplayedRect,
                 nameTargetDisplayedRect,
                 shipFirstCompartmentRect,
-                shipFirstCompartmentLogoRect;
+                shipFirstCompartmentLogoRect,
+                flowInTankRightRect,
+                flowInTankLeftRect,
+                shipRightRect,
+                shipLeftRect;
 
 void initShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships){
     initTextShipWindow(textTextures, fonts, ships);
@@ -179,6 +183,26 @@ void initRectShipWindow(SDL_Texture **textTextures) {
     modifyingTankRect.y = windowRect.y + windowRect.h * 0.59;
     modifyingTankRect.w = textureWidth * windowRect.w * 0.0005;
     modifyingTankRect.h = textureHeight * windowRect.w * 0.0005;
+
+    flowInTankRightRect.x = windowRect.x + windowRect.w * 0.3;
+    flowInTankRightRect.y = windowRect.y + windowRect.h * 0.6;
+    flowInTankRightRect.w = windowRect.w * 0.2;
+    flowInTankRightRect.h = windowRect.w * 0.2;
+
+    flowInTankLeftRect.x = windowRect.x + windowRect.w * 0.06;
+    flowInTankLeftRect.y = windowRect.y + windowRect.h * 0.6;
+    flowInTankLeftRect.w = windowRect.w * 0.2;
+    flowInTankLeftRect.h = windowRect.w * 0.2;
+
+    shipRightRect.x = windowRect.x + windowRect.w * 0.26;
+    shipRightRect.y = windowRect.y + windowRect.h * 0.68;
+    shipRightRect.w = windowRect.w * 0.13;
+    shipRightRect.h = windowRect.w * 0.13;
+
+    shipLeftRect.x = windowRect.x + windowRect.w * 0.17;
+    shipLeftRect.y = windowRect.y + windowRect.h * 0.68;
+    shipLeftRect.w = windowRect.w * 0.13;
+    shipLeftRect.h = windowRect.w * 0.13;
 
 
     // ShipWindowShipCond(imageTextures, textTextures, ships);
@@ -338,6 +362,15 @@ void ShipWindowTankManager(SDL_Texture ***imageTextures, SDL_Texture **textTextu
 
     // Affichage du tank en cours de modification ("Tank 1")
     SDL_RenderCopy(renderer, textTextures[15], NULL, &modifyingTankRect);
+
+    // Affichage du flux de minerais
+    SDL_RenderCopy(renderer, imageTextures[5][5], NULL, &flowInTankRightRect);
+    SDL_RenderCopyEx(renderer, imageTextures[5][5], NULL, &flowInTankLeftRect, 0.0, NULL, SDL_FLIP_HORIZONTAL);
+
+    // Affichage de la fusee
+    SDL_RenderCopy(renderer, imageTextures[7][13], &shipConditionSrcRect, &shipRightRect);
+    SDL_RenderCopy(renderer, imageTextures[7][13], &shipConditionSrcRect, &shipLeftRect);
+
 }
 
 void ShipWindowShipCond(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
