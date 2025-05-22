@@ -9,7 +9,7 @@
 typedef enum {NO_WINDOW, SHIP_WINDOW, PLANET_WINDOW, DEFENDER_WINDOW, ENNEMY_WINDOW, BASIC_SHIP_WINDOW} WindowType;
 
 typedef struct {
-    WindowType type;  // Type de fenetre afiche (d'une fusee, planete, attaquant, etc)
+    WindowType type;  // Type de fenetre affiche (d'une fusee, planete, attaquant, etc)
     uint32_t id;      // Stocke l'id de l'objet (fusee, planete, etc) affiche sur la fenetre
 } Window;
 
@@ -34,6 +34,11 @@ void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, SDL_Point m
     int whichPlanetIsClicked(Planet *planets, int planetCount, SDL_Point mouse);
     int clickOnPlanet(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets, int planetCount, SDL_Point mouse);
     int clickOnWindow(SDL_Point mouse);
+
+
+
+void shipWindowGestion(SDL_Point mouse);
+void planetWindowGestion(SDL_Point mouse);
 
 WindowType getWindowType(void);
 int getWindowId(void);

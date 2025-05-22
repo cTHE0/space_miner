@@ -13,6 +13,8 @@
 // Declaration des rectangles et variables propres a la fenetre d'informations des fusees
 static char baseName[64] = {0};
 static char targetName[64] = {0};
+static int currentTankIndex = 0;
+static int currentOreParameterIndex = 0;
 
 static SDL_Rect srcRectShip = {0, 0, 64, 64},
                 windowRect,
@@ -43,7 +45,13 @@ static SDL_Rect srcRectShip = {0, 0, 64, 64},
                 flowInTankRightRect,
                 flowInTankLeftRect,
                 shipRightRect,
-                shipLeftRect;
+                shipLeftRect,
+                oreToTransfert1Rect,
+                oreToTransfert2Rect,
+                oreToTransfert3Rect,
+                oreToTransfert4Rect,
+                changeTankManagerLeft,
+                changeTankManagerRight;
 
 void initShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships){
     initTextShipWindow(textTextures, fonts, ships);
@@ -204,6 +212,36 @@ void initRectShipWindow(SDL_Texture **textTextures) {
     shipLeftRect.w = windowRect.w * 0.13;
     shipLeftRect.h = windowRect.w * 0.13;
 
+    oreToTransfert1Rect.x = windowRect.x + windowRect.w * 0.145;
+    oreToTransfert1Rect.y = windowRect.y + windowRect.h * 0.68;
+    oreToTransfert1Rect.w = windowRect.w * 0.03;
+    oreToTransfert1Rect.h = windowRect.w * 0.03;
+
+    oreToTransfert2Rect.x = windowRect.x + windowRect.w * 0.145;
+    oreToTransfert2Rect.y = windowRect.y + windowRect.h * 0.82;
+    oreToTransfert2Rect.w = windowRect.w * 0.03;
+    oreToTransfert2Rect.h = windowRect.w * 0.03;
+
+    oreToTransfert3Rect.x = windowRect.x + windowRect.w * 0.385;
+    oreToTransfert3Rect.y = windowRect.y + windowRect.h * 0.68;
+    oreToTransfert3Rect.w = windowRect.w * 0.03;
+    oreToTransfert3Rect.h = windowRect.w * 0.03;
+
+    oreToTransfert4Rect.x = windowRect.x + windowRect.w * 0.385;
+    oreToTransfert4Rect.y = windowRect.y + windowRect.h * 0.82;
+    oreToTransfert4Rect.w = windowRect.w * 0.03;
+    oreToTransfert4Rect.h = windowRect.w * 0.03;
+
+    changeTankManagerLeft.x = windowRect.x + windowRect.w * 0.18;
+    changeTankManagerLeft.y = windowRect.y + windowRect.h * 0.59;
+    changeTankManagerLeft.w = windowRect.w * 0.03;
+    changeTankManagerLeft.h = windowRect.w * 0.03;
+
+    changeTankManagerRight.x = windowRect.x + windowRect.w * 0.35;
+    changeTankManagerRight.y = windowRect.y + windowRect.h * 0.59;
+    changeTankManagerRight.w = windowRect.w * 0.03;
+    changeTankManagerRight.h = windowRect.w * 0.03;
+
 
     // ShipWindowShipCond(imageTextures, textTextures, ships);
 
@@ -363,6 +401,11 @@ void ShipWindowTankManager(SDL_Texture ***imageTextures, SDL_Texture **textTextu
     // Affichage du tank en cours de modification ("Tank 1")
     SDL_RenderCopy(renderer, textTextures[15], NULL, &modifyingTankRect);
 
+    // Afficher les fleches pour pouvoir modifier le tank en cours de modification
+    SDL_RenderCopy(renderer, imageTextures[2][2], NULL, &changeTankManagerLeft);
+    SDL_RenderCopy(renderer, imageTextures[2][2], NULL, &changeTankManagerRight);
+
+
     // Affichage du flux de minerais
     SDL_RenderCopy(renderer, imageTextures[5][5], NULL, &flowInTankRightRect);
     SDL_RenderCopyEx(renderer, imageTextures[5][5], NULL, &flowInTankLeftRect, 0.0, NULL, SDL_FLIP_HORIZONTAL);
@@ -374,6 +417,12 @@ void ShipWindowTankManager(SDL_Texture ***imageTextures, SDL_Texture **textTextu
     // Affiche les deux lignes separatrices entre les deux fusees
     plotPath((SDL_Point){600, 670}, (SDL_Point){600, 950}, 10, 5, BLACK);
     plotPath((SDL_Point){650, 670}, (SDL_Point){650, 950}, 10, 5, BLACK);
+
+    // Affichage des minerais choisi pour les transferts
+    SDL_RenderCopy(renderer, imageTextures[4][ships[getWindowId()].cargo.compartmentsList[currentTankIndex].flowBase_in], NULL, &oreToTransfert1Rect);
+    SDL_RenderCopy(renderer, imageTextures[4][ships[getWindowId()].cargo.compartmentsList[currentTankIndex].flowBase_out], NULL, &oreToTransfert2Rect);
+    SDL_RenderCopy(renderer, imageTextures[4][ships[getWindowId()].cargo.compartmentsList[currentTankIndex].flowTarget_in], NULL, &oreToTransfert3Rect);
+    SDL_RenderCopy(renderer, imageTextures[4][ships[getWindowId()].cargo.compartmentsList[currentTankIndex].flowTarget_out], NULL, &oreToTransfert4Rect);
 
 }
 
@@ -412,8 +461,17 @@ void ShipWindowTankCompo(SDL_Texture ***imageTextures, SDL_Texture **textTexture
             case FUEL:
                 SDL_RenderCopy(renderer, imageTextures[4][0], NULL, &currentLogoRect);
                 break;
-            default:
+            case ORE1:
                 SDL_RenderCopy(renderer, imageTextures[4][1], NULL, &currentLogoRect);
+                break;
+            case ORE2:
+                SDL_RenderCopy(renderer, imageTextures[4][2], NULL, &currentLogoRect);
+                break;
+            case ORE3:
+                SDL_RenderCopy(renderer, imageTextures[4][3], NULL, &currentLogoRect);
+                break;
+            default:
+                SDL_RenderCopy(renderer, imageTextures[4][4], NULL, &currentLogoRect);
                 break;
         }
 
@@ -421,4 +479,37 @@ void ShipWindowTankCompo(SDL_Texture ***imageTextures, SDL_Texture **textTexture
         currentTankRect.y -= 1.05 * shipFirstCompartmentRect.h;
         currentLogoRect.y -= 1.05 * shipFirstCompartmentRect.h;
     }
+}
+
+void shipWindowGestion(SDL_Point mouse) {
+    if (SDL_PointInRect(&mouse, &WindowCrossRect) || !clickOnWindow(mouse)) {
+        changeWindowType(NO_WINDOW);
+    }
+
+    // Choix du tank
+    else if (currentTankIndex > 0 && SDL_PointInRect(&mouse, &changeTankManagerLeft)) {
+        currentTankIndex --;
+    } 
+    else if (currentTankIndex < 3 && SDL_PointInRect(&mouse, &changeTankManagerRight)) {
+        currentTankIndex ++;
+    }
+
+    // Choix de la case a modifier
+    else if (SDL_PointInRect(&mouse, &oreToTransfert1Rect)) {
+        currentOreParameterIndex = 0;
+        printf("currentOreParameterIndex = %d\n",currentOreParameterIndex);
+    } 
+    else if (SDL_PointInRect(&mouse, &oreToTransfert2Rect)) {
+        currentOreParameterIndex = 1;
+        printf("currentOreParameterIndex = %d\n",currentOreParameterIndex);
+    } 
+    else if (SDL_PointInRect(&mouse, &oreToTransfert3Rect)) {
+        currentOreParameterIndex = 2;
+        printf("currentOreParameterIndex = %d\n",currentOreParameterIndex);
+    } 
+    else if (SDL_PointInRect(&mouse, &oreToTransfert4Rect)) {
+        currentOreParameterIndex = 3;
+        printf("currentOreParameterIndex = %d\n",currentOreParameterIndex);
+    } 
+    
 }

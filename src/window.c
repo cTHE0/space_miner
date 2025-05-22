@@ -52,18 +52,12 @@ void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, SDL_Point m
             }
             break;
 
-        case SHIP_WINDOW:  // Ce cas doit fusionner avec le prochain (<=> (SHIP_WINDOW || PLANET_WINDOW) )
-            /* 
-                Lorsque l'on ne met rien dans un case, tres cher Theo, cela equivaut a 
-                l'operateur || avec le prochain case. Dans notre cas, cela donne :
-                    if (getWindowType() == SHIP_WINDOW || getWindowType() == PLANET_WINDOW) {...}
-                Je te laisse supprimer ce present commentaire si tu as compris :)
-            */
+        case SHIP_WINDOW:
+            shipWindowGestion(mouse);
+            break;
 
         case PLANET_WINDOW:
-            if (SDL_PointInRect(&mouse, &WindowCrossRect) || !clickOnWindow(mouse)) {
-                changeWindowType(NO_WINDOW);
-            }
+            planetWindowGestion(mouse);
             break;
 
         case BASIC_SHIP_WINDOW:

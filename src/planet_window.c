@@ -94,3 +94,9 @@ void displayPlanetWindow(SDL_Texture ***imageTextures, SDL_Texture **textTexture
         currentLogoRect.y -= 1.05 * planetFirstResourceRect.h;
     }
 }
+
+void planetWindowGestion(SDL_Point mouse) {
+    if (SDL_PointInRect(&mouse, &WindowCrossRect) || !clickOnWindow(mouse)) {
+        changeWindowType(NO_WINDOW);
+    }
+}
