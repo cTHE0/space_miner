@@ -37,7 +37,7 @@ void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, SDL_Point m
 
 
 
-void shipWindowGestion(SDL_Point mouse);
+void shipWindowGestion(Ship *ship, SDL_Point mouse);
 void planetWindowGestion(SDL_Point mouse);
 
 WindowType getWindowType(void);

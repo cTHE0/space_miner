@@ -14,7 +14,7 @@
 static char baseName[64] = {0};
 static char targetName[64] = {0};
 static int currentTankIndex = 0;
-static int currentOreParameterIndex = 0;
+static int currentOreParameterIndex = -1;
 
 static SDL_Rect srcRectShip = {0, 0, 64, 64},
                 windowRect,
@@ -51,7 +51,11 @@ static SDL_Rect srcRectShip = {0, 0, 64, 64},
                 oreToTransfert3Rect,
                 oreToTransfert4Rect,
                 changeTankManagerLeft,
-                changeTankManagerRight;
+                changeTankManagerRight,
+                orePossibility0,
+                orePossibility1,
+                orePossibility2,
+                orePossibility3;
 
 void initShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships){
     initTextShipWindow(textTextures, fonts, ships);
@@ -242,6 +246,26 @@ void initRectShipWindow(SDL_Texture **textTextures) {
     changeTankManagerRight.w = windowRect.w * 0.03;
     changeTankManagerRight.h = windowRect.w * 0.03;
 
+    orePossibility0.x = windowRect.x + windowRect.w * 0.1;
+    orePossibility0.y = windowRect.y + windowRect.h * 0.9;
+    orePossibility0.w = windowRect.w * 0.05;
+    orePossibility0.h = windowRect.w * 0.05;
+
+    orePossibility1.x = windowRect.x + windowRect.w * 0.16;
+    orePossibility1.y = windowRect.y + windowRect.h * 0.9;
+    orePossibility1.w = windowRect.w * 0.05;
+    orePossibility1.h = windowRect.w * 0.05;
+
+    orePossibility2.x = windowRect.x + windowRect.w * 0.22;
+    orePossibility2.y = windowRect.y + windowRect.h * 0.9;
+    orePossibility2.w = windowRect.w * 0.05;
+    orePossibility2.h = windowRect.w * 0.05;
+
+    orePossibility3.x = windowRect.x + windowRect.w * 0.28;
+    orePossibility3.y = windowRect.y + windowRect.h * 0.9;
+    orePossibility3.w = windowRect.w * 0.05;
+    orePossibility3.h = windowRect.w * 0.05;
+
 
     // ShipWindowShipCond(imageTextures, textTextures, ships);
 
@@ -418,12 +442,20 @@ void ShipWindowTankManager(SDL_Texture ***imageTextures, SDL_Texture **textTextu
     plotPath((SDL_Point){600, 670}, (SDL_Point){600, 950}, 10, 5, BLACK);
     plotPath((SDL_Point){650, 670}, (SDL_Point){650, 950}, 10, 5, BLACK);
 
-    // Affichage des minerais choisi pour les transferts
+    // Affichage des minerais choisis pour les transferts
     SDL_RenderCopy(renderer, imageTextures[4][ships[getWindowId()].cargo.compartmentsList[currentTankIndex].flowBase_in], NULL, &oreToTransfert1Rect);
     SDL_RenderCopy(renderer, imageTextures[4][ships[getWindowId()].cargo.compartmentsList[currentTankIndex].flowBase_out], NULL, &oreToTransfert2Rect);
     SDL_RenderCopy(renderer, imageTextures[4][ships[getWindowId()].cargo.compartmentsList[currentTankIndex].flowTarget_in], NULL, &oreToTransfert3Rect);
     SDL_RenderCopy(renderer, imageTextures[4][ships[getWindowId()].cargo.compartmentsList[currentTankIndex].flowTarget_out], NULL, &oreToTransfert4Rect);
 
+    // Si modification des minerais choisis pour les transfert, affichage des possibilites
+    if (currentOreParameterIndex != -1) {
+        SDL_RenderCopy(renderer, imageTextures[4][0], NULL, &orePossibility0);
+        SDL_RenderCopy(renderer, imageTextures[4][1], NULL, &orePossibility1);
+        SDL_RenderCopy(renderer, imageTextures[4][2], NULL, &orePossibility2);
+        SDL_RenderCopy(renderer, imageTextures[4][3], NULL, &orePossibility3);
+
+    }
 }
 
 void ShipWindowShipCond(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
@@ -481,7 +513,7 @@ void ShipWindowTankCompo(SDL_Texture ***imageTextures, SDL_Texture **textTexture
     }
 }
 
-void shipWindowGestion(SDL_Point mouse) {
+void shipWindowGestion(Ship *ship, SDL_Point mouse) {
     if (SDL_PointInRect(&mouse, &WindowCrossRect) || !clickOnWindow(mouse)) {
         changeWindowType(NO_WINDOW);
     }
@@ -511,5 +543,88 @@ void shipWindowGestion(SDL_Point mouse) {
         currentOreParameterIndex = 3;
         printf("currentOreParameterIndex = %d\n",currentOreParameterIndex);
     } 
+
+    // Choix du nouveau minerai transfere pour le rectangle prealablement choisi
+    else if (currentOreParameterIndex != -1 && SDL_PointInRect(&mouse, &orePossibility0)) {
+        switch (currentOreParameterIndex) {
+            case 0:
+                ship->cargo.compartmentsList[currentTankIndex].flowBase_in = 0;
+                break;
+            case 1:
+                ship->cargo.compartmentsList[currentTankIndex].flowBase_out = 0;
+                break;
+            case 2:
+                ship->cargo.compartmentsList[currentTankIndex].flowTarget_in = 0;
+                break;
+            case 3:
+                ship->cargo.compartmentsList[currentTankIndex].flowTarget_out = 0;
+                break;
+            default:
+                break;
+
+        }
+    }  
+    else if (currentOreParameterIndex != -1 && SDL_PointInRect(&mouse, &orePossibility1)) {
+        switch (currentOreParameterIndex) {
+            case 0:
+                ship->cargo.compartmentsList[currentTankIndex].flowBase_in = 1;
+                break;
+            case 1:
+                ship->cargo.compartmentsList[currentTankIndex].flowBase_out = 1;
+                break;
+            case 2:
+                ship->cargo.compartmentsList[currentTankIndex].flowTarget_in = 1;
+                break;
+            case 3:
+                ship->cargo.compartmentsList[currentTankIndex].flowTarget_out = 1;
+                break;
+            default:
+                break;
+
+        }
+    }  
+    else if (currentOreParameterIndex != -1 && SDL_PointInRect(&mouse, &orePossibility2)) {
+        switch (currentOreParameterIndex) {
+            case 0:
+                ship->cargo.compartmentsList[currentTankIndex].flowBase_in = 2;
+                break;
+            case 1:
+                ship->cargo.compartmentsList[currentTankIndex].flowBase_out = 2;
+                break;
+            case 2:
+                ship->cargo.compartmentsList[currentTankIndex].flowTarget_in = 2;
+                break;
+            case 3:
+                ship->cargo.compartmentsList[currentTankIndex].flowTarget_out = 2;
+                break;
+            default:
+                break;
+
+        }
+    }  
+    else if (currentOreParameterIndex != -1 && SDL_PointInRect(&mouse, &orePossibility3)) {
+        switch (currentOreParameterIndex) {
+            case 0:
+                ship->cargo.compartmentsList[currentTankIndex].flowBase_in = 3;
+                break;
+            case 1:
+                ship->cargo.compartmentsList[currentTankIndex].flowBase_out = 3;
+                break;
+            case 2:
+                ship->cargo.compartmentsList[currentTankIndex].flowTarget_in = 3;
+                break;
+            case 3:
+                ship->cargo.compartmentsList[currentTankIndex].flowTarget_out = 3;
+                break;
+            default:
+                break;
+
+        }
+    }     
+
+
+    else {
+        currentOreParameterIndex = -1;
+    }
     
 }
