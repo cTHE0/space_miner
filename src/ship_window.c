@@ -427,7 +427,7 @@ void ShipWindowTankManager(SDL_Texture ***imageTextures, SDL_Texture **textTextu
 
     // Afficher les fleches pour pouvoir modifier le tank en cours de modification
     SDL_RenderCopy(renderer, imageTextures[2][2], NULL, &changeTankManagerLeft);
-    SDL_RenderCopy(renderer, imageTextures[2][2], NULL, &changeTankManagerRight);
+    SDL_RenderCopyEx(renderer, imageTextures[2][2], NULL, &changeTankManagerRight, 0, NULL, SDL_FLIP_HORIZONTAL);
 
 
     // Affichage du flux de minerais
@@ -529,19 +529,15 @@ void shipWindowGestion(Ship *ship, SDL_Point mouse) {
     // Choix de la case a modifier
     else if (SDL_PointInRect(&mouse, &oreToTransfert1Rect)) {
         currentOreParameterIndex = 0;
-        printf("currentOreParameterIndex = %d\n",currentOreParameterIndex);
     } 
     else if (SDL_PointInRect(&mouse, &oreToTransfert2Rect)) {
         currentOreParameterIndex = 1;
-        printf("currentOreParameterIndex = %d\n",currentOreParameterIndex);
     } 
     else if (SDL_PointInRect(&mouse, &oreToTransfert3Rect)) {
         currentOreParameterIndex = 2;
-        printf("currentOreParameterIndex = %d\n",currentOreParameterIndex);
     } 
     else if (SDL_PointInRect(&mouse, &oreToTransfert4Rect)) {
         currentOreParameterIndex = 3;
-        printf("currentOreParameterIndex = %d\n",currentOreParameterIndex);
     } 
 
     // Choix du nouveau minerai transfere pour le rectangle prealablement choisi
