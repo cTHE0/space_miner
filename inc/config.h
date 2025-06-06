@@ -4,11 +4,12 @@
 #define SCREEN_WIDTH 1920 // (autre 16/9 courant plus petit : 1280 par 720)
 #define SCREEN_HEIGHT 1080
 #define MAP_SIZE 350000
+#define SOLAR_SYSTEM_SIZE 8000  // Taille d'un cote (c'est un carre)
 
 #define INIT_PLANET_COUNT 4
 #define INIT_SHIP_COUNT 4
-#define ORE_TYPE_COUNT 5
-#define CST_TEXT_NUMBER 42
+#define ORE_TYPE_COUNT 4
+#define CST_TEXT_NUMBER 47
 #define FONT_NUMBER 1
 
 #define SPRITE_SHEETS_DELAY 100  // En nombre de tick

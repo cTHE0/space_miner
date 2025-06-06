@@ -10,7 +10,7 @@ void solarSystemCoordinator(int *nbEntityGenerated, Planet *planets, int planetC
     // Initialisation du nombre d'entites par systeme solaire
     static int maxEntity = 20;
     static int minEntity = 5;
-    int nbEntityNewSS = minEntity + generateRandNb8(currentSeed, *nbEntityGenerated) % (maxEntity - minEntity + 1);  // Nb d'entites à rajouter ds le nouveau système solaire
+    int nbEntityNewSS = minEntity + generateRandNb8(currentSeed, *nbEntityGenerated) % (maxEntity - minEntity + 1);  // Nb d'entites a rajouter ds le nouveau systeme solaire
 
     if (*nbEntityGenerated + nbEntityNewSS > planetCount){  // Le nouveau systeme solaire passe-t-il ?
         nbEntityNewSS = planetCount - *nbEntityGenerated;
@@ -44,14 +44,14 @@ void generateSolarSystem(Planet *planets, int x, int y, int nbEntityGenerated, i
     newSun->radius = r;
     newSun->x = x;
     newSun->y = y;
-    newSun->buildingCounter = 1;
+    newSun->buildingCounter = 0;
     newSun->buildings = malloc(newSun->buildingCounter * sizeof(Building));
 
     // Generation des planetes
     for (int j = nbEntityGenerated + 1; j < nbEntityGenerated + nbEntityNewSS; j++) {
         planets[j].id = j;
         planets[j].planetType = PLANET;
-        planets[j].buildingCounter = 1;
+        planets[j].buildingCounter = 0;
         planets[j].buildings = malloc(planets[j].buildingCounter * sizeof(Building));
         planets[j].regenerationTime = generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % 10000;  // En millisecondes
         randIndex ++;
@@ -69,9 +69,9 @@ void generateSolarSystem(Planet *planets, int x, int y, int nbEntityGenerated, i
         while (planetIsAlone == 0) {
             rp = 200 + generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % 30;
             randIndex ++;
-            xp = x + (20000 - generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % 40000); // Abscisse planète
+            xp = x - SOLAR_SYSTEM_SIZE / 2 + generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % SOLAR_SYSTEM_SIZE; // Abscisse planete
             randIndex ++;
-            yp = y + (20000 - generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % 40000);
+            yp = y - SOLAR_SYSTEM_SIZE / 2 + generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % SOLAR_SYSTEM_SIZE;
             randIndex ++;
             planetIsAlone = 1;  // La nouvelle planete est eloignee A PART SI l'on en detecte une autre a cote
 

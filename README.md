@@ -1,5 +1,5 @@
 # Space Miner 🚀  
-Un jeu en C avec SDL2 dans lequel vous pourrez créer, développer et défendre une civilisation inter-galactique ! (visuel disponible sur Sigma : https://www.figma.com/design/dyd2ouuvGYLKhz5VeyWADk/Untitled?node-id=0-1&p=f)
+Un jeu en C avec SDL2 dans lequel vous pourrez creer, developper et defendre une civilisation inter-galactique ! (visuel disponible sur Sigma : https://www.figma.com/design/dyd2ouuvGYLKhz5VeyWADk/Untitled?node-id=0-1&p=f)
 
 ## Installation  
 1. Installez SDL2 et SDL2_gfx :  
@@ -18,4 +18,4 @@ Un jeu en C avec SDL2 dans lequel vous pourrez créer, développer et défendre 
    ```  
 
 ## Contributions  
-Les contributions sont les bienvenues mais je vous préviens : vous ne serez pas payé et Adam gardera tout l'argent ! Forkez le repo et faites une PR.  
+Les contributions sont les bienvenues mais je vous previens : vous ne serez pas paye et Adam gardera tout l'argent ! Forkez le repo et faites une PR.  

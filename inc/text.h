@@ -5,7 +5,7 @@
 #include <SDL2/SDL_ttf.h>
 
 typedef struct {
-	char text[64];    // Texte a afficher
+	char text[128];    // Texte a afficher
 	SDL_Color color;  // Couleur du texte
 	TTF_Font *font;	  // Police de caractere du texte
 } TextToLoad;

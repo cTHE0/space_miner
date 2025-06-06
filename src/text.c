@@ -25,11 +25,11 @@ TTF_Font* loadFont(const char* path, int size) {
 
 SDL_Texture **loadTextTextures(TTF_Font **fonts) {  // ATTENTION: ne pas oublier de modifier CST_TEXT_NUMBER
     SDL_Texture **textTextures = malloc(CST_TEXT_NUMBER * sizeof(SDL_Texture*));
-    TextToLoad cstTexts[CST_TEXT_NUMBER] = {{"Space Miner", WHITE, fonts[0]},
+    TextToLoad cstTexts[CST_TEXT_NUMBER] = {{"VOID REIGN:", WHITE, fonts[0]},
                                             {"Continue", WHITE, fonts[0]},
                                             {"New game", WHITE, fonts[0]},
                                             {"Settings", WHITE, fonts[0]},
-                                            {"Ship #1,887 – Basic Rocket Model S", BLACK, fonts[0]},
+                                            {"METS_CE_QUE_TU_VEUX_DANS_CET_EMPLACEMENT", BLACK, fonts[0]},
                                             {"Travel information", BLACK, fonts[0]},
                                             {"NOT ENOUGH FUEL", BLACK, fonts[0]},
                                             {"STOP", BLACK, fonts[0]},
@@ -43,10 +43,10 @@ SDL_Texture **loadTextTextures(TTF_Font **fonts) {  // ATTENTION: ne pas oublier
                                             {"Tank 1", BLACK, fonts[0]},
                                             {"Tank 2", BLACK, fonts[0]},
                                             {"Tank 3", BLACK, fonts[0]},
-                                            {"dynamicNumber", BLACK, fonts[0]},  // Zone de stockage pour la texture d'un nombre variable
-                                            {"dynamicNumber", BLACK, fonts[0]},  // Idem
-                                            {"dynamicNumber", BLACK, fonts[0]},  // Idem
-                                            {"dynamicNumber", BLACK, fonts[0]},  // Idem
+                                            {"Tank 4", BLACK, fonts[0]},
+                                            {"Tank 5", BLACK, fonts[0]},
+                                            {"Tank 6", BLACK, fonts[0]},
+                                            {"Tank 7", BLACK, fonts[0]},
                                             {"dynamicNumber", BLACK, fonts[0]},  // Idem
                                             {"dynamicNumber", BLACK, fonts[0]},  // Idem
                                             {"dynamicNumber", BLACK, fonts[0]},  // Idem
@@ -67,6 +67,11 @@ SDL_Texture **loadTextTextures(TTF_Font **fonts) {  // ATTENTION: ne pas oublier
                                             {"dynamiqueString", BLACK, fonts[0]},  // Idem
                                             {"dynamiqueString", BLACK, fonts[0]},  // Idem
                                             {"dynamiqueString", BLACK, fonts[0]},  // Idem
+                                            {"THE MINERALS WAR", WHITE, fonts[0]},
+                                            {"STOP", BLACK, fonts[0]},
+                                            {"NOT ENOUGH FUEL!", RED, fonts[0]},
+                                            {"Select a new base", ORANGE, fonts[0]},
+                                            {"Select a new target", ORANGE, fonts[0]}
                                            };
 
     for (int i = 0; i < CST_TEXT_NUMBER; i++) {
@@ -86,21 +91,21 @@ SDL_Texture* createTextTexture(TTF_Font* font, SDL_Color color, const char* text
     SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
     SDL_FreeSurface(surface);
     if (!texture) {
-        fprintf(stderr, "Erreur de création de texture: %s\n", SDL_GetError());
+        fprintf(stderr, "Erreur de creation de texture: %s\n", SDL_GetError());
     }
     return texture;
 }
 
 void updateTextTexture(SDL_Texture **updatedTextTexture, TextToLoad newText) {
-    // Détruire l'ancienne texture
+    // Detruire l'ancienne texture
     if (*updatedTextTexture) {
         SDL_DestroyTexture(*updatedTextTexture);
     }
 
-    // Créer et assigner la nouvelle texture
+    // Creer et assigner la nouvelle texture
     *updatedTextTexture = createTextTexture(newText.font, newText.color, newText.text);
     if (!*updatedTextTexture) {
-        fprintf(stderr, "Échec de la mise à jour de la texture du nouveau texte '%s'\n", newText.text);
+        fprintf(stderr, "Echec de la mise a jour de la texture du nouveau texte '%s'\n", newText.text);
     }
 }
 

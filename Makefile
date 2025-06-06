@@ -15,7 +15,7 @@ INCLUDE = inc/camera.h          inc/planet.h          inc/event.h           inc/
           inc/text.h            inc/config.h          inc/tools.h           inc/landing_page.h    \
           inc/window.h	        inc/solar_system.h    inc/basic_ship_window.h
 
-# Dépendances automatiques
+# Dependances automatiques
 DEPS = $(OBJ:$(OBJDIR)/%.o=$(OBJDIR)/%.d)
 
 all: $(EXEC)
@@ -31,7 +31,7 @@ $(EXEC): $(OBJ)
 	@echo "======================================================================================"
 	@echo "\n"
 
-# Créer le dossier des objets si nécessaire
+# Creer le dossier des objets si necessaire
 $(OBJDIR):
 	@echo "======================================================================================"
 	@echo "Creating directory '$(OBJDIR)'\n..."
@@ -41,12 +41,12 @@ $(OBJDIR):
 	@echo "======================================================================================"
 	@echo "Compilation of source files\n..."
 
-# Compilation des fichiers .c en .o, avec génération de dépendances .d
+# Compilation des fichiers .c en .o, avec generation de dependances .d
 $(OBJDIR)/%.o: src/%.c $(INCLUDE) | $(OBJDIR)
 	@echo "Compiling $<"
 	@$(CC) $(CFLAGS) -MMD -MP -c $< -o $@
 
-# Inclure les fichiers de dépendances générés pour chaque fichier .o
+# Inclure les fichiers de dependances generes pour chaque fichier .o
 -include $(DEPS)
 
 clean:

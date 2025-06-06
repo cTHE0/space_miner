@@ -5,6 +5,9 @@
 #include <string.h>
 #include <dirent.h>
 #include "renderer.h"
+#include "ship_window.h"
+#include "planet_window.h"
+#include "basic_ship_window.h"
 
 
 static int nbCategories;   // Initialisation
@@ -19,9 +22,9 @@ SDL_Texture* IMG_LoadTextureWithAlpha(const char* filePath, Uint8 alpha) {
         return NULL;
     }
 
-    // Définir le mode de mélange pour gérer l'alpha
+    // Definir le mode de melange pour gerer l'alpha
     if (SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND) != 0) {
-        printf("Erreur lors du réglage du mode de mélange : %s\n", SDL_GetError());
+        printf("Erreur lors du reglage du mode de melange : %s\n", SDL_GetError());
         SDL_DestroyTexture(texture);
         return NULL;
     }
@@ -53,13 +56,14 @@ SDL_Texture ***loadTextures(void) {
     for (int i = 0; i < nbCategories; i++) {
         imageTextures[i] = malloc(nbPicturesPerCategory[i] * sizeof(SDL_Texture*));
 
-        if (strcmp(foldersPath[i], "assets/img/5_others/") == 0) {  // Traitement spécifique pour 'others'
+        if (strcmp(foldersPath[i], "assets/img/5_others/") == 0) {  // Traitement specifique pour 'others'
             imageTextures[i][0] = IMG_LoadTexture(renderer, "assets/img/5_others/0.png");
             imageTextures[i][1] = IMG_LoadTextureWithAlpha("assets/img/5_others/1.png", 100);
             imageTextures[i][2] = IMG_LoadTexture(renderer, "assets/img/5_others/2.png");
             imageTextures[i][3] = IMG_LoadTextureWithAlpha("assets/img/5_others/3.png", 100);
             imageTextures[i][4] = IMG_LoadTexture(renderer, "assets/img/5_others/4.png");
             imageTextures[i][5] = IMG_LoadTexture(renderer, "assets/img/5_others/5.png");
+            imageTextures[i][6] = IMG_LoadTexture(renderer, "assets/img/5_others/6.png");
         }
 
         // Chargement des textures pour chaque image dans chaque dossier
@@ -75,7 +79,7 @@ SDL_Texture ***loadTextures(void) {
         }
     }
 
-    // Libération des chemins des dossiers
+    // Liberation des chemins des dossiers
     for (int i = 0; i < nbCategories; i++) {
         free(foldersPath[i]);
     }
@@ -98,14 +102,14 @@ int foldersNbFunction(const char *path) {
     struct dirent *entree;
     int indexFolder = 0;
     while ((entree = readdir(folder)) != NULL) {
-        if (strcmp(entree->d_name, ".") != 0 && strcmp(entree->d_name, "..") != 0) {  // Ignorer dossiers spécials
-            if (entree->d_type == DT_DIR) {  // Si l'entrée est un répertoire, l'incrémenter
+        if (strcmp(entree->d_name, ".") != 0 && strcmp(entree->d_name, "..") != 0) {  // Ignorer dossiers specials
+            if (entree->d_type == DT_DIR) {  // Si l'entree est un repertoire, l'incrementer
                 indexFolder++;
             }
         }
     }
 
-    // Fermer le dossier après lecture
+    // Fermer le dossier apres lecture
     closedir(folder);
 
     return indexFolder;
@@ -119,13 +123,13 @@ char **foldersPathFunction(const char *path) {
         return NULL;  // Retourner NULL en cas d'erreur
     }
 
-    // Lire toutes les entrées du dossier
+    // Lire toutes les entrees du dossier
     char **foldersName = malloc(nbCategories * sizeof(char *));  // Nombre de dossier a allouer 
     struct dirent *entree;
     int indexFolder = 0;
     while ((entree = readdir(folder)) != NULL) {
         if (strcmp(entree->d_name, ".") != 0 && strcmp(entree->d_name, "..") != 0) {  // Ignorer les dossiers speciaux
-            if (entree->d_type == DT_DIR) {  // Si l'entrée est un répertoire, l'ajouter au tableau
+            if (entree->d_type == DT_DIR) {  // Si l'entree est un repertoire, l'ajouter au tableau
                 foldersName[indexFolder] = malloc(128 * sizeof(char));   // 128 caracteres par chemin maximum
                 strcpy(foldersName[indexFolder], entree->d_name);  // Copier le nom du dossier
                 indexFolder++;
@@ -133,10 +137,10 @@ char **foldersPathFunction(const char *path) {
         }
     }
 
-    // Fermuture du dossier après lecture
+    // Fermuture du dossier apres lecture
     closedir(folder);
 
-    // Trier les noms de dossiers par ordre alphabétique
+    // Trier les noms de dossiers par ordre alphabetique
     qsort(foldersName, indexFolder, sizeof(char *), compare);
 
     // Ajouter le debut du chemin assets/img/ avant le nom du dossier
@@ -167,14 +171,14 @@ int *filesNbFunction(char **foldersPath) {  // Creer une liste d'entiers. Chaque
         int indexFile = 0;
         while ((entree = readdir(folder)) != NULL) {  
             if (strcmp(entree->d_name, ".") != 0 && strcmp(entree->d_name, "..") != 0) {  // Ignorer "." et ".."
-                if (entree->d_type == DT_REG) {  // Si l'entrée est un fichier, l'ajouter au tableau
+                if (entree->d_type == DT_REG) {  // Si l'entree est un fichier, l'ajouter au tableau
                     indexFile++;
                 }
             }
         }
         filesNbPerFolder[i] = indexFile;
 
-        // Fermuture du dossier après lecture
+        // Fermuture du dossier apres lecture
         closedir(folder);
     }
 
@@ -185,6 +189,12 @@ int compare(const void *a, const void *b) {  // Fonction de comparaison pour qso
     const char **nomA = (const char **)a;
     const char **nomB = (const char **)b;
     return strcmp(*nomA, *nomB);
+}
+
+void initRects(SDL_Texture **textTextures) {
+    initRectShipWindow(textTextures);
+    initRectPlanetWindow(textTextures);
+    initRectBasicShipWindow(textTextures);
 }
 
 void destroyImageTextures(SDL_Texture ***imageTextures) {

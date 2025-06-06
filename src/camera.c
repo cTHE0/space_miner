@@ -10,11 +10,11 @@ static Camera camera;
 
 
 void initCamera(Planet *planets) {
-    camera.rect.x = planets[1].x;
-    camera.rect.y = planets[1].y;
+    camera.rect.x = planets[1].x - SCREEN_WIDTH / 2;
+    camera.rect.y = planets[1].y - SCREEN_HEIGHT / 2;
     camera.rect.h = SCREEN_HEIGHT;
     camera.rect.w = SCREEN_WIDTH;
-    camera.scale = 1.0;
+    camera.scale = 0.5;
 }
 
 SDL_Rect getCameraRect(void) {
@@ -23,6 +23,11 @@ SDL_Rect getCameraRect(void) {
 
 float getCameraScale(void) {
     return camera.scale;
+}
+
+void setCenterCamera(SDL_Point newCenter) {
+    camera.rect.x = newCenter.x - SCREEN_WIDTH / 2;
+    camera.rect.y = newCenter.y - SCREEN_HEIGHT / 2;
 }
 
 void zoomCamera(float zoomFactor) {

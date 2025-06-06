@@ -5,16 +5,34 @@
 #include "renderer.h"
 
 
-lpFrameControler lpFrameController = {0, 0, 0, 0};
-
-SDL_Rect bgButton1Rect = {SCREEN_WIDTH * 0.53, SCREEN_HEIGHT * 0.358, SCREEN_WIDTH * 0.3, SCREEN_HEIGHT * 0.07};  // Position du background des boutons sur le menu
-SDL_Rect bgButton2Rect = {SCREEN_WIDTH * 0.53, SCREEN_HEIGHT * 0.478, SCREEN_WIDTH * 0.3, SCREEN_HEIGHT * 0.07};
-SDL_Rect bgButton3Rect = {SCREEN_WIDTH * 0.53, SCREEN_HEIGHT * 0.598, SCREEN_WIDTH * 0.3, SCREEN_HEIGHT * 0.07};
-
 int bg_button_a_afficher = 0;
 
+static lpFrameControler lpFrameController = {0, 0, 0, 0};
 
-void handleMenuEvents(GameState *state) {   // Gère les événements du menu
+static SDL_Rect bgButton1Rect,
+                bgButton2Rect,
+                bgButton3Rect;
+
+
+void initLandingPageRects(void) {
+    bgButton1Rect.x = SCREEN_WIDTH * 0.53;
+    bgButton1Rect.y = SCREEN_HEIGHT * 0.458;
+    bgButton1Rect.w = SCREEN_WIDTH * 0.3;
+    bgButton1Rect.h = SCREEN_HEIGHT * 0.07;
+
+    bgButton2Rect.x = SCREEN_WIDTH * 0.53;
+    bgButton2Rect.y = SCREEN_HEIGHT * 0.578;
+    bgButton2Rect.w = SCREEN_WIDTH * 0.3;
+    bgButton2Rect.h = SCREEN_HEIGHT * 0.07;
+
+    bgButton3Rect.x = SCREEN_WIDTH * 0.53;
+    bgButton3Rect.y = SCREEN_HEIGHT * 0.698;
+    bgButton3Rect.w = SCREEN_WIDTH * 0.3;
+    bgButton3Rect.h = SCREEN_HEIGHT * 0.07;
+}
+
+
+void handleMenuEvents(GameState *state) {   // Gere les evenements du menu
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         int x, y;
@@ -45,7 +63,7 @@ void handleMenuEvents(GameState *state) {   // Gère les événements du menu
                 break;
 
             case SDL_MOUSEMOTION:
-                // Vérifier si la souris est dans les zones des boutons
+                // Verifier si la souris est dans les zones des boutons
                 if (SDL_PointInRect(&point, &bgButton1Rect)) {
                     bg_button_a_afficher = 1;
                 } else if (SDL_PointInRect(&point, &bgButton2Rect)) {
@@ -73,7 +91,7 @@ void handleMenuEvents(GameState *state) {   // Gère les événements du menu
     }
 }
 
-void updateFrameIndex() {
+void updateFrameIndex(void) {
     if (SDL_GetTicks() > lpFrameController.lastFrameTime1 + SPRITE_SHEETS_DELAY) {
         lpFrameController.frameIndex1 = (lpFrameController.frameIndex1 + 1) % 160;  // 160 images dans le sprite sheet de la
         lpFrameController.lastFrameTime1 = SDL_GetTicks();                            // planetes qui tourne dans le menu
@@ -85,6 +103,8 @@ void updateFrameIndex() {
 }
 
 void displayMenu(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
+    initLandingPageRects();
+    
     // Initialisation graphique du menu
     SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, imageTextures[5][2], NULL, NULL);
@@ -104,12 +124,18 @@ void displayMenu(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
 
     SDL_RenderCopyEx(renderer, imageTextures[0][1], NULL, &asteroid2Rect, -3 * lpFrameController.frameIndex2, NULL, SDL_FLIP_NONE);
 
-    // Affichage du titre Space Miner
+    // Affichage du titre "Void Reign:"
     int textureWidth, textureHeight;  // Permet de garder les proportions du texte
     SDL_QueryTexture(textTextures[0], NULL, NULL, &textureWidth, &textureHeight);
 
-    SDL_Rect titleRect = {SCREEN_WIDTH * 0.42, SCREEN_HEIGHT * 0.07, textureWidth * SCREEN_HEIGHT * 0.004, textureHeight * SCREEN_HEIGHT * 0.004};
+    SDL_Rect titleRect = {SCREEN_WIDTH * 0.5, SCREEN_HEIGHT * 0.07, textureWidth * SCREEN_HEIGHT * 0.003, textureHeight * SCREEN_HEIGHT * 0.003};
     SDL_RenderCopy(renderer, textTextures[0], NULL, &titleRect);
+
+    // Affichage du titre "The Minerals War"
+    SDL_QueryTexture(textTextures[42], NULL, NULL, &textureWidth, &textureHeight);  // Permet de garder les proportions du texte
+
+    SDL_Rect title2Rect = {SCREEN_WIDTH * 0.39, SCREEN_HEIGHT * 0.2, textureWidth * SCREEN_HEIGHT * 0.003, textureHeight * SCREEN_HEIGHT * 0.003};
+    SDL_RenderCopy(renderer, textTextures[42], NULL, &title2Rect);
 
     // Affiche les bouton New game, Continue, Settings
     SDL_SetTextureBlendMode(imageTextures[5][1], SDL_BLENDMODE_BLEND);
@@ -126,17 +152,17 @@ void displayMenu(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
         default:
             break;
     }
-SDL_SetTextureBlendMode(imageTextures[5][1], SDL_BLENDMODE_BLEND);
+    SDL_SetTextureBlendMode(imageTextures[5][1], SDL_BLENDMODE_BLEND);
     SDL_QueryTexture(textTextures[1], NULL, NULL, &textureWidth, &textureHeight);  // Permet de garder les proportions du texte
-    SDL_Rect text1Rect = {SCREEN_WIDTH * 0.618, SCREEN_HEIGHT * 0.35, textureWidth * SCREEN_HEIGHT * 0.0013, textureHeight * SCREEN_HEIGHT * 0.0013};
+    SDL_Rect text1Rect = {SCREEN_WIDTH * 0.618, SCREEN_HEIGHT * 0.45, textureWidth * SCREEN_HEIGHT * 0.0013, textureHeight * SCREEN_HEIGHT * 0.0013};
     SDL_RenderCopy(renderer, textTextures[1], NULL, &text1Rect);  // Affiche "Continue"
 
     SDL_QueryTexture(textTextures[2], NULL, NULL, &textureWidth, &textureHeight);
-    SDL_Rect text2Rect = {SCREEN_WIDTH * 0.608, SCREEN_HEIGHT * 0.47, textureWidth * SCREEN_HEIGHT * 0.0013, textureHeight * SCREEN_HEIGHT * 0.0013};
+    SDL_Rect text2Rect = {SCREEN_WIDTH * 0.608, SCREEN_HEIGHT * 0.57, textureWidth * SCREEN_HEIGHT * 0.0013, textureHeight * SCREEN_HEIGHT * 0.0013};
     SDL_RenderCopy(renderer, textTextures[2], NULL, &text2Rect);  // Affiche "New game"
 
     SDL_QueryTexture(textTextures[3], NULL, NULL, &textureWidth, &textureHeight);
-    SDL_Rect text3Rect = {SCREEN_WIDTH * 0.62, SCREEN_HEIGHT * 0.59, textureWidth * SCREEN_HEIGHT * 0.0013, textureHeight * SCREEN_HEIGHT * 0.0013};
+    SDL_Rect text3Rect = {SCREEN_WIDTH * 0.62, SCREEN_HEIGHT * 0.69, textureWidth * SCREEN_HEIGHT * 0.0013, textureHeight * SCREEN_HEIGHT * 0.0013};
     SDL_RenderCopy(renderer, textTextures[3], NULL, &text3Rect);  // Affiche "Settings"
 
     SDL_RenderPresent(renderer);
