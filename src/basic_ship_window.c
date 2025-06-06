@@ -184,7 +184,7 @@ void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *
             setWindowId(getWindowId() - 1);
         }
         initBasicShipWindow(textTextures, fonts, ships);
-        setCenterCamera((SDL_Point){ships[getWindowId()].x, ships[getWindowId()].y});
+        setCenterCamera((SDL_Point){ships[getWindowId()].x + ships[getWindowId()].w / 2, ships[getWindowId()].y + ships[getWindowId()].h / 2});
     }
 
     // Aucun des boutons de la fenetre n'a ete clique :

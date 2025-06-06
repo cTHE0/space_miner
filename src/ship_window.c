@@ -9,6 +9,7 @@
 #include "renderer.h"
 #include "tools.h"
 #include "window.h"
+#include "planet_window.h"
 
 
 // Declaration des rectangles et variables propres a la fenetre d'informations des fusees
@@ -443,7 +444,7 @@ void ShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextur
 
     // Affichage bouton stop 
     SDL_RenderCopy(renderer, textTextures[43], NULL, &stopBoutonRect);
-    SDL_RenderCopy(renderer, imageTextures[5][6], NULL, &edgeStopButtonRect);
+    SDL_DrawEdgeOfRect(renderer, edgeStopButtonRect, 5);
 
     // Affichage "OUT OF FUEL!"
     if (ships[getWindowId()].state == OUT_OF_FUEL) {
@@ -525,7 +526,7 @@ void ShipWindowTankManager(SDL_Texture ***imageTextures, SDL_Texture **textTextu
     SDL_RenderCopyEx(renderer, imageTextures[2][2], NULL, &changeTankManagerRight, 0, NULL, SDL_FLIP_HORIZONTAL);
 
     // Affichage bordure du choix de tank
-    SDL_RenderCopy(renderer, imageTextures[5][6], NULL, &edgeTankChoosenButtonRect);
+    SDL_DrawEdgeOfRect(renderer, edgeTankChoosenButtonRect, 5);
 
     // Affichage du flux de minerais
     SDL_RenderCopy(renderer, imageTextures[5][5], NULL, &flowInTankRightRect);
@@ -567,13 +568,16 @@ void ShipWindowShipCond(SDL_Texture ***imageTextures, SDL_Texture **textTextures
     SDL_RenderCopy(renderer, textTextures[13], NULL, &category4TitleRect);
 
     // Affichage etat de la fusee (fond)
-        SDL_SetRenderDrawColor(renderer, 150, 150, 150, 255);
+    SDL_SetRenderDrawColor(renderer, 150, 150, 150, 255);
     SDL_RenderFillRect(renderer, &maxLifeShipRect);
 
     // Affichage etat de la fusee (barre actuelle)
-        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
     currentLifeShipRect.w = maxLifeShipRect.w * ships[getWindowId()].currentLife / (float)ships[getWindowId()].maxLife;
     SDL_RenderFillRect(renderer, &currentLifeShipRect);
+
+    // Affiche le fond de la barre de vie
+    SDL_DrawEdgeOfRect(renderer, maxLifeShipRect, 3);
 }
 
 void ShipWindowTankCompo(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
@@ -614,6 +618,10 @@ void ShipWindowTankCompo(SDL_Texture ***imageTextures, SDL_Texture **textTexture
                 break;
         }
 
+        // Afficher le bord du tank
+        currentTankRect.w = shipFirstCompartmentRect.w;
+        SDL_DrawEdgeOfRect(renderer, currentTankRect, 3);
+
         // Pour afficher le prochain reservoir
         currentTankRect.y -= 1.05 * shipFirstCompartmentRect.h;
         currentLogoRect.y -= 1.05 * shipFirstCompartmentRect.h;
@@ -627,10 +635,10 @@ void ShipWindowTankCompo(SDL_Texture ***imageTextures, SDL_Texture **textTexture
     SDL_RenderCopy(renderer, textTextures[15 + currentTankIndex], NULL, &infoPerTankRect);
 
     // Affichage bordure du choix de tank
-    SDL_RenderCopy(renderer, imageTextures[5][6], NULL, &edgeTankChoosenButtonRect2);
+    SDL_DrawEdgeOfRect(renderer, edgeTankChoosenButtonRect2, 5);
 }
 
-void shipWindowGestion(SDL_Texture **textTextures, Ship *ship, SDL_Point mouse) {
+void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship, Planet *planets, SDL_Point mouse) {
     if (SDL_PointInRect(&mouse, &WindowCrossRect) || !clickOnWindow(mouse)) {
         setWindowType(NO_WINDOW);
     }
@@ -650,15 +658,21 @@ void shipWindowGestion(SDL_Texture **textTextures, Ship *ship, SDL_Point mouse) 
 
     // Ouverture de la fenetre de la planete (depuis la fenetre d'info. de la fusee)
     else if (SDL_PointInRect(&mouse, &baseDisplayedRect)) {
-        setWindowType(PLANET_WINDOW);
         if (ship->base.type == SPOT_PLANET) {
+            setWindowType(PLANET_WINDOW);
             setWindowId(ship->base.id_spot);
+            initTextPlanetWindow(textTextures, fonts, planets);
+        } else {
+            setWindowType(NO_WINDOW);
         }
     }
     else if (SDL_PointInRect(&mouse, &targetDisplayedRect)) {
-        setWindowType(PLANET_WINDOW);
         if (ship->target.type == SPOT_PLANET) {
+            setWindowType(PLANET_WINDOW);
             setWindowId(ship->target.id_spot);
+            initTextPlanetWindow(textTextures, fonts, planets);
+        } else {
+            setWindowType(NO_WINDOW);
         }
     }
 

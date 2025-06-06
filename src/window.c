@@ -54,7 +54,7 @@ void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, SDL_Point m
             break;
 
         case SHIP_WINDOW:
-            shipWindowGestion(textTextures, &ships[getWindowId()], mouse);
+            shipWindowGestion(textTextures, fonts, &ships[getWindowId()], planets, mouse);
             break;
 
         case PLANET_WINDOW:

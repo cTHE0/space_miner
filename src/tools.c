@@ -224,3 +224,15 @@ void plotPath(SDL_Point origin, SDL_Point destination, int dashLength, int gapLe
         SDL_RenderDrawLine(renderer, (int)startX, (int)startY, (int)endX, (int)endY);
     }  
 }
+
+void SDL_DrawEdgeOfRect(SDL_Renderer *renderer, SDL_Rect rect, int lineWidth) {
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+
+    for (int i = 0; i < lineWidth; i++) {
+        SDL_RenderDrawRect(renderer, &rect);
+        rect.x += 1;
+        rect.y += 1;
+        rect.w -= 2;
+        rect.h -= 2;
+    }
+}

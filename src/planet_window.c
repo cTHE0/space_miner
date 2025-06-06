@@ -48,7 +48,7 @@ void initTextPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts, Planet *
             break;
     }
     
-    sprintf(newText.text, "%s %s", type_planet, name_planet);
+    sprintf(newText.text, "%s - %s", type_planet, name_planet);
     newText.color = BLACK;
     newText.font = fonts[0];
 
@@ -97,6 +97,15 @@ void initRectPlanetWindow(SDL_Texture **textTextures) {
 
 
 void displayPlanetWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planets, int planetCount) {
+    planetWindowFoundations(imageTextures, textTextures);
+    planetWindowGeneralInfo(imageTextures, textTextures, planets);
+    planetWindowOverviewBuildings(imageTextures, textTextures);
+    planetWindowNewBuildings(imageTextures, textTextures);
+    planetWindowBuildingQueue(imageTextures, textTextures);
+    planetWindowOreAbundance(imageTextures, textTextures, planets);
+}
+
+void planetWindowFoundations(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
     // Arriere plan de la fenetre d'informations
     SDL_RenderCopy(renderer, imageTextures[5][3], NULL, &windowRect);
 
@@ -107,13 +116,30 @@ void displayPlanetWindow(SDL_Texture ***imageTextures, SDL_Texture **textTexture
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderFillRect(renderer, &windowLine1Rect);
 
+    // Affichage du titre de la page
+    SDL_RenderCopy(renderer, textTextures[30], NULL, &windowTitleRect);
+}
+
+void planetWindowGeneralInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planets) {
     // Planete decrite dans cette fenetre
     int idPicture = (planets[getWindowId()].planetType == SUN) ? 9 : generateRandNb8(currentSeed, getWindowId()) % 8 + 1;
     SDL_RenderCopy(renderer, imageTextures[6][idPicture], NULL, &planetDisplayedRect);  
+}
 
+void planetWindowOverviewBuildings(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
+}
+
+void planetWindowNewBuildings(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
+}
+
+void planetWindowBuildingQueue(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
+}
+
+void planetWindowOreAbundance(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planets) {
     // Affichage des stocks de ressources, l'un apres l'autre
     SDL_Rect currentOreRect = planetFirstResourceRect;
     SDL_Rect currentLogoRect = planetFirstResourceLogoRect;
+
     for (int i = 0; i < ORE_TYPE_COUNT; i++) {
         // Barre de fond
         SDL_SetRenderDrawColor(renderer, 150, 150, 150, 255);
@@ -148,9 +174,6 @@ void displayPlanetWindow(SDL_Texture ***imageTextures, SDL_Texture **textTexture
         currentOreRect.y -= 1.05 * planetFirstResourceRect.h;
         currentLogoRect.y -= 1.05 * planetFirstResourceRect.h;
     }
-
-    // Affichage du titre de la page
-    SDL_RenderCopy(renderer, textTextures[30], NULL, &windowTitleRect);
 }
 
 void planetWindowGestion(SDL_Point mouse) {

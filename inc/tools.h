@@ -22,4 +22,6 @@ uint8_t generateRandNb8(uint32_t seed, int index);  // Alternative pour les peti
 
 void plotPath(SDL_Point origin, SDL_Point destination, int dashLength, int gapLength, SDL_Color color);
 
+void SDL_DrawEdgeOfRect(SDL_Renderer *renderer, SDL_Rect rect, int lineWidth);
+
 #endif

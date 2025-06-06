@@ -20,6 +20,6 @@ void ShipWindowTankCompo(SDL_Texture ***imageTextures, SDL_Texture **textTexture
 
 void refreshRectTankchoosen(SDL_Texture **textTextures);
 
-void shipWindowGestion(SDL_Texture **textTextures, Ship *ship, SDL_Point mouse);
+void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship, Planet *planets, SDL_Point mouse);
 
 #endif
