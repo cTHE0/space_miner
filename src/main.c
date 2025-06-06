@@ -43,7 +43,7 @@ int main(void) {
     Uint32 toLimitFPS;
     int frameCount = 0;
 
-    // Lancement de space_miner
+    // Lancement de Void Reign
     GameState state = LANDING_PAGE;
 
     while (state != QUIT) {

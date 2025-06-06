@@ -1,4 +1,4 @@
-# Space Miner 🚀  
+# Void Reign: The Minerals War 🚀  
 Un jeu en C avec SDL2 dans lequel vous pourrez creer, developper et defendre une civilisation inter-galactique ! (visuel disponible sur Sigma : https://www.figma.com/design/dyd2ouuvGYLKhz5VeyWADk/Untitled?node-id=0-1&p=f)
 
 ## Installation  
