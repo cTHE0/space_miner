@@ -8,95 +8,95 @@
 
 
 void *supprElemList(void *list, int *nb_elem, int type_size, int i) {
-    // Vérification des paramètres
+    // Verification des parametres
     if (*nb_elem <= 0 || i < 0 || i >= *nb_elem) {
-        printf("Erreur [supprElemList] : paramètre invalide.\n");
+        printf("Erreur [supprElemList] : parametre invalide.\n");
         return NULL;
     }
 
-    // Décaler les éléments après l'élément à supprimer
+    // Decaler les elements apres l'element a supprimer
     char *ptr = (char *)list;
     memmove(ptr + i * type_size, ptr + (i + 1) * type_size, (*nb_elem - i - 1) * type_size);
 
-    // Mettre à jour le nombre d'éléments
+    // Mettre a jour le nombre d'elements
     (*nb_elem)--;
 
-    // Réallouer la mémoire pour ajuster la taille
+    // Reallouer la memoire pour ajuster la taille
     void *res = realloc(list, (*nb_elem) * type_size);
     if (!res) {
-        printf("Erreur [supprElemList] : échec du réajustement mémoire.\n");
-        return list;  // Retourne l'ancienne liste si realloc échoue
+        printf("Erreur [supprElemList] : echec du reajustement memoire.\n");
+        return list;  // Retourne l'ancienne liste si realloc echoue
     }
 
     return res;
 }
 
-// Fonction générique pour échanger deux éléments dans une liste
+// Fonction generique pour echanger deux elements dans une liste
 void *swapElements(void *list, int nb_elem, int type_size, int i, int j) {
-    // Vérification des indices
+    // Verification des indices
     if (i < 0 || j < 0 || i >= nb_elem || j >= nb_elem) {
         printf("Erreur [swapElements] : indices invalides.\n");
         return NULL;
     }
 
-    // Si les indices sont identiques, aucun échange n'est nécessaire
+    // Si les indices sont identiques, aucun echange n'est necessaire
     if (i == j) return list;
 
-    // Allocation d'un espace temporaire pour l'échange
+    // Allocation d'un espace temporaire pour l'echange
     void *temp = malloc(type_size);
     if (!temp) {
-        printf("Erreur [swapElements] : échec de l'allocation mémoire.\n");
+        printf("Erreur [swapElements] : echec de l'allocation memoire.\n");
         return NULL;
     }
 
-    // Pointeurs vers les éléments à échanger
+    // Pointeurs vers les elements a echanger
     char *ptr = (char *)list;
     void *elem1 = ptr + i * type_size;
     void *elem2 = ptr + j * type_size;
 
-    // Échange des éléments
+    // echange des elements
     memcpy(temp, elem1, type_size);
     memcpy(elem1, elem2, type_size);
     memcpy(elem2, temp, type_size);
 
-    // Libérer la mémoire temporaire
+    // Liberer la memoire temporaire
     free(temp);
 
     return list;
 }
 
-// Fonction pour déplacer un élément à la fin de la liste
+// Fonction pour deplacer un element a la fin de la liste
 void *moveToEnd(void *list, int nb_elem, int type_size, int index) {
-    // Vérification des indices
+    // Verification des indices
     if (index < 0 || index >= nb_elem) {
         printf("Erreur [moveToEnd] : indice invalide.\n");
         return NULL;
     }
 
-    // Si l'élément est déjà à la fin, rien à faire
+    // Si l'element est deja a la fin, rien a faire
     if (index == nb_elem - 1) return list;
 
-    // Allocation d'un espace temporaire pour l'élément à déplacer
+    // Allocation d'un espace temporaire pour l'element a deplacer
     void *temp = malloc(type_size);
     if (!temp) {
-        printf("Erreur [moveToEnd] : échec de l'allocation mémoire.\n");
+        printf("Erreur [moveToEnd] : echec de l'allocation memoire.\n");
         return NULL;
     }
 
-    // Pointeurs vers l'élément et la fin
+    // Pointeurs vers l'element et la fin
     char *ptr = (char *)list;
     void *elem = ptr + index * type_size;
 
-    // Sauvegarde de l'élément
+    // Sauvegarde de l'element
     memcpy(temp, elem, type_size);
 
-    // Décalage des éléments suivants vers la gauche
+    // Decalage des elements suivants vers la gauche
     memmove(ptr + index * type_size, ptr + (index + 1) * type_size, (nb_elem - index - 1) * type_size);
 
-    // Placer l'élément sauvegardé à la fin
+    // Placer l'element sauvegarde a la fin
     memcpy(ptr + (nb_elem - 1) * type_size, temp, type_size);
 
-    // Libérer la mémoire temporaire
+    // Liberer la memoire temporaire
     free(temp);
 
     return list;
@@ -190,7 +190,7 @@ uint32_t generateRandNb32(uint32_t seed, int index) {  // linear congruential ge
         return 0U;
     }
 
-    index += 1;  // La variable index ne doit pas être nulle
+    index += 1;  // La variable index ne doit pas etre nulle
     for (int i = 0; i < index; i++) {
         seed *= 69069U;
     }

@@ -13,7 +13,7 @@ SDL_Renderer *renderer = NULL;
 
 
 void initSDL(SDL_Window **window) {
-    // Initialiser SDL (vidéo)
+    // Initialiser SDL (video)
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         printf("Erreur d'initialisation de SDL : %s\n", SDL_GetError());
         return;
@@ -34,21 +34,21 @@ void initSDL(SDL_Window **window) {
         return;
     }
 
-    // Créer la fenêtre
-    *window = SDL_CreateWindow("SPACE MINER", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    // Creer la fenetre
+    *window = SDL_CreateWindow("VOID REIGN: THE MINERALS WAR", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     if (*window == NULL) {
-        printf("Erreur de création de la fenêtre : %s\n", SDL_GetError());
+        printf("Erreur de creation de la fenetre : %s\n", SDL_GetError());
         TTF_Quit();  // Nettoyer SDL_ttf
         IMG_Quit();  // Nettoyer SDL_image
         SDL_Quit();  // Nettoyer SDL
         return;
     }
 
-    // Créer le renderer
+    // Creer le renderer
     renderer = SDL_CreateRenderer(*window, -1, SDL_RENDERER_ACCELERATED);
     if (renderer == NULL) {
-        printf("Erreur de création du renderer : %s\n", SDL_GetError());
-        SDL_DestroyWindow(*window);  // Nettoyer la fenêtre
+        printf("Erreur de creation du renderer : %s\n", SDL_GetError());
+        SDL_DestroyWindow(*window);  // Nettoyer la fenetre
         TTF_Quit();  // Nettoyer SDL_ttf
         IMG_Quit();  // Nettoyer SDL_image
         SDL_Quit();  // Nettoyer SDL

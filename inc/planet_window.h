@@ -1,0 +1,18 @@
+#ifndef PLANET_WINDOW_H
+#define PLANET_WINDOW_H
+
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
+#include "planet.h"
+#include "ship.h"
+
+
+void initPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets);
+void initRectPlanetWindow(SDL_Texture **textTextures);
+void initTextPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets);
+
+void displayPlanetWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planets, int planetCount);
+
+void planetWindowGestion(SDL_Point mouse);
+
+#endif

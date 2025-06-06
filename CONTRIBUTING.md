@@ -1,4 +1,4 @@
-# Contribuer à Space Miner 🚀  
+# Contribuer à Void Reign: The Minerals War 🚀  
 
 Merci à toi Léon de nous éclairer !  
 

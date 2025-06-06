@@ -1,5 +1,5 @@
-#ifndef SHIP_WINDOW_H
-#define SHIP_WINDOW_H
+#ifndef WINDOW_H
+#define WINDOW_H
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
@@ -14,35 +14,21 @@ typedef struct {
 } Window;
 
 void displayWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships, Planet *planets, int planetCount);
-        void displayShipWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships);
-                void initShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships);
-                        void initRectShipWindow(SDL_Texture **textTextures);
-                        void initTextShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships);
-                void ShipWindowFondations(SDL_Texture ***imageTextures, SDL_Texture **textTextures);
-                void ShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships);
-                void ShipWindowTankManager(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships);
-                void ShipWindowShipCond(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships);
-                void ShipWindowTankCompo(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships);
-        void displayPlanetWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planets, int planetCount);
-                void initPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts);
-                    void initRectPlanetWindow(SDL_Texture **textTextures);
-                    void initTextPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts);
 
 void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, SDL_Point mouse, Ship *ships, int shipCount, Planet *planets, int planetCount);
-    int whichShipIsClicked(Ship *ships, int shipCount, SDL_Point mouse);
-    int clickOnShip(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, int shipCount, SDL_Point mouse);
-    int whichPlanetIsClicked(Planet *planets, int planetCount, SDL_Point mouse);
-    int clickOnPlanet(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets, int planetCount, SDL_Point mouse);
-    int clickOnWindow(SDL_Point mouse);
 
+int whichShipIsClicked(Ship *ships, int shipCount, SDL_Point mouse);
+int clickOnShip(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, int shipCount, SDL_Point mouse);
 
+int whichPlanetIsClicked(Planet *planets, int planetCount, SDL_Point mouse);
+int clickOnPlanet(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets, int planetCount, SDL_Point mouse);
 
-void shipWindowGestion(Ship *ship, SDL_Point mouse);
-void planetWindowGestion(SDL_Point mouse);
+int clickOnWindow(SDL_Point mouse);
 
 WindowType getWindowType(void);
 int getWindowId(void);
-void changeWindowType(WindowType newType);
-void changeWindowId(int newId);
+
+void setWindowType(WindowType newType);
+void setWindowId(int newId);
 
 #endif

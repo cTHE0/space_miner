@@ -13,8 +13,8 @@ void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
     *ships = malloc(shipCount * sizeof(Ship));
 
     if (*ships == NULL) {
-        printf("Erreur d'allocation mémoire pour les vaisseaux !\n");
-        return;  // Sortir de la fonction pour éviter d'utiliser ships après un échec
+        printf("Erreur d'allocation memoire pour les vaisseaux !\n");
+        return;  // Sortir de la fonction pour eviter d'utiliser ships apres un echec
     }
 
     for (int i = 0; i < shipCount; i++) {
@@ -22,9 +22,11 @@ void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
         (*ships)[i].id = i;
         (*ships)[i].idModel = rand() % 12;
         (*ships)[i].base.type = SPOT_PLANET;
-        (*ships)[i].base.planet = &planets[1];  // La première planète est la base de chaque vaisseau
+        (*ships)[i].base.planet = &planets[1];  // La premiere planete est la base de chaque vaisseau
+        (*ships)[i].base.id_spot = 1;
         (*ships)[i].target.type = SPOT_PLANET;
-        (*ships)[i].target.planet = &planets[rand() % (planetCount - 2) + 2];
+        (*ships)[i].target.id_spot = rand() % (planetCount - 2) + 2;
+        (*ships)[i].target.planet = &planets[(*ships)[i].target.id_spot];
         (*ships)[i].x = (*ships)[i].base.planet->x;
         (*ships)[i].y = (*ships)[i].base.planet->y;
         (*ships)[i].w = 62;
@@ -52,9 +54,9 @@ void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
         cargo->compartmentsNumber = 4;
         cargo->compartmentsList = malloc(cargo->compartmentsNumber * sizeof(Compartment));
         if (cargo->compartmentsList == NULL) {
-            printf("Erreur d'allocation mémoire pour les compartiments du vaisseau %d!\n", i);
+            printf("Erreur d'allocation memoire pour les compartiments du vaisseau %d!\n", i);
             
-            // Libérer la mémoire des vaisseaux déjà créés
+            // Liberer la memoire des vaisseaux deja crees
             for (int j = 0; j < i; j++) {
                 free(cargo->compartmentsList);
             }
@@ -207,8 +209,8 @@ int fuelFilling(Ship *ship) {
     }
 
     // Remplissage des reservoirs d'essence de la fusee (et inversement pour la planete)
-    int lastEmptyFuelCompartment = -1;  // Permet de ne remplir que le dernier réservoir vide
-    int fuelGiven = 0;  // Vérifie si de l'essence a été donnée (1:oui, 0:non)
+    int lastEmptyFuelCompartment = -1;  // Permet de ne remplir que le dernier reservoir vide
+    int fuelGiven = 0;  // Verifie si de l'essence a ete donnee (1:oui, 0:non)
     Cargo *cargo = &ship->cargo;
 
     for (int i = 0; i < cargo->compartmentsNumber; i++) {
@@ -229,7 +231,7 @@ int fuelFilling(Ship *ship) {
         }
     }
 
-    // Si aucune essence n'a été donnée, remplir le dernier compartiment vide
+    // Si aucune essence n'a ete donnee, remplir le dernier compartiment vide
     if (!fuelGiven && lastEmptyFuelCompartment != -1) {
         cargo->compartmentsList[lastEmptyFuelCompartment].currentCapacity += cargo->compartmentsList[lastEmptyFuelCompartment].flowSpeed;
         fuelGiven = 1;
@@ -254,7 +256,7 @@ void OreFillingOrEmptying(Ship *ship) {
         return;
     }
 
-    int modified = 0;  // Vérifie s'il s'est passé qch (1:oui, 0:non)
+    int modified = 0;  // Verifie s'il s'est passe qch (1:oui, 0:non)
     Cargo *cargo = &ship->cargo;
     Planet *landingPlanet = (ship->state == WAITING_ON_BASE) ? ship->base.planet : ship->target.planet;
 
@@ -390,7 +392,7 @@ void renderShipImage(SDL_Texture *textureShip, Ship ship, SDL_Point ShipOnScreen
     // Creation des variables necessaires a l'affichage
     SDL_Rect srcRect = {ship.frameIndex * 64, 0, 64, 64};  // Frame actuelle sur le sprite sheet
     SDL_Rect destRect = {ShipOnScreen.x, ShipOnScreen.y, ship.w * getCameraScale(), ship.h * getCameraScale()};  // Position et taille affichee
-    SDL_Point center = {destRect.w / 2, destRect.h / 2};  // Définition du point de rotation (au centre du sprite)
+    SDL_Point center = {destRect.w / 2, destRect.h / 2};  // Definition du point de rotation (au centre du sprite)
 
     // Dessin des fusees avec rotation
     SDL_RenderCopyEx(renderer, textureShip, &srcRect, &destRect, angle, &center, SDL_FLIP_NONE);

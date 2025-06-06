@@ -5,104 +5,133 @@
 #include "renderer.h"
 #include "ship.h"
 #include "window.h"
+#include "ship_window.h"
 #include "config.h"
 #include "camera.h"
 #include "event.h"
 #include "tools.h"
 #include "assets_gestion.h"
+#include "text.h"
 
 
-static BasicShipWindowButton buttonSelected = NO_BUTTON; // Lequel des 3 boutons est sélectionné ? AU début, aucun des boutons n'est sélectionné
+static BasicShipWindowButton buttonSelected = NO_BUTTON; // Lequel des 3 boutons est selectionne ? Au debut, aucun des boutons n'est selectionne
 
-static SDL_Rect bgRect = {
-                            SCREEN_WIDTH/12, 
-                            3*SCREEN_HEIGHT/4, 
-                            5*SCREEN_WIDTH/6, 
-                            SCREEN_HEIGHT/4
-                        };
+static SDL_Rect bgRect,
+                shipPictureRect,
+                leftArrowRect, 
+                rightArrowRect,
+                line1Rect,
+                crossRect,
+                button1Rect,
+                button2Rect,
+                button3Rect,
+                windowTitleRect,
+                selectNewBaseRect,
+                selectNewTargetRect;
 
-static SDL_Rect shipPictureRect = {
-                                    SCREEN_WIDTH/12 + SCREEN_HEIGHT/32, 
-                                    3*SCREEN_HEIGHT/4, 
-                                    SCREEN_HEIGHT/4, 
-                                    SCREEN_HEIGHT/4
-                                };
+void initBasicShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships) {
+    initTextBasicShipWindow(textTextures, fonts, ships);
+}
 
-static SDL_Rect leftArrowRect = {
-                                    SCREEN_WIDTH/12, 
-                                    7*SCREEN_HEIGHT/8 - SCREEN_HEIGHT/64, 
-                                    SCREEN_HEIGHT/32, 
-                                    SCREEN_HEIGHT/32
-                                };
+void initTextBasicShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships) {
+    int textureWidth, textureHeight;
+    TextToLoad newText;
 
-static SDL_Rect rightArrowRect = {
-                                    11*SCREEN_WIDTH/12 - SCREEN_HEIGHT/32, 
-                                    7*SCREEN_HEIGHT/8 - SCREEN_HEIGHT/64, 
-                                    SCREEN_HEIGHT/32, 
-                                    SCREEN_HEIGHT/32
-                                };
+    // Importe la texture decrivant le titre de la page d'info. de la fusee
+    sprintf(newText.text, "Ship #%d – Basic Rocket", getWindowId() + 1);  // Construction "de Ship #1,887 – Basic Rocket"
+    newText.color = BLACK;
+    newText.font = fonts[0];
 
-static SDL_Rect line1Rect = {
-                                SCREEN_WIDTH/12 + SCREEN_HEIGHT/32 + SCREEN_HEIGHT/4, 
-                                3*SCREEN_HEIGHT/4 + SCREEN_HEIGHT/32, 
-                                SCREEN_WIDTH/12 + 5*SCREEN_WIDTH/6 - (SCREEN_WIDTH/12 + SCREEN_HEIGHT/32 + SCREEN_HEIGHT/4), 
-                                3
-                            };
+    updateTextTexture(&textTextures[30], newText);
 
-static SDL_Rect crossRect = {
-                                11*SCREEN_WIDTH/12 - 3*SCREEN_HEIGHT/128, 
-                                3*SCREEN_HEIGHT/4 + SCREEN_HEIGHT/128, 
-                                SCREEN_HEIGHT/64, 
-                                SCREEN_HEIGHT/64
-                            };
+    SDL_QueryTexture(textTextures[30], NULL, NULL, &textureWidth, &textureHeight);
+    windowTitleRect.x = SCREEN_WIDTH * 0.28;
+    windowTitleRect.y = SCREEN_HEIGHT * 0.753;
+    windowTitleRect.w = textureWidth * SCREEN_HEIGHT * 0.0004;
+    windowTitleRect.h = textureHeight * SCREEN_HEIGHT * 0.0004;
+}
 
-static SDL_Rect button1Rect = {
-                                    SCREEN_WIDTH/2 - SCREEN_HEIGHT/8, 
-                                    3*SCREEN_HEIGHT/4 - SCREEN_HEIGHT/16, 
-                                    SCREEN_HEIGHT/16, 
-                                    SCREEN_HEIGHT/32
-                                };
-                        
-static SDL_Rect button2Rect = {
-                                    SCREEN_WIDTH/2 - SCREEN_HEIGHT/32, 
-                                    3*SCREEN_HEIGHT/4 - SCREEN_HEIGHT/16, 
-                                    SCREEN_HEIGHT/16, 
-                                    SCREEN_HEIGHT/32
-                                };
+void initRectBasicShipWindow(SDL_Texture **textTextures) {
+    int textureWidth, textureHeight;
 
-static SDL_Rect button3Rect = {
-                                    SCREEN_WIDTH/2 + SCREEN_HEIGHT/16, 
-                                    3*SCREEN_HEIGHT/4 - SCREEN_HEIGHT/16, 
-                                    SCREEN_HEIGHT/16, 
-                                    SCREEN_HEIGHT/32
-                                };
+    bgRect.x = SCREEN_WIDTH * 0.1; 
+    bgRect.y = SCREEN_HEIGHT * 0.75; 
+    bgRect.w = SCREEN_WIDTH * 0.8; 
+    bgRect.h = SCREEN_HEIGHT * 0.25; 
 
-static const SDL_Rect basicShipWindowCrossRect = {
-                                                    11*SCREEN_WIDTH/12 - 3*SCREEN_HEIGHT/128, 
-                                                    3*SCREEN_HEIGHT/4 + SCREEN_HEIGHT/128, 
-                                                    SCREEN_HEIGHT/64, 
-                                                    SCREEN_HEIGHT/64
-                                                };
+    shipPictureRect.x = SCREEN_WIDTH * 0.13; 
+    shipPictureRect.y = SCREEN_HEIGHT * 0.75; 
+    shipPictureRect.w = SCREEN_HEIGHT * 0.25; 
+    shipPictureRect.h = SCREEN_HEIGHT * 0.25; 
 
+    leftArrowRect.x = SCREEN_WIDTH * 0.105; 
+    leftArrowRect.y = SCREEN_HEIGHT * 0.86; 
+    leftArrowRect.w = SCREEN_HEIGHT * 0.031; 
+    leftArrowRect.h = SCREEN_HEIGHT * 0.031; 
 
-void displayBasicShipWindow(SDL_Texture ***imageTextures, Ship *ships){
+    rightArrowRect.x = SCREEN_WIDTH * 0.88; 
+    rightArrowRect.y = SCREEN_HEIGHT * 0.86; 
+    rightArrowRect.w = SCREEN_HEIGHT * 0.031; 
+    rightArrowRect.h = SCREEN_HEIGHT * 0.031; 
+
+    line1Rect.x = SCREEN_WIDTH * 0.272; 
+    line1Rect.y = SCREEN_HEIGHT * 0.78; 
+    line1Rect.w = SCREEN_WIDTH * 0.627; 
+    line1Rect.h = 3; 
+
+    crossRect.x = SCREEN_WIDTH * 0.885; 
+    crossRect.y = SCREEN_HEIGHT * 0.757; 
+    crossRect.w = SCREEN_HEIGHT * 0.02; 
+    crossRect.h = SCREEN_HEIGHT * 0.02; 
+
+    button1Rect.x = SCREEN_WIDTH * 0.43; 
+    button1Rect.y = SCREEN_HEIGHT * 0.69; 
+    button1Rect.w = SCREEN_HEIGHT * 0.05; 
+    button1Rect.h = SCREEN_HEIGHT * 0.05; 
+
+    button2Rect.x = SCREEN_WIDTH * 0.49; 
+    button2Rect.y = SCREEN_HEIGHT * 0.69; 
+    button2Rect.w = SCREEN_HEIGHT * 0.05; 
+    button2Rect.h = SCREEN_HEIGHT * 0.05; 
+
+    button3Rect.x = SCREEN_WIDTH * 0.55; 
+    button3Rect.y = SCREEN_HEIGHT * 0.69; 
+    button3Rect.w = SCREEN_HEIGHT * 0.05; 
+    button3Rect.h = SCREEN_HEIGHT * 0.05;
+
+    SDL_QueryTexture(textTextures[45], NULL, NULL, &textureWidth, &textureHeight);
+    selectNewBaseRect.x = SCREEN_WIDTH * 0.465;
+    selectNewBaseRect.y = SCREEN_HEIGHT * 0.753;
+    selectNewBaseRect.w = textureWidth * SCREEN_HEIGHT * 0.0004;
+    selectNewBaseRect.h = textureHeight * SCREEN_HEIGHT * 0.0004;
+
+    SDL_QueryTexture(textTextures[46], NULL, NULL, &textureWidth, &textureHeight);
+    selectNewTargetRect.x = SCREEN_WIDTH * 0.465;
+    selectNewTargetRect.y = SCREEN_HEIGHT * 0.753;
+    selectNewTargetRect.w = textureWidth * SCREEN_HEIGHT * 0.0004;
+    selectNewTargetRect.h = textureHeight * SCREEN_HEIGHT * 0.0004;
+}
+
+void displayBasicShipWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships){
+    /*
     // Afficher la portee de la fusee
     SDL_Rect rangeCircle = (SDL_Rect){ships[getWindowId()].destRect.x - getCameraScale() * ships[getWindowId()].range, 
                              ships[getWindowId()].destRect.y - getCameraScale() * ships[getWindowId()].range, 
                              2 * getCameraScale() * ships[getWindowId()].range, 
                              2 * getCameraScale() * ships[getWindowId()].range};
     SDL_RenderCopy(renderer, imageTextures[5][4], NULL, &rangeCircle);
+    */
 
     // Afficher fenetre du bas
     SDL_RenderCopy(renderer, imageTextures[5][3], NULL, &bgRect);                                       //Afficher fond
     SDL_RenderCopy(renderer, imageTextures[8][0], NULL, &shipPictureRect);                              //Afficher "photo" du ship
-    SDL_RenderCopy(renderer, imageTextures[2][2], NULL, &leftArrowRect);                                //Afficher flèche gauche
-    SDL_RenderCopyEx(renderer, imageTextures[2][2], NULL, &rightArrowRect, 180, NULL, SDL_FLIP_NONE);   // Afficher flèche droite
+    SDL_RenderCopy(renderer, imageTextures[2][2], NULL, &leftArrowRect);                                //Afficher fleche gauche
+    SDL_RenderCopyEx(renderer, imageTextures[2][2], NULL, &rightArrowRect, 180, NULL, SDL_FLIP_NONE);   // Afficher fleche droite
     SDL_RenderCopy(renderer, imageTextures[2][0], NULL, &crossRect);
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_RenderFillRect(renderer, &line1Rect);                                                           // Ligne horizontale sous nom fusée
+    SDL_RenderFillRect(renderer, &line1Rect);                                                           // Ligne horizontale sous nom fusee
 
-    // Affichage boutons au-dessus fenêtre
+    // Affichage boutons au-dessus fenetre
     SDL_RenderCopy(renderer, imageTextures[2][3], NULL, &button1Rect);
     SDL_RenderCopy(renderer, imageTextures[2][4], NULL, &button1Rect);
 
@@ -118,19 +147,48 @@ void displayBasicShipWindow(SDL_Texture ***imageTextures, Ship *ships){
                                      ships[getWindowId()].destRect.y + ships[getWindowId()].destRect.h / 2};
         plotPath(centerShipCoord, getMouseCoordinates(), 10, 5, WHITE);
     }
+
+    // Afficher le nom de la fusee
+    SDL_RenderCopy(renderer, textTextures[30], NULL, &windowTitleRect);
+
+    // Affiche 'select a new base/target' quand necessaire
+    if (buttonSelected == BASE_BUTTON) {
+        SDL_RenderCopy(renderer, textTextures[45], NULL, &selectNewBaseRect);
+    } else if (buttonSelected == TARGET_BUTTON) {
+        SDL_RenderCopy(renderer, textTextures[46], NULL, &selectNewTargetRect);
+    }
 }
 
 void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, int shipCount, Planet *planets, int planetCount, SDL_Point mouse) {
-    // Changement du bouton selectionne dans la fenettre basique d'information
+    // Changement du bouton selectionne dans la fenetre basique d'information
     if (SDL_PointInRect(&mouse, &button1Rect)) {
-        changeWindowType(SHIP_WINDOW);
+        setWindowType(SHIP_WINDOW);
         buttonSelected = NO_BUTTON;
+        initShipWindow(textTextures, fonts, ships);
     } else if (SDL_PointInRect(&mouse, &button2Rect)) {
         buttonSelected = BASE_BUTTON;
     } else if (SDL_PointInRect(&mouse, &button3Rect)) {
         buttonSelected = ATTACK_BUTTON;
-    } else { // Le bouton selectionne n'a pas ete modifie
+    } 
 
+    // Changement de la fusee observee
+    else if (SDL_PointInRect(&mouse, &rightArrowRect)) {
+        setWindowId((getWindowId() + 1) % shipCount);
+        initBasicShipWindow(textTextures, fonts, ships);
+        setCenterCamera((SDL_Point){ships[getWindowId()].x, ships[getWindowId()].y});
+    }
+    else if (SDL_PointInRect(&mouse, &leftArrowRect)) {
+        if (getWindowId() == 0) {
+            setWindowId(shipCount - 1);
+        } else {
+            setWindowId(getWindowId() - 1);
+        }
+        initBasicShipWindow(textTextures, fonts, ships);
+        setCenterCamera((SDL_Point){ships[getWindowId()].x, ships[getWindowId()].y});
+    }
+
+    // Aucun des boutons de la fenetre n'a ete clique :
+    else {
         // Gestion des actions en fonction du bouton appuye
         switch (buttonSelected) {
             case BASE_BUTTON:  // Equivaut a faire if (BASE_BUTTON || TARGET_BUTTON) {...}
@@ -141,8 +199,8 @@ void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *
             case NO_BUTTON:
                 if (!clickOnShip(textTextures, fonts, ships, shipCount, mouse) && 
                     !clickOnPlanet(textTextures, fonts, planets, planetCount, mouse)) {
-                    if (SDL_PointInRect(&mouse, &basicShipWindowCrossRect) || !clickOnBasicShipWindow(mouse)) {
-                        changeWindowType(NO_WINDOW);
+                    if (SDL_PointInRect(&mouse, &crossRect) || !clickOnBasicShipWindow(mouse)) {
+                        setWindowType(NO_WINDOW);
                     }
                 } else {  // Initialisation de buttonSelected si l'on clic sur une fusee/planet
                     buttonSelected = NO_BUTTON;
@@ -152,8 +210,7 @@ void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *
             default:
                 break;
         }
-
-    }  
+    }
 }
 
 void choosingNewBaseOrTarget(Ship *ships, int shipCount, Planet *planets, int planetCount, SDL_Point mouse) {
@@ -161,7 +218,7 @@ void choosingNewBaseOrTarget(Ship *ships, int shipCount, Planet *planets, int pl
     int shipChosen = whichShipIsClicked(ships, shipCount, mouse);
     Spot *spotDest = ((buttonSelected == BASE_BUTTON) ? &ships[getWindowId()].base : &ships[getWindowId()].target);
 
-    if (planetChosen != -1) {  // La nouvelle cible est une planète
+    if (planetChosen != -1) {  // La nouvelle cible est une planete
         spotDest->type = SPOT_PLANET;
         spotDest->planet = &planets[planetChosen];
     } else if (shipChosen != -1) {  // La nouvelle cible est un ship (par ex. une station spatiale, orbitale ou un vaisseau de ravitaillement)

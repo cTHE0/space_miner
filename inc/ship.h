@@ -6,21 +6,22 @@
 #include "ship.h"
 #include "ore.h"
 
-typedef enum { MOVING_TO_TARGET, MOVING_TO_BASE, WAITING_ON_TARGET, WAITING_ON_BASE, OUT_OF_FUEL, BROKE } ShipState;
+typedef enum { MOVING_TO_TARGET, MOVING_TO_BASE, WAITING_ON_TARGET, WAITING_ON_BASE, OUT_OF_FUEL, BROKE, STOP } ShipState;
 
 typedef enum { TRANSPORTER, EXPLORER, DEFENDER } ShipType;
 
 typedef enum {SPOT_NONE, SPOT_PLANET, SPOT_POINT, SPOT_SHIP} SpotType;  // Vers quel genre se destination se dirige-t-on ?
 
-typedef struct Ship Ship;  // Declaration anticipee (car sinon cercle de dépendance)
+typedef struct Ship Ship;  // Declaration anticipee (car sinon cercle de dependance)
 
 typedef struct {  // Notre destination
     SpotType type;
     union {
-        Planet *planet;    // Si c'est une planète
+        Planet *planet;    // Si c'est une planete
         Ship *ship;        // Si c'est une fusee, par ex une station spatiale
         SDL_Point point;   // Si c'est un point libre sur la map, par ex pour partir en exploration
     };
+    int id_spot;           // Permet de garder en memoire l'identifiant de la planet/fusee
 } Spot;
 
 struct Ship {

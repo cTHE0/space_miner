@@ -3,7 +3,7 @@
 
 #include <SDL2/SDL.h>
 
-// États possibles du jeu
+// etats possibles du jeu
 typedef enum {
     LANDING_PAGE,
     GAME,
@@ -18,11 +18,13 @@ typedef struct {
 } lpFrameControler;
 
 // Affiche le menu principal i.e: landing page
+void initLandingPageRects(void);
+
 void displayMenu(SDL_Texture ***imageTextures, SDL_Texture **textTextures);
 
 void updateFrameIndex(void);
 
-// Gère les événements du menu
+// Gere les evenements du menu
 void handleMenuEvents(GameState *state);
 
 #endif

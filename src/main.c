@@ -36,12 +36,14 @@ int main(void) {
     SDL_Texture ***imageTextures = loadTextures();
     SDL_Texture **textTextures = loadTextTextures(fonts);
 
+    initRects(textTextures);
+
     // Variables pour mesurer les FPS
     Uint32 toShowFPS = SDL_GetTicks();
     Uint32 toLimitFPS;
     int frameCount = 0;
 
-    // Lancement de space_miner
+    // Lancement de Void Reign
     GameState state = LANDING_PAGE;
 
     while (state != QUIT) {

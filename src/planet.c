@@ -14,7 +14,7 @@ void generatePlanets(Planet **planets, int planetCount) {
     *planets = malloc(planetCount * sizeof(Planet));
 
     // Generations des planetes, systeme solaire par systeme solaire
-    int nbEntityGenerated = 0;  // Nombre planètes (étoiles incluses) déjà présentes
+    int nbEntityGenerated = 0;  // Nombre planetes (etoiles incluses) deja presentes
     while (nbEntityGenerated < planetCount) {
         solarSystemCoordinator(&nbEntityGenerated, *planets, planetCount);
     }
@@ -22,7 +22,7 @@ void generatePlanets(Planet **planets, int planetCount) {
 
 void renderPlanets(SDL_Texture ***imageTextures, Planet *planets, int planetCount) {
     for (int i = 0; i < planetCount; i++) {
-        //(screenX, screenY) = coordonnees sur l'ecran physique, du point en haut à gauche du rect de la planete
+        //(screenX, screenY) = coordonnees sur l'ecran physique, du point en haut a gauche du rect de la planete
         float screenX = (planets[i].x - getCameraRect().x - planets[i].radius - SCREEN_WIDTH / 2.f) * getCameraScale() + SCREEN_WIDTH / 2.f;  // (planets[i].x, planets[i].y) = coordonnees sur la map
         float screenY = (planets[i].y - getCameraRect().y - planets[i].radius - SCREEN_HEIGHT / 2.f) * getCameraScale() + SCREEN_HEIGHT / 2.f;  
         float screenRadius = planets[i].radius * getCameraScale();  
@@ -30,7 +30,7 @@ void renderPlanets(SDL_Texture ***imageTextures, Planet *planets, int planetCoun
         SDL_Rect destRect = {screenX, screenY, 2 * screenRadius, 2 * screenRadius};
 
         if (screenX >= -2 * screenRadius && screenX <= SCREEN_WIDTH && 
-            screenY >= -2 * screenRadius && screenY <= SCREEN_HEIGHT + screenRadius) {   // On n'affiche pas les planètes situés en dehors de l'ecran  
+            screenY >= -2 * screenRadius && screenY <= SCREEN_HEIGHT + screenRadius) {   // On n'affiche pas les planetes situes en dehors de l'ecran  
             // Affichage planete 
             int idPicture = (planets[i].planetType == SUN) ? 9 : (generateRandNb8(currentSeed, i) % 8 + 1);
             SDL_RenderCopy(renderer, imageTextures[6][idPicture], NULL, &destRect);
