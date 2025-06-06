@@ -8,12 +8,12 @@ SRC     = src/main.c            src/camera.c          src/event.c           src/
           src/ore.c             src/assets_gestion.c  src/map.c             src/text.c            \
           src/solar_system.c    src/landing_page.c    src/window.c          src/ship_window.c     \
           src/planet_window.c   src/tools.c           src/planet.c          src/ship.c 			  \
-		  src/basic_ship_window.c 
+		  src/basic_ship_window.c  src/place.c
 	      
 INCLUDE = inc/camera.h          inc/planet.h          inc/event.h           inc/renderer.h        \
           inc/ship.h            inc/ore.h             inc/map.h             inc/assets_gestion.h  \
           inc/text.h            inc/config.h          inc/tools.h           inc/landing_page.h    \
-          inc/window.h	        inc/solar_system.h    inc/basic_ship_window.h
+          inc/window.h	        inc/solar_system.h    inc/basic_ship_window.h inc/place.h
 
 # Dépendances automatiques
 DEPS = $(OBJ:$(OBJDIR)/%.o=$(OBJDIR)/%.d)
