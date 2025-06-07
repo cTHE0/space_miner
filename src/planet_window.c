@@ -18,7 +18,16 @@ static SDL_Rect windowRect,
                 planetFirstResourceRect,
                 planetFirstResourceLogoRect,
                 windowLine1Rect,
-                windowTitleRect;
+                windowLine2Rect,
+                windowLine3Rect,
+                windowLine4Rect,
+                windowLine5Rect,
+                windowTitleRect,
+                category1TitleRect,
+                category2TitleRect,
+                category3TitleRect,
+                category4TitleRect,
+                category5TitleRect;
 
 
 void initPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets) {
@@ -62,7 +71,10 @@ void initTextPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts, Planet *
 }
 
 void initRectPlanetWindow(SDL_Texture **textTextures) {
-    //int textureWidth, textureHeight;  // Permet de garder les proportions des textes
+    int textureWidth, textureHeight;  // Permet de garder les proportions des textes
+
+
+    //planetWindowFoundations
 
     windowRect.x = (1 - 0.8) * SCREEN_WIDTH / 2.;
     windowRect.y = (1 - 0.8) * SCREEN_HEIGHT / 2.;
@@ -74,15 +86,83 @@ void initRectPlanetWindow(SDL_Texture **textTextures) {
     windowLine1Rect.w = windowRect.w;
     windowLine1Rect.h = 3;
 
+    windowLine2Rect.x = windowRect.x + windowRect.w * 0.75;  // Grande barre verticale haut
+    windowLine2Rect.y = windowRect.y + windowRect.h * 0.07;
+    windowLine2Rect.w = 3;
+    windowLine2Rect.h = windowRect.h * 0.43;
+
+    windowLine3Rect.x = windowRect.x;  // Grande barre horizontale milieu
+    windowLine3Rect.y = windowRect.y + windowRect.h * 0.5;
+    windowLine3Rect.w = windowRect.w;
+    windowLine3Rect.h = 3;
+
+    windowLine4Rect.x = windowRect.x + windowRect.w * 0.45;  // Grande barre verticale bas gauche
+    windowLine4Rect.y = windowRect.y + windowRect.h * 0.5;
+    windowLine4Rect.w = 3;
+    windowLine4Rect.h = windowRect.h * 0.5;
+
+    windowLine5Rect.x = windowRect.x + windowRect.w * 0.72;  // Grande barre verticale bas droite
+    windowLine5Rect.y = windowRect.y + windowRect.h * 0.5;
+    windowLine5Rect.w = 3;
+    windowLine5Rect.h = windowRect.h * 0.5;
+
     WindowCrossRect.x = windowRect.x + windowRect.w * 0.97;
     WindowCrossRect.y = windowRect.y + windowRect.h * 0.025;
     WindowCrossRect.w = windowRect.w * 0.015;
     WindowCrossRect.h = windowRect.w * 0.015;
+
+
+    // planetWindowGeneralInfo
+       
+    SDL_QueryTexture(textTextures[52], NULL, NULL, &textureWidth, &textureHeight);
+    category1TitleRect.x = windowRect.x + windowRect.w * 0.05;
+    category1TitleRect.y = windowRect.y + windowRect.h * 0.1;
+    category1TitleRect.w = textureWidth * windowRect.w * 0.0005;
+    category1TitleRect.h = textureHeight * windowRect.w * 0.0005;
     
-    planetDisplayedRect.x = SCREEN_WIDTH / 8.;
-    planetDisplayedRect.y = SCREEN_WIDTH / 3.;
-    planetDisplayedRect.w = 300;
-    planetDisplayedRect.h = 300;
+    planetDisplayedRect.x = SCREEN_WIDTH * 0.35;
+    planetDisplayedRect.y = SCREEN_WIDTH * 0.12;
+    planetDisplayedRect.w = SCREEN_WIDTH * 0.15;
+    planetDisplayedRect.h = SCREEN_WIDTH * 0.15;
+
+
+    // planetWindowOverviewBuildings
+       
+    SDL_QueryTexture(textTextures[53], NULL, NULL, &textureWidth, &textureHeight);
+    category2TitleRect.x = windowRect.x + windowRect.w * 0.77;
+    category2TitleRect.y = windowRect.y + windowRect.h * 0.1;
+    category2TitleRect.w = textureWidth * windowRect.w * 0.0005;
+    category2TitleRect.h = textureHeight * windowRect.w * 0.0005;
+
+
+
+    // planetWindowNewBuildings
+       
+    SDL_QueryTexture(textTextures[54], NULL, NULL, &textureWidth, &textureHeight);
+    category3TitleRect.x = windowRect.x + windowRect.w * 0.05;
+    category3TitleRect.y = windowRect.y + windowRect.h * 0.53;
+    category3TitleRect.w = textureWidth * windowRect.w * 0.0005;
+    category3TitleRect.h = textureHeight * windowRect.w * 0.0005;
+
+
+
+    // planetWindowOreAbundance
+       
+    SDL_QueryTexture(textTextures[55], NULL, NULL, &textureWidth, &textureHeight);
+    category4TitleRect.x = windowRect.x + windowRect.w * 0.49;
+    category4TitleRect.y = windowRect.y + windowRect.h * 0.53;
+    category4TitleRect.w = textureWidth * windowRect.w * 0.0005;
+    category4TitleRect.h = textureHeight * windowRect.w * 0.0005;
+
+
+
+    // planetWindowBuildingQueue
+       
+    SDL_QueryTexture(textTextures[56], NULL, NULL, &textureWidth, &textureHeight);
+    category5TitleRect.x = windowRect.x + windowRect.w * 0.79;
+    category5TitleRect.y = windowRect.y + windowRect.h * 0.53;
+    category5TitleRect.w = textureWidth * windowRect.w * 0.0005;
+    category5TitleRect.h = textureHeight * windowRect.w * 0.0005;
 
     planetFirstResourceRect.x = windowRect.x + windowRect.w * 0.85;
     planetFirstResourceRect.y = windowRect.y + windowRect.h * 0.88;
@@ -115,27 +195,42 @@ void planetWindowFoundations(SDL_Texture ***imageTextures, SDL_Texture **textTex
     // Barres pour structurer la page 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderFillRect(renderer, &windowLine1Rect);
+    SDL_RenderFillRect(renderer, &windowLine2Rect);
+    SDL_RenderFillRect(renderer, &windowLine3Rect);
+    SDL_RenderFillRect(renderer, &windowLine4Rect);
+    SDL_RenderFillRect(renderer, &windowLine5Rect);
 
     // Affichage du titre de la page
     SDL_RenderCopy(renderer, textTextures[30], NULL, &windowTitleRect);
 }
 
 void planetWindowGeneralInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planets) {
+    // Affichage du titre "General information"
+    SDL_RenderCopy(renderer, textTextures[52], NULL, &category1TitleRect);
+
     // Planete decrite dans cette fenetre
     int idPicture = (planets[getWindowId()].planetType == SUN) ? 9 : generateRandNb8(currentSeed, getWindowId()) % 8 + 1;
     SDL_RenderCopy(renderer, imageTextures[6][idPicture], NULL, &planetDisplayedRect);  
 }
 
 void planetWindowOverviewBuildings(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
+    // Affichage du titre "General information"
+    SDL_RenderCopy(renderer, textTextures[53], NULL, &category2TitleRect);
 }
 
 void planetWindowNewBuildings(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
+    // Affichage du titre "General information"
+    SDL_RenderCopy(renderer, textTextures[54], NULL, &category3TitleRect);
 }
 
 void planetWindowBuildingQueue(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
+    // Affichage du titre "General information"
+    SDL_RenderCopy(renderer, textTextures[55], NULL, &category4TitleRect);
 }
 
 void planetWindowOreAbundance(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planets) {
+    // Affichage du titre "General information"
+    SDL_RenderCopy(renderer, textTextures[56], NULL, &category5TitleRect);
     // Affichage des stocks de ressources, l'un apres l'autre
     SDL_Rect currentOreRect = planetFirstResourceRect;
     SDL_Rect currentLogoRect = planetFirstResourceLogoRect;

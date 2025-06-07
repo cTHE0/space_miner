@@ -71,7 +71,17 @@ SDL_Texture **loadTextTextures(TTF_Font **fonts) {  // ATTENTION: ne pas oublier
                                             {"STOP", BLACK, fonts[0]},
                                             {"NOT ENOUGH FUEL!", RED, fonts[0]},
                                             {"Select a new base", ORANGE, fonts[0]},
-                                            {"Select a new target", ORANGE, fonts[0]}
+                                            {"Select a new target", ORANGE, fonts[0]},
+                                            {"Main info.", BLACK, fonts[0]},
+                                            {"I  ", BLACK, fonts[0]},
+                                            {"II ", BLACK, fonts[0]},
+                                            {"III", BLACK, fonts[0]},
+                                            {"IV", BLACK, fonts[0]},
+                                            {"General information", BLACK, fonts[0]},
+                                            {"Mineral abundance", BLACK, fonts[0]},
+                                            {"Overview of buildings", BLACK, fonts[0]},
+                                            {"Make new buildings", BLACK, fonts[0]},
+                                            {"Builing queue", BLACK, fonts[0]}
                                            };
 
     for (int i = 0; i < CST_TEXT_NUMBER; i++) {

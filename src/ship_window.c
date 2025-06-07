@@ -44,9 +44,11 @@ static SDL_Rect srcRectShip = {0, 0, 64, 64},
                 nameTargetDisplayedRect,
                 shipFirstCompartmentRect,
                 shipFirstCompartmentLogoRect,
+                shipFirstCompartmentNumberRect,
                 flowInTankRightRect,
                 flowInTankLeftRect,
                 shipRightRect,
+                shipRightRect2,
                 shipLeftRect,
                 oreToTransfert1Rect,
                 oreToTransfert2Rect,
@@ -68,7 +70,9 @@ static SDL_Rect srcRectShip = {0, 0, 64, 64},
                 infoPerTankRect,
                 edgeStopButtonRect,
                 edgeTankChoosenButtonRect,
-                edgeTankChoosenButtonRect2;
+                edgeTankChoosenButtonRect2,
+                mainInfoTanksEdgeRect,
+                mainInfoTanksInfoRect;
 
 void initShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships) {
     initTextShipWindow(textTextures, fonts, ships);
@@ -380,20 +384,41 @@ void initRectShipWindow(SDL_Texture **textTextures) {  // Les rects sont initial
     category5TitleRect.w = textureWidth * windowRect.w * 0.0005;
     category5TitleRect.h = textureHeight * windowRect.w * 0.0005;
 
-    shipFirstCompartmentRect.x = windowRect.x + windowRect.w * 0.85;
-    shipFirstCompartmentRect.y = windowRect.y + windowRect.h * 0.88;
-    shipFirstCompartmentRect.w = windowRect.w * 0.07;
-    shipFirstCompartmentRect.h = windowRect.h * 0.07;
+    shipFirstCompartmentRect.x = windowRect.x + windowRect.w * 0.90;
+    shipFirstCompartmentRect.y = windowRect.y + windowRect.h * 0.84;
+    shipFirstCompartmentRect.w = windowRect.w * 0.05;
+    shipFirstCompartmentRect.h = windowRect.h * 0.04;
 
-    shipFirstCompartmentLogoRect.x = windowRect.x + windowRect.w * 0.93;
-    shipFirstCompartmentLogoRect.y = windowRect.y + windowRect.h * 0.89;
-    shipFirstCompartmentLogoRect.w = windowRect.w * 0.04;
-    shipFirstCompartmentLogoRect.h = windowRect.w * 0.04;
+    shipFirstCompartmentLogoRect.x = windowRect.x + windowRect.w * 0.95;
+    shipFirstCompartmentLogoRect.y = windowRect.y + windowRect.h * 0.835;
+    shipFirstCompartmentLogoRect.w = windowRect.w * 0.025;
+    shipFirstCompartmentLogoRect.h = windowRect.w * 0.025;
+
+    shipFirstCompartmentNumberRect.x = windowRect.x + windowRect.w * 0.915;
+    shipFirstCompartmentNumberRect.y = windowRect.y + windowRect.h * 0.835;
+    shipFirstCompartmentNumberRect.w = windowRect.w * 0.025;
+    shipFirstCompartmentNumberRect.h = windowRect.w * 0.025;
 
     edgeTankChoosenButtonRect2.x = windowRect.x + windowRect.w * 0.59;  
     edgeTankChoosenButtonRect2.y = windowRect.y + windowRect.h * 0.67;
     edgeTankChoosenButtonRect2.w = windowRect.w * 0.25;
     edgeTankChoosenButtonRect2.h = windowRect.h * 0.07;
+
+    shipRightRect2.x = windowRect.x + windowRect.w * 0.77;
+    shipRightRect2.y = windowRect.y + windowRect.h * 0.57;
+    shipRightRect2.w = windowRect.w * 0.3;
+    shipRightRect2.h = windowRect.h * 0.6;
+
+    mainInfoTanksEdgeRect.x = windowRect.x + windowRect.w * 0.865;
+    mainInfoTanksEdgeRect.y = windowRect.y + windowRect.h * 0.65;
+    mainInfoTanksEdgeRect.w = windowRect.w * 0.12;
+    mainInfoTanksEdgeRect.h = windowRect.h * 0.32;
+       
+    SDL_QueryTexture(textTextures[47], NULL, NULL, &textureWidth, &textureHeight);
+    mainInfoTanksInfoRect.x = windowRect.x + windowRect.w * 0.884;
+    mainInfoTanksInfoRect.y = windowRect.y + windowRect.h * 0.61;
+    mainInfoTanksInfoRect.w = textureWidth * windowRect.w * 0.0004;
+    mainInfoTanksInfoRect.h = textureHeight * windowRect.w * 0.0004;
 }
 
 void displayShipWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
@@ -584,10 +609,20 @@ void ShipWindowTankCompo(SDL_Texture ***imageTextures, SDL_Texture **textTexture
     // Affichage du titre "Tank composition"
     SDL_RenderCopy(renderer, textTextures[14], NULL, &category5TitleRect);
 
+    // Affiche la fusee en arriere plan a droite (reservoir par dessus)
+    SDL_RenderCopy(renderer, imageTextures[7][13], &shipConditionSrcRect, &shipRightRect2);
+
+    // Affiche le contour du schema du 'main info'
+    SDL_RenderDrawRect(renderer, &mainInfoTanksEdgeRect);
+
+    // Affiche le 'main info'
+    SDL_RenderCopy(renderer, textTextures[47], NULL, &mainInfoTanksInfoRect);
+
     // Affichage des reservoirs, l'un apres l'autre
     Cargo cargo = ships[getWindowId()].cargo;
     SDL_Rect currentTankRect = shipFirstCompartmentRect;
     SDL_Rect currentLogoRect = shipFirstCompartmentLogoRect;
+    SDL_Rect currentNumberRect = shipFirstCompartmentNumberRect;
     for (int i = 0; i < cargo.compartmentsNumber; i++) {
         // Barre de fond
         SDL_SetRenderDrawColor(renderer, 150, 150, 150, 255);
@@ -622,9 +657,13 @@ void ShipWindowTankCompo(SDL_Texture ***imageTextures, SDL_Texture **textTexture
         currentTankRect.w = shipFirstCompartmentRect.w;
         SDL_DrawEdgeOfRect(renderer, currentTankRect, 3);
 
+        // Afficher le numero du tank
+        SDL_RenderCopy(renderer, textTextures[48 + i], NULL, &currentNumberRect);
+
         // Pour afficher le prochain reservoir
         currentTankRect.y -= 1.05 * shipFirstCompartmentRect.h;
         currentLogoRect.y -= 1.05 * shipFirstCompartmentRect.h;
+        currentNumberRect.y -= 1.05 * shipFirstCompartmentRect.h;
     }
 
     // Affichage fleches pour changer le tank    // Afficher les fleches pour pouvoir modifier le tank en cours de modification

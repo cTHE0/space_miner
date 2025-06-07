@@ -51,7 +51,7 @@ void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
         // Allocation des compartiments
         Cargo *cargo = &(*ships)[i].cargo;
 
-        cargo->compartmentsNumber = 4;
+        cargo->compartmentsNumber = 3;
         cargo->compartmentsList = malloc(cargo->compartmentsNumber * sizeof(Compartment));
         if (cargo->compartmentsList == NULL) {
             printf("Erreur d'allocation memoire pour les compartiments du vaisseau %d!\n", i);
