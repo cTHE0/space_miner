@@ -175,7 +175,7 @@ void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *
     else if (SDL_PointInRect(&mouse, &rightArrowRect)) {
         setWindowId((getWindowId() + 1) % shipCount);
         initBasicShipWindow(textTextures, fonts, ships);
-        setCenterCamera((SDL_Point){ships[getWindowId()].x, ships[getWindowId()].y});
+        setCenterCamera((SDL_Point){ships[getWindowId()].x + ships[getWindowId()].w / 2, ships[getWindowId()].y + ships[getWindowId()].h / 2});
     }
     else if (SDL_PointInRect(&mouse, &leftArrowRect)) {
         if (getWindowId() == 0) {
