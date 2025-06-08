@@ -1,8 +1,8 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#define SCREEN_WIDTH 1280 // (autre 16/9 courant plus petit : 1280 par 720)
-#define SCREEN_HEIGHT 720
+#define SCREEN_WIDTH 1920 // (autre 16/9 courant plus petit : 1280 par 720)
+#define SCREEN_HEIGHT 1080
 #define MAP_SIZE 350000
 #define SOLAR_SYSTEM_SIZE 8000  // Taille d'un cote (c'est un carre)
 
