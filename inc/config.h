@@ -11,6 +11,7 @@
 #define ORE_TYPE_COUNT 5
 #define CST_TEXT_NUMBER 61
 #define FONT_NUMBER 1
+#define BUILD_TYPE_COUNT 12
 
 #define SPRITE_SHEETS_DELAY 100  // En nombre de tick
 #define WAIT_TIME_SHIP 1000  // En millisecondes

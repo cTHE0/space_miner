@@ -150,8 +150,4 @@ void destroyFonts(TTF_Font **fonts) {
     for (int i = 0; i < FONT_NUMBER; i++) {
         TTF_CloseFont(fonts[i]);
     }
-
-    if (TTF_WasInit()) {
-        TTF_Quit();
-    }
 }

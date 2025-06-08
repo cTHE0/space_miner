@@ -7,6 +7,8 @@
 #include "solar_system.h"
 #include "renderer.h"
 #include "tools.h"
+#include "ore.h"
+#include "build.h"
 
 
 void generatePlanets(Planet **planets, int planetCount) {
@@ -17,6 +19,35 @@ void generatePlanets(Planet **planets, int planetCount) {
     int nbEntityGenerated = 0;  // Nombre planetes (etoiles incluses) deja presentes
     while (nbEntityGenerated < planetCount) {
         solarSystemCoordinator(&nbEntityGenerated, *planets, planetCount);
+    }
+
+    for (int i=0; i<2; i++) {
+        for (int j; j<BUILD_TYPE_COUNT; j++) {
+            (planets[i]->builds[j]).level = 0;
+            if (j<ORE_TYPE_COUNT) {
+                (planets[i]->builds[j]).type = ORE_STORE;
+            }
+            else if (j < 2*ORE_TYPE_COUNT) {
+                (planets[i]->builds[j]).type = ORE_MINE;
+            }    
+        }
+        (planets[i]->builds[10]).type = DEFENCE_TOWER;
+        (planets[i]->builds[11]).type = FACTORY;
+
+        (planets[i]->builds[0]).data.tank = (Compartment){FUEL, 0, 0, 0, 0, 200, 500, 20};
+        (planets[i]->builds[1]).data.tank = (Compartment){ORE1, 0, 0, 0, 0, 200, 500, 20};
+        (planets[i]->builds[2]).data.tank = (Compartment){ORE2, 0, 0, 0, 0, 200, 500, 20};
+        (planets[i]->builds[3]).data.tank = (Compartment){ORE3, 0, 0, 0, 0, 200, 500, 20};
+        (planets[i]->builds[4]).data.tank = (Compartment){ORE4, 0, 0, 0, 0, 200, 500, 20};
+
+        (planets[i]->builds[5]).data.production_speed = 0;
+        (planets[i]->builds[6]).data.production_speed = 0;
+        (planets[i]->builds[7]).data.production_speed = 0;
+        (planets[i]->builds[8]).data.production_speed = 0;
+        (planets[i]->builds[9]).data.production_speed = 0;
+
+        (planets[i]->builds[10]).data.damages = 0;
+        (planets[i]->builds[11]).data.production_speed = 0;
     }
 }
 
@@ -98,8 +129,5 @@ void displayBuildAroundPlanet(Planet planet, int nb_build, SDL_Texture **build_t
 
 
 void destroyPlanets(Planet *planets, int planetCount) {
-    for (int i = 0; i < planetCount; i++) {
-        free(planets[i].buildings);
-    }
     free(planets);
 }

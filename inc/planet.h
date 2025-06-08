@@ -3,20 +3,19 @@
 
 #include <SDL2/SDL.h>
 #include "config.h"
-#include "building.h"
+#include "build.h"
 
-typedef enum {SUN, PLANET} planetTypeEnum; 
+typedef enum { SUN, PLANET } planetTypeEnum;
 
 typedef struct {
-    int id;                             // Identifiant de la planet (permet la generation aleatoire
-    planetTypeEnum planetType;          // Type de planete : soleil, planete gazeuse, planete rocheuse, ...
-    float x, y;                         // Position du centre de la planete sur la map
+    int id;                             // Identifiant de la planète
+    planetTypeEnum planetType;          // Type de planète
+    float x, y;                         // Position du centre de la planète sur la map
     float radius;
-    float     maxOre[ORE_TYPE_COUNT];   // Quantite maximale et actuelle de minerais
+    float maxOre[ORE_TYPE_COUNT];       // Quantité maximale et actuelle de minerais
     float currentOre[ORE_TYPE_COUNT];
-    Building *buildings;                // Batiments construits sur la planete
-    int buildingCounter;
-    int abundance[5];                   // Pourcentage de difficulte de minage
+    Build builds[BUILD_TYPE_COUNT];     // Bâtiments construits sur la planète
+    int abundance[ORE_TYPE_COUNT];      // Pourcentage de difficulté de minage
 } Planet;
 
 void generatePlanets(Planet **planets, int planetCount);
