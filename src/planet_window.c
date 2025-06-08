@@ -24,16 +24,14 @@ static SDL_Rect windowRect,
                 windowLine4Rect,
                 windowLine5Rect,
                 windowLine6Rect,
-                square1Rect,
-                square2Rect,
-                square3Rect,
                 windowTitleRect,
                 category1TitleRect,
                 category2TitleRect,
                 category3TitleRect,
                 category4TitleRect,
                 category5TitleRect,
-                nbFirstOreRect;
+                nbFirstOreRect,
+                bat1Rect;
 
 
 void initPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets) {
@@ -112,10 +110,6 @@ void initRectPlanetWindow(SDL_Texture **textTextures) {
     // 1ère barre verticale, 1ère ligne
     windowLine6Rect = (SDL_Rect){windowRect.x + windowRect.w * 0.45, SCREEN_HEIGHT * 25/160, 3, SCREEN_WIDTH * 37/160};
 
-    square1Rect = (SDL_Rect){SCREEN_WIDTH *21/160, SCREEN_HEIGHT * 103/160, SCREEN_WIDTH * 15/160, SCREEN_WIDTH * 19/160};
-    square2Rect = (SDL_Rect){SCREEN_WIDTH *37/160, SCREEN_HEIGHT * 103/160, SCREEN_WIDTH * 15/160, SCREEN_WIDTH * 19/160};
-    square3Rect = (SDL_Rect){SCREEN_WIDTH *53/160, SCREEN_HEIGHT * 103/160, SCREEN_WIDTH * 15/160, SCREEN_WIDTH * 19/160};
-
     WindowCrossRect.x = windowRect.x + windowRect.w * 0.97;
     WindowCrossRect.y = windowRect.y + windowRect.h * 0.025;
     WindowCrossRect.w = windowRect.w * 0.015;
@@ -140,6 +134,8 @@ void initRectPlanetWindow(SDL_Texture **textTextures) {
     category2TitleRect.y = windowRect.y + windowRect.h * 0.1;
     category2TitleRect.w = textureWidth * windowRect.w * 0.0005;
     category2TitleRect.h = textureHeight * windowRect.w * 0.0005;
+
+    bat1Rect = (SDL_Rect){SCREEN_WIDTH * 19/160, SCREEN_HEIGHT * 88/160, SCREEN_WIDTH * 9/160, SCREEN_WIDTH * 8/160};
 
 
 
@@ -203,11 +199,6 @@ void planetWindowFoundations(SDL_Texture ***imageTextures, SDL_Texture **textTex
     SDL_RenderFillRect(renderer, &windowLine5Rect);
     SDL_RenderFillRect(renderer, &windowLine6Rect);
 
-    // Carrée affichage bâtiments
-    SDL_RenderCopy(renderer, imageTextures[5][7], NULL, &square1Rect);
-    SDL_RenderCopy(renderer, imageTextures[5][7], NULL, &square2Rect);
-    SDL_RenderCopy(renderer, imageTextures[5][7], NULL, &square3Rect);
-
     // Affichage du titre de la page
     SDL_RenderCopy(renderer, textTextures[33], NULL, &windowTitleRect);
 }
@@ -224,6 +215,14 @@ void planetWindowGeneralInfo(SDL_Texture ***imageTextures, SDL_Texture **textTex
 void planetWindowOverviewBuildings(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
     // Affichage du titre "General information"
     SDL_RenderCopy(renderer, textTextures[53], NULL, &category2TitleRect);
+    SDL_Rect local_rect = bat1Rect;
+    for (int i = 0; i<4; i++) {
+        for (int j = 0; j<3; j++) {
+            local_rect.x = bat1Rect.x + SCREEN_WIDTH *i*14/160;
+            local_rect.y = bat1Rect.y + SCREEN_HEIGHT *j*18/160;
+            SDL_RenderCopy(renderer, imageTextures[9][1], NULL, &local_rect);
+        }
+    }
 }
 
 void planetWindowNewBuildings(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
