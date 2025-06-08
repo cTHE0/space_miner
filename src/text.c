@@ -11,15 +11,14 @@
 
 void renderNumber(SDL_Renderer *renderer, SDL_Texture **textTextures, int numberDisplayed, SDL_Rect destRect) {
     int NbDigits = countDigits(numberDisplayed);
-    char buffer[32] = {0};
 
+    char buffer[32] = {0};
     sprintf(buffer, "%d", numberDisplayed);
 
     for (int i = 0; i < NbDigits; i++) {
         char d = buffer[i];
         if (d >= '0' && d <= '9') {
-            int digit = d - '0';
-            SDL_RenderCopy(renderer, textTextures[22 + digit], NULL, &destRect);
+            SDL_RenderCopy(renderer, textTextures[22 + (int)(d - '0')], NULL, &destRect);
             destRect.x += destRect.w;  // Avance vers la droite pour le chiffre suivant
         }
     }
@@ -98,7 +97,8 @@ SDL_Texture **loadTextTextures(TTF_Font **fonts) {  // ATTENTION: ne pas oublier
                                             {"Mineral abundance", BLACK, fonts[0]},
                                             {"Overview of buildings", BLACK, fonts[0]},
                                             {"Make new buildings", BLACK, fonts[0]},
-                                            {"Builing queue", BLACK, fonts[0]}
+                                            {"Builing queue", BLACK, fonts[0]},
+                                            {"Bunkers information", BLACK, fonts[0]}
                                            };
 
     for (int i = 0; i < CST_TEXT_NUMBER; i++) {

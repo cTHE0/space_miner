@@ -9,7 +9,7 @@
 #define INIT_PLANET_COUNT 4
 #define INIT_SHIP_COUNT 4
 #define ORE_TYPE_COUNT 4
-#define CST_TEXT_NUMBER 57
+#define CST_TEXT_NUMBER 58
 #define FONT_NUMBER 1
 
 #define SPRITE_SHEETS_DELAY 100  // En nombre de tick

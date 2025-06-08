@@ -109,7 +109,7 @@ void initRectPlanetWindow(SDL_Texture **textTextures) {
     windowLine5Rect.w = 3;
     windowLine5Rect.h = windowRect.h * 0.5;
 
-    //1ère barre verticale, 1ère ligne
+    // 1ère barre verticale, 1ère ligne
     windowLine6Rect = (SDL_Rect){windowRect.x + windowRect.w * 0.45, SCREEN_HEIGHT * 25/160, 3, SCREEN_WIDTH * 37/160};
 
     square1Rect = (SDL_Rect){SCREEN_WIDTH *21/160, SCREEN_HEIGHT * 103/160, SCREEN_WIDTH * 15/160, SCREEN_WIDTH * 19/160};
