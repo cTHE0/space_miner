@@ -689,7 +689,7 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship,
         refreshRectTankchoosen(textTextures);
 
     } 
-    else if (currentTankIndex < 3 && 
+    else if (currentTankIndex < ship->cargo.compartmentsNumber - 1 && 
              (SDL_PointInRect(&mouse, &changeTankManagerRight) || SDL_PointInRect(&mouse, &changeTankManagerRight2))) {
         currentTankIndex ++;
         refreshRectTankchoosen(textTextures);
