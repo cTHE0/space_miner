@@ -23,6 +23,10 @@ static SDL_Rect windowRect,
                 windowLine3Rect,
                 windowLine4Rect,
                 windowLine5Rect,
+                windowLine6Rect,
+                square1Rect,
+                square2Rect,
+                square3Rect,
                 windowTitleRect,
                 category1TitleRect,
                 category2TitleRect,
@@ -88,10 +92,7 @@ void initRectPlanetWindow(SDL_Texture **textTextures) {
     windowLine1Rect.w = windowRect.w;
     windowLine1Rect.h = 3;
 
-    windowLine2Rect.x = windowRect.x + windowRect.w * 0.75;  // Grande barre verticale haut
-    windowLine2Rect.y = windowRect.y + windowRect.h * 0.07;
-    windowLine2Rect.w = 3;
-    windowLine2Rect.h = windowRect.h * 0.43;
+    windowLine2Rect = (SDL_Rect){SCREEN_WIDTH * 108/160, SCREEN_HEIGHT * 25/160, 3, SCREEN_WIDTH * 37/160};
 
     windowLine3Rect.x = windowRect.x;  // Grande barre horizontale milieu
     windowLine3Rect.y = windowRect.y + windowRect.h * 0.5;
@@ -108,6 +109,13 @@ void initRectPlanetWindow(SDL_Texture **textTextures) {
     windowLine5Rect.w = 3;
     windowLine5Rect.h = windowRect.h * 0.5;
 
+    //1ère barre verticale, 1ère ligne
+    windowLine6Rect = (SDL_Rect){windowRect.x + windowRect.w * 0.45, SCREEN_HEIGHT * 25/160, 3, SCREEN_WIDTH * 37/160};
+
+    square1Rect = (SDL_Rect){SCREEN_WIDTH *21/160, SCREEN_HEIGHT * 103/160, SCREEN_WIDTH * 15/160, SCREEN_WIDTH * 19/160};
+    square2Rect = (SDL_Rect){SCREEN_WIDTH *37/160, SCREEN_HEIGHT * 103/160, SCREEN_WIDTH * 15/160, SCREEN_WIDTH * 19/160};
+    square3Rect = (SDL_Rect){SCREEN_WIDTH *53/160, SCREEN_HEIGHT * 103/160, SCREEN_WIDTH * 15/160, SCREEN_WIDTH * 19/160};
+
     WindowCrossRect.x = windowRect.x + windowRect.w * 0.97;
     WindowCrossRect.y = windowRect.y + windowRect.h * 0.025;
     WindowCrossRect.w = windowRect.w * 0.015;
@@ -122,10 +130,7 @@ void initRectPlanetWindow(SDL_Texture **textTextures) {
     category1TitleRect.w = textureWidth * windowRect.w * 0.0005;
     category1TitleRect.h = textureHeight * windowRect.w * 0.0005;
     
-    planetDisplayedRect.x = SCREEN_WIDTH * 0.35;
-    planetDisplayedRect.y = SCREEN_WIDTH * 0.12;
-    planetDisplayedRect.w = SCREEN_WIDTH * 0.15;
-    planetDisplayedRect.h = SCREEN_WIDTH * 0.15;
+    planetDisplayedRect = (SDL_Rect){SCREEN_WIDTH * 52/160, SCREEN_HEIGHT * 40/160, SCREEN_WIDTH * 18/160, SCREEN_WIDTH * 17/160};
 
 
     // planetWindowOverviewBuildings
@@ -169,10 +174,7 @@ void initRectPlanetWindow(SDL_Texture **textTextures) {
     planetFirstResourceRect = (SDL_Rect){SCREEN_WIDTH * 77/160, SCREEN_HEIGHT * 65/160, SCREEN_WIDTH * 24/160, SCREEN_WIDTH * 5/160};
     nbFirstOreRect = (SDL_Rect){SCREEN_WIDTH * 80/160, SCREEN_HEIGHT * 74/160, SCREEN_WIDTH * 1/160, SCREEN_WIDTH * 3/160};
 
-    planetFirstResourceLogoRect.x = windowRect.x + windowRect.w * 0.93;
-    planetFirstResourceLogoRect.y = windowRect.y + windowRect.h * 0.89;
-    planetFirstResourceLogoRect.w = windowRect.w * 0.04;
-    planetFirstResourceLogoRect.h = windowRect.w * 0.04;
+    planetFirstResourceLogoRect = (SDL_Rect){SCREEN_WIDTH * 102/160, SCREEN_HEIGHT * 65/160, SCREEN_WIDTH * 4/160, SCREEN_WIDTH * 4/160};
 }
 
 
@@ -199,6 +201,12 @@ void planetWindowFoundations(SDL_Texture ***imageTextures, SDL_Texture **textTex
     SDL_RenderFillRect(renderer, &windowLine3Rect);
     SDL_RenderFillRect(renderer, &windowLine4Rect);
     SDL_RenderFillRect(renderer, &windowLine5Rect);
+    SDL_RenderFillRect(renderer, &windowLine6Rect);
+
+    // Carrée affichage bâtiments
+    SDL_RenderCopy(renderer, imageTextures[5][7], NULL, &square1Rect);
+    SDL_RenderCopy(renderer, imageTextures[5][7], NULL, &square2Rect);
+    SDL_RenderCopy(renderer, imageTextures[5][7], NULL, &square3Rect);
 
     // Affichage du titre de la page
     SDL_RenderCopy(renderer, textTextures[30], NULL, &windowTitleRect);
