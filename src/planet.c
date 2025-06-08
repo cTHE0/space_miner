@@ -98,8 +98,5 @@ void displayBuildAroundPlanet(Planet planet, int nb_build, SDL_Texture **build_t
 
 
 void destroyPlanets(Planet *planets, int planetCount) {
-    for (int i = 0; i < planetCount; i++) {
-        free(planets[i].buildings);
-    }
     free(planets);
 }

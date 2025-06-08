@@ -3,7 +3,7 @@
 
 #include <SDL2/SDL.h>
 #include "config.h"
-#include "building.h"
+#include "build.h"
 
 typedef enum {SUN, PLANET} planetTypeEnum; 
 
@@ -14,9 +14,8 @@ typedef struct {
     float radius;
     float     maxOre[ORE_TYPE_COUNT];   // Quantite maximale et actuelle de minerais
     float currentOre[ORE_TYPE_COUNT];
-    Building *buildings;                // Batiments construits sur la planete
-    int buildingCounter;
-    int abundance[5];                   // Pourcentage de difficulte de minage
+    Build buils[BUILD_TYPE_COUNT];                // Batiments construits sur la planete
+    int abundance[ORE_TYPE_COUNT];                   // Pourcentage de difficulte de minage
 } Planet;
 
 void generatePlanets(Planet **planets, int planetCount);
