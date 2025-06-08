@@ -7,6 +7,38 @@
 #include "renderer.h"
 #include "assets_gestion.h"
 
+/* ------------------------------------------GESTION NOMBRES-------------------------------------------------------*/
+
+SDL_Texture *number_textures[10]; // textures pour les chiffres de 0 à 9
+
+// Préparer les textures pour les chiffres de 0 à 9
+void load_numbers(TTF_Font *font) {
+    char digit_str[2] = "0";
+    for (int i = 0; i < 10; i++) {
+        digit_str[0] = '0' + i;
+        number_textures[i] = createTextTexture(font, (SDL_Color){16, 16, 16, 255}, digit_str);
+    }
+}
+
+void render_number(SDL_Renderer *renderer, int i, SDL_Rect *dstRect, int nb_chiffres) {
+    if (nb_chiffres <= 0 || nb_chiffres > 20) return; // Limite de sécurité
+
+    char buffer[21]; // Assez grand pour nb_chiffres jusqu'à 20 + '\0'
+    snprintf(buffer, sizeof(buffer), "%0*d", nb_chiffres, i); // Formatage avec zéros à gauche
+
+    SDL_Rect rect = *dstRect;
+
+    for (int j = 0; j < nb_chiffres; j++) {
+        char c = buffer[j];
+        if (c >= '0' && c <= '9') {
+            int digit = c - '0';
+            SDL_RenderCopy(renderer, number_textures[digit], NULL, &rect);
+            rect.x += rect.w; // Avance vers la droite pour le chiffre suivant
+        }
+    }
+}
+
+/* ------------------------------------------GESTION NOMBRES-------------------------------------------------------*/
 
 void loadFonts(TTF_Font **fonts) {  // ATTENTION: ne pas oublier de modifier FONT_NUMBER
     fonts[0] = loadFont("assets/fonts/f1.ttf", 56);  // Taille optimale pour cette police : 56
@@ -88,6 +120,9 @@ SDL_Texture **loadTextTextures(TTF_Font **fonts) {  // ATTENTION: ne pas oublier
         textTextures[i] = createTextTexture(cstTexts[i].font, cstTexts[i].color, cstTexts[i].text);
     }
 
+    //On charge textures des 10 chiffres
+    load_numbers(fonts[0]);
+
     return textTextures;
 }
 
@@ -129,5 +164,15 @@ void destroyTextTextures(SDL_Texture **textTextures) {
 void destroyFonts(TTF_Font **fonts) {
     for (int i = 0; i < FONT_NUMBER; i++) {
         TTF_CloseFont(fonts[i]);
+    }
+    for (int i = 0; i < 10; i++) {
+        if (number_textures[i] != NULL) {
+            SDL_DestroyTexture(number_textures[i]);
+            number_textures[i] = NULL;
+        }
+    }
+
+    if (TTF_WasInit()) {
+        TTF_Quit();
     }
 }

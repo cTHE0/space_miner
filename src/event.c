@@ -9,6 +9,7 @@
 #include "window.h"
 #include "landing_page.h"
 #include "basic_ship_window.h"
+#include "place.h"
 
 static SDL_Point mouse;
 
@@ -95,6 +96,25 @@ void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, GameState *state
                         translateCamera(0, STEP_TRANSLATION);
                         click = 0;
                         break;
+                    
+                    /*---------Partie pr développement------------*/
+                    case SDLK_1:
+                        change_sign();
+                        break;
+                    case SDLK_x:
+                        modif_emp(1, 0, 0, 0);
+                        break;
+                    case SDLK_y:
+                        modif_emp(0, 1, 0, 0);
+                        break;
+                    case SDLK_w:
+                        modif_emp(0, 0, 1, 0);
+                        break;
+                    case SDLK_h:
+                        modif_emp(0, 0, 0, 1);
+                        break;
+                    /*---------Partie pr développement------------*/
+                    
                     default:
                         break;
                 }

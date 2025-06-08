@@ -9,6 +9,7 @@
 #include "text.h"
 #include "assets_gestion.h"
 #include "window.h"
+#include "place.h"
 
 
 // Declaration des rectangles et variables propres a la fenetre d'informations des fusees
@@ -27,7 +28,8 @@ static SDL_Rect windowRect,
                 category2TitleRect,
                 category3TitleRect,
                 category4TitleRect,
-                category5TitleRect;
+                category5TitleRect,
+                nbFirstOreRect;
 
 
 void initPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets) {
@@ -164,10 +166,8 @@ void initRectPlanetWindow(SDL_Texture **textTextures) {
     category5TitleRect.w = textureWidth * windowRect.w * 0.0005;
     category5TitleRect.h = textureHeight * windowRect.w * 0.0005;
 
-    planetFirstResourceRect.x = windowRect.x + windowRect.w * 0.85;
-    planetFirstResourceRect.y = windowRect.y + windowRect.h * 0.88;
-    planetFirstResourceRect.w = windowRect.w * 0.07;
-    planetFirstResourceRect.h = windowRect.h * 0.07;
+    planetFirstResourceRect = (SDL_Rect){SCREEN_WIDTH * 77/160, SCREEN_HEIGHT * 65/160, SCREEN_WIDTH * 24/160, SCREEN_WIDTH * 5/160};
+    nbFirstOreRect = (SDL_Rect){SCREEN_WIDTH * 80/160, SCREEN_HEIGHT * 74/160, SCREEN_WIDTH * 1/160, SCREEN_WIDTH * 3/160};
 
     planetFirstResourceLogoRect.x = windowRect.x + windowRect.w * 0.93;
     planetFirstResourceLogoRect.y = windowRect.y + windowRect.h * 0.89;
@@ -234,6 +234,7 @@ void planetWindowOreAbundance(SDL_Texture ***imageTextures, SDL_Texture **textTe
     // Affichage des stocks de ressources, l'un apres l'autre
     SDL_Rect currentOreRect = planetFirstResourceRect;
     SDL_Rect currentLogoRect = planetFirstResourceLogoRect;
+    SDL_Rect currentNbOreRect = nbFirstOreRect;
 
     for (int i = 0; i < ORE_TYPE_COUNT; i++) {
         // Barre de fond
@@ -268,6 +269,10 @@ void planetWindowOreAbundance(SDL_Texture ***imageTextures, SDL_Texture **textTe
         // Pour afficher le prochain reservoir
         currentOreRect.y -= 1.05 * planetFirstResourceRect.h;
         currentLogoRect.y -= 1.05 * planetFirstResourceRect.h;
+        currentNbOreRect.y -= 1.05 * planetFirstResourceRect.h;
+
+        //Afficher nombre current ore
+        render_number(renderer, (int)planets[getWindowId()].currentOre[i], &currentNbOreRect, 8);
     }
 }
 
