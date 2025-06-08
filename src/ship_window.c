@@ -395,7 +395,7 @@ void initRectShipWindow(SDL_Texture **textTextures) {  // Les rects sont initial
     shipFirstCompartmentLogoRect.h = windowRect.w * 0.025;
 
     shipFirstCompartmentNumberRect.x = windowRect.x + windowRect.w * 0.915;
-    shipFirstCompartmentNumberRect.y = windowRect.y + windowRect.h * 0.835;
+    shipFirstCompartmentNumberRect.y = windowRect.y + windowRect.h * 0.837;
     shipFirstCompartmentNumberRect.w = windowRect.w * 0.025;
     shipFirstCompartmentNumberRect.h = windowRect.w * 0.025;
 
@@ -483,8 +483,8 @@ void ShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextur
     if (ships[getWindowId()].base.type == SPOT_PLANET && ships[getWindowId()].target.type == SPOT_PLANET) {
         if (ships[getWindowId()].state == MOVING_TO_TARGET || ships[getWindowId()].state == WAITING_ON_BASE) {  
             // Fraction du chemin parcourue
-            f = distanceShipPlanet(ships[getWindowId()], *ships[getWindowId()].base.planet)
-                / (distancePlanetPlanet(*ships[getWindowId()].target.planet, *ships[getWindowId()].base.planet) - ships[getWindowId()].base.planet->radius - ships[getWindowId()].target.planet->radius);
+            f = distanceShipPlanet(&ships[getWindowId()], ships[getWindowId()].base.planet)
+                / (distancePlanetPlanet(ships[getWindowId()].target.planet, ships[getWindowId()].base.planet) - ships[getWindowId()].base.planet->radius - ships[getWindowId()].target.planet->radius);
             f = (f > 1) ? 1 : f;
 
             // Tracer la fleche
@@ -504,8 +504,8 @@ void ShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextur
 
         } else if (ships[getWindowId()].state == MOVING_TO_BASE || ships[getWindowId()].state == WAITING_ON_TARGET) { 
             // Fraction du chemin parcourue
-            f = distanceShipPlanet(ships[getWindowId()], *ships[getWindowId()].base.planet)
-                / (distancePlanetPlanet(*ships[getWindowId()].target.planet, *ships[getWindowId()].base.planet) - ships[getWindowId()].base.planet->radius - ships[getWindowId()].target.planet->radius);
+            f = distanceShipPlanet(&ships[getWindowId()], ships[getWindowId()].base.planet)
+                / (distancePlanetPlanet(ships[getWindowId()].target.planet, ships[getWindowId()].base.planet) - ships[getWindowId()].base.planet->radius - ships[getWindowId()].target.planet->radius);
             f = (f > 1) ? 1 : f;
 
             // Tracer la fleche

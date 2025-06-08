@@ -16,7 +16,7 @@ typedef struct {
     float currentOre[ORE_TYPE_COUNT];
     Building *buildings;                // Batiments construits sur la planete
     int buildingCounter;
-    float regenerationTime;             // Duree pour que la planete regenere ses ressources lorsque que currentOre = 0
+    int abundance[5];                   // Pourcentage de difficulte de minage
 } Planet;
 
 void generatePlanets(Planet **planets, int planetCount);

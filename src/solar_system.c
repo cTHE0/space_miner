@@ -31,8 +31,10 @@ void generateSolarSystem(Planet *planets, int x, int y, int nbEntityGenerated, i
 
     newSun->planetType = SUN;
     newSun->id = nbEntityGenerated;
-    newSun->regenerationTime = generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % 10000;  // En millisecondes
-    randIndex ++;
+    for (int i = 0; i < 5; i++) {
+        newSun->abundance[i] = generateRandNb8(currentSeed, nbEntityGenerated + randIndex) % 100;
+        randIndex ++;
+    }
     for (int i = 0; i < ORE_TYPE_COUNT; i++) {
         newSun->maxOre[i] = 1 + generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % 10000;
         randIndex ++;
@@ -53,8 +55,11 @@ void generateSolarSystem(Planet *planets, int x, int y, int nbEntityGenerated, i
         planets[j].planetType = PLANET;
         planets[j].buildingCounter = 0;
         planets[j].buildings = malloc(planets[j].buildingCounter * sizeof(Building));
-        planets[j].regenerationTime = generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % 10000;  // En millisecondes
-        randIndex ++;
+
+        for (int i = 0; i < 5; i++) {
+            planets[j].abundance[i] = generateRandNb8(currentSeed, nbEntityGenerated + randIndex) % 100;
+            randIndex ++;
+        }
         
         for (int i = 0; i < ORE_TYPE_COUNT; i++) {
             planets[j].maxOre[i] = 1 + generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % 10000;
