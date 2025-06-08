@@ -42,9 +42,9 @@ void initTextBasicShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship 
     newText.color = BLACK;
     newText.font = fonts[0];
 
-    updateTextTexture(&textTextures[30], newText);
+    updateTextTexture(&textTextures[33], newText);
 
-    SDL_QueryTexture(textTextures[30], NULL, NULL, &textureWidth, &textureHeight);
+    SDL_QueryTexture(textTextures[33], NULL, NULL, &textureWidth, &textureHeight);
     windowTitleRect.x = SCREEN_WIDTH * 0.28;
     windowTitleRect.y = SCREEN_HEIGHT * 0.753;
     windowTitleRect.w = textureWidth * SCREEN_HEIGHT * 0.0004;
@@ -149,7 +149,7 @@ void displayBasicShipWindow(SDL_Texture ***imageTextures, SDL_Texture **textText
     }
 
     // Afficher le nom de la fusee
-    SDL_RenderCopy(renderer, textTextures[30], NULL, &windowTitleRect);
+    SDL_RenderCopy(renderer, textTextures[33], NULL, &windowTitleRect);
 
     // Affiche 'select a new base/target' quand necessaire
     if (buttonSelected == BASE_BUTTON) {

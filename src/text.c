@@ -7,38 +7,24 @@
 #include "renderer.h"
 #include "assets_gestion.h"
 
-/* ------------------------------------------GESTION NOMBRES-------------------------------------------------------*/
 
-SDL_Texture *number_textures[10]; // textures pour les chiffres de 0 à 9
-
-// Préparer les textures pour les chiffres de 0 à 9
-void load_numbers(TTF_Font *font) {
-    char digit_str[2] = "0";
-    for (int i = 0; i < 10; i++) {
-        digit_str[0] = '0' + i;
-        number_textures[i] = createTextTexture(font, (SDL_Color){16, 16, 16, 255}, digit_str);
+void renderNumber(SDL_Renderer *renderer, SDL_Texture **textTextures, int numberDisplayed, SDL_Rect destRect, int nb_chiffres) {
+    if (nb_chiffres <= 0 || nb_chiffres > 31) {  // Limite de sécurité
+        return;
     }
-}
 
-void render_number(SDL_Renderer *renderer, int i, SDL_Rect *dstRect, int nb_chiffres) {
-    if (nb_chiffres <= 0 || nb_chiffres > 20) return; // Limite de sécurité
+    char buffer[32];  // Assez grand pour nb_chiffres jusqu'à 20 + '\0'
+    snprintf(buffer, sizeof(buffer), "%0*d", nb_chiffres, numberDisplayed);  // Formatage avec zéros à gauche
 
-    char buffer[21]; // Assez grand pour nb_chiffres jusqu'à 20 + '\0'
-    snprintf(buffer, sizeof(buffer), "%0*d", nb_chiffres, i); // Formatage avec zéros à gauche
-
-    SDL_Rect rect = *dstRect;
-
-    for (int j = 0; j < nb_chiffres; j++) {
-        char c = buffer[j];
+    for (int i = 0; i < nb_chiffres; i++) {
+        char c = buffer[i];
         if (c >= '0' && c <= '9') {
             int digit = c - '0';
-            SDL_RenderCopy(renderer, number_textures[digit], NULL, &rect);
-            rect.x += rect.w; // Avance vers la droite pour le chiffre suivant
+            SDL_RenderCopy(renderer, textTextures[22 + digit], NULL, &destRect);
+            destRect.x += destRect.w;  // Avance vers la droite pour le chiffre suivant
         }
     }
 }
-
-/* ------------------------------------------GESTION NOMBRES-------------------------------------------------------*/
 
 void loadFonts(TTF_Font **fonts) {  // ATTENTION: ne pas oublier de modifier FONT_NUMBER
     fonts[0] = loadFont("assets/fonts/f1.ttf", 56);  // Taille optimale pour cette police : 56
@@ -79,17 +65,17 @@ SDL_Texture **loadTextTextures(TTF_Font **fonts) {  // ATTENTION: ne pas oublier
                                             {"Tank 5", BLACK, fonts[0]},
                                             {"Tank 6", BLACK, fonts[0]},
                                             {"Tank 7", BLACK, fonts[0]},
-                                            {"dynamicNumber", BLACK, fonts[0]},  // Idem
-                                            {"dynamicNumber", BLACK, fonts[0]},  // Idem
-                                            {"dynamicNumber", BLACK, fonts[0]},  // Idem
-                                            {"dynamicNumber", BLACK, fonts[0]},  // Idem
-                                            {"dynamicNumber", BLACK, fonts[0]},  // Idem
-                                            {"dynamicNumber", BLACK, fonts[0]},  // Idem
-                                            {"dynamicNumber", BLACK, fonts[0]},  // Idem
-                                            {"dynamicNumber", BLACK, fonts[0]},  // Idem
+                                            {"0", BLACK, fonts[0]},
+                                            {"1", BLACK, fonts[0]},
+                                            {"2", BLACK, fonts[0]},
+                                            {"3", BLACK, fonts[0]},
+                                            {"4", BLACK, fonts[0]},
+                                            {"5", BLACK, fonts[0]},
+                                            {"6", BLACK, fonts[0]},
+                                            {"7", BLACK, fonts[0]},
+                                            {"8", BLACK, fonts[0]},
+                                            {"9", BLACK, fonts[0]},
                                             {"dynamiqueString", BLACK, fonts[0]},  // Zone de stockage pour la texture d'un string
-                                            {"dynamiqueString", BLACK, fonts[0]},  // Idem
-                                            {"dynamiqueString", BLACK, fonts[0]},  // Idem
                                             {"dynamiqueString", BLACK, fonts[0]},  // Idem
                                             {"dynamiqueString", BLACK, fonts[0]},  // Idem
                                             {"dynamiqueString", BLACK, fonts[0]},  // Idem
@@ -119,9 +105,6 @@ SDL_Texture **loadTextTextures(TTF_Font **fonts) {  // ATTENTION: ne pas oublier
     for (int i = 0; i < CST_TEXT_NUMBER; i++) {
         textTextures[i] = createTextTexture(cstTexts[i].font, cstTexts[i].color, cstTexts[i].text);
     }
-
-    //On charge textures des 10 chiffres
-    load_numbers(fonts[0]);
 
     return textTextures;
 }
@@ -164,12 +147,6 @@ void destroyTextTextures(SDL_Texture **textTextures) {
 void destroyFonts(TTF_Font **fonts) {
     for (int i = 0; i < FONT_NUMBER; i++) {
         TTF_CloseFont(fonts[i]);
-    }
-    for (int i = 0; i < 10; i++) {
-        if (number_textures[i] != NULL) {
-            SDL_DestroyTexture(number_textures[i]);
-            number_textures[i] = NULL;
-        }
     }
 
     if (TTF_WasInit()) {

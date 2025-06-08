@@ -90,10 +90,10 @@ void initTextShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship
         newText.font = fonts[0];
     
         // Creation de la texture de la base de la fusee
-        updateTextTexture(&textTextures[30], newText);
+        updateTextTexture(&textTextures[33], newText);
 
         // Atualisation de la taille du rect affichant ce nom
-        SDL_QueryTexture(textTextures[30], NULL, NULL, &textureWidth, &textureHeight);
+        SDL_QueryTexture(textTextures[33], NULL, NULL, &textureWidth, &textureHeight);
         nameBaseDisplayedRect.x = windowRect.x + windowRect.w * 0.03;
         nameBaseDisplayedRect.y = windowRect.y + windowRect.h * 0.4;
         nameBaseDisplayedRect.w = textureWidth * windowRect.w * 0.0004;
@@ -108,10 +108,10 @@ void initTextShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship
         newText.font = fonts[0];
 
         // Creation de la texture de la cible de la fusee
-        updateTextTexture(&textTextures[31], newText);
+        updateTextTexture(&textTextures[34], newText);
 
         // Atualisation de la taille du rect affichant ce nom
-        SDL_QueryTexture(textTextures[31], NULL, NULL, &textureWidth, &textureHeight);
+        SDL_QueryTexture(textTextures[34], NULL, NULL, &textureWidth, &textureHeight);
         nameTargetDisplayedRect.x = windowRect.x + windowRect.w * 0.43;
         nameTargetDisplayedRect.y = windowRect.y + windowRect.h * 0.4;
         nameTargetDisplayedRect.w = textureWidth * windowRect.w * 0.0004;
@@ -464,8 +464,8 @@ void ShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextur
     }
 
     // Affichage du nom des deux planetes
-    SDL_RenderCopy(renderer, textTextures[30], NULL, &nameBaseDisplayedRect);
-    SDL_RenderCopy(renderer, textTextures[31], NULL, &nameTargetDisplayedRect);
+    SDL_RenderCopy(renderer, textTextures[33], NULL, &nameBaseDisplayedRect);
+    SDL_RenderCopy(renderer, textTextures[34], NULL, &nameTargetDisplayedRect);
 
     // Affichage bouton stop 
     SDL_RenderCopy(renderer, textTextures[43], NULL, &stopBoutonRect);

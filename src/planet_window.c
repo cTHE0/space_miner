@@ -63,9 +63,9 @@ void initTextPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts, Planet *
     newText.color = BLACK;
     newText.font = fonts[0];
 
-    updateTextTexture(&textTextures[30], newText);
+    updateTextTexture(&textTextures[33], newText);
 
-    SDL_QueryTexture(textTextures[30], NULL, NULL, &textureWidth, &textureHeight);
+    SDL_QueryTexture(textTextures[33], NULL, NULL, &textureWidth, &textureHeight);
     windowTitleRect.x = windowRect.x + windowRect.w * 0.01;  
     windowTitleRect.y = windowRect.y + windowRect.h * 0.007;
     windowTitleRect.w = textureWidth * windowRect.w * 0.0005;
@@ -201,7 +201,7 @@ void planetWindowFoundations(SDL_Texture ***imageTextures, SDL_Texture **textTex
     SDL_RenderFillRect(renderer, &windowLine5Rect);
 
     // Affichage du titre de la page
-    SDL_RenderCopy(renderer, textTextures[30], NULL, &windowTitleRect);
+    SDL_RenderCopy(renderer, textTextures[33], NULL, &windowTitleRect);
 }
 
 void planetWindowGeneralInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planets) {
@@ -271,8 +271,8 @@ void planetWindowOreAbundance(SDL_Texture ***imageTextures, SDL_Texture **textTe
         currentLogoRect.y -= 1.05 * planetFirstResourceRect.h;
         currentNbOreRect.y -= 1.05 * planetFirstResourceRect.h;
 
-        //Afficher nombre current ore
-        render_number(renderer, (int)planets[getWindowId()].currentOre[i], &currentNbOreRect, 8);
+        // Afficher nombre current ore
+        renderNumber(renderer, textTextures, (int)planets[getWindowId()].currentOre[i], currentNbOreRect, 8);
     }
 }
 
