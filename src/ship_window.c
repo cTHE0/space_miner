@@ -63,6 +63,7 @@ static SDL_Rect srcRectShip = {0, 0, 64, 64},
                 orePossibility2,
                 orePossibility3,
                 orePossibility4,
+                orePossibility5,
                 maxLifeShipRect,
                 currentLifeShipRect,
                 stopBoutonRect,
@@ -336,6 +337,11 @@ void initRectShipWindow(SDL_Texture **textTextures) {  // Les rects sont initial
     orePossibility4.w = windowRect.w * 0.05;
     orePossibility4.h = windowRect.w * 0.05;
 
+    orePossibility5.x = windowRect.x + windowRect.w * 0.4;
+    orePossibility5.y = windowRect.y + windowRect.h * 0.9;
+    orePossibility5.w = windowRect.w * 0.05;
+    orePossibility5.h = windowRect.w * 0.05;
+
     edgeTankChoosenButtonRect.x = windowRect.x + windowRect.w * 0.16;  
     edgeTankChoosenButtonRect.y = windowRect.y + windowRect.h * 0.58;
     edgeTankChoosenButtonRect.w = windowRect.w * 0.25;
@@ -578,7 +584,7 @@ void ShipWindowTankManager(SDL_Texture ***imageTextures, SDL_Texture **textTextu
         SDL_RenderCopy(renderer, imageTextures[4][2], NULL, &orePossibility2);
         SDL_RenderCopy(renderer, imageTextures[4][3], NULL, &orePossibility3);
         SDL_RenderCopy(renderer, imageTextures[4][4], NULL, &orePossibility4);
-
+        SDL_RenderCopy(renderer, imageTextures[4][5], NULL, &orePossibility5);
     }
 }
 
@@ -824,6 +830,25 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship,
                 break;
             case 3:
                 ship->cargo.compartmentsList[currentTankIndex].flowTarget_out = 4;
+                break;
+            default:
+                break;
+
+        }
+    }   
+    else if (currentOreParameterIndex != -1 && SDL_PointInRect(&mouse, &orePossibility5)) {
+        switch (currentOreParameterIndex) {
+            case 0:
+                ship->cargo.compartmentsList[currentTankIndex].flowBase_in = 5;
+                break;
+            case 1:
+                ship->cargo.compartmentsList[currentTankIndex].flowBase_out = 5;
+                break;
+            case 2:
+                ship->cargo.compartmentsList[currentTankIndex].flowTarget_in = 5;
+                break;
+            case 3:
+                ship->cargo.compartmentsList[currentTankIndex].flowTarget_out = 5;
                 break;
             default:
                 break;
