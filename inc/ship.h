@@ -51,7 +51,6 @@ void updateShips(Ship *ships, int shipCount);
     void updateShipMove(Ship *ship, Uint32 currentTime);
     void updateShipTanks(Ship *ship, Uint32 currentTime);
         void fuelConsumption(Ship *ship);
-        int fuelFilling(Ship *ship);
         void OreFillingOrEmptying(Ship *ships);
     
 void renderShips(SDL_Texture ***textureShip, Ship *ships, int shipCount);
