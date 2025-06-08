@@ -4,22 +4,21 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include "config.h"
+#include "tools.h"
 #include "renderer.h"
 #include "assets_gestion.h"
 
 
-void renderNumber(SDL_Renderer *renderer, SDL_Texture **textTextures, int numberDisplayed, SDL_Rect destRect, int nb_chiffres) {
-    if (nb_chiffres <= 0 || nb_chiffres > 31) {  // Limite de sécurité
-        return;
-    }
+void renderNumber(SDL_Renderer *renderer, SDL_Texture **textTextures, int numberDisplayed, SDL_Rect destRect) {
+    int NbDigits = countDigits(numberDisplayed);
+    char buffer[32] = {0};
 
-    char buffer[32];  // Assez grand pour nb_chiffres jusqu'à 20 + '\0'
-    snprintf(buffer, sizeof(buffer), "%0*d", nb_chiffres, numberDisplayed);  // Formatage avec zéros à gauche
+    sprintf(buffer, "%d", numberDisplayed);
 
-    for (int i = 0; i < nb_chiffres; i++) {
-        char c = buffer[i];
-        if (c >= '0' && c <= '9') {
-            int digit = c - '0';
+    for (int i = 0; i < NbDigits; i++) {
+        char d = buffer[i];
+        if (d >= '0' && d <= '9') {
+            int digit = d - '0';
             SDL_RenderCopy(renderer, textTextures[22 + digit], NULL, &destRect);
             destRect.x += destRect.w;  // Avance vers la droite pour le chiffre suivant
         }

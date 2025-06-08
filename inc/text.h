@@ -10,7 +10,7 @@ typedef struct {
 	TTF_Font *font;	  // Police de caractere du texte
 } TextToLoad;
 
-void renderNumber(SDL_Renderer *renderer, SDL_Texture **textTextures, int i, SDL_Rect dstRect, int nb_chiffres);
+void renderNumber(SDL_Renderer *renderer, SDL_Texture **textTextures, int i, SDL_Rect dstRect);
 
 void loadFonts(TTF_Font **fonts);
 	TTF_Font* loadFont(const char* path, int size);

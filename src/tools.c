@@ -236,3 +236,45 @@ void SDL_DrawEdgeOfRect(SDL_Renderer *renderer, SDL_Rect rect, int lineWidth) {
         rect.h -= 2;
     }
 }
+
+int countDigits(int n) {
+    if (n == 0) {
+        return 1;  // 0 a 1 chiffre
+    }
+
+    if (n < 0) {
+        n = -n;  // Gerer les nombres negatifs
+    }
+
+    int count = 0;
+    while (n != 0) {
+        n /= 10;
+        count++;
+    }
+
+    return count;
+}
+
+int power(int number, int power) {
+    if (power == 0) {
+        return 1;
+    }
+
+    int res = number;
+
+    for (int i = 1; i < power; i++) {
+        res *= number;
+    }
+
+    return res;
+}
+
+int extractOneDigit(int number, int position) {  // 'position' demarre a 0, de droite a gauche
+    // Enlever les chiffre a droite en trop
+    number /= power(10, position);
+
+    // Enlever les chiffre a gauche en trop
+    number %= 10;
+
+    return number;
+}

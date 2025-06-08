@@ -24,4 +24,8 @@ void plotPath(SDL_Point origin, SDL_Point destination, int dashLength, int gapLe
 
 void SDL_DrawEdgeOfRect(SDL_Renderer *renderer, SDL_Rect rect, int lineWidth);
 
+int power(int number, int power);
+int extractOneDigit(int number, int position);
+int countDigits(int n);
+
 #endif

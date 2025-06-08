@@ -280,7 +280,7 @@ void planetWindowOreAbundance(SDL_Texture ***imageTextures, SDL_Texture **textTe
         currentNbOreRect.y -= 1.05 * planetFirstResourceRect.h;
 
         // Afficher nombre current ore
-        renderNumber(renderer, textTextures, (int)planets[getWindowId()].currentOre[i], currentNbOreRect, 8);
+        renderNumber(renderer, textTextures, (int)planets[getWindowId()].currentOre[i], currentNbOreRect);
     }
 }
 
