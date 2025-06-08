@@ -22,5 +22,6 @@ typedef struct {
 void generatePlanets(Planet **planets, int planetCount);
 void renderPlanets(SDL_Texture ***imageTextures, Planet *planets, int planetCount);
 void destroyPlanets(Planet *planets, int planetCount);
+void displayBuildAroundPlanet(Planet planet, int nb_build, SDL_Texture **build_textures_list, SDL_Point texture_dimensions);
 
 #endif
