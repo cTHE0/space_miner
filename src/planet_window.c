@@ -18,6 +18,8 @@ static SDL_Rect windowRect,
                 planetDisplayedRect,
                 planetFirstResourceRect,
                 planetFirstResourceLogoRect,
+                planetFirstResourceRect2,
+                planetFirstResourceLogoRect2,
                 windowLine1Rect,
                 windowLine2Rect,
                 windowLine3Rect,
@@ -30,8 +32,16 @@ static SDL_Rect windowRect,
                 category3TitleRect,
                 category4TitleRect,
                 category5TitleRect,
-                nbFirstOreRect,
-                bat1Rect;
+                category6TitleRect,
+                quantityFirstOreRect,
+                firstBuildingRect,
+                narrowAxesXAbundanceRect,
+                narrowAxesYAbundanceRect,
+                axesXAbundanceRect,
+                axesYAbundanceRect,
+                nameAxesXAbundanceRect,
+                nameAxesYAbundanceRect,
+                limitAxesXAbundanceRect;
 
 
 void initPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets) {
@@ -78,12 +88,9 @@ void initRectPlanetWindow(SDL_Texture **textTextures) {
     int textureWidth, textureHeight;  // Permet de garder les proportions des textes
 
 
-    //planetWindowFoundations
+    // planetWindowFoundations
 
-    windowRect.x = (1 - 0.8) * SCREEN_WIDTH / 2.;
-    windowRect.y = (1 - 0.8) * SCREEN_HEIGHT / 2.;
-    windowRect.w = SCREEN_WIDTH * 0.8;
-    windowRect.h = SCREEN_HEIGHT * 0.8;
+    windowRect = (SDL_Rect){(1 - 0.8) * SCREEN_WIDTH / 2., (1 - 0.8) * SCREEN_HEIGHT / 2., SCREEN_WIDTH * 0.8, SCREEN_HEIGHT * 0.8};
 
     windowLine1Rect.x = windowRect.x;  // Grande barre horizontale haut
     windowLine1Rect.y = windowRect.y + windowRect.h * 0.07;
@@ -107,8 +114,7 @@ void initRectPlanetWindow(SDL_Texture **textTextures) {
     windowLine5Rect.w = 3;
     windowLine5Rect.h = windowRect.h * 0.5;
 
-    // 1ère barre verticale, 1ère ligne
-    windowLine6Rect = (SDL_Rect){windowRect.x + windowRect.w * 0.45, SCREEN_HEIGHT * 25/160, 3, SCREEN_WIDTH * 37/160};
+    windowLine6Rect = (SDL_Rect){windowRect.x + windowRect.w * 0.45, SCREEN_HEIGHT * 25/160, 3, SCREEN_WIDTH * 37/160};  // 1ère barre verticale, 1ère ligne
 
     WindowCrossRect.x = windowRect.x + windowRect.w * 0.97;
     WindowCrossRect.y = windowRect.y + windowRect.h * 0.025;
@@ -127,7 +133,21 @@ void initRectPlanetWindow(SDL_Texture **textTextures) {
     planetDisplayedRect = (SDL_Rect){SCREEN_WIDTH * 52/160, SCREEN_HEIGHT * 40/160, SCREEN_WIDTH * 18/160, SCREEN_WIDTH * 17/160};
 
 
-    // planetWindowOverviewBuildings
+    // planetWindowContainerInfo
+       
+    SDL_QueryTexture(textTextures[58], NULL, NULL, &textureWidth, &textureHeight);
+    category6TitleRect.x = windowRect.x + windowRect.w * 0.48;
+    category6TitleRect.y = windowRect.y + windowRect.h * 0.1;
+    category6TitleRect.w = textureWidth * windowRect.w * 0.0005;
+    category6TitleRect.h = textureHeight * windowRect.w * 0.0005;
+
+    planetFirstResourceRect = (SDL_Rect){SCREEN_WIDTH * 78/160, SCREEN_HEIGHT * 0.424, SCREEN_WIDTH * 24/160, SCREEN_WIDTH * 4/160};
+    quantityFirstOreRect = (SDL_Rect){SCREEN_WIDTH * 79/160, SCREEN_HEIGHT * 0.477, SCREEN_WIDTH * 1/160, SCREEN_WIDTH * 3/160};
+
+    planetFirstResourceLogoRect = (SDL_Rect){SCREEN_WIDTH * 103/160, SCREEN_HEIGHT * 0.424, SCREEN_WIDTH * 4/160, SCREEN_WIDTH * 4/160};
+
+
+    // planetWindowMineralAbundance
        
     SDL_QueryTexture(textTextures[53], NULL, NULL, &textureWidth, &textureHeight);
     category2TitleRect.x = windowRect.x + windowRect.w * 0.77;
@@ -135,11 +155,25 @@ void initRectPlanetWindow(SDL_Texture **textTextures) {
     category2TitleRect.w = textureWidth * windowRect.w * 0.0005;
     category2TitleRect.h = textureHeight * windowRect.w * 0.0005;
 
-    bat1Rect = (SDL_Rect){SCREEN_WIDTH * 19/160, SCREEN_HEIGHT * 88/160, SCREEN_WIDTH * 9/160, SCREEN_WIDTH * 8/160};
+    narrowAxesXAbundanceRect = (SDL_Rect){SCREEN_WIDTH * 0.87, SCREEN_HEIGHT * 0.453, SCREEN_WIDTH * 0.01, SCREEN_WIDTH * 0.01};
+    narrowAxesYAbundanceRect = (SDL_Rect){SCREEN_WIDTH * 0.726, SCREEN_HEIGHT * 0.22, SCREEN_WIDTH * 0.01, SCREEN_WIDTH * 0.01};
+
+    axesXAbundanceRect = (SDL_Rect){SCREEN_WIDTH * 0.73, SCREEN_HEIGHT * 0.46, SCREEN_WIDTH * 0.147, 3};
+    axesYAbundanceRect = (SDL_Rect){SCREEN_WIDTH * 0.73, SCREEN_HEIGHT * 0.224, 3, SCREEN_WIDTH * 0.135};
+
+    SDL_QueryTexture(textTextures[59], NULL, NULL, &textureWidth, &textureHeight);
+    nameAxesXAbundanceRect = (SDL_Rect){SCREEN_WIDTH * 0.76, SCREEN_HEIGHT * 0.465, textureWidth * SCREEN_WIDTH * 0.00027, textureHeight * SCREEN_WIDTH * 0.00027};
+
+    SDL_QueryTexture(textTextures[60], NULL, NULL, &textureWidth, &textureHeight);
+    nameAxesYAbundanceRect = (SDL_Rect){SCREEN_WIDTH * 0.702, SCREEN_HEIGHT * 0.33, textureWidth * SCREEN_WIDTH * 0.00027, textureHeight * SCREEN_WIDTH * 0.00027};
+
+    limitAxesXAbundanceRect = (SDL_Rect){SCREEN_WIDTH * 0.86, SCREEN_HEIGHT * 0.452, 5, SCREEN_WIDTH * 0.01};
+
+    planetFirstResourceRect2 = (SDL_Rect){SCREEN_WIDTH * 0.7302, SCREEN_HEIGHT * 0.418, SCREEN_WIDTH * 0.133, SCREEN_WIDTH * 0.018};
+    planetFirstResourceLogoRect2 = (SDL_Rect){SCREEN_WIDTH * 0.735, SCREEN_HEIGHT * 0.417, SCREEN_WIDTH * 0.018, SCREEN_WIDTH * 0.018};
 
 
-
-    // planetWindowNewBuildings
+    // planetWindowManageBuilds
        
     SDL_QueryTexture(textTextures[54], NULL, NULL, &textureWidth, &textureHeight);
     category3TitleRect.x = windowRect.x + windowRect.w * 0.05;
@@ -147,16 +181,16 @@ void initRectPlanetWindow(SDL_Texture **textTextures) {
     category3TitleRect.w = textureWidth * windowRect.w * 0.0005;
     category3TitleRect.h = textureHeight * windowRect.w * 0.0005;
 
+    firstBuildingRect = (SDL_Rect){SCREEN_WIDTH * 19/160, SCREEN_HEIGHT * 88/160, SCREEN_WIDTH * 9/160, SCREEN_WIDTH * 8/160};
 
 
-    // planetWindowOreAbundance
+    // planetWindowOverviewBuild
        
     SDL_QueryTexture(textTextures[55], NULL, NULL, &textureWidth, &textureHeight);
     category4TitleRect.x = windowRect.x + windowRect.w * 0.49;
     category4TitleRect.y = windowRect.y + windowRect.h * 0.53;
     category4TitleRect.w = textureWidth * windowRect.w * 0.0005;
     category4TitleRect.h = textureHeight * windowRect.w * 0.0005;
-
 
 
     // planetWindowBuildingQueue
@@ -166,21 +200,17 @@ void initRectPlanetWindow(SDL_Texture **textTextures) {
     category5TitleRect.y = windowRect.y + windowRect.h * 0.53;
     category5TitleRect.w = textureWidth * windowRect.w * 0.0005;
     category5TitleRect.h = textureHeight * windowRect.w * 0.0005;
-
-    planetFirstResourceRect = (SDL_Rect){SCREEN_WIDTH * 77/160, SCREEN_HEIGHT * 65/160, SCREEN_WIDTH * 24/160, SCREEN_WIDTH * 5/160};
-    nbFirstOreRect = (SDL_Rect){SCREEN_WIDTH * 80/160, SCREEN_HEIGHT * 74/160, SCREEN_WIDTH * 1/160, SCREEN_WIDTH * 3/160};
-
-    planetFirstResourceLogoRect = (SDL_Rect){SCREEN_WIDTH * 102/160, SCREEN_HEIGHT * 65/160, SCREEN_WIDTH * 4/160, SCREEN_WIDTH * 4/160};
 }
 
 
 void displayPlanetWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planets, int planetCount) {
     planetWindowFoundations(imageTextures, textTextures);
     planetWindowGeneralInfo(imageTextures, textTextures, planets);
-    planetWindowOverviewBuildings(imageTextures, textTextures);
-    planetWindowNewBuildings(imageTextures, textTextures);
+    planetWindowContainerInfo(imageTextures, textTextures, planets);
+    planetWindowMineralAbundance(imageTextures, textTextures, planets);
+    planetWindowManageBuilds(imageTextures, textTextures);
+    planetWindowOverviewBuild(imageTextures, textTextures);
     planetWindowBuildingQueue(imageTextures, textTextures);
-    planetWindowOreAbundance(imageTextures, textTextures, planets);
 }
 
 void planetWindowFoundations(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
@@ -212,36 +242,15 @@ void planetWindowGeneralInfo(SDL_Texture ***imageTextures, SDL_Texture **textTex
     SDL_RenderCopy(renderer, imageTextures[6][idPicture], NULL, &planetDisplayedRect);  
 }
 
-void planetWindowOverviewBuildings(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
-    // Affichage du titre "General information"
-    SDL_RenderCopy(renderer, textTextures[53], NULL, &category2TitleRect);
-    SDL_Rect local_rect = bat1Rect;
-    for (int i = 0; i<4; i++) {
-        for (int j = 0; j<3; j++) {
-            local_rect.x = bat1Rect.x + SCREEN_WIDTH *i*14/160;
-            local_rect.y = bat1Rect.y + SCREEN_HEIGHT *j*18/160;
-            SDL_RenderCopy(renderer, imageTextures[9][1], NULL, &local_rect);
-        }
-    }
-}
 
-void planetWindowNewBuildings(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
-    // Affichage du titre "General information"
-    SDL_RenderCopy(renderer, textTextures[54], NULL, &category3TitleRect);
-}
+void planetWindowContainerInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planets) {
+    // Affichage du titre "Container information"
+    SDL_RenderCopy(renderer, textTextures[58], NULL, &category6TitleRect);
 
-void planetWindowBuildingQueue(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
-    // Affichage du titre "General information"
-    SDL_RenderCopy(renderer, textTextures[55], NULL, &category4TitleRect);
-}
-
-void planetWindowOreAbundance(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planets) {
-    // Affichage du titre "General information"
-    SDL_RenderCopy(renderer, textTextures[56], NULL, &category5TitleRect);
     // Affichage des stocks de ressources, l'un apres l'autre
     SDL_Rect currentOreRect = planetFirstResourceRect;
     SDL_Rect currentLogoRect = planetFirstResourceLogoRect;
-    SDL_Rect currentNbOreRect = nbFirstOreRect;
+    SDL_Rect currentQuantityOreRect = quantityFirstOreRect;
 
     for (int i = 0; i < ORE_TYPE_COUNT; i++) {
         // Barre de fond
@@ -269,18 +278,105 @@ void planetWindowOreAbundance(SDL_Texture ***imageTextures, SDL_Texture **textTe
                 SDL_RenderCopy(renderer, imageTextures[4][3], NULL, &currentLogoRect);
                 break;
             default:
-                SDL_RenderCopy(renderer, imageTextures[4][4], NULL, &currentLogoRect);
+                SDL_RenderCopy(renderer, imageTextures[4][0], NULL, &currentLogoRect);
                 break;
         }
+
+        // Afficher le bord du reservoir
+        currentOreRect.w = planetFirstResourceRect.w;
+        SDL_DrawEdgeOfRect(renderer, currentOreRect, 3);
 
         // Pour afficher le prochain reservoir
         currentOreRect.y -= 1.05 * planetFirstResourceRect.h;
         currentLogoRect.y -= 1.05 * planetFirstResourceRect.h;
-        currentNbOreRect.y -= 1.05 * planetFirstResourceRect.h;
+        currentQuantityOreRect.y -= 1.05 * planetFirstResourceRect.h;
 
         // Afficher nombre current ore
-        renderNumber(renderer, textTextures, (int)planets[getWindowId()].currentOre[i], currentNbOreRect);
+        renderNumber(renderer, textTextures, (int)planets[getWindowId()].currentOre[i], currentQuantityOreRect);
     }
+}
+
+void planetWindowMineralAbundance(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planets) {
+    // Affichage du titre "Mineral abundance"
+    SDL_RenderCopy(renderer, textTextures[53], NULL, &category2TitleRect);
+
+    // Affichage des fleches des axes du graphique
+    SDL_RenderCopy(renderer, imageTextures[5][6], NULL, &narrowAxesXAbundanceRect);
+    SDL_RenderCopyEx(renderer, imageTextures[5][6], NULL, &narrowAxesYAbundanceRect, -90, NULL, SDL_FLIP_NONE);
+
+    // Affichage des axes du graphique
+    SDL_RenderFillRect(renderer, &axesXAbundanceRect);
+    SDL_RenderFillRect(renderer, &axesYAbundanceRect);
+
+    // Affichage des noms des axes du graphique
+    SDL_RenderCopy(renderer, textTextures[59], NULL, &nameAxesXAbundanceRect);
+    SDL_RenderCopyEx(renderer, textTextures[60], NULL, &nameAxesYAbundanceRect, -90, NULL, SDL_FLIP_NONE);
+
+    // Affichage des stocks de ressources, l'un apres l'autre
+    SDL_Rect currentOreRect = planetFirstResourceRect2;
+    SDL_Rect currentLogoRect = planetFirstResourceLogoRect2;
+
+    for (int i = 0; i < ORE_TYPE_COUNT; i++) {
+        // Barre de niveau actuel
+        SDL_SetRenderDrawColor(renderer, 255, 95, 31, 255);
+        currentOreRect.w = planetFirstResourceRect2.w * planets[getWindowId()].abundance[i] / 100;
+        SDL_RenderFillRect(renderer, &currentOreRect);
+
+        // Logo du type de minerai
+        switch (i) {
+            case FUEL:
+                SDL_RenderCopy(renderer, imageTextures[4][0], NULL, &currentLogoRect);
+                break;
+            case ORE1:
+                SDL_RenderCopy(renderer, imageTextures[4][1], NULL, &currentLogoRect);
+                break;
+            case ORE2:
+                SDL_RenderCopy(renderer, imageTextures[4][2], NULL, &currentLogoRect);
+                break;
+            case ORE3:
+                SDL_RenderCopy(renderer, imageTextures[4][3], NULL, &currentLogoRect);
+                break;
+            default:
+                SDL_RenderCopy(renderer, imageTextures[4][0], NULL, &currentLogoRect);
+                break;
+        }
+
+        // Afficher le bord du reservoir
+        SDL_DrawEdgeOfRect(renderer, currentOreRect, 3);
+
+        // Pour afficher le prochain reservoir
+        currentOreRect.y -= 1.4 * planetFirstResourceRect2.h;
+        currentLogoRect.y -= 1.4 * planetFirstResourceRect2.h;
+    }
+
+    // Affiche la limite de l'axe X
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderFillRect(renderer, &limitAxesXAbundanceRect);
+}
+
+void planetWindowManageBuilds(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
+    // Affichage du titre "Manage builds"
+    SDL_RenderCopy(renderer, textTextures[54], NULL, &category3TitleRect);
+
+    // Affichage des differents batiments    
+    SDL_Rect local_rect = firstBuildingRect;
+    for (int i = 0; i<4; i++) {
+        for (int j = 0; j<3; j++) {
+            local_rect.x = firstBuildingRect.x + SCREEN_WIDTH *i*14/160;
+            local_rect.y = firstBuildingRect.y + SCREEN_HEIGHT *j*18/160;
+            SDL_RenderCopy(renderer, imageTextures[9][1], NULL, &local_rect);
+        }
+    }
+}
+
+void planetWindowOverviewBuild(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
+    // Affichage du titre "Overview of build"
+    SDL_RenderCopy(renderer, textTextures[55], NULL, &category4TitleRect);
+}
+
+void planetWindowBuildingQueue(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
+    // Affichage du titre "Building queue"
+    SDL_RenderCopy(renderer, textTextures[56], NULL, &category5TitleRect);
 }
 
 void planetWindowGestion(SDL_Point mouse) {

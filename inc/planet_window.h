@@ -14,10 +14,11 @@ void initTextPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts, Planet *
 void displayPlanetWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planets, int planetCount);
 void planetWindowFoundations(SDL_Texture ***imageTextures, SDL_Texture **textTextures);
 void planetWindowGeneralInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planets);
-void planetWindowOverviewBuildings(SDL_Texture ***imageTextures, SDL_Texture **textTextures);
-void planetWindowNewBuildings(SDL_Texture ***imageTextures, SDL_Texture **textTextures);
+void planetWindowContainerInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planets);
+void planetWindowMineralAbundance(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planets);
+void planetWindowManageBuilds(SDL_Texture ***imageTextures, SDL_Texture **textTextures);
+void planetWindowOverviewBuild(SDL_Texture ***imageTextures, SDL_Texture **textTextures);
 void planetWindowBuildingQueue(SDL_Texture ***imageTextures, SDL_Texture **textTextures);
-void planetWindowOreAbundance(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planets);
 
 void planetWindowGestion(SDL_Point mouse);
 

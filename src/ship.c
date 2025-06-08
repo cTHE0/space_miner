@@ -66,7 +66,7 @@ void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
         }
         for (int j = 0; j < (*ships)[i].cargo.compartmentsNumber; j++) {  // Ici, chaque compartiment contient de l'essence
             cargo->compartmentsList[j].ore = rand() % 4;
-            cargo->compartmentsList[j].maxCapacity = 1000;
+            cargo->compartmentsList[j].maxCapacity = 2000;
             cargo->compartmentsList[j].currentCapacity = 1000;
             cargo->compartmentsList[j].flowSpeed = 20;
 

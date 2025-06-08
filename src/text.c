@@ -95,10 +95,13 @@ SDL_Texture **loadTextTextures(TTF_Font **fonts) {  // ATTENTION: ne pas oublier
                                             {"IV", BLACK, fonts[0]},
                                             {"General information", BLACK, fonts[0]},
                                             {"Mineral abundance", BLACK, fonts[0]},
-                                            {"Overview of buildings", BLACK, fonts[0]},
-                                            {"Make new buildings", BLACK, fonts[0]},
-                                            {"Builing queue", BLACK, fonts[0]},
-                                            {"Bunkers information", BLACK, fonts[0]}
+                                            {"Manage builds", BLACK, fonts[0]},
+                                            {"Overview of build", BLACK, fonts[0]},
+                                            {"Building queue", BLACK, fonts[0]},
+                                            {"Bunkers information", BLACK, fonts[0]},
+                                            {"Container information", BLACK, fonts[0]},
+                                            {"Abundance (%)", BLACK, fonts[0]},
+                                            {"Mineral", BLACK, fonts[0]}
                                            };
 
     for (int i = 0; i < CST_TEXT_NUMBER; i++) {
