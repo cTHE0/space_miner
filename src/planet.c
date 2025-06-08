@@ -35,6 +35,7 @@ void renderPlanets(SDL_Texture ***imageTextures, Planet *planets, int planetCoun
             int idPicture = (planets[i].planetType == SUN) ? 9 : (generateRandNb8(currentSeed, i) % 8 + 1);
             SDL_RenderCopy(renderer, imageTextures[6][idPicture], NULL, &destRect);
 
+            /*
             // Affichage barre* de minerais (1)      (*une seule barre, mais representant la valeur totale de minerais !?)
             destRect.h = 5 * getCameraScale();
             destRect.y -= destRect.h + 2 / getCameraScale();
@@ -47,6 +48,7 @@ void renderPlanets(SDL_Texture ***imageTextures, Planet *planets, int planetCoun
 
             SDL_SetRenderDrawColor(renderer, 255, 215, 0, 255);
             SDL_RenderFillRect(renderer, &destRect);
+            */
         }
         
         displayBuildAroundPlanet(planets[i], 3, imageTextures[9], (SDL_Point){60, 60});

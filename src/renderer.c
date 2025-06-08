@@ -57,14 +57,6 @@ void initSDL(SDL_Window **window) {
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
 }
 
-void quitSDL(SDL_Window *window) {
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    TTF_Quit();
-    IMG_Quit();
-    SDL_Quit();
-}
-
 void clearScreen(void) {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
@@ -79,3 +71,10 @@ void displayGame(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship 
     SDL_RenderPresent(renderer);
 }
 
+void quitSDL(SDL_Window *window) {
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    TTF_Quit();
+    IMG_Quit();
+    SDL_Quit();
+}

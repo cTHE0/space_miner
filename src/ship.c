@@ -7,6 +7,7 @@
 #include "camera.h"
 #include "config.h"
 #include "renderer.h"
+#include "tools.h"
 
 
 void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
@@ -171,6 +172,8 @@ void updateShipTanks(Ship *ship, Uint32 currentTime) {  // Gere depot/recuperati
             return;
         }
         OreFillingOrEmptying(ship);
+    } else if (ship->state == OUT_OF_FUEL) {
+        isShipOnPlanet(ship);
     }
 }
 
@@ -247,6 +250,13 @@ void OreFillingOrEmptying(Ship *ship) {
                 break;
             }
 
+            // Changement de ressource
+            else if (cargo->compartmentsList[i].currentCapacity == 0.f &&
+                     cargo->compartmentsList[i].flowBase_in != EMPTY &&
+                     cargo->compartmentsList[i].ore != cargo->compartmentsList[i].flowBase_in) {
+                cargo->compartmentsList[i].ore = cargo->compartmentsList[i].flowBase_in;
+            }
+
         } else if (ship->state == WAITING_ON_TARGET) {
             // Remplissage de la fusee
             if (cargo->compartmentsList[i].flowTarget_in != EMPTY &&  // Eviter ce cas illogique
@@ -289,13 +299,42 @@ void OreFillingOrEmptying(Ship *ship) {
                 modified = 1;
                 break;
             }
+
+            // Changement de ressource
+            else if (cargo->compartmentsList[i].currentCapacity == 0.f &&
+                     cargo->compartmentsList[i].flowTarget_in != EMPTY &&
+                     cargo->compartmentsList[i].ore != cargo->compartmentsList[i].flowTarget_in) {
+                cargo->compartmentsList[i].ore = cargo->compartmentsList[i].flowTarget_in;
+            }
         }
     }
 
     // Si les transferts de matieres sont finis, changer l'etat de la fusee
-    if (!modified) {
+    if (!modified && haveFuel(ship)) {
         ship->state = (ship->state == WAITING_ON_BASE) ? MOVING_TO_TARGET : MOVING_TO_BASE;
     }       
+}
+
+int haveFuel(Ship *ship) {
+    for (int i = 0; i < ship->cargo.compartmentsNumber; i++) {
+        if (ship->cargo.compartmentsList[i].ore == FUEL && 
+            ship->cargo.compartmentsList[i].currentCapacity > 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+void isShipOnPlanet(Ship *ship) {
+    if (ship->base.type == SPOT_PLANET) {
+        if (distanceShipPlanet(ship, ship->base.planet) < ship->base.planet->radius) {
+            ship->state = WAITING_ON_BASE;
+        }
+    } else if (ship->target.type == SPOT_PLANET) {
+        if (distanceShipPlanet(ship, ship->target.planet) < ship->target.planet->radius) {
+            ship->state = WAITING_ON_TARGET;
+        }
+    }
 }
 
 void renderShips(SDL_Texture ***imageTextures, Ship *ships, int shipCount) {
@@ -307,7 +346,7 @@ void renderShips(SDL_Texture ***imageTextures, Ship *ships, int shipCount) {
         if (ShipOnScreen.x >= -ships[i].w * getCameraScale() && ShipOnScreen.x <= SCREEN_WIDTH && 
             ShipOnScreen.y >= -ships[i].h * getCameraScale() && ShipOnScreen.y <= SCREEN_HEIGHT + ships[i].h * getCameraScale()) {  // Si la fusee est dans l'ecran 
             renderShipImage(imageTextures[7][ships[i].idModel], ships[i], ShipOnScreen);
-            renderShipBars(ships[i], ShipOnScreen);
+            // renderShipBars(ships[i], ShipOnScreen);
             ships[i].destRect.x = ShipOnScreen.x;
             ships[i].destRect.y = ShipOnScreen.y;
             ships[i].destRect.w = ships[i].w * getCameraScale();

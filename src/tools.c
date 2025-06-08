@@ -102,16 +102,16 @@ void *moveToEnd(void *list, int nb_elem, int type_size, int index) {
     return list;
 }
 
-float distanceShipPlanet(Ship ship, Planet planet) {
-    return sqrt(carre(ship.x + ship.w / 2. - planet.x) + carre(ship.y + ship.h / 2. - planet.y)) - planet.radius;
+float distanceShipPlanet(Ship *ship, Planet *planet) {
+    return sqrt(carre(ship->x + ship->w / 2. - planet->x) + carre(ship->y + ship->h / 2. - planet->y)) - planet->radius;
 }
 
-float distancePlanetPlanet(Planet planet1, Planet planet2) {
-    return sqrt(carre(planet1.x - planet2.x) + carre(planet1.y - planet2.y));
+float distancePlanetPlanet(Planet *planet1, Planet *planet2) {
+    return sqrt(carre(planet1->x - planet2->x) + carre(planet1->y - planet2->y));
 }
 
-float distanceShipShip(Ship ship1, Ship ship2) {
-    return sqrt(carre(ship1.x + ship1.w / 2. - (ship2.x + ship2.w / 2.)) + carre(ship1.y + ship1.h / 2. - (ship2.y + ship2.h / 2.)));
+float distanceShipShip(Ship *ship1, Ship *ship2) {
+    return sqrt(carre(ship1->x + ship1->w / 2. - (ship2->x + ship2->w / 2.)) + carre(ship1->y + ship1->h / 2. - (ship2->y + ship2->h / 2.)));
 }
 
 static char arrayOfSyllabes[405][5] = {0};  // MODIFIER '385' SI BESOIN
