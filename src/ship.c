@@ -243,8 +243,8 @@ void OreFillingOrEmptying(Ship *ship) {
 
                 // Actualisation planete
                 landingPlanet->currentOre[cargo->compartmentsList[i].flowBase_out] += cargo->compartmentsList[i].flowSpeed;
-                if (landingPlanet->currentOre[cargo->compartmentsList[i].flowBase_out] < landingPlanet->maxOre[cargo->compartmentsList[i].flowBase_out]) {
-                    landingPlanet->currentOre[cargo->compartmentsList[i].flowBase_in] = landingPlanet->maxOre[cargo->compartmentsList[i].flowBase_out];
+                if (landingPlanet->currentOre[cargo->compartmentsList[i].flowBase_out] > landingPlanet->maxOre[cargo->compartmentsList[i].flowBase_out]) {
+                    landingPlanet->currentOre[cargo->compartmentsList[i].flowBase_out] = landingPlanet->maxOre[cargo->compartmentsList[i].flowBase_out];
                 }
                 modified = 1;
                 break;
@@ -293,8 +293,8 @@ void OreFillingOrEmptying(Ship *ship) {
 
                 // Actualisation planete
                 landingPlanet->currentOre[cargo->compartmentsList[i].flowTarget_out] += cargo->compartmentsList[i].flowSpeed;
-                if (landingPlanet->currentOre[cargo->compartmentsList[i].flowTarget_out] < landingPlanet->maxOre[cargo->compartmentsList[i].flowTarget_out]) {
-                    landingPlanet->currentOre[cargo->compartmentsList[i].flowTarget_in] = landingPlanet->maxOre[cargo->compartmentsList[i].flowTarget_out];
+                if (landingPlanet->currentOre[cargo->compartmentsList[i].flowTarget_out] > landingPlanet->maxOre[cargo->compartmentsList[i].flowTarget_out]) {
+                    landingPlanet->currentOre[cargo->compartmentsList[i].flowTarget_out] = landingPlanet->maxOre[cargo->compartmentsList[i].flowTarget_out];
                 }
                 modified = 1;
                 break;
