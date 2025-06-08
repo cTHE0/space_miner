@@ -8,8 +8,8 @@
 
 void solarSystemCoordinator(int *nbEntityGenerated, Planet *planets, int planetCount) {
     // Initialisation du nombre d'entites par systeme solaire
-    static int maxEntity = 20;
-    static int minEntity = 5;
+    static int maxEntity = 5;
+    static int minEntity = 2;
     int nbEntityNewSS = minEntity + generateRandNb8(currentSeed, *nbEntityGenerated) % (maxEntity - minEntity + 1);  // Nb d'entites a rajouter ds le nouveau systeme solaire
 
     if (*nbEntityGenerated + nbEntityNewSS > planetCount){  // Le nouveau systeme solaire passe-t-il ?

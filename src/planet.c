@@ -1,5 +1,5 @@
 #include "planet.h"
-
+#include <stdio.h>
 #include <stdlib.h>
 #include <SDL2/SDL.h>
 #include "camera.h"
@@ -10,46 +10,99 @@
 #include "ore.h"
 #include "build.h"
 
+float theta_deg = 0;
+Uint32 lastPlanetUpdateTime = 0;
+
+
+void updatePlanet(Planet *planets) {
+    Uint32 currentTime = SDL_GetTicks();
+
+    if (currentTime > lastPlanetUpdateTime + SPRITE_SHEETS_DELAY/15) {
+        lastPlanetUpdateTime = currentTime;
+
+        for (int i = 0; i < INIT_PLANET_COUNT; i++) {
+            if (planets[i].planetType != SUN) {
+                // Mise à jour de l'angle
+                planets[i].orbit_angle_deg += planets[i].orbit_speed_deg;
+                if (planets[i].orbit_angle_deg >= 360.0)
+                    planets[i].orbit_angle_deg -= 360.0;
+
+                // Recalcule la position à partir du centre et du rayon
+                double angle_rad = planets[i].orbit_angle_deg * M_PI / 180.0;
+                planets[i].x = (int)(planets[i].orbit_center_x + planets[i].orbit_radius * cos(angle_rad));
+                planets[i].y = (int)(planets[i].orbit_center_y + planets[i].orbit_radius * sin(angle_rad));
+            }
+        }
+    }
+}
+
 
 void generatePlanets(Planet **planets, int planetCount) {
-    // Allocation du tableau de planetes
+    // Allocation du tableau de planètes
     *planets = malloc(planetCount * sizeof(Planet));
+    if (*planets == NULL) {
+        fprintf(stderr, "Erreur : échec de l'allocation mémoire pour les planètes\n");
+        exit(EXIT_FAILURE);
+    }
 
-    // Generations des planetes, systeme solaire par systeme solaire
-    int nbEntityGenerated = 0;  // Nombre planetes (etoiles incluses) deja presentes
+    // Génération des planètes via la fonction système solaire
+    int nbEntityGenerated = 0;
     while (nbEntityGenerated < planetCount) {
         solarSystemCoordinator(&nbEntityGenerated, *planets, planetCount);
     }
 
-    for (int i=0; i<2; i++) {
-        for (int j; j<BUILD_TYPE_COUNT; j++) {
-            (planets[i]->builds[j]).level = 0;
-            if (j<ORE_TYPE_COUNT) {
-                (planets[i]->builds[j]).type = ORE_STORE;
-            }
-            else if (j < 2*ORE_TYPE_COUNT) {
-                (planets[i]->builds[j]).type = ORE_MINE;
-            }    
+    SDL_Point solar_center = {0, 0};
+
+    for (int i = 0; i < planetCount; i++) {
+        Planet *p = &(*planets)[i];
+
+        // Définir le centre solaire si c'est le Soleil
+        if (p->planetType == SUN) {
+            solar_center.x = p->x;
+            solar_center.y = p->y;
         }
-        (planets[i]->builds[10]).type = DEFENCE_TOWER;
-        (planets[i]->builds[11]).type = FACTORY;
 
-        (planets[i]->builds[0]).data.tank = (Compartment){FUEL, 0, 0, 0, 0, 200, 500, 20};
-        (planets[i]->builds[1]).data.tank = (Compartment){ORE1, 0, 0, 0, 0, 200, 500, 20};
-        (planets[i]->builds[2]).data.tank = (Compartment){ORE2, 0, 0, 0, 0, 200, 500, 20};
-        (planets[i]->builds[3]).data.tank = (Compartment){ORE3, 0, 0, 0, 0, 200, 500, 20};
-        (planets[i]->builds[4]).data.tank = (Compartment){ORE4, 0, 0, 0, 0, 200, 500, 20};
+        // Initialisation des builds
+        for (int j = 0; j < BUILD_TYPE_COUNT; j++) {
+            p->builds[j].level = 0;
+            if (j < ORE_TYPE_COUNT) {
+                p->builds[j].type = ORE_STORE;
+            } else if (j < 2 * ORE_TYPE_COUNT) {
+                p->builds[j].type = ORE_MINE;
+            }
+        }
 
-        (planets[i]->builds[5]).data.production_speed = 0;
-        (planets[i]->builds[6]).data.production_speed = 0;
-        (planets[i]->builds[7]).data.production_speed = 0;
-        (planets[i]->builds[8]).data.production_speed = 0;
-        (planets[i]->builds[9]).data.production_speed = 0;
+        p->builds[10].type = DEFENCE_TOWER;
+        p->builds[11].type = FACTORY;
 
-        (planets[i]->builds[10]).data.damages = 0;
-        (planets[i]->builds[11]).data.production_speed = 0;
+        // Initialisation des tanks
+        p->builds[0].data.tank = (Compartment){FUEL, 0, 0, 0, 0, 200, 500, 20};
+        p->builds[1].data.tank = (Compartment){ORE1, 0, 0, 0, 0, 200, 500, 20};
+        p->builds[2].data.tank = (Compartment){ORE2, 0, 0, 0, 0, 200, 500, 20};
+        p->builds[3].data.tank = (Compartment){ORE3, 0, 0, 0, 0, 200, 500, 20};
+        p->builds[4].data.tank = (Compartment){ORE4, 0, 0, 0, 0, 200, 500, 20};
+
+        // Initialisation de la production
+        for (int j = 5; j <= 9; j++) {
+            p->builds[j].data.production_speed = 0;
+        }
+        p->builds[10].data.damages = 0;
+        p->builds[11].data.production_speed = 0;
+
+        // Initialisation de l'orbite si ce n'est pas le Soleil
+        if (p->planetType != SUN) {
+            double dx = p->x - solar_center.x;
+            double dy = p->y - solar_center.y;
+
+            p->orbit_center_x = solar_center.x;
+            p->orbit_center_y = solar_center.y;
+            p->orbit_radius = sqrt(dx * dx + dy * dy);
+            p->orbit_angle_deg = atan2(dy, dx) * 180.0 / M_PI;
+            p->orbit_speed_deg = 0.01 + (rand() % 5) * 0.01; // entre 0.1 et 0.2
+        }
     }
 }
+
 
 void renderPlanets(SDL_Texture ***imageTextures, Planet *planets, int planetCount) {
     for (int i = 0; i < planetCount; i++) {
