@@ -2,8 +2,6 @@
 #define SHIP_H
 
 #include <SDL2/SDL.h>
-struct Planet;
-typedef struct Planet Planet;
 #include "planet.h"
 #include "ship.h"
 #include "ore.h"
