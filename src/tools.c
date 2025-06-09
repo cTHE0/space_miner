@@ -289,3 +289,90 @@ double computeAngleDeg(int x, int y, int cx, int cy) {
 
     return angle;
 }
+
+SDL_Texture* createTextTextureWithNewline(SDL_Renderer* renderer, TTF_Font* font, const char* text, SDL_Color color) {
+    // Calculer la largeur maximale et la hauteur totale des lignes de texte
+    int totalHeight = 0;
+    int maxWidth = 0;
+
+    // Parcours du texte et découpe en lignes
+    const char* start = text;
+    SDL_Surface* surface = NULL;
+    while (start) {
+        // Trouver la fin de la ligne (au prochain '\n' ou fin du texte)
+        const char* end = strchr(start, '\n');    // Cherche la position du prochain \n, renvoie 0 s'il n'y en a pas
+        size_t len = (end) ? (size_t)(end - start) : strlen(start);  // nombre de caracteres dans le texte
+
+        // Créer une surface pour cette ligne de texte
+        char line[len + 1];
+        memcpy(line, start, len);  // Copie la ligne dans line
+        line[len] = '\0';  // Assurez-vous que la chaîne est bien terminée.
+
+        surface = TTF_RenderText_Blended(font, line, color);
+        if (!surface) {
+            printf("Erreur de création de surface de texte: %s\n", TTF_GetError());
+            return NULL;
+        }
+
+        totalHeight += surface->h;
+        if (surface->w > maxWidth) {
+            maxWidth = surface->w;
+        }
+
+        SDL_FreeSurface(surface);  // Libère la surface après utilisation
+        start = end ? end + 1 : NULL;  // Passer à la ligne suivante
+    }
+
+    // Créer une surface finale de la taille de tout le texte
+    SDL_Surface* finalSurface = SDL_CreateRGBSurface(0, maxWidth, totalHeight, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+    if (!finalSurface) {
+        printf("Erreur de création de surface finale: %s\n", SDL_GetError());
+        return NULL;
+    }
+
+    // Rendre le texte ligne par ligne
+    SDL_Rect dstRect = { 0, 0, 0, 0 };  // Position de chaque ligne dans la surface finale
+    start = text;
+    int currentY = 0;
+
+    while (start) {  // Condition vrai tant que start pointe vers qch qui existe
+        // Trouver la fin de la ligne (au prochain '\n' ou fin du texte)
+        const char* end = strchr(start, '\n');  // Cherche la position du prochain \n, renvoie 0 s'il n'y en a pas
+        size_t len = (end) ? end - start : strlen(start);  // nombre de ligne dans le texte
+
+        // Créer une surface pour cette ligne de texte
+        char line[len + 1];
+        strncpy(line, start, len);
+        line[len] = '\0';
+
+        surface = TTF_RenderText_Blended(font, line, color);
+        if (!surface) {
+            printf("Erreur de création de surface de texte: %s\n", TTF_GetError());
+            SDL_FreeSurface(finalSurface);
+            return NULL;
+        }
+
+        // Copier la surface dans la surface finale
+        dstRect.y = currentY;
+        dstRect.w = surface->w;
+        dstRect.h = surface->h;
+        SDL_BlitSurface(surface, NULL, finalSurface, &dstRect);  // Rendre sur la surface finale
+
+        // Mettre à jour la position Y pour la prochaine ligne
+        currentY += surface->h;
+        SDL_FreeSurface(surface);  // Libérer la surface de la ligne après utilisation
+
+        start = end ? end + 1 : NULL;  // Passer à la ligne suivante
+    }
+
+    // Créer une texture à partir de la surface finale
+    SDL_Texture* finalTexture = SDL_CreateTextureFromSurface(renderer, finalSurface);
+    SDL_FreeSurface(finalSurface);  // Libérer la surface après l'avoir convertie en texture
+
+    if (!finalTexture) {
+        printf("Erreur de création de la texture: %s\n", SDL_GetError());
+    }
+
+    return finalTexture;
+}
+

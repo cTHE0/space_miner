@@ -34,14 +34,16 @@ static SDL_Rect windowRect,
                 category5TitleRect,
                 category6TitleRect,
                 quantityFirstOreRect,
-                firstBuildingRect,
+                firstBuildRect,
+                firstBarBuildRect,
                 narrowAxesXAbundanceRect,
                 narrowAxesYAbundanceRect,
                 axesXAbundanceRect,
                 axesYAbundanceRect,
                 nameAxesXAbundanceRect,
                 nameAxesYAbundanceRect,
-                limitAxesXAbundanceRect;
+                limitAxesXAbundanceRect,
+                textGeneralInfoRect;
 
 
 void initPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets) {
@@ -52,36 +54,52 @@ void initTextPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts, Planet *
     int textureWidth, textureHeight;
     TextToLoad newText;
 
+    // Stock le nom de la planete
+    char planetName[64];
+    generateRandomName(planetName, currentSeed, planets[getWindowId()].id);
+
+    // Genere la texture qui donne le descriptif de la planete
+    char descriptionText[512];
+    sprintf(descriptionText, "Type                                 %s\nName                               %s\nDiameter                         %d km\nMass                                %d kg\nRotation period               %d d\nMain atmosphere\ncomposition                    nitrogen-oxygen\nAverage temperature    303 K\nAge                                  3.2 billion years", 
+            "terrestial",
+            planetName,
+            (int)planets[getWindowId()].radius,
+            generateRandNb32(currentSeed, 666) % 1000000,
+            (int)planets[getWindowId()].orbitSpeedDeg);
+    textTextures[32] = createTextTextureWithNewline(renderer, fonts[0], descriptionText, BLACK);
+    SDL_QueryTexture(textTextures[32], NULL, NULL, &textureWidth, &textureHeight);
+    textGeneralInfoRect = (SDL_Rect){SCREEN_WIDTH * 0.13, SCREEN_HEIGHT * 0.22, textureWidth * SCREEN_WIDTH * 0.00027, textureHeight * SCREEN_WIDTH * 0.00027};
+
     // Importe la texture decrivant le titre de la page d'info. de la planete
-    char name_planet[64];
-    generateRandomName(name_planet, currentSeed, planets[getWindowId()].id);
+    char planetType[32];
 
-
-    char type_planet[32];
     switch (planets[getWindowId()].planetType) {
         case SUN:
-            strcpy(type_planet, "Sun");
+            strcpy(planetType, "Sun");
             break;
         case PLANET:
-            strcpy(type_planet, "Planet");
+            strcpy(planetType, "Planet");
             break;
             break;
         default:
-            strcpy(type_planet, "Planet type unknown...");
+            strcpy(planetType, "Planet type unknown...");
             break;
     }
     
-    sprintf(newText.text, "%s - %s", type_planet, name_planet);
+    sprintf(newText.text, "%s - %s", planetType, planetName);
     newText.color = BLACK;
     newText.font = fonts[0];
 
+    // Creation de la texture de la cible de la fusee
     updateTextTexture(&textTextures[33], newText);
+
 
     SDL_QueryTexture(textTextures[33], NULL, NULL, &textureWidth, &textureHeight);
     windowTitleRect.x = windowRect.x + windowRect.w * 0.01;  
     windowTitleRect.y = windowRect.y + windowRect.h * 0.007;
     windowTitleRect.w = textureWidth * windowRect.w * 0.0005;
     windowTitleRect.h = textureHeight * windowRect.w * 0.0005;
+
 }
 
 void initRectPlanetWindow(SDL_Texture **textTextures) {
@@ -97,24 +115,24 @@ void initRectPlanetWindow(SDL_Texture **textTextures) {
     windowLine1Rect.w = windowRect.w;
     windowLine1Rect.h = 3;
 
-    windowLine2Rect = (SDL_Rect){SCREEN_WIDTH * 108/160, SCREEN_HEIGHT * 25/160, 3, SCREEN_WIDTH * 37/160};
+    windowLine2Rect = (SDL_Rect){SCREEN_WIDTH * 0.705, SCREEN_HEIGHT * 25/160, 3, SCREEN_WIDTH * 0.194};  // PEtite barre verticale droite haut
 
     windowLine3Rect.x = windowRect.x;  // Grande barre horizontale milieu
     windowLine3Rect.y = windowRect.y + windowRect.h * 0.5;
     windowLine3Rect.w = windowRect.w;
     windowLine3Rect.h = 3;
 
-    windowLine4Rect.x = windowRect.x + windowRect.w * 0.45;  // Grande barre verticale bas gauche
+    windowLine4Rect.x = windowRect.x + windowRect.w * 0.485;  // Petite barre verticale bas gauche
     windowLine4Rect.y = windowRect.y + windowRect.h * 0.5;
     windowLine4Rect.w = 3;
     windowLine4Rect.h = windowRect.h * 0.5;
 
-    windowLine5Rect.x = windowRect.x + windowRect.w * 0.72;  // Grande barre verticale bas droite
+    windowLine5Rect.x = windowRect.x + windowRect.w * 0.757;  // Petite barre verticale bas droite
     windowLine5Rect.y = windowRect.y + windowRect.h * 0.5;
     windowLine5Rect.w = 3;
     windowLine5Rect.h = windowRect.h * 0.5;
 
-    windowLine6Rect = (SDL_Rect){windowRect.x + windowRect.w * 0.45, SCREEN_HEIGHT * 25/160, 3, SCREEN_WIDTH * 37/160};  // 1ère barre verticale, 1ère ligne
+    windowLine6Rect = (SDL_Rect){windowRect.x + windowRect.w * 0.485, SCREEN_HEIGHT * 25/160, 3, SCREEN_WIDTH * 31/160};  // 1ère barre verticale, 1ère ligne
 
     WindowCrossRect.x = windowRect.x + windowRect.w * 0.97;
     WindowCrossRect.y = windowRect.y + windowRect.h * 0.025;
@@ -125,32 +143,32 @@ void initRectPlanetWindow(SDL_Texture **textTextures) {
     // planetWindowGeneralInfo
        
     SDL_QueryTexture(textTextures[52], NULL, NULL, &textureWidth, &textureHeight);
-    category1TitleRect.x = windowRect.x + windowRect.w * 0.05;
+    category1TitleRect.x = windowRect.x + windowRect.w * 0.0365;
     category1TitleRect.y = windowRect.y + windowRect.h * 0.1;
     category1TitleRect.w = textureWidth * windowRect.w * 0.0005;
     category1TitleRect.h = textureHeight * windowRect.w * 0.0005;
     
-    planetDisplayedRect = (SDL_Rect){SCREEN_WIDTH * 52/160, SCREEN_HEIGHT * 40/160, SCREEN_WIDTH * 18/160, SCREEN_WIDTH * 17/160};
+    planetDisplayedRect = (SDL_Rect){SCREEN_WIDTH * 57/160, SCREEN_HEIGHT * 40/160, SCREEN_WIDTH * 18/160, SCREEN_WIDTH * 17/160};
 
 
     // planetWindowContainerInfo
        
     SDL_QueryTexture(textTextures[58], NULL, NULL, &textureWidth, &textureHeight);
-    category6TitleRect.x = windowRect.x + windowRect.w * 0.48;
+    category6TitleRect.x = windowRect.x + windowRect.w * 0.515;
     category6TitleRect.y = windowRect.y + windowRect.h * 0.1;
     category6TitleRect.w = textureWidth * windowRect.w * 0.0005;
     category6TitleRect.h = textureHeight * windowRect.w * 0.0005;
 
-    planetFirstResourceRect = (SDL_Rect){SCREEN_WIDTH * 78/160, SCREEN_HEIGHT * 0.424, SCREEN_WIDTH * 24/160, SCREEN_WIDTH * 4/160};
-    quantityFirstOreRect = (SDL_Rect){SCREEN_WIDTH * 79/160, SCREEN_HEIGHT * 0.477, SCREEN_WIDTH * 1/160, SCREEN_WIDTH * 3/160};
+    planetFirstResourceRect = (SDL_Rect){SCREEN_WIDTH * 82/160, SCREEN_HEIGHT * 0.424, SCREEN_WIDTH * 24/160, SCREEN_WIDTH * 4/160};
+    quantityFirstOreRect = (SDL_Rect){SCREEN_WIDTH * 83/160, SCREEN_HEIGHT * 0.477, SCREEN_WIDTH * 1/160, SCREEN_WIDTH * 3/160};
 
-    planetFirstResourceLogoRect = (SDL_Rect){SCREEN_WIDTH * 103/160, SCREEN_HEIGHT * 0.424, SCREEN_WIDTH * 4/160, SCREEN_WIDTH * 4/160};
+    planetFirstResourceLogoRect = (SDL_Rect){SCREEN_WIDTH * 107/160, SCREEN_HEIGHT * 0.424, SCREEN_WIDTH * 4/160, SCREEN_WIDTH * 4/160};
 
 
     // planetWindowMineralAbundance
        
     SDL_QueryTexture(textTextures[53], NULL, NULL, &textureWidth, &textureHeight);
-    category2TitleRect.x = windowRect.x + windowRect.w * 0.77;
+    category2TitleRect.x = windowRect.x + windowRect.w * 0.785;
     category2TitleRect.y = windowRect.y + windowRect.h * 0.1;
     category2TitleRect.w = textureWidth * windowRect.w * 0.0005;
     category2TitleRect.h = textureHeight * windowRect.w * 0.0005;
@@ -176,18 +194,19 @@ void initRectPlanetWindow(SDL_Texture **textTextures) {
     // planetWindowManageBuilds
        
     SDL_QueryTexture(textTextures[54], NULL, NULL, &textureWidth, &textureHeight);
-    category3TitleRect.x = windowRect.x + windowRect.w * 0.05;
+    category3TitleRect.x = windowRect.x + windowRect.w * 0.037;
     category3TitleRect.y = windowRect.y + windowRect.h * 0.53;
     category3TitleRect.w = textureWidth * windowRect.w * 0.0005;
     category3TitleRect.h = textureHeight * windowRect.w * 0.0005;
 
-    firstBuildingRect = (SDL_Rect){SCREEN_WIDTH * 19/160, SCREEN_HEIGHT * 88/160, SCREEN_WIDTH * 9/160, SCREEN_WIDTH * 8/160};
+    firstBuildRect = (SDL_Rect){SCREEN_WIDTH * 0.144, SCREEN_HEIGHT * 0.566, SCREEN_WIDTH * 0.04, SCREEN_WIDTH * 0.04};
+    firstBarBuildRect = (SDL_Rect){SCREEN_WIDTH * 0.13, SCREEN_HEIGHT * 0.637, SCREEN_WIDTH * 0.07, SCREEN_WIDTH * 0.016};
 
 
     // planetWindowOverviewBuild
        
     SDL_QueryTexture(textTextures[55], NULL, NULL, &textureWidth, &textureHeight);
-    category4TitleRect.x = windowRect.x + windowRect.w * 0.49;
+    category4TitleRect.x = windowRect.x + windowRect.w * 0.52;
     category4TitleRect.y = windowRect.y + windowRect.h * 0.53;
     category4TitleRect.w = textureWidth * windowRect.w * 0.0005;
     category4TitleRect.h = textureHeight * windowRect.w * 0.0005;
@@ -240,6 +259,9 @@ void planetWindowGeneralInfo(SDL_Texture ***imageTextures, SDL_Texture **textTex
     // Planete decrite dans cette fenetre
     int idPicture = (planets[getWindowId()].planetType == SUN) ? 9 : generateRandNb8(currentSeed, getWindowId()) % 7 + 1;
     SDL_RenderCopy(renderer, imageTextures[6][idPicture], NULL, &planetDisplayedRect);  
+
+    // Afficher le texte descriptif
+    SDL_RenderCopy(renderer, textTextures[32], NULL, &textGeneralInfoRect);  
 }
 
 
@@ -359,12 +381,23 @@ void planetWindowManageBuilds(SDL_Texture ***imageTextures, SDL_Texture **textTe
     SDL_RenderCopy(renderer, textTextures[54], NULL, &category3TitleRect);
 
     // Affichage des differents batiments    
-    SDL_Rect local_rect = firstBuildingRect;
-    for (int i = 0; i<4; i++) {
-        for (int j = 0; j<3; j++) {
-            local_rect.x = firstBuildingRect.x + SCREEN_WIDTH *i*14/160;
-            local_rect.y = firstBuildingRect.y + SCREEN_HEIGHT *j*18/160;
-            SDL_RenderCopy(renderer, imageTextures[9][1], NULL, &local_rect);
+    SDL_Rect imageRect = firstBuildRect; 
+    SDL_Rect barRect = firstBarBuildRect;
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 3; j++) {
+            // Affiche la barre d'amelioration/creation
+            SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+            barRect.x = firstBarBuildRect.x + firstBuildRect.w * i * 2.26;
+            barRect.y = firstBarBuildRect.y + firstBuildRect.h * j * 1.5;
+            SDL_RenderFillRect(renderer, &barRect);
+            SDL_DrawEdgeOfRect(renderer, barRect, 2);
+
+            // Affiche l'image de l'objet
+            imageRect.x = firstBuildRect.x + firstBuildRect.w * i * 2.26;
+            imageRect.y = firstBuildRect.y + firstBuildRect.h * j * 1.5;
+            SDL_RenderCopy(renderer, imageTextures[9][1], NULL, &imageRect);
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+            SDL_RenderFillRect(renderer, &imageRect);
         }
     }
 }

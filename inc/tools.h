@@ -30,4 +30,6 @@ int countDigits(int n);
 
 double computeAngleDeg(int x, int y, int cx, int cy);
 
+SDL_Texture* createTextTextureWithNewline(SDL_Renderer* renderer, TTF_Font* font, const char* text, SDL_Color color);
+
 #endif
