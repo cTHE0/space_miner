@@ -148,7 +148,7 @@ void initRectPlanetWindow(SDL_Texture **textTextures) {
     category1TitleRect.w = textureWidth * windowRect.w * 0.0005;
     category1TitleRect.h = textureHeight * windowRect.w * 0.0005;
     
-    planetDisplayedRect = (SDL_Rect){SCREEN_WIDTH * 57/160, SCREEN_HEIGHT * 40/160, SCREEN_WIDTH * 18/160, SCREEN_WIDTH * 17/160};
+    planetDisplayedRect = (SDL_Rect){SCREEN_WIDTH * 0.35, SCREEN_HEIGHT * 0.22, SCREEN_WIDTH * 0.125, SCREEN_WIDTH * 0.125};
 
 
     // planetWindowContainerInfo
@@ -222,7 +222,7 @@ void initRectPlanetWindow(SDL_Texture **textTextures) {
 }
 
 
-void displayPlanetWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planets, int planetCount) {
+void displayPlanetWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planets) {
     planetWindowFoundations(imageTextures, textTextures);
     planetWindowGeneralInfo(imageTextures, textTextures, planets);
     planetWindowContainerInfo(imageTextures, textTextures, planets);

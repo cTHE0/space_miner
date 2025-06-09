@@ -115,10 +115,10 @@ int clickOnPlanet(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets,
     return id != -1;
 }
 
-void displayWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships, Planet *planets, int planetCount) {
+void displayWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships, Planet *planets) {
     switch (getWindowType()) {
         case PLANET_WINDOW:
-            displayPlanetWindow(imageTextures, textTextures, planets, planetCount);
+            displayPlanetWindow(imageTextures, textTextures, planets);
             break;
             
         case BASIC_SHIP_WINDOW:

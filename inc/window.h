@@ -13,7 +13,7 @@ typedef struct {
     uint32_t id;      // Stocke l'id de l'objet (fusee, planete, etc) affiche sur la fenetre
 } Window;
 
-void displayWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships, Planet *planets, int planetCount);
+void displayWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships, Planet *planets);
 
 void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, SDL_Point mouse, Ship *ships, int shipCount, Planet *planets, int planetCount);
 

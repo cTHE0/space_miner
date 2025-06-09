@@ -338,7 +338,7 @@ SDL_Texture* createTextTextureWithNewline(SDL_Renderer* renderer, TTF_Font* font
     while (start) {  // Condition vrai tant que start pointe vers qch qui existe
         // Trouver la fin de la ligne (au prochain '\n' ou fin du texte)
         const char* end = strchr(start, '\n');  // Cherche la position du prochain \n, renvoie 0 s'il n'y en a pas
-        size_t len = (end) ? end - start : strlen(start);  // nombre de ligne dans le texte
+        size_t len = (end) ? (size_t)(end - start) : strlen(start);  // nombre de ligne dans le texte
 
         // Créer une surface pour cette ligne de texte
         char line[len + 1];

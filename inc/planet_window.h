@@ -11,7 +11,7 @@ void initPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts, Planet *plan
 void initRectPlanetWindow(SDL_Texture **textTextures);
 void initTextPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets);
 
-void displayPlanetWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planets, int planetCount);
+void displayPlanetWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planets);
 void planetWindowFoundations(SDL_Texture ***imageTextures, SDL_Texture **textTextures);
 void planetWindowGeneralInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planets);
 void planetWindowContainerInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planets);

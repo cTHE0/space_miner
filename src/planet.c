@@ -121,6 +121,6 @@ void renderPlanets(SDL_Texture ***imageTextures, Planet *planets, int planetCoun
     }
 }
 
-void destroyPlanets(Planet *planets, int planetCount) {
+void destroyPlanets(Planet *planets) {
     free(planets);
 }

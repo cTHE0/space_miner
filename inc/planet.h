@@ -31,6 +31,6 @@ typedef struct Planet {
 void updatePlanet(Planet *planets, Ship *ships, int shipCount);
 void generatePlanets(Planet **planets, int planetCount);
 void renderPlanets(SDL_Texture ***imageTextures, Planet *planets, int planetCount);
-void destroyPlanets(Planet *planets, int planetCount);
+void destroyPlanets(Planet *planets);
 
 #endif

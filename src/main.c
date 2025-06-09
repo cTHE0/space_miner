@@ -92,7 +92,7 @@ int main(void) {
     // Fermeture du programme
     if (gameBegun) {
         destroyShips(ships, shipCount);
-        destroyPlanets(planets, planetCount);
+        destroyPlanets(planets);
     }
 
     destroyImageTextures(imageTextures);
