@@ -67,7 +67,7 @@ int main(void) {
             case GAME:
                 handleEvents(textTextures, fonts, &state, ships, shipCount, planets, planetCount);
                 updateShips(ships, shipCount);
-                updatePlanet(planets);
+                updatePlanet(planets, ships, shipCount);
                 displayGame(imageTextures, textTextures, ships, shipCount, planets, planetCount);
                 break;
             

@@ -28,4 +28,6 @@ int power(int number, int power);
 int extractOneDigit(int number, int position);
 int countDigits(int n);
 
+double computeAngleDeg(int x, int y, int cx, int cy);
+
 #endif

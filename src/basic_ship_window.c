@@ -29,6 +29,7 @@ static SDL_Rect bgRect,
                 selectNewBaseRect,
                 selectNewTargetRect;
 
+
 void initBasicShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships) {
     initTextBasicShipWindow(textTextures, fonts, ships);
 }

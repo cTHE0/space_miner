@@ -238,7 +238,7 @@ void planetWindowGeneralInfo(SDL_Texture ***imageTextures, SDL_Texture **textTex
     SDL_RenderCopy(renderer, textTextures[52], NULL, &category1TitleRect);
 
     // Planete decrite dans cette fenetre
-    int idPicture = (planets[getWindowId()].planetType == SUN) ? 9 : generateRandNb8(currentSeed, getWindowId()) % 8 + 1;
+    int idPicture = (planets[getWindowId()].planetType == SUN) ? 9 : generateRandNb8(currentSeed, getWindowId()) % 7 + 1;
     SDL_RenderCopy(renderer, imageTextures[6][idPicture], NULL, &planetDisplayedRect);  
 }
 
@@ -260,7 +260,7 @@ void planetWindowContainerInfo(SDL_Texture ***imageTextures, SDL_Texture **textT
 
         // Barre de niveau actuel
         SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-        currentOreRect.w = planetFirstResourceRect.w * planets[getWindowId()].currentOre[i] / planets[getWindowId()].maxOre[i];
+        currentOreRect.w = planetFirstResourceRect.w * planets[getWindowId()].builds[i].tank.currentCapacity / planets[getWindowId()].builds[i].tank.maxCapacity;
         SDL_RenderFillRect(renderer, &currentOreRect);
 
         // Logo du type de minerai
@@ -278,7 +278,7 @@ void planetWindowContainerInfo(SDL_Texture ***imageTextures, SDL_Texture **textT
                 SDL_RenderCopy(renderer, imageTextures[4][3], NULL, &currentLogoRect);
                 break;
             default:
-                SDL_RenderCopy(renderer, imageTextures[4][0], NULL, &currentLogoRect);
+                SDL_RenderCopy(renderer, imageTextures[4][4], NULL, &currentLogoRect);
                 break;
         }
 
@@ -292,7 +292,7 @@ void planetWindowContainerInfo(SDL_Texture ***imageTextures, SDL_Texture **textT
         currentQuantityOreRect.y -= 1.05 * planetFirstResourceRect.h;
 
         // Afficher nombre current ore
-        renderNumber(renderer, textTextures, (int)planets[getWindowId()].currentOre[i], currentQuantityOreRect);
+        renderNumber(renderer, textTextures, (int)planets[getWindowId()].builds[i].tank.currentCapacity, currentQuantityOreRect);
     }
 }
 

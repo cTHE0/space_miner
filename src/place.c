@@ -1,5 +1,9 @@
+#include "place.h"
+
 #include <SDL2/SDL.h>
 #include "config.h"
+
+
 /*
 (SDL_Rect){SCREEN_WIDTH * get_emp().x /160, SCREEN_HEIGHT * get_emp().y/160, SCREEN_WIDTH * get_emp().w/160, SCREEN_WIDTH * get_emp().h/160};
 */

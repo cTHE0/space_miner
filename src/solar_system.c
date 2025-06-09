@@ -8,8 +8,8 @@
 
 void solarSystemCoordinator(int *nbEntityGenerated, Planet *planets, int planetCount) {
     // Initialisation du nombre d'entites par systeme solaire
-    static int maxEntity = 5;
-    static int minEntity = 2;
+    static int maxEntity = 6;
+    static int minEntity = 6;
     int nbEntityNewSS = minEntity + generateRandNb8(currentSeed, *nbEntityGenerated) % (maxEntity - minEntity + 1);  // Nb d'entites a rajouter ds le nouveau systeme solaire
 
     if (*nbEntityGenerated + nbEntityNewSS > planetCount){  // Le nouveau systeme solaire passe-t-il ?
@@ -36,9 +36,9 @@ void generateSolarSystem(Planet *planets, int x, int y, int nbEntityGenerated, i
         randIndex ++;
     }
     for (int i = 0; i < ORE_TYPE_COUNT; i++) {
-        newSun->maxOre[i] = 1 + generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % 10000;
+        newSun->builds[i].tank.maxCapacity = 1 + generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % 10000;
         randIndex ++;
-        newSun->currentOre[i] = generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % (int)newSun->maxOre[i];  // Les planetes ne sont pas toutes initialement remplies
+        newSun->builds[i].tank.currentCapacity = generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % (int)newSun->builds[i].tank.maxCapacity;  // Les planetes ne sont pas toutes initialement remplies
         randIndex ++;
     }
     int r = 650 + generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % 50;
@@ -58,9 +58,9 @@ void generateSolarSystem(Planet *planets, int x, int y, int nbEntityGenerated, i
         }
         
         for (int i = 0; i < ORE_TYPE_COUNT; i++) {
-            planets[j].maxOre[i] = 1 + generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % 10000;
+            planets[j].builds[i].tank.maxCapacity = 1 + generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % 10000;
             randIndex ++;
-            planets[j].currentOre[i] = generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % (int)planets[j].maxOre[i];  // Les planetes ne sont pas toutes initialement remplies
+            planets[j].builds[i].tank.currentCapacity = generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % (int)planets[j].builds[i].tank.maxCapacity;  // Les planetes ne sont pas toutes initialement remplies
             randIndex ++;
         }
 

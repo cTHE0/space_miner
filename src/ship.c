@@ -48,6 +48,7 @@ void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
         (*ships)[i].destRect.y = 0;
         (*ships)[i].destRect.w = 0;
         (*ships)[i].destRect.h = 0;
+        (*ships)[i].angleWithPlanet = 0;
 
         // Allocation des compartiments
         Cargo *cargo = &(*ships)[i].cargo;
@@ -125,6 +126,13 @@ void updateShipMove(Ship *ship, Uint32 currentTime) {
             } else {
                 ship->waitStartTime = currentTime;
                 ship->state = (ship->state == MOVING_TO_BASE) ? WAITING_ON_BASE : WAITING_ON_TARGET;
+                
+                if (ship->state == MOVING_TO_BASE) {
+                    ship->angleWithPlanet = computeAngleDeg(ship->x, ship->y, ship->base.planet->x, ship->base.planet->y)* M_PI / 180.0;
+                }
+                else {
+                    ship->angleWithPlanet = computeAngleDeg(ship->x, ship->y, ship->target.planet->x, ship->target.planet->y)* M_PI / 180.0;
+                }
             }
             break;
         case SPOT_SHIP:
@@ -211,7 +219,7 @@ void OreFillingOrEmptying(Ship *ship) {
         if (ship->state == WAITING_ON_BASE) {
             // Remplissage de la fusee
             if (cargo->compartmentsList[i].flowBase_in != EMPTY &&  // Eviter ce cas illogique
-                landingPlanet->currentOre[cargo->compartmentsList[i].flowBase_in] > 0.f &&  // La planete a des stocks
+                landingPlanet->builds[cargo->compartmentsList[i].flowBase_in].tank.currentCapacity > 0.f &&  // La planete a des stocks
                 (cargo->compartmentsList[i].ore == EMPTY || cargo->compartmentsList[i].ore == cargo->compartmentsList[i].flowBase_in)) {  // La fusee peut recuperer les ressources
 
                 // Actualisation fusee
@@ -221,9 +229,9 @@ void OreFillingOrEmptying(Ship *ship) {
                 }
 
                 // Actualisation planete
-                landingPlanet->currentOre[cargo->compartmentsList[i].flowBase_in] -= cargo->compartmentsList[i].flowSpeed;
-                if (landingPlanet->currentOre[cargo->compartmentsList[i].flowBase_in] < 0.f) {
-                    landingPlanet->currentOre[cargo->compartmentsList[i].flowBase_in] = 0.f;
+                landingPlanet->builds[cargo->compartmentsList[i].flowBase_in].tank.currentCapacity -= cargo->compartmentsList[i].flowSpeed;
+                if (landingPlanet->builds[cargo->compartmentsList[i].flowBase_in].tank.currentCapacity < 0.f) {
+                    landingPlanet->builds[cargo->compartmentsList[i].flowBase_in].tank.currentCapacity = 0.f;
                 }
                 modified = 1;
                 break;
@@ -231,7 +239,7 @@ void OreFillingOrEmptying(Ship *ship) {
 
              // Vidange de la fusee
             else if (cargo->compartmentsList[i].flowBase_out != EMPTY &&  // Eviter ce cas illogique
-                     landingPlanet->currentOre[cargo->compartmentsList[i].flowBase_out] < landingPlanet->maxOre[cargo->compartmentsList[i].flowBase_out] &&  // La planete a de la place
+                     landingPlanet->builds[cargo->compartmentsList[i].flowBase_out].tank.currentCapacity < landingPlanet->builds[cargo->compartmentsList[i].flowBase_out].tank.maxCapacity &&  // La planete a de la place
                      cargo->compartmentsList[i].currentCapacity > 0.f &&  // La fusee a des ressources a deposer
                      cargo->compartmentsList[i].ore == cargo->compartmentsList[i].flowBase_out) {  // Le compartiment a le bon contenu
                 
@@ -242,9 +250,9 @@ void OreFillingOrEmptying(Ship *ship) {
                 }
 
                 // Actualisation planete
-                landingPlanet->currentOre[cargo->compartmentsList[i].flowBase_out] += cargo->compartmentsList[i].flowSpeed;
-                if (landingPlanet->currentOre[cargo->compartmentsList[i].flowBase_out] > landingPlanet->maxOre[cargo->compartmentsList[i].flowBase_out]) {
-                    landingPlanet->currentOre[cargo->compartmentsList[i].flowBase_out] = landingPlanet->maxOre[cargo->compartmentsList[i].flowBase_out];
+                landingPlanet->builds[cargo->compartmentsList[i].flowBase_out].tank.currentCapacity += cargo->compartmentsList[i].flowSpeed;
+                if (landingPlanet->builds[cargo->compartmentsList[i].flowBase_out].tank.currentCapacity > landingPlanet->builds[cargo->compartmentsList[i].flowBase_out].tank.maxCapacity) {
+                    landingPlanet->builds[cargo->compartmentsList[i].flowBase_out].tank.currentCapacity = landingPlanet->builds[cargo->compartmentsList[i].flowBase_out].tank.maxCapacity;
                 }
                 modified = 1;
                 break;
@@ -261,7 +269,7 @@ void OreFillingOrEmptying(Ship *ship) {
             // Remplissage de la fusee
             if (cargo->compartmentsList[i].flowTarget_in != EMPTY &&  // Eviter ce cas illogique
                 cargo->compartmentsList[i].currentCapacity < cargo->compartmentsList[i].maxCapacity &&  // Les reservoirs d'essence de la fusee sont remplis avant
-                landingPlanet->currentOre[cargo->compartmentsList[i].flowTarget_in] > 0.f &&  // La planete a des stocks
+                landingPlanet->builds[cargo->compartmentsList[i].flowTarget_in].tank.currentCapacity > 0.f &&  // La planete a des stocks
                 (cargo->compartmentsList[i].ore == EMPTY || cargo->compartmentsList[i].ore == cargo->compartmentsList[i].flowTarget_in)) {  // La fusee peut recuperer les ressources
                 
                 // Actualisation fusee
@@ -271,9 +279,9 @@ void OreFillingOrEmptying(Ship *ship) {
                 }
 
                 // Actualisation planete
-                landingPlanet->currentOre[cargo->compartmentsList[i].flowTarget_in] -= cargo->compartmentsList[i].flowSpeed;
-                if (landingPlanet->currentOre[cargo->compartmentsList[i].flowTarget_in] < 0.f) {
-                    landingPlanet->currentOre[cargo->compartmentsList[i].flowTarget_in] = 0.f;
+                landingPlanet->builds[cargo->compartmentsList[i].flowTarget_in].tank.currentCapacity -= cargo->compartmentsList[i].flowSpeed;
+                if (landingPlanet->builds[cargo->compartmentsList[i].flowTarget_in].tank.currentCapacity < 0.f) {
+                    landingPlanet->builds[cargo->compartmentsList[i].flowTarget_in].tank.currentCapacity = 0.f;
                 }
                 modified = 1;
                 break;
@@ -281,7 +289,7 @@ void OreFillingOrEmptying(Ship *ship) {
 
              // Vidange de la fusee
             else if (cargo->compartmentsList[i].flowTarget_out != EMPTY &&  // Eviter ce cas illogique
-                     landingPlanet->currentOre[cargo->compartmentsList[i].flowTarget_out] < landingPlanet->maxOre[cargo->compartmentsList[i].flowTarget_out] &&  // La planete a de la place
+                     landingPlanet->builds[cargo->compartmentsList[i].flowTarget_out].tank.currentCapacity < landingPlanet->builds[cargo->compartmentsList[i].flowTarget_out].tank.maxCapacity &&  // La planete a de la place
                      cargo->compartmentsList[i].currentCapacity > 0.f &&  // La fusee a des ressources a deposer
                      cargo->compartmentsList[i].ore == cargo->compartmentsList[i].flowTarget_out) {  // Le compartiment a le bon contenu
                 
@@ -292,9 +300,9 @@ void OreFillingOrEmptying(Ship *ship) {
                 }
 
                 // Actualisation planete
-                landingPlanet->currentOre[cargo->compartmentsList[i].flowTarget_out] += cargo->compartmentsList[i].flowSpeed;
-                if (landingPlanet->currentOre[cargo->compartmentsList[i].flowTarget_out] > landingPlanet->maxOre[cargo->compartmentsList[i].flowTarget_out]) {
-                    landingPlanet->currentOre[cargo->compartmentsList[i].flowTarget_out] = landingPlanet->maxOre[cargo->compartmentsList[i].flowTarget_out];
+                landingPlanet->builds[cargo->compartmentsList[i].flowTarget_out].tank.currentCapacity += cargo->compartmentsList[i].flowSpeed;
+                if (landingPlanet->builds[cargo->compartmentsList[i].flowTarget_out].tank.currentCapacity > landingPlanet->builds[cargo->compartmentsList[i].flowTarget_out].tank.maxCapacity) {
+                    landingPlanet->builds[cargo->compartmentsList[i].flowTarget_out].tank.currentCapacity = landingPlanet->builds[cargo->compartmentsList[i].flowTarget_out].tank.maxCapacity;
                 }
                 modified = 1;
                 break;

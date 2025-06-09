@@ -11,7 +11,9 @@
 #include "basic_ship_window.h"
 #include "place.h"
 
+
 static SDL_Point mouse;
+
 
 SDL_Point getMouseCoordinates(void) {
     return mouse;

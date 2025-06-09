@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include "planet.h"
 #include "ship.h"
 #include "renderer.h"
@@ -277,4 +278,14 @@ int extractOneDigit(int number, int position) {  // 'position' demarre a 0, de d
     number %= 10;
 
     return number;
+}
+
+double computeAngleDeg(int x, int y, int cx, int cy) {
+    double angle = atan2(y - cy, x - cx) * 180.0 / M_PI;
+
+    if (angle < 0) {
+        angle += 360.0;
+    }
+
+    return angle;
 }

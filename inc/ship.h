@@ -2,6 +2,8 @@
 #define SHIP_H
 
 #include <SDL2/SDL.h>
+struct Planet;
+typedef struct Planet Planet;
 #include "planet.h"
 #include "ship.h"
 #include "ore.h"
@@ -42,6 +44,7 @@ struct Ship {
     Uint32 waitStartTime;
     int frameIndex;
     Uint32 lastFrameTime;
+    double angleWithPlanet; // Angle permettant de situer le ship sur la surface de la planète
 };
 
 
