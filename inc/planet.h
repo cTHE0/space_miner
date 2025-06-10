@@ -8,7 +8,7 @@
 
 typedef enum { SUN, PLANET } planetTypeEnum;
 
-typedef struct Ship Ship;
+typedef struct Ship Ship; 
 
 typedef struct Build Build;
 
