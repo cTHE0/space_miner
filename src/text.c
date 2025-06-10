@@ -101,10 +101,14 @@ SDL_Texture **loadTextTextures(TTF_Font **fonts) {  // ATTENTION: ne pas oublier
                                             {"Bunkers information", BLACK, fonts[0]},
                                             {"Container information", BLACK, fonts[0]},
                                             {"Abundance (%)", BLACK, fonts[0]},
-                                            {"Mineral", BLACK, fonts[0]}
+                                            {"Mineral", BLACK, fonts[0]},
+                                            {"NEW", RED, fonts[0]},
+                                            {"New build", BLACK, fonts[0]},
+                                            {"Upgrade", BLACK, fonts[0]}
                                            };
 
-    for (int i = 0; i < CST_TEXT_NUMBER; i++) {
+    for (int i = 0; i < CST_TEXT_NUMBER; i++)
+ {
         textTextures[i] = createTextTexture(cstTexts[i].font, cstTexts[i].color, cstTexts[i].text);
     }
 
