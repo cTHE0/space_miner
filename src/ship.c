@@ -70,6 +70,7 @@ void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
             cargo->compartmentsList[j].maxCapacity = 1000;
             cargo->compartmentsList[j].currentCapacity = 700;
             cargo->compartmentsList[j].flowSpeed = 20;
+            cargo->compartmentsList[j].level = 1;
 
             // Pour tester le systeme de ressource
             // Faire une interface graphique pour gerer ca proprement

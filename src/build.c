@@ -22,7 +22,7 @@ void initBuildsPlanet(Planet *planet) {
 
     // Initialisation des reservoirs et des mines
     for (int i = 0; i < ORE_TYPE_COUNT; i++) {
-        planet->builds[i].tank = (Compartment){i, 0, 0, 0, 0, 8000, 10000, 20};
+        planet->builds[i].tank = (Compartment){i, 0, 0, 0, 0, 1, 8000, 10000, 20};
         planet->builds[i + ORE_TYPE_COUNT].productionSpeed = 0;
     }
 

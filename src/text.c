@@ -105,7 +105,8 @@ SDL_Texture **loadTextTextures(TTF_Font **fonts) {  // ATTENTION: ne pas oublier
                                             {"NEW", RED, fonts[0]},
                                             {"New build", BLACK, fonts[0]},
                                             {"Upgrade", BLACK, fonts[0]},
-                                            {"RESTART", BLACK, fonts[0]}
+                                            {"RESTART", BLACK, fonts[0]},
+                                            {"Repair", BLACK, fonts[0]}
                                            };
 
     for (int i = 0; i < CST_TEXT_NUMBER; i++)

@@ -11,6 +11,7 @@ typedef struct {  // Un seul compartiment
     Ore flowTarget_out;
     int currentCapacity, maxCapacity;
     int flowSpeed;
+    int level;
 } Compartment;
 
 
