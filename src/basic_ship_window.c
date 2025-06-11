@@ -30,11 +30,11 @@ static SDL_Rect bgRect,
                 selectNewTargetRect;
 
 
-void initBasicShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships) {
-    initTextBasicShipWindow(textTextures, fonts, ships);
+void initBasicShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship) {
+    initTextBasicShipWindow(textTextures, fonts, ship);
 }
 
-void initTextBasicShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships) {
+void initTextBasicShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship) {
     int textureWidth, textureHeight;
     TextToLoad newText;
 
@@ -165,7 +165,7 @@ void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *
     if (SDL_PointInRect(&mouse, &button1Rect)) {
         setWindowType(SHIP_WINDOW);
         buttonSelected = NO_BUTTON;
-        initShipWindow(textTextures, fonts, ships);
+        initShipWindow(textTextures, fonts, &ships[getWindowId()]);
     } else if (SDL_PointInRect(&mouse, &button2Rect)) {
         buttonSelected = BASE_BUTTON;
     } else if (SDL_PointInRect(&mouse, &button3Rect)) {
@@ -175,7 +175,7 @@ void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *
     // Changement de la fusee observee
     else if (SDL_PointInRect(&mouse, &rightArrowRect)) {
         setWindowId((getWindowId() + 1) % shipCount);
-        initBasicShipWindow(textTextures, fonts, ships);
+        initBasicShipWindow(textTextures, fonts, &ships[getWindowId()]);
         setCenterCamera((SDL_Point){ships[getWindowId()].x + ships[getWindowId()].w / 2, ships[getWindowId()].y + ships[getWindowId()].h / 2});
     }
     else if (SDL_PointInRect(&mouse, &leftArrowRect)) {
@@ -184,7 +184,7 @@ void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *
         } else {
             setWindowId(getWindowId() - 1);
         }
-        initBasicShipWindow(textTextures, fonts, ships);
+        initBasicShipWindow(textTextures, fonts, &ships[getWindowId()]);
         setCenterCamera((SDL_Point){ships[getWindowId()].x + ships[getWindowId()].w / 2, ships[getWindowId()].y + ships[getWindowId()].h / 2});
     }
 
@@ -244,4 +244,8 @@ void choosingNewBaseOrTarget(Ship *ships, int shipCount, Planet *planets, int pl
 
 int clickOnBasicShipWindow(SDL_Point mouse) {
     return SDL_PointInRect(&mouse, &bgRect);
+}
+
+void setButtonSelected(BasicShipWindowButton newButton) {
+    buttonSelected = newButton;
 }

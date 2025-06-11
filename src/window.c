@@ -82,7 +82,7 @@ int clickOnShip(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, int s
     if (id != -1) {  // Si un ship a etait clique...
         setWindowId(id);
         setWindowType(BASIC_SHIP_WINDOW); 
-        initBasicShipWindow(textTextures, fonts, ships);
+        initBasicShipWindow(textTextures, fonts, &ships[id]);
     }
 
     return id != -1;
