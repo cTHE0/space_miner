@@ -12,6 +12,11 @@
 #include "place.h"
 
 
+static int currentBuildIndex = 0;  
+static float GapBetweenBuildX = 2.26;   
+static float GapBetweenBuildY = 1.5;
+
+
 // Declaration des rectangles et variables propres a la fenetre d'informations des fusees
 static SDL_Rect windowRect,
                 WindowCrossRect,
@@ -34,7 +39,7 @@ static SDL_Rect windowRect,
                 category5TitleRect,
                 category6TitleRect,
                 quantityFirstOreRect,
-                firstBuildRect,
+                firstBuildImageRect,
                 firstBarBuildRect,
                 narrowAxesXAbundanceRect,
                 narrowAxesYAbundanceRect,
@@ -46,6 +51,7 @@ static SDL_Rect windowRect,
                 textGeneralInfoRect,
                 firstNewTextBuildRect,
                 firstUpgradeBuildRect,
+                firstBuildRect,
                 imageBuildRect,
                 upgradeBarRect;
 
@@ -207,7 +213,7 @@ void initRectPlanetWindow(SDL_Texture **textTextures) {
     category3TitleRect.w = textureWidth * windowRect.w * 0.0005;
     category3TitleRect.h = textureHeight * windowRect.w * 0.0005;
 
-    firstBuildRect = (SDL_Rect){SCREEN_WIDTH * 0.144, SCREEN_HEIGHT * 0.566, SCREEN_WIDTH * 0.04, SCREEN_WIDTH * 0.04};
+    firstBuildImageRect = (SDL_Rect){SCREEN_WIDTH * 0.144, SCREEN_HEIGHT * 0.566, SCREEN_WIDTH * 0.04, SCREEN_WIDTH * 0.04};
     firstBarBuildRect = (SDL_Rect){SCREEN_WIDTH * 0.13, SCREEN_HEIGHT * 0.637, SCREEN_WIDTH * 0.07, SCREEN_WIDTH * 0.016};
 
     SDL_QueryTexture(textTextures[61], NULL, NULL, &textureWidth, &textureHeight);
@@ -215,6 +221,8 @@ void initRectPlanetWindow(SDL_Texture **textTextures) {
 
     SDL_QueryTexture(textTextures[63], NULL, NULL, &textureWidth, &textureHeight);
     firstUpgradeBuildRect = (SDL_Rect){SCREEN_WIDTH * 0.148, SCREEN_HEIGHT * 0.64, textureWidth * SCREEN_WIDTH * 0.0002, textureHeight * SCREEN_WIDTH * 0.0002};
+    
+    firstBuildRect = (SDL_Rect){SCREEN_WIDTH * 0.13, SCREEN_HEIGHT * 0.565, SCREEN_WIDTH * 0.07, SCREEN_WIDTH * 0.057};
 
 
     // planetWindowOverviewBuild
@@ -400,8 +408,8 @@ void planetWindowManageBuilds(SDL_Texture ***imageTextures, SDL_Texture **textTe
     // Affichage du titre "Manage builds"
     SDL_RenderCopy(renderer, textTextures[54], NULL, &category3TitleRect);
 
-    // Affichage des differents batiments    
-    SDL_Rect imageRect = firstBuildRect;
+    // Affichage des differents batiments  
+    SDL_Rect imageRect = firstBuildImageRect;
     SDL_Rect barRect = firstBarBuildRect;
     SDL_Rect newTextRect = firstNewTextBuildRect;
     SDL_Rect upgradeRect = firstUpgradeBuildRect;
@@ -409,29 +417,35 @@ void planetWindowManageBuilds(SDL_Texture ***imageTextures, SDL_Texture **textTe
         for (int j = 0; j < 3; j++) {
             // Affiche la barre d'amelioration/creation
             SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-            barRect.x = firstBarBuildRect.x + firstBuildRect.w * i * 2.26;
-            barRect.y = firstBarBuildRect.y + firstBuildRect.h * j * 1.5;
+            barRect.x = firstBarBuildRect.x + firstBuildImageRect.w * i * GapBetweenBuildX;
+            barRect.y = firstBarBuildRect.y + firstBuildImageRect.h * j * GapBetweenBuildY;
             SDL_RenderFillRect(renderer, &barRect);
             SDL_DrawEdgeOfRect(renderer, barRect, 2);
 
             // Affiche l'image de l'objet
-            imageRect.x = firstBuildRect.x + firstBuildRect.w * i * 2.26;
-            imageRect.y = firstBuildRect.y + firstBuildRect.h * j * 1.5;
+            imageRect.x = firstBuildImageRect.x + firstBuildImageRect.w * i * GapBetweenBuildX;
+            imageRect.y = firstBuildImageRect.y + firstBuildImageRect.h * j * GapBetweenBuildY;
             SDL_RenderCopy(renderer, imageTextures[9][1], NULL, &imageRect);
             SDL_DrawEdgeOfRect(renderer, imageRect, 2);
 
             // Logo 'NEW'
-            newTextRect.x = firstNewTextBuildRect.x + firstBuildRect.w * i * 2.26;
-            newTextRect.y = firstNewTextBuildRect.y + firstBuildRect.h * j * 1.5;
+            newTextRect.x = firstNewTextBuildRect.x + firstBuildImageRect.w * i * GapBetweenBuildX;
+            newTextRect.y = firstNewTextBuildRect.y + firstBuildImageRect.h * j * GapBetweenBuildY;
             SDL_RenderCopy(renderer, textTextures[61], NULL, &newTextRect);
 
             // Logo 'Upgrade' / 'New build'
-            upgradeRect.x = firstUpgradeBuildRect.x + firstBuildRect.w * i * 2.26;
-            upgradeRect.y = firstUpgradeBuildRect.y + firstBuildRect.h * j * 1.5;
+            upgradeRect.x = firstUpgradeBuildRect.x + firstBuildImageRect.w * i * GapBetweenBuildX;
+            upgradeRect.y = firstUpgradeBuildRect.y + firstBuildImageRect.h * j * GapBetweenBuildY;
             SDL_RenderCopy(renderer, textTextures[63], NULL, &upgradeRect);
-
         }
     }
+
+    // Affiche le contour du batiment choisi, dont l'apercu est affiche
+    SDL_Rect edgeSelectedBuildRect = firstBuildRect;
+
+    edgeSelectedBuildRect.x = firstBuildRect.x + firstBuildImageRect.w * (currentBuildIndex % 4) * GapBetweenBuildX;
+    edgeSelectedBuildRect.y = firstBuildRect.y + firstBuildImageRect.h * (currentBuildIndex / 4) * GapBetweenBuildY;
+    SDL_DrawEdgeOfRect(renderer, edgeSelectedBuildRect, 3);
 }
 
 void planetWindowOverviewBuild(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
@@ -456,5 +470,18 @@ void planetWindowBuildingQueue(SDL_Texture ***imageTextures, SDL_Texture **textT
 void planetWindowGestion(SDL_Point mouse) {
     if (SDL_PointInRect(&mouse, &WindowCrossRect) || !clickOnWindow(mouse)) {
         setWindowType(NO_WINDOW);
+    }
+
+    // Choix du batiment
+    SDL_Rect edgeSelectedBuildRect = firstBuildRect;
+    
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 3; j++) {
+            edgeSelectedBuildRect.x = firstBuildRect.x + firstBuildImageRect.w * i * GapBetweenBuildX;
+            edgeSelectedBuildRect.y = firstBuildRect.y + firstBuildImageRect.h * j * GapBetweenBuildY;
+            if (SDL_PointInRect(&mouse, &edgeSelectedBuildRect)) {
+                currentBuildIndex = j * 4 + i;
+            }
+        }
     }
 }

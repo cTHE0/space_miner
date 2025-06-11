@@ -702,7 +702,7 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship,
     }
 
     // Ouverture de la fenetre de la planete (depuis la fenetre d'info. de la fusee)
-    else if (SDL_PointInRect(&mouse, &baseDisplayedRect)) {
+    else if (SDL_PointInRect(&mouse, &baseDisplayedRect) || SDL_PointInRect(&mouse, &baseDisplayedRect2)) {
         if (ship->base.type == SPOT_PLANET) {
             setWindowType(PLANET_WINDOW);
             setWindowId(ship->base.id_spot);
@@ -711,7 +711,7 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship,
             setWindowType(NO_WINDOW);
         }
     }
-    else if (SDL_PointInRect(&mouse, &targetDisplayedRect)) {
+    else if (SDL_PointInRect(&mouse, &targetDisplayedRect) || SDL_PointInRect(&mouse, &targetDisplayedRect2)) {
         if (ship->target.type == SPOT_PLANET) {
             setWindowType(PLANET_WINDOW);
             setWindowId(ship->target.id_spot);
