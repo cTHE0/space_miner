@@ -16,10 +16,8 @@ void ShipWindowFondations(SDL_Texture ***imageTextures, SDL_Texture **textTextur
 void ShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships);
 void ShipWindowTankManager(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships);
 void ShipWindowShipCond(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships);
-void ShipWindowShipModel(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships);
+void ShipWindowShipModel(SDL_Texture ***imageTextures, SDL_Texture **textTextures);
 void ShipWindowTankCompo(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships);
-
-void refreshRectTankchoosen(SDL_Texture **textTextures);
 
 void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship, Planet *planets, SDL_Point mouse);
 

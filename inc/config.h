@@ -9,7 +9,7 @@
 #define INIT_PLANET_COUNT 6
 #define INIT_SHIP_COUNT 4
 #define ORE_TYPE_COUNT 5
-#define CST_TEXT_NUMBER 66
+#define CST_TEXT_NUMBER 67
 #define FONT_NUMBER 1
 #define BUILD_TYPE_COUNT 12
 

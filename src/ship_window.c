@@ -79,10 +79,18 @@ static SDL_Rect srcRectShip = {0, 0, 64, 64},
                 mainInfoTanksInfoRect,
                 tankInfoRect,
                 upgradeButtonTankRect,
+                upgradeButtonTankRect2,
                 repareShipButtonRect,
                 repareShipButtonRect2,
+                upgradeShipButtonRect,
+                upgradeShipButtonRect2,
                 percentShipHealthRect,
-                shipInfoRect;
+                shipInfoRect,
+                shipInfoRect2,
+                logoUpgradeButtonShipInfoRect,
+                logoUpgradeButtonTankInfoRect,
+                logoRepairButtonShipInfoRect,
+                currentVisualNarrowRect;
 
 void initShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship) {
     initTextShipWindow(textTextures, fonts, ship);
@@ -160,14 +168,14 @@ void initTextShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship
 
     // Genere la texture qui donne le descriptif de la planete
     char descriptionText[512];
-    sprintf(descriptionText, "Countenance                      fuel\nFill rate                               %d %%\nCapacity                             %d m3\nDrain speed                        %d\nUpgrade level                     %d", 
+    sprintf(descriptionText, "Countenance     fuel\nFill rate              %d %%\nCapacity            %d m3\nDrain speed       %d\nUpgrade level    %d", 
             (ship->cargo.compartmentsList[currentTankIndex].currentCapacity * 100) / ship->cargo.compartmentsList[currentTankIndex].maxCapacity,
             ship->cargo.compartmentsList[currentTankIndex].maxCapacity,
             ship->cargo.compartmentsList[currentTankIndex].flowSpeed,
             ship->cargo.compartmentsList[currentTankIndex].level);
     textTextures[35] = createTextTextureWithNewline(renderer, fonts[0], descriptionText, BLACK);
     SDL_QueryTexture(textTextures[35], NULL, NULL, &textureWidth, &textureHeight);
-    tankInfoRect = (SDL_Rect){SCREEN_WIDTH * 0.577, SCREEN_HEIGHT * 0.7, textureWidth * SCREEN_WIDTH * 0.00027, textureHeight * SCREEN_WIDTH * 0.00027};
+    tankInfoRect = (SDL_Rect){SCREEN_WIDTH * 0.567, SCREEN_HEIGHT * 0.69, textureWidth * SCREEN_WIDTH * 0.00025, textureHeight * SCREEN_WIDTH * 0.00025};
 
     // Mise a jour de la vie de la fusee
     strcpy(descriptionText, "");
@@ -176,17 +184,30 @@ void initTextShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship
     SDL_QueryTexture(textTextures[36], NULL, NULL, &textureWidth, &textureHeight);
     percentShipHealthRect = (SDL_Rect){SCREEN_WIDTH * 0.747, SCREEN_HEIGHT * 0.245, SCREEN_WIDTH * textureWidth * 0.0002, SCREEN_WIDTH * textureHeight * 0.0002};
     
-    // Mise a jour des donnes de la fusee
+    // Mise a jour des donnees de la fusee (description de gauche)
+
     strcpy(descriptionText, "");
-    sprintf(descriptionText, "Model                         Basic Rocket     Fuel consumption       30 L/s  \nProduction number   1                        Tank capacity            14.91 m3\nLevel                          7                        Durability                    2h \nMove speed               17 km/s              Mineral transferred  199,552 m3");
+    sprintf(descriptionText, "Model               Basic Rocket\nProduction No %d\nLevel                %d\nMove speed     %.2f km/s",
+            getWindowId() + 1,
+            ship->level,
+            ship->speed);
+
     textTextures[37] = createTextTextureWithNewline(renderer, fonts[0], descriptionText, BLACK);
     SDL_QueryTexture(textTextures[37], NULL, NULL, &textureWidth, &textureHeight);
-    shipInfoRect = (SDL_Rect){SCREEN_WIDTH * 0.565, SCREEN_HEIGHT * 0.4, SCREEN_WIDTH * textureWidth * 0.00025, SCREEN_WIDTH * textureHeight * 0.00025};
-}
+    shipInfoRect = (SDL_Rect){SCREEN_WIDTH * 0.565, SCREEN_HEIGHT * 0.4, SCREEN_WIDTH * textureWidth * 0.00025, SCREEN_WIDTH * textureHeight * 0.00025};    
+    
+    // Mise a jour des donnees de la fusee (description de droite)
+    strcpy(descriptionText, "");
+    sprintf(descriptionText, "Fuel consumption       %d L/s  \nTank capacity            %.2f m3\nDurability                    2h \nMineral transferred  199,552 m3",
+        ship->fuelConsumption,
+        globalTankCapacity(ship) / 100.f
+        );
 
-void refreshRectTankchoosen(SDL_Texture **textTextures) {
-    int textureWidth, textureHeight;
+    textTextures[38] = createTextTextureWithNewline(renderer, fonts[0], descriptionText, BLACK);
+    SDL_QueryTexture(textTextures[38], NULL, NULL, &textureWidth, &textureHeight);
+    shipInfoRect2 = (SDL_Rect){SCREEN_WIDTH * 0.72, SCREEN_HEIGHT * 0.4, SCREEN_WIDTH * textureWidth * 0.00025, SCREEN_WIDTH * textureHeight * 0.00025};
 
+    // Met a jour le tank en cours de modification/observation
     SDL_QueryTexture(textTextures[15 + currentTankIndex], NULL, NULL, &textureWidth, &textureHeight);
     modifyingTankRect.x = windowRect.x + windowRect.w * 0.25;
     modifyingTankRect.y = windowRect.y + windowRect.h * 0.59;
@@ -194,11 +215,10 @@ void refreshRectTankchoosen(SDL_Texture **textTextures) {
     modifyingTankRect.h = textureHeight * windowRect.w * 0.0005;
 
     SDL_QueryTexture(textTextures[15 + currentTankIndex], NULL, NULL, &textureWidth, &textureHeight);
-    infoPerTankRect.x = windowRect.x + windowRect.w * 0.69;
+    infoPerTankRect.x = windowRect.x + windowRect.w * 0.663;
     infoPerTankRect.y = windowRect.y + windowRect.h * 0.68;
-    infoPerTankRect.w = textureWidth * windowRect.w * 0.0005;
-    infoPerTankRect.h = textureHeight * windowRect.w * 0.0005;
-
+    infoPerTankRect.w = textureWidth * windowRect.w * 0.00035;
+    infoPerTankRect.h = textureHeight * windowRect.w * 0.00035;
 }
 
 void initRectShipWindow(SDL_Texture **textTextures) {  // Les rects sont initialises dans le main
@@ -297,8 +317,6 @@ void initRectShipWindow(SDL_Texture **textTextures) {  // Les rects sont initial
     targetDisplayedRect2.w = windowRect.w * 0.09;
     targetDisplayedRect2.h = windowRect.w * 0.09;
 
-    refreshRectTankchoosen(textTextures);
-
     flowInTankRightRect.x = windowRect.x + windowRect.w * 0.3;
     flowInTankRightRect.y = windowRect.y + windowRect.h * 0.6;
     flowInTankRightRect.w = windowRect.w * 0.2;
@@ -348,16 +366,6 @@ void initRectShipWindow(SDL_Texture **textTextures) {  // Les rects sont initial
     changeTankManagerRight.y = windowRect.y + windowRect.h * 0.59;
     changeTankManagerRight.w = windowRect.w * 0.03;
     changeTankManagerRight.h = windowRect.w * 0.03;
-
-    changeTankManagerLeft2.x = windowRect.x + windowRect.w * 0.6;
-    changeTankManagerLeft2.y = windowRect.y + windowRect.h * 0.68;
-    changeTankManagerLeft2.w = windowRect.w * 0.03;
-    changeTankManagerLeft2.h = windowRect.w * 0.03;
-
-    changeTankManagerRight2.x = windowRect.x + windowRect.w * 0.8;
-    changeTankManagerRight2.y = windowRect.y + windowRect.h * 0.68;
-    changeTankManagerRight2.w = windowRect.w * 0.03;
-    changeTankManagerRight2.h = windowRect.w * 0.03;
 
     orePossibility0.x = windowRect.x + windowRect.w * 0.1;
     orePossibility0.y = windowRect.y + windowRect.h * 0.9;
@@ -428,6 +436,19 @@ void initRectShipWindow(SDL_Texture **textTextures) {  // Les rects sont initial
     SDL_QueryTexture(textTextures[65], NULL, NULL, &textureWidth, &textureHeight);
     repareShipButtonRect2 = (SDL_Rect){SCREEN_WIDTH * 0.74, SCREEN_HEIGHT * 0.285, SCREEN_WIDTH * textureWidth * 0.0003, SCREEN_WIDTH * textureHeight * 0.0003};
 
+    logoRepairButtonShipInfoRect = (SDL_Rect){SCREEN_WIDTH * 0.705, SCREEN_HEIGHT * 0.285, SCREEN_WIDTH * 0.0190, SCREEN_WIDTH * 0.0190};
+
+
+    // ShipWindowShipModel
+
+    upgradeShipButtonRect = (SDL_Rect){SCREEN_WIDTH * 0.67, SCREEN_HEIGHT * 0.52, SCREEN_WIDTH * 0.1150, SCREEN_WIDTH * 0.026};
+
+    SDL_QueryTexture(textTextures[63], NULL, NULL, &textureWidth, &textureHeight);
+    upgradeShipButtonRect2 = (SDL_Rect){SCREEN_WIDTH * 0.705, SCREEN_HEIGHT * 0.525, SCREEN_WIDTH * textureWidth * 0.0003, SCREEN_WIDTH * textureHeight * 0.0003};
+
+    logoUpgradeButtonShipInfoRect = (SDL_Rect){SCREEN_WIDTH * 0.6750, SCREEN_HEIGHT * 0.5250, SCREEN_WIDTH * 0.0190, SCREEN_WIDTH * 0.0190};
+
+
     // ShipWindowTankCompo(imageTextures, textTextures);
        
     SDL_QueryTexture(textTextures[14], NULL, NULL, &textureWidth, &textureHeight);
@@ -436,47 +457,36 @@ void initRectShipWindow(SDL_Texture **textTextures) {  // Les rects sont initial
     category5TitleRect.w = textureWidth * windowRect.w * 0.0005;
     category5TitleRect.h = textureHeight * windowRect.w * 0.0005;
 
-    shipFirstCompartmentRect.x = windowRect.x + windowRect.w * 0.90;
-    shipFirstCompartmentRect.y = windowRect.y + windowRect.h * 0.84;
-    shipFirstCompartmentRect.w = windowRect.w * 0.05;
-    shipFirstCompartmentRect.h = windowRect.h * 0.04;
+    shipFirstCompartmentRect = (SDL_Rect){SCREEN_WIDTH * 0.7890, SCREEN_HEIGHT * 0.7930, SCREEN_WIDTH * 0.0500, SCREEN_WIDTH * 0.0210};
 
-    shipFirstCompartmentLogoRect.x = windowRect.x + windowRect.w * 0.95;
-    shipFirstCompartmentLogoRect.y = windowRect.y + windowRect.h * 0.835;
-    shipFirstCompartmentLogoRect.w = windowRect.w * 0.025;
-    shipFirstCompartmentLogoRect.h = windowRect.w * 0.025;
+    shipFirstCompartmentLogoRect = (SDL_Rect){SCREEN_WIDTH * 0.76600, SCREEN_HEIGHT * 0.7940, SCREEN_WIDTH * 0.0200, SCREEN_WIDTH * 0.0200};
 
-    shipFirstCompartmentNumberRect.x = windowRect.x + windowRect.w * 0.915;
-    shipFirstCompartmentNumberRect.y = windowRect.y + windowRect.h * 0.837;
-    shipFirstCompartmentNumberRect.w = windowRect.w * 0.025;
-    shipFirstCompartmentNumberRect.h = windowRect.w * 0.025;
+    shipFirstCompartmentNumberRect = (SDL_Rect){SCREEN_WIDTH * 0.8070, SCREEN_HEIGHT * 0.7870, SCREEN_WIDTH * 0.0200, SCREEN_WIDTH * 0.0280};
 
-    edgeTankChoosenButtonRect2.x = windowRect.x + windowRect.w * 0.59;  
-    edgeTankChoosenButtonRect2.y = windowRect.y + windowRect.h * 0.67;
-    edgeTankChoosenButtonRect2.w = windowRect.w * 0.25;
-    edgeTankChoosenButtonRect2.h = windowRect.h * 0.07;
+    edgeTankChoosenButtonRect2 = (SDL_Rect){SCREEN_WIDTH * 0.56500, SCREEN_HEIGHT * 0.6400, SCREEN_WIDTH * 0.1600, SCREEN_WIDTH * 0.0200};
 
-    shipRightRect2.x = windowRect.x + windowRect.w * 0.77;
-    shipRightRect2.y = windowRect.y + windowRect.h * 0.57;
-    shipRightRect2.w = windowRect.w * 0.3;
-    shipRightRect2.h = windowRect.h * 0.6;
+    shipRightRect2 = (SDL_Rect){SCREEN_WIDTH * 0.6330, SCREEN_HEIGHT * 0.5700, SCREEN_WIDTH * 0.3500, SCREEN_WIDTH * 0.2700};
 
-    mainInfoTanksEdgeRect.x = windowRect.x + windowRect.w * 0.865;
-    mainInfoTanksEdgeRect.y = windowRect.y + windowRect.h * 0.65;
-    mainInfoTanksEdgeRect.w = windowRect.w * 0.12;
-    mainInfoTanksEdgeRect.h = windowRect.h * 0.32;
+    mainInfoTanksEdgeRect = (SDL_Rect){SCREEN_WIDTH * 0.7460, SCREEN_HEIGHT * 0.6410, SCREEN_WIDTH * 0.1300, SCREEN_WIDTH * 0.1350};
        
     SDL_QueryTexture(textTextures[47], NULL, NULL, &textureWidth, &textureHeight);
-    mainInfoTanksInfoRect.x = windowRect.x + windowRect.w * 0.884;
-    mainInfoTanksInfoRect.y = windowRect.y + windowRect.h * 0.61;
+    mainInfoTanksInfoRect.x = windowRect.x + windowRect.w * 0.855;
+    mainInfoTanksInfoRect.y = windowRect.y + windowRect.h * 0.64;
     mainInfoTanksInfoRect.w = textureWidth * windowRect.w * 0.0004;
     mainInfoTanksInfoRect.h = textureHeight * windowRect.w * 0.0004;
        
     SDL_QueryTexture(textTextures[63], NULL, NULL, &textureWidth, &textureHeight);
-    upgradeButtonTankRect.x = windowRect.x + windowRect.w * 0.7;
-    upgradeButtonTankRect.y = windowRect.y + windowRect.h * 0.9;
-    upgradeButtonTankRect.w = textureWidth * windowRect.w * 0.0004;
-    upgradeButtonTankRect.h = textureHeight * windowRect.w * 0.0004;
+    upgradeButtonTankRect2 = (SDL_Rect){SCREEN_WIDTH * 0.62, SCREEN_HEIGHT * 0.84, SCREEN_WIDTH * textureWidth * 0.0003, SCREEN_WIDTH * textureHeight * 0.0003};
+
+    upgradeButtonTankRect = (SDL_Rect){SCREEN_WIDTH * 0.58, SCREEN_HEIGHT * 0.835, SCREEN_WIDTH * 0.1150, SCREEN_WIDTH * 0.026};
+
+    logoUpgradeButtonTankInfoRect = (SDL_Rect){SCREEN_WIDTH * 0.585, SCREEN_HEIGHT * 0.84, SCREEN_WIDTH * 0.0190, SCREEN_WIDTH * 0.0190};
+
+    changeTankManagerLeft2 = (SDL_Rect){SCREEN_WIDTH * 0.5690, SCREEN_HEIGHT * 0.6430, SCREEN_WIDTH * 0.0150, SCREEN_WIDTH * 0.0160};
+
+    changeTankManagerRight2 = (SDL_Rect){SCREEN_WIDTH * 0.705, SCREEN_HEIGHT * 0.6430, SCREEN_WIDTH * 0.0150, SCREEN_WIDTH * 0.0160};
+
+    currentVisualNarrowRect = (SDL_Rect){SCREEN_WIDTH * 0.8400, SCREEN_HEIGHT * 0.7950, SCREEN_WIDTH * 0.0190, SCREEN_WIDTH * 0.0200};
 }
 
 void displayShipWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
@@ -484,7 +494,7 @@ void displayShipWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures,
     ShipWindowTravelInfo(imageTextures, textTextures, ships);
     ShipWindowTankManager(imageTextures, textTextures, ships);
     ShipWindowShipCond(imageTextures, textTextures, ships);
-    ShipWindowShipModel(imageTextures, textTextures, ships);
+    ShipWindowShipModel(imageTextures, textTextures);
     ShipWindowTankCompo(imageTextures, textTextures, ships);
 }
 
@@ -698,14 +708,28 @@ void ShipWindowShipCond(SDL_Texture ***imageTextures, SDL_Texture **textTextures
     // Affichage du pourcentage de sante de la fusee
     SDL_RenderCopy(renderer, textTextures[36], NULL, &percentShipHealthRect);
 
+    // Afficher le logo du bouton de reparation
+    SDL_RenderCopy(renderer, imageTextures[2][7], NULL, &logoRepairButtonShipInfoRect);
+
 }
 
-void ShipWindowShipModel(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
+void ShipWindowShipModel(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
     // Affichage du titre "Ship model"
     SDL_RenderCopy(renderer, textTextures[13], NULL, &category4TitleRect);
 
-    // Affichage du titre "Ship model"
+    // Affichage de la description de la fusee
     SDL_RenderCopy(renderer, textTextures[37], NULL, &shipInfoRect);
+    SDL_RenderCopy(renderer, textTextures[38], NULL, &shipInfoRect2);
+
+    // Affiche le bouton d'amelioration du vaisseau
+    SDL_SetRenderDrawColor(renderer, 125, 197, 46, 255);
+    SDL_RenderFillRect(renderer, &upgradeShipButtonRect);
+    SDL_DrawEdgeOfRect(renderer, upgradeShipButtonRect, 3);
+    SDL_RenderCopy(renderer, textTextures[63], NULL, &upgradeShipButtonRect2);
+
+    // Afficher le logo du bouton d'amelioration
+    SDL_RenderCopy(renderer, imageTextures[2][7], NULL, &logoUpgradeButtonShipInfoRect);
+
 }
 
 void ShipWindowTankCompo(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
@@ -722,6 +746,7 @@ void ShipWindowTankCompo(SDL_Texture ***imageTextures, SDL_Texture **textTexture
     SDL_RenderCopy(renderer, textTextures[47], NULL, &mainInfoTanksInfoRect);
 
     // Affichage des reservoirs, l'un apres l'autre
+    float GapBetweenTanks = 1.05;
     Cargo cargo = ships[getWindowId()].cargo;
     SDL_Rect currentTankRect = shipFirstCompartmentRect;
     SDL_Rect currentLogoRect = shipFirstCompartmentLogoRect;
@@ -764,10 +789,17 @@ void ShipWindowTankCompo(SDL_Texture ***imageTextures, SDL_Texture **textTexture
         SDL_RenderCopy(renderer, textTextures[48 + i], NULL, &currentNumberRect);
 
         // Pour afficher le prochain reservoir
-        currentTankRect.y -= 1.05 * shipFirstCompartmentRect.h;
-        currentLogoRect.y -= 1.05 * shipFirstCompartmentRect.h;
-        currentNumberRect.y -= 1.05 * shipFirstCompartmentRect.h;
+        currentTankRect.y -= GapBetweenTanks * shipFirstCompartmentRect.h;
+        currentLogoRect.y -= GapBetweenTanks * shipFirstCompartmentRect.h;
+        currentNumberRect.y -= GapBetweenTanks * shipFirstCompartmentRect.h;
     }
+
+    // Affiche une fleche pour annoncer le tank en cours de modification
+    SDL_Rect currentVisualNarrowRectTempo = currentVisualNarrowRect;
+    for (int i = 0; i < currentTankIndex; i++) {
+        currentVisualNarrowRectTempo.y -= GapBetweenTanks * shipFirstCompartmentRect.h;
+    }
+    SDL_RenderCopy(renderer, imageTextures[2][2], NULL, &currentVisualNarrowRectTempo);
 
     // Affichage fleches pour changer le tank    // Afficher les fleches pour pouvoir modifier le tank en cours de modification
     SDL_RenderCopy(renderer, imageTextures[2][2], NULL, &changeTankManagerLeft2);
@@ -782,11 +814,14 @@ void ShipWindowTankCompo(SDL_Texture ***imageTextures, SDL_Texture **textTexture
     // Affiche la description du tank 
     SDL_RenderCopy(renderer, textTextures[35], NULL, &tankInfoRect);
 
-    // Affiche le bouton d'ameliroation du tank
-    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+    // Affiche le bouton d'amelioration du tank
+    SDL_SetRenderDrawColor(renderer, 125, 197, 46, 255);
     SDL_RenderFillRect(renderer, &upgradeButtonTankRect);
     SDL_DrawEdgeOfRect(renderer, upgradeButtonTankRect, 3);
-    SDL_RenderCopy(renderer, textTextures[63], NULL, &upgradeButtonTankRect);
+    SDL_RenderCopy(renderer, textTextures[63], NULL, &upgradeButtonTankRect2);
+
+    // Afficher le logo du bouton d'amelioration du tank
+    SDL_RenderCopy(renderer, imageTextures[2][7], NULL, &logoUpgradeButtonTankInfoRect);
 }
 
 void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship, Planet *planets, SDL_Point mouse) {
@@ -798,13 +833,13 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship,
     else if (currentTankIndex > 0 && 
              (SDL_PointInRect(&mouse, &changeTankManagerLeft) || SDL_PointInRect(&mouse, &changeTankManagerLeft2))) {
         currentTankIndex --;
-        refreshRectTankchoosen(textTextures);
+        initTextShipWindow(textTextures, fonts, ship);
 
     } 
     else if (currentTankIndex < ship->cargo.compartmentsNumber - 1 && 
              (SDL_PointInRect(&mouse, &changeTankManagerRight) || SDL_PointInRect(&mouse, &changeTankManagerRight2))) {
         currentTankIndex ++;
-        refreshRectTankchoosen(textTextures);
+        initTextShipWindow(textTextures, fonts, ship);
     }
 
     // Ouverture de la fenetre de la planete (depuis la fenetre d'info. de la fusee)
@@ -834,6 +869,18 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship,
         if (ship->currentLife > ship->maxLife) {
             ship->currentLife = ship->maxLife;
         }
+        initTextShipWindow(textTextures, fonts, ship);
+    }
+
+    // Ameliroation de la fusee
+    else if (SDL_PointInRect(&mouse, &upgradeShipButtonRect)) {
+        ship->level += 1;
+        initTextShipWindow(textTextures, fonts, ship);
+    }
+
+    // Ameliroation de la fusee
+    else if (SDL_PointInRect(&mouse, &upgradeButtonTankRect)) {
+        ship->cargo.compartmentsList[currentTankIndex].level += 1;
         initTextShipWindow(textTextures, fonts, ship);
     }
 

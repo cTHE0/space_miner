@@ -33,6 +33,7 @@ void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
         (*ships)[i].w = 62;
         (*ships)[i].h = 62;
         (*ships)[i].speed = (rand() / (float)RAND_MAX * 0.6 + 0.4) * SHIP_SPEED;
+        (*ships)[i].level = 1;
         (*ships)[i].state = MOVING_TO_TARGET;
         (*ships)[i].maxLife = 100;
         (*ships)[i].currentLife = rand() % (int)(*ships)[i].maxLife;
@@ -434,4 +435,14 @@ void destroyShips(Ship *ships, int shipCount) {
         free(ships[i].cargo.compartmentsList);
     }
     free(ships);
+}
+
+int globalTankCapacity(Ship *ship) {
+    int capacity = 0;
+
+    for (int i = 0; i < ship->cargo.compartmentsNumber; i++) {
+        capacity += ship->cargo.compartmentsList[i].maxCapacity;
+    }
+
+    return capacity;
 }

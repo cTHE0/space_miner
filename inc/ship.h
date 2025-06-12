@@ -28,6 +28,7 @@ struct Ship {
     ShipType shiptype;
     int id;
     int idModel;
+    int level;
     float x, y, w, h;      // Rect de la fusee sur la map
     SDL_Rect destRect;     // Rect de la fusee sur l'ecran physique
     Spot base;
@@ -60,6 +61,8 @@ int haveFuel(Ship *ship);
 void renderShips(SDL_Texture ***textureShip, Ship *ships, int shipCount);
     void renderShipImage(SDL_Texture *spriteSheet, Ship ship, SDL_Point ShipOnScreen);
     void renderShipBars(Ship ship, SDL_Point ShipOnScreen);
+
+int globalTankCapacity(Ship *ship);
 
 void destroyShips(Ship *ships, int shipCount);
 
