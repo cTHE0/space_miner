@@ -80,7 +80,9 @@ static SDL_Rect srcRectShip = {0, 0, 64, 64},
                 tankInfoRect,
                 upgradeButtonTankRect,
                 repareShipButtonRect,
-                repareShipButtonRect2;
+                repareShipButtonRect2,
+                percentShipHealthRect,
+                shipInfoRect;
 
 void initShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship) {
     initTextShipWindow(textTextures, fonts, ship);
@@ -166,6 +168,20 @@ void initTextShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship
     textTextures[35] = createTextTextureWithNewline(renderer, fonts[0], descriptionText, BLACK);
     SDL_QueryTexture(textTextures[35], NULL, NULL, &textureWidth, &textureHeight);
     tankInfoRect = (SDL_Rect){SCREEN_WIDTH * 0.577, SCREEN_HEIGHT * 0.7, textureWidth * SCREEN_WIDTH * 0.00027, textureHeight * SCREEN_WIDTH * 0.00027};
+
+    // Mise a jour de la vie de la fusee
+    strcpy(descriptionText, "");
+    sprintf(descriptionText, "%d%%", (ship->currentLife * 100) / ship->maxLife);
+    textTextures[36] = createTextTextureWithNewline(renderer, fonts[0], descriptionText, BLACK);
+    SDL_QueryTexture(textTextures[36], NULL, NULL, &textureWidth, &textureHeight);
+    percentShipHealthRect = (SDL_Rect){SCREEN_WIDTH * 0.747, SCREEN_HEIGHT * 0.245, SCREEN_WIDTH * textureWidth * 0.0002, SCREEN_WIDTH * textureHeight * 0.0002};
+    
+    // Mise a jour des donnes de la fusee
+    strcpy(descriptionText, "");
+    sprintf(descriptionText, "Model                         Basic Rocket     Fuel consumption       30 L/s  \nProduction number   1                        Tank capacity            14.91 m3\nLevel                          7                        Durability                    2h \nMove speed               17 km/s              Mineral transferred  199,552 m3");
+    textTextures[37] = createTextTextureWithNewline(renderer, fonts[0], descriptionText, BLACK);
+    SDL_QueryTexture(textTextures[37], NULL, NULL, &textureWidth, &textureHeight);
+    shipInfoRect = (SDL_Rect){SCREEN_WIDTH * 0.565, SCREEN_HEIGHT * 0.4, SCREEN_WIDTH * textureWidth * 0.00025, SCREEN_WIDTH * textureHeight * 0.00025};
 }
 
 void refreshRectTankchoosen(SDL_Texture **textTextures) {
@@ -403,10 +419,14 @@ void initRectShipWindow(SDL_Texture **textTextures) {  // Les rects sont initial
     shipConditionSrcRect.w = 64;
     shipConditionSrcRect.h = 64;
 
-    currentLifeShipRect = (SDL_Rect){SCREEN_WIDTH * 0.65, SCREEN_HEIGHT * 0.247, SCREEN_WIDTH * 0.21, SCREEN_WIDTH * 0.01};
+    currentLifeShipRect = (SDL_Rect){SCREEN_WIDTH * 0.65, SCREEN_HEIGHT * 0.245, SCREEN_WIDTH * 0.21, SCREEN_WIDTH * 0.013};
 
-    maxLifeShipRect = (SDL_Rect){SCREEN_WIDTH * 0.65, SCREEN_HEIGHT * 0.247, SCREEN_WIDTH * 0.21, SCREEN_WIDTH * 0.01};
+    maxLifeShipRect = (SDL_Rect){SCREEN_WIDTH * 0.65, SCREEN_HEIGHT * 0.245, SCREEN_WIDTH * 0.21, SCREEN_WIDTH * 0.013};
 
+    repareShipButtonRect = (SDL_Rect){SCREEN_WIDTH * 0.7000, SCREEN_HEIGHT * 0.279, SCREEN_WIDTH * 0.1150, SCREEN_WIDTH * 0.026};
+
+    SDL_QueryTexture(textTextures[65], NULL, NULL, &textureWidth, &textureHeight);
+    repareShipButtonRect2 = (SDL_Rect){SCREEN_WIDTH * 0.74, SCREEN_HEIGHT * 0.285, SCREEN_WIDTH * textureWidth * 0.0003, SCREEN_WIDTH * textureHeight * 0.0003};
 
     // ShipWindowTankCompo(imageTextures, textTextures);
        
@@ -457,11 +477,6 @@ void initRectShipWindow(SDL_Texture **textTextures) {  // Les rects sont initial
     upgradeButtonTankRect.y = windowRect.y + windowRect.h * 0.9;
     upgradeButtonTankRect.w = textureWidth * windowRect.w * 0.0004;
     upgradeButtonTankRect.h = textureHeight * windowRect.w * 0.0004;
-
-    repareShipButtonRect = (SDL_Rect){SCREEN_WIDTH * 0.7000, SCREEN_HEIGHT * 0.2780, SCREEN_WIDTH * 0.1150, SCREEN_WIDTH * 0.026};
-
-    SDL_QueryTexture(textTextures[65], NULL, NULL, &textureWidth, &textureHeight);
-    repareShipButtonRect2 = (SDL_Rect){SCREEN_WIDTH * 0.74, SCREEN_HEIGHT * 0.28, SCREEN_WIDTH * textureWidth * 0.0003, SCREEN_WIDTH * textureHeight * 0.0003};
 }
 
 void displayShipWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
@@ -678,13 +693,19 @@ void ShipWindowShipCond(SDL_Texture ***imageTextures, SDL_Texture **textTextures
     SDL_SetRenderDrawColor(renderer, 255, 232, 207, 255);
     SDL_RenderFillRect(renderer, &repareShipButtonRect);
     SDL_DrawEdgeOfRect(renderer, repareShipButtonRect, 3);
-
     SDL_RenderCopy(renderer, textTextures[65], NULL, &repareShipButtonRect2);
+
+    // Affichage du pourcentage de sante de la fusee
+    SDL_RenderCopy(renderer, textTextures[36], NULL, &percentShipHealthRect);
+
 }
 
 void ShipWindowShipModel(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
     // Affichage du titre "Ship model"
     SDL_RenderCopy(renderer, textTextures[13], NULL, &category4TitleRect);
+
+    // Affichage du titre "Ship model"
+    SDL_RenderCopy(renderer, textTextures[37], NULL, &shipInfoRect);
 }
 
 void ShipWindowTankCompo(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
@@ -813,6 +834,7 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship,
         if (ship->currentLife > ship->maxLife) {
             ship->currentLife = ship->maxLife;
         }
+        initTextShipWindow(textTextures, fonts, ship);
     }
 
     // Systeme d'arret d'urgence de la fusee
