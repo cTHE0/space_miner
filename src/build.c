@@ -1,8 +1,14 @@
 #include "build.h"
 
 #include "planet.h"
+#include "ship.h"
 #include "renderer.h"
 #include "camera.h"
+#include "mine.h"
+#include "config.h"
+
+
+static Uint32 lastBuildUpdateTime = 0;
 
 
 void initBuildsPlanet(Planet *planet) {
@@ -23,12 +29,64 @@ void initBuildsPlanet(Planet *planet) {
     // Initialisation des reservoirs et des mines
     for (int i = 0; i < ORE_TYPE_COUNT; i++) {
         planet->builds[i].tank = (Compartment){i, 0, 0, 0, 0, 1, 8000, 10000, 20};
-        planet->builds[i + ORE_TYPE_COUNT].productionSpeed = 0;
+
+        planet->builds[i + ORE_TYPE_COUNT].mine.productivity = 200;
+        planet->builds[i + ORE_TYPE_COUNT].mine.level = 1;
+        planet->builds[i + ORE_TYPE_COUNT].mine.ore = i;
     }
 
     // Initialisation de l'usine et de la tourelle de defence
-    planet->builds[10].damages = 0;
-    planet->builds[11].productionSpeed = 0;
+    // ...
+}
+
+void updateBuilds(Planet *planets, Ship *ships, int shipCount, int planetCount) {
+    if (SDL_GetTicks() < lastBuildUpdateTime + REFRESH_TIME_BUILDS) {
+        return;
+    }
+
+    lastBuildUpdateTime += REFRESH_TIME_BUILDS;
+
+    for (int i = 0; i < planetCount; i++) {
+        for (int j = 0; j < BUILD_TYPE_COUNT; j++) {
+            if (planets[i].builds[j].type == NOTHING) {  // Il n'y a plus d'objet ensuite
+                break;
+            } 
+
+            switch (planets[i].builds[j].type) {
+                case ORE_STORE:  // Tout est gere dans ship.c
+                    break;
+
+                case ORE_MINE:
+                    updateBuildMine(planets[i].builds, &planets[i].builds[j].mine, planets[i].abundance[planets[i].builds[j].mine.ore]);
+                    break;
+
+                case DEFENCE_TOWER:
+                    break;
+
+                case FACTORY:
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
+}
+
+void updateBuildMine(Build *builds, Mine *mine, int abundance) {
+    for (int i = 0; i < ORE_TYPE_COUNT; i++) {
+        if (builds[i].type == ORE_STORE && builds[i].tank.ore == mine->ore) {  // Si l'on a trouve le bon reservoir, acceuillant les bons minerais...
+            builds[i].tank.currentCapacity += mine->productivity * (abundance / 100.f);
+
+            if (builds[i].tank.currentCapacity > builds[i].tank.maxCapacity) {
+                builds[i].tank.currentCapacity = builds[i].tank.maxCapacity;
+            }
+            return;
+        }
+    }
+
+    printf("Pas d'emplacement de stockage trouve pour vider la mine (build.c)\n");
+    return;
 }
 
 void displayBuildsAroundPlanet(Planet *planet, int countBuild, SDL_Texture **imageTextures, SDL_Point texture_dimensions) {

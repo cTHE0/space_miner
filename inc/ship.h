@@ -12,7 +12,8 @@ typedef enum { TRANSPORTER, EXPLORER, DEFENDER } ShipType;
 
 typedef enum {SPOT_NONE, SPOT_PLANET, SPOT_POINT, SPOT_SHIP} SpotType;  // Vers quel genre se destination se dirige-t-on ?
 
-typedef struct Ship Ship;  // Declaration anticipee (car sinon cercle de dependance)
+typedef struct Ship Ship;  // Declarations anticipees (car sinon cercle de dependance)
+typedef struct Planet Planet;
 
 typedef struct {  // Notre destination
     SpotType type;

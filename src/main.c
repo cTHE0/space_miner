@@ -12,6 +12,7 @@
 #include "landing_page.h"
 #include "text.h"
 #include "place.h"
+#include "build.h"
 
 
 const uint32_t currentSeed = 2;  // Peut prendre des valeurs entre 1 et 2**32-1
@@ -69,7 +70,8 @@ int main(void) {
                 initRects(textTextures);  // A SUPPRIMER, SEULEMENT POUR LE DEV
                 handleEvents(textTextures, fonts, &state, ships, shipCount, planets, planetCount);
                 updateShips(ships, shipCount);
-                updatePlanet(planets, ships, shipCount);
+                updatePlanets(planets, ships, shipCount, planetCount);
+                updateBuilds(planets, ships, shipCount, planetCount);
                 displayGame(imageTextures, textTextures, ships, shipCount, planets, planetCount);
                 break;
             
@@ -99,10 +101,11 @@ int main(void) {
 
     // POUR LE DEV 
     printf("(SDL_Rect){SCREEN_WIDTH * %.4f, SCREEN_HEIGHT * %.4f, SCREEN_WIDTH * %.4f, SCREEN_WIDTH * %.4f};\n", 
-        getEmp().x / (float)getScaleDev(), 
-        getEmp().y / (float)getScaleDev(), 
-        getEmp().w / (float)getScaleDev(), 
-        getEmp().h / (float)getScaleDev());
+           getEmp().x / (float)getScaleDev(), 
+           getEmp().y / (float)getScaleDev(), 
+           getEmp().w / (float)getScaleDev(), 
+           getEmp().h / (float)getScaleDev()
+          );
     
     destroyImageTextures(imageTextures);
     destroyTextTextures(textTextures);

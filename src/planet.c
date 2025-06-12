@@ -53,12 +53,12 @@ void generatePlanets(Planet **planets, int planetCount) {
     }
 }
 
-void updatePlanet(Planet *planets, Ship *ships, int shipCount) {
+void updatePlanets(Planet *planets, Ship *ships, int shipCount, int planetCount) {
     if (SDL_GetTicks() > lastPlanetUpdateTime + WAIT_TIME_PLANET) {
-        lastPlanetUpdateTime = SDL_GetTicks();
+        lastPlanetUpdateTime += WAIT_TIME_PLANET;
 
         // Mise a jour des rotations des planètes
-        for (int i = 0; i < INIT_PLANET_COUNT; i++) {
+        for (int i = 0; i < planetCount; i++) {
             if (planets[i].planetType != SUN) {
                 // Mise à jour de l'angle
                 planets[i].orbitAngleDeg += planets[i].orbitSpeedDeg;

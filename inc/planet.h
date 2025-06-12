@@ -5,12 +5,11 @@
 #include "config.h"
 #include "build.h"
 #include "ship.h"
+#include "build.h"
 
 typedef enum { SUN, PLANET } planetTypeEnum;
 
-typedef struct Ship Ship; 
-
-typedef struct Build Build;
+typedef struct Ship Ship;
 
 typedef struct Planet {
     int id;                             // Identifiant de la planète
@@ -28,7 +27,7 @@ typedef struct Planet {
     int orbitCenterY;
 } Planet;
 
-void updatePlanet(Planet *planets, Ship *ships, int shipCount);
+void updatePlanets(Planet *planets, Ship *ships, int shipCount, int planetCount);
 void generatePlanets(Planet **planets, int planetCount);
 void renderPlanets(SDL_Texture ***imageTextures, Planet *planets, int planetCount);
 void destroyPlanets(Planet *planets);
