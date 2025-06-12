@@ -101,19 +101,22 @@ void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, GameState *state
                     
                     /*---------Partie pr développement------------*/
                     case SDLK_1:
-                        change_sign();
+                        setSign();
                         break;
                     case SDLK_x:
-                        modif_emp(1, 0, 0, 0);
+                        modifEmp(1, 0, 0, 0);
                         break;
                     case SDLK_y:
-                        modif_emp(0, 1, 0, 0);
+                        modifEmp(0, 1, 0, 0);
                         break;
                     case SDLK_w:
-                        modif_emp(0, 0, 1, 0);
+                        modifEmp(0, 0, 1, 0);
                         break;
                     case SDLK_h:
-                        modif_emp(0, 0, 0, 1);
+                        modifEmp(0, 0, 0, 1);
+                        break;
+                    case SDLK_s:
+                        setScaleDev();
                         break;
                     /*---------Partie pr développement------------*/
                     

@@ -186,7 +186,7 @@ void initRectPlanetWindow(SDL_Texture **textTextures) {
     category2TitleRect.y = windowRect.y + windowRect.h * 0.1;
     category2TitleRect.w = textureWidth * windowRect.w * 0.0005;
     category2TitleRect.h = textureHeight * windowRect.w * 0.0005;
-
+    
     narrowAxesXAbundanceRect = (SDL_Rect){SCREEN_WIDTH * 0.87, SCREEN_HEIGHT * 0.453, SCREEN_WIDTH * 0.01, SCREEN_WIDTH * 0.01};
     narrowAxesYAbundanceRect = (SDL_Rect){SCREEN_WIDTH * 0.726, SCREEN_HEIGHT * 0.22, SCREEN_WIDTH * 0.01, SCREEN_WIDTH * 0.01};
 

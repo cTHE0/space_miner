@@ -65,6 +65,7 @@ int main(void) {
                 break;
             
             case GAME:
+                initRects(textTextures);  // A SUPPRIMER, SEULEMENT POUR LE DEV
                 handleEvents(textTextures, fonts, &state, ships, shipCount, planets, planetCount);
                 updateShips(ships, shipCount);
                 updatePlanet(planets, ships, shipCount);

@@ -5,30 +5,56 @@
 
 
 /*
-(SDL_Rect){SCREEN_WIDTH * get_emp().x /160, SCREEN_HEIGHT * get_emp().y/160, SCREEN_WIDTH * get_emp().w/160, SCREEN_WIDTH * get_emp().h/160};
+(SDL_Rect){SCREEN_WIDTH * getEmp().x / getScaleDev(), SCREEN_HEIGHT * getEmp().y / getScaleDev(), SCREEN_WIDTH * getEmp().w / getScaleDev(), SCREEN_WIDTH * getEmp().h / getScaleDev()};
 */
 
-SDL_Rect emplacement = {0, 0, 0, 0};
-int sign = 1;
+static SDL_Rect emplacement = {5, 5, 1, 1};
+static int scaleDev = 10;  // Puissance de 10
+static int sign = 1;
 
-SDL_Rect get_emp(){
+SDL_Rect getEmp(void) {
     return emplacement;
 }
 
-int get_sign(){
+int getSign(void) {
     return sign;
 }
 
-void change_sign(){
+int getScaleDev(void) {
+    return scaleDev;
+}
+
+void setScaleDev(void) {
+    if (scaleDev <= 1000 && sign == 1) {
+        scaleDev *= 10;
+
+        emplacement.x = emplacement.x * 10;
+        emplacement.y = emplacement.y * 10;
+        emplacement.w = emplacement.w * 10;
+        emplacement.h = emplacement.h * 10;
+    } else if (scaleDev >= 100 && sign == -1) {
+        scaleDev /= 10;
+
+        emplacement.x = emplacement.x / 10;
+        emplacement.y = emplacement.y / 10;
+        emplacement.w = emplacement.w / 10;
+        emplacement.h = emplacement.h / 10;
+    }
+
+    printf("New scale: %d\n", scaleDev);
+
+}
+
+void setSign(){
     sign *= (-1);
     printf("Sign: %d \n", sign);
 }
 
-void modif_emp(int dx, int dy, int dw, int dh) {
-    emplacement.x += sign*dx;
-    emplacement.y += sign*dy;
-    emplacement.w += sign*dw;
-    emplacement.h += sign*dh;
-    
-    printf("x:%d ; y:%d ; w:%d ; h:%d \n", emplacement.x, emplacement.y, emplacement.w, emplacement.h);
+void modifEmp(int dx, int dy, int dw, int dh) {
+    emplacement.x += sign * dx;
+    emplacement.y += sign * dy;
+    emplacement.w += sign * dw;
+    emplacement.h += sign * dh;
+
+    printf("x:%.4f ; y:%.4f ; w:%.4f ; h:%.4f\n", emplacement.x / (float)scaleDev, emplacement.y / (float)scaleDev, emplacement.w / (float)scaleDev, emplacement.h / (float)scaleDev);
 }
