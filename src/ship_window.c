@@ -11,6 +11,7 @@
 #include "window.h"
 #include "planet_window.h"
 #include "basic_ship_window.h"
+#include "place.h"
 
 
 // Declaration des rectangles et variables propres a la fenetre d'informations des fusees
@@ -31,6 +32,7 @@ static SDL_Rect srcRectShip = {0, 0, 64, 64},
                 windowLine2Rect,
                 windowLine3Rect,
                 windowLine4Rect,
+                windowLine5Rect,
                 category1TitleRect,
                 category2TitleRect,
                 category3TitleRect,
@@ -77,7 +79,8 @@ static SDL_Rect srcRectShip = {0, 0, 64, 64},
                 mainInfoTanksInfoRect,
                 tankInfoRect,
                 upgradeButtonTankRect,
-                repareShipButtonRect;
+                repareShipButtonRect,
+                repareShipButtonRect2;
 
 void initShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship) {
     initTextShipWindow(textTextures, fonts, ship);
@@ -218,6 +221,7 @@ void initRectShipWindow(SDL_Texture **textTextures) {  // Les rects sont initial
     windowLine4Rect.w = 3;
     windowLine4Rect.h = windowRect.h * 0.93;
 
+    windowLine5Rect = (SDL_Rect){SCREEN_WIDTH * 0.5400, SCREEN_HEIGHT * 0.3430, SCREEN_WIDTH * 0.3600, SCREEN_WIDTH * 0.0020};
 
     // ShipWindowTravelInfo(imageTextures, textTextures, ships);
 
@@ -399,15 +403,10 @@ void initRectShipWindow(SDL_Texture **textTextures) {  // Les rects sont initial
     shipConditionSrcRect.w = 64;
     shipConditionSrcRect.h = 64;
 
-    currentLifeShipRect.x = windowRect.x + windowRect.w * 0.7;
-    currentLifeShipRect.y = windowRect.y + windowRect.h * 0.22;
-    currentLifeShipRect.w = windowRect.w * 0.25;
-    currentLifeShipRect.h = windowRect.h * 0.03;
+    currentLifeShipRect = (SDL_Rect){SCREEN_WIDTH * 0.65, SCREEN_HEIGHT * 0.247, SCREEN_WIDTH * 0.21, SCREEN_WIDTH * 0.01};
 
-    maxLifeShipRect.x = windowRect.x + windowRect.w * 0.7;
-    maxLifeShipRect.y = windowRect.y + windowRect.h * 0.22;
-    maxLifeShipRect.w = windowRect.w * 0.25;
-    maxLifeShipRect.h = windowRect.h * 0.03;
+    maxLifeShipRect = (SDL_Rect){SCREEN_WIDTH * 0.65, SCREEN_HEIGHT * 0.247, SCREEN_WIDTH * 0.21, SCREEN_WIDTH * 0.01};
+
 
     // ShipWindowTankCompo(imageTextures, textTextures);
        
@@ -458,12 +457,11 @@ void initRectShipWindow(SDL_Texture **textTextures) {  // Les rects sont initial
     upgradeButtonTankRect.y = windowRect.y + windowRect.h * 0.9;
     upgradeButtonTankRect.w = textureWidth * windowRect.w * 0.0004;
     upgradeButtonTankRect.h = textureHeight * windowRect.w * 0.0004;
-       
+
+    repareShipButtonRect = (SDL_Rect){SCREEN_WIDTH * 0.7000, SCREEN_HEIGHT * 0.2780, SCREEN_WIDTH * 0.1150, SCREEN_WIDTH * 0.026};
+
     SDL_QueryTexture(textTextures[65], NULL, NULL, &textureWidth, &textureHeight);
-    repareShipButtonRect.x = windowRect.x + windowRect.w * 0.8;
-    repareShipButtonRect.y = windowRect.y + windowRect.h * 0.28;
-    repareShipButtonRect.w = textureWidth * windowRect.w * 0.0004;
-    repareShipButtonRect.h = textureHeight * windowRect.w * 0.0004;
+    repareShipButtonRect2 = (SDL_Rect){SCREEN_WIDTH * 0.74, SCREEN_HEIGHT * 0.28, SCREEN_WIDTH * textureWidth * 0.0003, SCREEN_WIDTH * textureHeight * 0.0003};
 }
 
 void displayShipWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
@@ -471,6 +469,7 @@ void displayShipWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures,
     ShipWindowTravelInfo(imageTextures, textTextures, ships);
     ShipWindowTankManager(imageTextures, textTextures, ships);
     ShipWindowShipCond(imageTextures, textTextures, ships);
+    ShipWindowShipModel(imageTextures, textTextures, ships);
     ShipWindowTankCompo(imageTextures, textTextures, ships);
 }
 
@@ -490,6 +489,7 @@ void ShipWindowFondations(SDL_Texture ***imageTextures, SDL_Texture **textTextur
     SDL_RenderFillRect(renderer, &windowLine2Rect);  // Barre horizontale milieu
     SDL_RenderFillRect(renderer, &windowLine3Rect);  // Barre horizontale droite milieu
     SDL_RenderFillRect(renderer, &windowLine4Rect);  // Barre verticale du milieu
+    SDL_RenderFillRect(renderer, &windowLine5Rect);  // Barre horizontale droite haut
 }
 
 void ShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
@@ -662,9 +662,6 @@ void ShipWindowShipCond(SDL_Texture ***imageTextures, SDL_Texture **textTextures
     // Affichage de la fusee
     SDL_RenderCopy(renderer, imageTextures[7][ships[getWindowId()].idModel], &shipConditionSrcRect, &shipConditionRect);
 
-    // Affichage du titre "Reported problemes"
-    SDL_RenderCopy(renderer, textTextures[13], NULL, &category4TitleRect);
-
     // Affichage etat de la fusee (fond)
     SDL_SetRenderDrawColor(renderer, 150, 150, 150, 255);
     SDL_RenderFillRect(renderer, &maxLifeShipRect);
@@ -678,10 +675,16 @@ void ShipWindowShipCond(SDL_Texture ***imageTextures, SDL_Texture **textTextures
     SDL_DrawEdgeOfRect(renderer, maxLifeShipRect, 3);
 
     // Affiche le bouton de reparation du vaisseau
-    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+    SDL_SetRenderDrawColor(renderer, 255, 232, 207, 255);
     SDL_RenderFillRect(renderer, &repareShipButtonRect);
     SDL_DrawEdgeOfRect(renderer, repareShipButtonRect, 3);
-    SDL_RenderCopy(renderer, textTextures[65], NULL, &repareShipButtonRect);
+
+    SDL_RenderCopy(renderer, textTextures[65], NULL, &repareShipButtonRect2);
+}
+
+void ShipWindowShipModel(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
+    // Affichage du titre "Ship model"
+    SDL_RenderCopy(renderer, textTextures[13], NULL, &category4TitleRect);
 }
 
 void ShipWindowTankCompo(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
@@ -800,6 +803,15 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship,
             initTextPlanetWindow(textTextures, fonts, planets);
         } else {
             setWindowType(NO_WINDOW);
+        }
+    }
+
+    // Reparation de la fusee
+    else if (SDL_PointInRect(&mouse, &repareShipButtonRect)) {
+        ship->currentLife += 0.1 * ship->maxLife;
+
+        if (ship->currentLife > ship->maxLife) {
+            ship->currentLife = ship->maxLife;
         }
     }
 

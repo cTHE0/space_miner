@@ -54,7 +54,7 @@ SDL_Texture **loadTextTextures(TTF_Font **fonts) {  // ATTENTION: ne pas oublier
                                             {"Target:", BLACK, fonts[0]},
                                             {"Ship condition", BLACK, fonts[0]},
                                             {"Repair", BLACK, fonts[0]},
-                                            {"Reported problems", BLACK, fonts[0]},
+                                            {"Ship model", BLACK, fonts[0]},
                                             {"Tank composition", BLACK, fonts[0]},
                                             {"Tank 1", BLACK, fonts[0]},
                                             {"Tank 2", BLACK, fonts[0]},

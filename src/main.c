@@ -11,6 +11,7 @@
 #include "config.h"
 #include "landing_page.h"
 #include "text.h"
+#include "place.h"
 
 
 const uint32_t currentSeed = 2;  // Peut prendre des valeurs entre 1 et 2**32-1
@@ -78,7 +79,7 @@ int main(void) {
         }
 
         // Affichage des FPS
-        if (SDL_GetTicks() - toShowFPS >= 2000) {
+        if (SDL_GetTicks() - toShowFPS >= 3000) {
             printf("FPS: %d\n", (frameCount * 1000) / (SDL_GetTicks() - toShowFPS));
             frameCount = 0;
             toShowFPS = SDL_GetTicks();
@@ -96,6 +97,13 @@ int main(void) {
         destroyPlanets(planets);
     }
 
+    // POUR LE DEV 
+    printf("(SDL_Rect){SCREEN_WIDTH * %.4f, SCREEN_HEIGHT * %.4f, SCREEN_WIDTH * %.4f, SCREEN_WIDTH * %.4f};\n", 
+        getEmp().x / (float)getScaleDev(), 
+        getEmp().y / (float)getScaleDev(), 
+        getEmp().w / (float)getScaleDev(), 
+        getEmp().h / (float)getScaleDev());
+    
     destroyImageTextures(imageTextures);
     destroyTextTextures(textTextures);
     destroyFonts(fonts);

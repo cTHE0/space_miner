@@ -6,10 +6,12 @@
 
 /*
 (SDL_Rect){SCREEN_WIDTH * getEmp().x / getScaleDev(), SCREEN_HEIGHT * getEmp().y / getScaleDev(), SCREEN_WIDTH * getEmp().w / getScaleDev(), SCREEN_WIDTH * getEmp().h / getScaleDev()};
+
+(SDL_Rect){SCREEN_WIDTH * getEmp().x / getScaleDev(), SCREEN_HEIGHT * getEmp().y / getScaleDev(), SCREEN_WIDTH * textureWidth * getEmp().w / getScaleDev(), SCREEN_WIDTH * textureHeight * getEmp().h / getScaleDev()};
 */
 
-static SDL_Rect emplacement = {5, 5, 1, 1};
-static int scaleDev = 10;  // Puissance de 10
+static SDL_Rect emplacement = {50, 50, 5, 5};
+static int scaleDev = 100;  // Puissance de 10
 static int sign = 1;
 
 SDL_Rect getEmp(void) {
