@@ -113,7 +113,7 @@ void initTextShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship
         // Atualisation de la taille du rect affichant ce nom
         SDL_QueryTexture(textTextures[33], NULL, NULL, &textureWidth, &textureHeight);
         nameBaseDisplayedRect.x = windowRect.x + windowRect.w * 0.03;
-        nameBaseDisplayedRect.y = windowRect.y + windowRect.h * 0.4;
+        nameBaseDisplayedRect.y = windowRect.y + windowRect.h * 0.38;
         nameBaseDisplayedRect.w = textureWidth * windowRect.w * 0.0004;
         nameBaseDisplayedRect.h = textureHeight * windowRect.w * 0.0004;
     }
@@ -131,7 +131,7 @@ void initTextShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship
         // Atualisation de la taille du rect affichant ce nom
         SDL_QueryTexture(textTextures[34], NULL, NULL, &textureWidth, &textureHeight);
         nameTargetDisplayedRect.x = windowRect.x + windowRect.w * 0.43;
-        nameTargetDisplayedRect.y = windowRect.y + windowRect.h * 0.4;
+        nameTargetDisplayedRect.y = windowRect.y + windowRect.h * 0.38;
         nameTargetDisplayedRect.w = textureWidth * windowRect.w * 0.0004;
         nameTargetDisplayedRect.h = textureHeight * windowRect.w * 0.0004;
     }
@@ -153,16 +153,11 @@ void initTextShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship
     if (ship->state == STOPPED_MOVING_TO_BASE || ship->state == STOPPED_MOVING_TO_TARGET ||
         ship->state == STOPPED_WAITING_ON_BASE || ship->state == STOPPED_WAITING_ON_TARGET) {
         SDL_QueryTexture(textTextures[64], NULL, NULL, &textureWidth, &textureHeight);
-        stopBoutonRect.x = windowRect.x + windowRect.w * 0.24;
-        stopBoutonRect.y = windowRect.y + windowRect.h * 0.35;
-        stopBoutonRect.w = textureWidth * windowRect.w * 0.0007;
-        stopBoutonRect.h = textureHeight * windowRect.w * 0.0007;
+        stopBoutonRect = (SDL_Rect){SCREEN_WIDTH * 0.287, SCREEN_HEIGHT * 0.36, SCREEN_WIDTH * textureWidth * 0.0005, SCREEN_WIDTH * textureHeight * 0.0005};
     } else {
         SDL_QueryTexture(textTextures[43], NULL, NULL, &textureWidth, &textureHeight);
-        stopBoutonRect.x = windowRect.x + windowRect.w * 0.26;
-        stopBoutonRect.y = windowRect.y + windowRect.h * 0.35;
-        stopBoutonRect.w = textureWidth * windowRect.w * 0.0007;
-        stopBoutonRect.h = textureHeight * windowRect.w * 0.0007;
+        stopBoutonRect = (SDL_Rect){SCREEN_WIDTH * 0.305, SCREEN_HEIGHT * 0.36, SCREEN_WIDTH * textureWidth * 0.0005, SCREEN_WIDTH * textureHeight * 0.0005};
+
     }
 
 
@@ -210,7 +205,7 @@ void initTextShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship
     // Met a jour le tank en cours de modification/observation
     SDL_QueryTexture(textTextures[15 + currentTankIndex], NULL, NULL, &textureWidth, &textureHeight);
     modifyingTankRect.x = windowRect.x + windowRect.w * 0.25;
-    modifyingTankRect.y = windowRect.y + windowRect.h * 0.59;
+    modifyingTankRect.y = windowRect.y + windowRect.h * 0.55;
     modifyingTankRect.w = textureWidth * windowRect.w * 0.0005;
     modifyingTankRect.h = textureHeight * windowRect.w * 0.0005;
 
@@ -243,7 +238,7 @@ void initRectShipWindow(SDL_Texture **textTextures) {  // Les rects sont initial
     windowLine1Rect.h = 3;
 
     windowLine2Rect.x = windowRect.x;  // Barre horizontale gauche milieu
-    windowLine2Rect.y = windowRect.y + windowRect.h * 0.5;
+    windowLine2Rect.y = windowRect.y + windowRect.h * 0.45;
     windowLine2Rect.w = windowRect.w * 0.55;
     windowLine2Rect.h = 3;
 
@@ -262,20 +257,14 @@ void initRectShipWindow(SDL_Texture **textTextures) {  // Les rects sont initial
     // ShipWindowTravelInfo(imageTextures, textTextures, ships);
 
     SDL_QueryTexture(textTextures[5], NULL, NULL, &textureWidth, &textureHeight);
-    category1TitleRect.x = windowRect.x + windowRect.w * 0.04;  // Travel information
+    category1TitleRect.x = windowRect.x + windowRect.w * 0.03;  // Travel information
     category1TitleRect.y = windowRect.y + windowRect.h * 0.1;
     category1TitleRect.w = textureWidth * windowRect.w * 0.0005;
     category1TitleRect.h = textureHeight * windowRect.w * 0.0005;
 
-    baseDisplayedRect.x = windowRect.x + windowRect.w * 0.02;
-    baseDisplayedRect.y = windowRect.y + windowRect.h * 0.18;
-    baseDisplayedRect.w = windowRect.w * 0.12;
-    baseDisplayedRect.h = windowRect.w * 0.12;
+    baseDisplayedRect = (SDL_Rect){SCREEN_WIDTH * 0.1240, SCREEN_HEIGHT * 0.2250, SCREEN_WIDTH * 0.0980, SCREEN_WIDTH * 0.0980};
 
-    targetDisplayedRect.x = windowRect.x + windowRect.w * 0.42;
-    targetDisplayedRect.y = windowRect.y + windowRect.h * 0.18;
-    targetDisplayedRect.w = windowRect.w * 0.12;
-    targetDisplayedRect.h = windowRect.w * 0.12;
+    targetDisplayedRect = (SDL_Rect){SCREEN_WIDTH * 0.43, SCREEN_HEIGHT * 0.2250, SCREEN_WIDTH * 0.0980, SCREEN_WIDTH * 0.0980};
 
     destRectShip.x = baseDisplayedRect.x + baseDisplayedRect.w;  
     destRectShip.y = baseDisplayedRect.y + baseDisplayedRect.h * 0.13;
@@ -293,17 +282,13 @@ void initRectShipWindow(SDL_Texture **textTextures) {  // Les rects sont initial
     notEnoughFuelRect.w = textureWidth * windowRect.w * 0.0005;
     notEnoughFuelRect.h = textureHeight * windowRect.w * 0.0005;
 
-    edgeStopButtonRect.x = windowRect.x + windowRect.w * 0.21;  
-    edgeStopButtonRect.y = windowRect.y + windowRect.h * 0.35;
-    edgeStopButtonRect.w = windowRect.w * 0.16;
-    edgeStopButtonRect.h = windowRect.h * 0.07;
-
+    edgeStopButtonRect = (SDL_Rect){SCREEN_WIDTH * 0.2700, SCREEN_HEIGHT * 0.358, SCREEN_WIDTH * 0.1120, SCREEN_WIDTH * 0.0310};
 
     // ShipWindowTankManager(imageTextures, textTextures, ships);
 
     SDL_QueryTexture(textTextures[8], NULL, NULL, &textureWidth, &textureHeight);
-    category2TitleRect.x = windowRect.x + windowRect.w * 0.04;  // Tank manager
-    category2TitleRect.y = windowRect.y + windowRect.h * 0.53;
+    category2TitleRect.x = windowRect.x + windowRect.w * 0.03;  // Tank manager
+    category2TitleRect.y = windowRect.y + windowRect.h * 0.48;
     category2TitleRect.w = textureWidth * windowRect.w * 0.0005;
     category2TitleRect.h = textureHeight * windowRect.w * 0.0005;
 
@@ -357,15 +342,9 @@ void initRectShipWindow(SDL_Texture **textTextures) {  // Les rects sont initial
     oreToTransfert4Rect.w = windowRect.w * 0.03;
     oreToTransfert4Rect.h = windowRect.w * 0.03;
 
-    changeTankManagerLeft.x = windowRect.x + windowRect.w * 0.18;
-    changeTankManagerLeft.y = windowRect.y + windowRect.h * 0.59;
-    changeTankManagerLeft.w = windowRect.w * 0.03;
-    changeTankManagerLeft.h = windowRect.w * 0.03;
+    changeTankManagerLeft = (SDL_Rect){SCREEN_WIDTH * 0.2284, SCREEN_HEIGHT * 0.5459, SCREEN_WIDTH * 0.0200, SCREEN_WIDTH * 0.0190};
 
-    changeTankManagerRight.x = windowRect.x + windowRect.w * 0.35;
-    changeTankManagerRight.y = windowRect.y + windowRect.h * 0.59;
-    changeTankManagerRight.w = windowRect.w * 0.03;
-    changeTankManagerRight.h = windowRect.w * 0.03;
+    changeTankManagerRight = (SDL_Rect){SCREEN_WIDTH * 0.40, SCREEN_HEIGHT * 0.5459, SCREEN_WIDTH * 0.0200, SCREEN_WIDTH * 0.0190};
 
     orePossibility0.x = windowRect.x + windowRect.w * 0.1;
     orePossibility0.y = windowRect.y + windowRect.h * 0.9;
@@ -397,10 +376,7 @@ void initRectShipWindow(SDL_Texture **textTextures) {  // Les rects sont initial
     orePossibility5.w = windowRect.w * 0.05;
     orePossibility5.h = windowRect.w * 0.05;
 
-    edgeTankChoosenButtonRect.x = windowRect.x + windowRect.w * 0.16;  
-    edgeTankChoosenButtonRect.y = windowRect.y + windowRect.h * 0.58;
-    edgeTankChoosenButtonRect.w = windowRect.w * 0.25;
-    edgeTankChoosenButtonRect.h = windowRect.h * 0.07;
+    edgeTankChoosenButtonRect = (SDL_Rect){SCREEN_WIDTH * 0.2240, SCREEN_HEIGHT * 0.540, SCREEN_WIDTH * 0.2000, SCREEN_WIDTH * 0.0240};
 
 
     // ShipWindowShipCond(imageTextures, textTextures, ships);
