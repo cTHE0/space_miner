@@ -33,7 +33,7 @@ void updateCameraFollow(Ship *ships,Planet *planets) {
         setCenterCamera((SDL_Point){ships[camera.last_object_selected].x + ships[camera.last_object_selected].w/2, ships[camera.last_object_selected].y+ ships[camera.last_object_selected].h/2});
     }
     else if (camera_mode == FOLLOW_PLANET) {
-        setCenterCamera((SDL_Point){planets[camera.last_object_selected].x + planets[camera.last_object_selected].radius/2, planets[camera.last_object_selected].y + planets[camera.last_object_selected].radius/2});
+        setCenterCamera((SDL_Point){planets[camera.last_object_selected].x, planets[camera.last_object_selected].y});
     }
 }
 
