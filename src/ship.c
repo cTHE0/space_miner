@@ -125,16 +125,15 @@ void updateShipMove(Ship *ship, Uint32 currentTime) {
             if (distance - ship->speed >= spotDest.planet->radius) {
                 ship->x += dx * ship->speed / distance;
                 ship->y += dy * ship->speed / distance;
-            } else {
-                ship->waitStartTime = currentTime;
-                ship->state = (ship->state == MOVING_TO_BASE) ? WAITING_ON_BASE : WAITING_ON_TARGET;
-                
                 if (ship->state == MOVING_TO_BASE) {
                     ship->angleWithPlanet = computeAngleDeg(ship->x, ship->y, ship->base.planet->x, ship->base.planet->y)* M_PI / 180.0;
                 }
-                else {
+                else if (ship->state == MOVING_TO_TARGET) {
                     ship->angleWithPlanet = computeAngleDeg(ship->x, ship->y, ship->target.planet->x, ship->target.planet->y)* M_PI / 180.0;
                 }
+            } else {
+                ship->waitStartTime = currentTime;
+                ship->state = (ship->state == MOVING_TO_BASE) ? WAITING_ON_BASE : WAITING_ON_TARGET;
             }
             break;
         case SPOT_SHIP:

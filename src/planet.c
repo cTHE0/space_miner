@@ -79,6 +79,7 @@ void updatePlanets(Planet *planets, Ship *ships, int shipCount, int planetCount)
                 ships[i].y = planets[ships[i].target.id_spot].y + planets[ships[i].target.id_spot].radius * sin(ships[i].angleWithPlanet);
             }
             else if (ships[i].state == WAITING_ON_BASE && planets[ships[i].base.id_spot].planetType != SUN) {
+                printf("%f \n", ships[i].angleWithPlanet);
                 ships[i].x = planets[ships[i].base.id_spot].x + planets[ships[i].base.id_spot].radius * cos(ships[i].angleWithPlanet);
                 ships[i].y = planets[ships[i].base.id_spot].y + planets[ships[i].base.id_spot].radius * sin(ships[i].angleWithPlanet);
             }
