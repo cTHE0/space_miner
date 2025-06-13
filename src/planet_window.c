@@ -53,7 +53,10 @@ static SDL_Rect windowRect,
                 firstUpgradeBuildRect,
                 firstBuildRect,
                 imageBuildRect,
-                upgradeBarRect;
+                upgradeBarRect,
+                titleBuildRect,
+                infoBuildRect,
+                updateButtonBuildRect;
 
 
 void initPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets) {
@@ -107,13 +110,22 @@ void initTextPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts, Planet *
     // Creation de la texture de la cible de la fusee
     updateTextTexture(&textTextures[33], newText);
 
-
     SDL_QueryTexture(textTextures[33], NULL, NULL, &textureWidth, &textureHeight);
     windowTitleRect.x = windowRect.x + windowRect.w * 0.015;  
     windowTitleRect.y = windowRect.y + windowRect.h * 0.007;
     windowTitleRect.w = textureWidth * windowRect.w * 0.0005;
     windowTitleRect.h = textureHeight * windowRect.w * 0.0005;
 
+    // Choix d'un nouvel objet : actualisation du nom
+    SDL_QueryTexture(textTextures[66 + currentBuildIndex], NULL, NULL, &textureWidth, &textureHeight);
+    titleBuildRect = (SDL_Rect){SCREEN_WIDTH * 0.645, SCREEN_HEIGHT * 0.565, textureWidth * SCREEN_WIDTH * 0.00025, textureHeight * SCREEN_WIDTH * 0.00025};
+
+    // Genere la texture qui donne le descriptif du batiment selectionne
+    strcpy(descriptionText, "");
+    sprintf(descriptionText, "Description:\nA coal mine is dark, dusty,\nwith tunnels, machines, and\nworkers digging for coal.\n \nDetails: \nFunction        extraction coal\nDrain speed   13.2 m3/s\nLevel              0");
+    textTextures[34] = createTextTextureWithNewline(renderer, fonts[0], descriptionText, BLACK);
+    SDL_QueryTexture(textTextures[34], NULL, NULL, &textureWidth, &textureHeight);
+    infoBuildRect = (SDL_Rect){SCREEN_WIDTH * 0.516, SCREEN_HEIGHT * 0.575, (textureWidth * SCREEN_WIDTH) * 0.000232, (textureHeight * SCREEN_WIDTH) * 0.000232};
 }
 
 void initRectPlanetWindow(SDL_Texture **textTextures) {
@@ -141,7 +153,7 @@ void initRectPlanetWindow(SDL_Texture **textTextures) {
     windowLine4Rect.w = 3;
     windowLine4Rect.h = windowRect.h * 0.5;
 
-    windowLine5Rect.x = windowRect.x + windowRect.w * 0.757;  // Petite barre verticale bas droite
+    windowLine5Rect.x = windowRect.x + windowRect.w * 0.78;  // Petite barre verticale bas droite
     windowLine5Rect.y = windowRect.y + windowRect.h * 0.5;
     windowLine5Rect.w = 3;
     windowLine5Rect.h = windowRect.h * 0.5;
@@ -233,20 +245,21 @@ void initRectPlanetWindow(SDL_Texture **textTextures) {
     category4TitleRect.w = textureWidth * windowRect.w * 0.0005;
     category4TitleRect.h = textureHeight * windowRect.w * 0.0005;
 
-    imageBuildRect = (SDL_Rect){SCREEN_WIDTH * 0.61, SCREEN_HEIGHT * 0.57, SCREEN_WIDTH * 0.08, SCREEN_WIDTH * 0.08};
+    imageBuildRect = (SDL_Rect){SCREEN_WIDTH * 0.645, SCREEN_HEIGHT * 0.59, SCREEN_WIDTH * 0.074, SCREEN_WIDTH * 0.074};
+
+    SDL_QueryTexture(textTextures[63], NULL, NULL, &textureWidth, &textureHeight);
+    updateButtonBuildRect = (SDL_Rect){SCREEN_WIDTH * 0.58, SCREEN_HEIGHT * 0.83, textureWidth * SCREEN_WIDTH * 0.0003, textureHeight * SCREEN_WIDTH * 0.0003};
+    
+    upgradeBarRect = (SDL_Rect){SCREEN_WIDTH * 0.54, SCREEN_HEIGHT * 0.82, SCREEN_WIDTH * 0.12, SCREEN_WIDTH * 0.03};
 
 
-
-    // planetWindowBuildingQueue
+    // planetWindowNearestShips
        
     SDL_QueryTexture(textTextures[56], NULL, NULL, &textureWidth, &textureHeight);
     category5TitleRect.x = windowRect.x + windowRect.w * 0.79;
     category5TitleRect.y = windowRect.y + windowRect.h * 0.53;
     category5TitleRect.w = textureWidth * windowRect.w * 0.0005;
     category5TitleRect.h = textureHeight * windowRect.w * 0.0005;
-
-    upgradeBarRect = (SDL_Rect){SCREEN_WIDTH * 0.55, SCREEN_HEIGHT * 0.8, SCREEN_WIDTH * 0.1, SCREEN_WIDTH * 0.04};
-
 }
 
 
@@ -255,9 +268,9 @@ void displayPlanetWindow(SDL_Texture ***imageTextures, SDL_Texture **textTexture
     planetWindowGeneralInfo(imageTextures, textTextures, planets);
     planetWindowContainerInfo(imageTextures, textTextures, planets);
     planetWindowMineralAbundance(imageTextures, textTextures, planets);
-    planetWindowManageBuilds(imageTextures, textTextures);
+    planetWindowManageBuilds(imageTextures, textTextures, &planets[getWindowId()]);
     planetWindowOverviewBuild(imageTextures, textTextures);
-    planetWindowBuildingQueue(imageTextures, textTextures);
+    planetWindowNearestShips(imageTextures, textTextures);
 }
 
 void planetWindowFoundations(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
@@ -404,7 +417,7 @@ void planetWindowMineralAbundance(SDL_Texture ***imageTextures, SDL_Texture **te
     SDL_RenderFillRect(renderer, &limitAxesXAbundanceRect);
 }
 
-void planetWindowManageBuilds(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
+void planetWindowManageBuilds(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planet) {
     // Affichage du titre "Manage builds"
     SDL_RenderCopy(renderer, textTextures[54], NULL, &category3TitleRect);
 
@@ -416,7 +429,7 @@ void planetWindowManageBuilds(SDL_Texture ***imageTextures, SDL_Texture **textTe
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 3; j++) {
             // Affiche la barre d'amelioration/creation
-            SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+            SDL_SetRenderDrawColor(renderer, 125, 197, 46, 255);
             barRect.x = firstBarBuildRect.x + firstBuildImageRect.w * i * GapBetweenBuildX;
             barRect.y = firstBarBuildRect.y + firstBuildImageRect.h * j * GapBetweenBuildY;
             SDL_RenderFillRect(renderer, &barRect);
@@ -429,9 +442,11 @@ void planetWindowManageBuilds(SDL_Texture ***imageTextures, SDL_Texture **textTe
             SDL_DrawEdgeOfRect(renderer, imageRect, 2);
 
             // Logo 'NEW'
-            newTextRect.x = firstNewTextBuildRect.x + firstBuildImageRect.w * i * GapBetweenBuildX;
-            newTextRect.y = firstNewTextBuildRect.y + firstBuildImageRect.h * j * GapBetweenBuildY;
-            SDL_RenderCopy(renderer, textTextures[61], NULL, &newTextRect);
+            if (planet->builds[4 * j + i].type == NOTHING) {
+                newTextRect.x = firstNewTextBuildRect.x + firstBuildImageRect.w * i * GapBetweenBuildX;
+                newTextRect.y = firstNewTextBuildRect.y + firstBuildImageRect.h * j * GapBetweenBuildY;
+                SDL_RenderCopy(renderer, textTextures[61], NULL, &newTextRect);
+            }
 
             // Logo 'Upgrade' / 'New build'
             upgradeRect.x = firstUpgradeBuildRect.x + firstBuildImageRect.w * i * GapBetweenBuildX;
@@ -457,17 +472,27 @@ void planetWindowOverviewBuild(SDL_Texture ***imageTextures, SDL_Texture **textT
     SDL_RenderCopy(renderer, imageTextures[9][1], NULL, &imageBuildRect);
 
     // Affichage de la barre d'amelioration
-    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+    SDL_SetRenderDrawColor(renderer, 125, 197, 46, 255);
     SDL_RenderFillRect(renderer, &upgradeBarRect);
     SDL_DrawEdgeOfRect(renderer, upgradeBarRect, 3);
+    SDL_RenderCopy(renderer, textTextures[63], NULL, &updateButtonBuildRect);
+
+    // Afficher le texte dans la barre d'amelioration
+    SDL_RenderCopy(renderer, textTextures[63], NULL, &updateButtonBuildRect);
+
+    // Afficher le titre du batiment
+    SDL_RenderCopy(renderer, textTextures[66 + currentBuildIndex], NULL, &titleBuildRect);
+
+    // Afficher la description du batiment
+    SDL_RenderCopy(renderer, textTextures[34], NULL, &infoBuildRect);
 }
 
-void planetWindowBuildingQueue(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
-    // Affichage du titre "Building queue"
+void planetWindowNearestShips(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
+    // Affichage du titre "Nearest ships"
     SDL_RenderCopy(renderer, textTextures[56], NULL, &category5TitleRect);
 }
 
-void planetWindowGestion(SDL_Point mouse) {
+void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets, SDL_Point mouse) {
     if (SDL_PointInRect(&mouse, &WindowCrossRect) || !clickOnWindow(mouse)) {
         setWindowType(NO_WINDOW);
     }
@@ -481,7 +506,33 @@ void planetWindowGestion(SDL_Point mouse) {
             edgeSelectedBuildRect.y = firstBuildRect.y + firstBuildImageRect.h * j * GapBetweenBuildY;
             if (SDL_PointInRect(&mouse, &edgeSelectedBuildRect)) {
                 currentBuildIndex = j * 4 + i;
+                initTextPlanetWindow(textTextures, fonts, planets);
             }
+        }
+    }
+
+    // Achat d'un nouveau batiment
+    if (SDL_PointInRect(&mouse, &upgradeBarRect) && planets[getWindowId()].builds[currentBuildIndex].type == NOTHING) {
+        switch (currentBuildIndex) {
+            case 0:
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+                break;
+            case 5:
+            case 6:
+            case 7:
+            case 8:
+            case 9:  // Acheter une mine
+                planets[getWindowId()].builds[currentBuildIndex].type = ORE_MINE;
+                planets[getWindowId()].builds[currentBuildIndex].level = 1;
+                planets[getWindowId()].builds[currentBuildIndex].mine = (Mine){currentBuildIndex - 5 , 1000};
+                break;
+            case 10:
+            case 11:
+            default:
+                break;
         }
     }
 }

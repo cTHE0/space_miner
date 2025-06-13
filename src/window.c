@@ -58,7 +58,7 @@ void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, SDL_Point m
             break;
 
         case PLANET_WINDOW:
-            planetWindowGestion(mouse);
+            planetWindowGestion(textTextures, fonts, planets, mouse);
             break;
 
         default:

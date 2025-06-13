@@ -12,31 +12,17 @@ static Uint32 lastBuildUpdateTime = 0;
 
 
 void initBuildsPlanet(Planet *planet) {
-	// Cree tous les batiments sur cette planete
+	// Cree tous les reservoirs sur les planetes
     for (int i = 0; i < BUILD_TYPE_COUNT; i++) {
-        planet->builds[i].level = 0;
         if (i < ORE_TYPE_COUNT) {
             planet->builds[i].type = ORE_STORE;
-        } else if (i < 2 * ORE_TYPE_COUNT) {
-            planet->builds[i].type = ORE_MINE;
-        } else if (i == 10) {
-            planet->builds[11].type = DEFENCE_TOWER;
-        } else if (i == 11) {
-            planet->builds[11].type = FACTORY;
+            planet->builds[i].level = 0;
+            planet->builds[i].tank = (Compartment){i, 0, 0, 0, 0, 1, 8000, 10000, 20};
+        } else {
+            planet->builds[i].type = NOTHING;
+            planet->builds[i].level = 0;
         }
     }
-
-    // Initialisation des reservoirs et des mines
-    for (int i = 0; i < ORE_TYPE_COUNT; i++) {
-        planet->builds[i].tank = (Compartment){i, 0, 0, 0, 0, 1, 8000, 10000, 20};
-
-        planet->builds[i + ORE_TYPE_COUNT].mine.productivity = 200;
-        planet->builds[i + ORE_TYPE_COUNT].mine.level = 1;
-        planet->builds[i + ORE_TYPE_COUNT].mine.ore = i;
-    }
-
-    // Initialisation de l'usine et de la tourelle de defence
-    // ...
 }
 
 void updateBuilds(Planet *planets, Ship *ships, int shipCount, int planetCount) {

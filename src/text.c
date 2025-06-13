@@ -97,7 +97,7 @@ SDL_Texture **loadTextTextures(TTF_Font **fonts) {  // ATTENTION: ne pas oublier
                                             {"Mineral abundance", BLACK, fonts[0]},
                                             {"Manage builds", BLACK, fonts[0]},
                                             {"Overview of build", BLACK, fonts[0]},
-                                            {"Building queue", BLACK, fonts[0]},
+                                            {"Nearest ships", BLACK, fonts[0]},
                                             {"Bunkers information", BLACK, fonts[0]},
                                             {"Container information", BLACK, fonts[0]},
                                             {"Abundance (%)", BLACK, fonts[0]},
@@ -107,7 +107,18 @@ SDL_Texture **loadTextTextures(TTF_Font **fonts) {  // ATTENTION: ne pas oublier
                                             {"Upgrade", BLACK, fonts[0]},
                                             {"RESTART", BLACK, fonts[0]},
                                             {"Repair", BLACK, fonts[0]},
-                                            {"{A utiliser..........}", BLACK, fonts[0]}
+                                            {"Coal1 Storage", BLACK, fonts[0]},  // Les noms des 12 objets achetables
+                                            {"Coal2 Storage", BLACK, fonts[0]},
+                                            {"Coal3 Storage", BLACK, fonts[0]},
+                                            {"Coal4 Storage", BLACK, fonts[0]},
+                                            {"Coal5 Storage", BLACK, fonts[0]},
+                                            {"Coal1 mine", BLACK, fonts[0]},
+                                            {"Coal2 mine", BLACK, fonts[0]},
+                                            {"Coal3 mine", BLACK, fonts[0]},
+                                            {"Coal4 mine", BLACK, fonts[0]},
+                                            {"Coal5 mine", BLACK, fonts[0]},
+                                            {"other object1", BLACK, fonts[0]},
+                                            {"other object2", BLACK, fonts[0]}
                                            };
 
     for (int i = 0; i < CST_TEXT_NUMBER; i++)

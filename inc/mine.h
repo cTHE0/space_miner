@@ -6,7 +6,6 @@
 typedef struct {
     Ore ore;
     int productivity;
-    int level;
 } Mine;
 
 #endif
