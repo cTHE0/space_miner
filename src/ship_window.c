@@ -608,12 +608,12 @@ void ShipWindowTankManager(SDL_Texture ***imageTextures, SDL_Texture **textTextu
     int idPicture;
 
     if (ships[getWindowId()].base.type == SPOT_PLANET) {
-        idPicture = (ships[getWindowId()].base.planet->planetType == SUN) ? 9 : generateRandNb8(currentSeed, ships[getWindowId()].base.planet->id) % 8 + 1;
+        idPicture = (ships[getWindowId()].base.planet->planetType == SUN) ? 9 : generateRandNb8(currentSeed, ships[getWindowId()].base.planet->id) % 7 + 1;
         SDL_RenderCopy(renderer, imageTextures[6][idPicture], NULL, &baseDisplayedRect2);
     }
 
     if (ships[getWindowId()].target.type == SPOT_PLANET) {
-        idPicture = (ships[getWindowId()].target.planet->planetType == SUN) ? 9 : generateRandNb8(currentSeed, ships[getWindowId()].target.planet->id) % 8 + 1;
+        idPicture = (ships[getWindowId()].target.planet->planetType == SUN) ? 9 : generateRandNb8(currentSeed, ships[getWindowId()].target.planet->id) % 7 + 1;
         SDL_RenderCopy(renderer, imageTextures[6][idPicture], NULL, &targetDisplayedRect2);
     }
 

@@ -72,6 +72,7 @@ int main(void) {
                 updateShips(ships, shipCount);
                 updatePlanets(planets, ships, shipCount, planetCount);
                 updateBuilds(planets, ships, shipCount, planetCount);
+                updateCameraFollow(ships, planets);
                 displayGame(imageTextures, textTextures, ships, shipCount, planets, planetCount);
                 break;
             
