@@ -7,7 +7,7 @@
 
 
 static Camera camera;
-
+static CameraMode camera_mode = NORMAL;
 
 void initCamera(Planet *planets) {
     camera.rect.x = planets[1].x - SCREEN_WIDTH / 2;
@@ -15,6 +15,26 @@ void initCamera(Planet *planets) {
     camera.rect.h = SCREEN_HEIGHT;
     camera.rect.w = SCREEN_WIDTH;
     camera.scale = 0.5;
+}
+
+CameraMode getCameraMode() {
+    return camera_mode;
+}
+void changeCameraLastObjectSelected(int lastObjectSelected) {
+    camera.last_object_selected = lastObjectSelected;
+}
+
+void changeCameraMode(CameraMode new_camera_mode) {
+    camera_mode = new_camera_mode;
+}
+
+void updateCameraFollow(Ship *ships,Planet *planets) {
+    if (camera_mode == FOLLOW_SHIP) {
+        setCenterCamera((SDL_Point){ships[camera.last_object_selected].x + ships[camera.last_object_selected].w/2, ships[camera.last_object_selected].y+ ships[camera.last_object_selected].h/2});
+    }
+    else if (camera_mode == FOLLOW_PLANET) {
+        setCenterCamera((SDL_Point){planets[camera.last_object_selected].x + planets[camera.last_object_selected].radius/2, planets[camera.last_object_selected].y + planets[camera.last_object_selected].radius/2});
+    }
 }
 
 SDL_Rect getCameraRect(void) {
