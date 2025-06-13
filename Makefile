@@ -14,7 +14,7 @@ INCLUDE = inc/camera.h          inc/planet.h          inc/event.h           inc/
           inc/ship.h            inc/ore.h             inc/map.h             inc/assets_gestion.h  \
           inc/text.h            inc/config.h          inc/tools.h           inc/landing_page.h    \
           inc/window.h	        inc/solar_system.h    inc/place.h           inc/basic_ship_window.h\
-		  inc/build.h
+		  inc/build.h           inc/mine.h
 
 # Dependances automatiques
 DEPS = $(OBJ:$(OBJDIR)/%.o=$(OBJDIR)/%.d)
