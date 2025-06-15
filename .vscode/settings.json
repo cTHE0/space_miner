@@ -13,7 +13,8 @@
         "window.h": "c",
         "basic_ship_window.h": "c",
         "landing_page.h": "c",
-        "random": "c"
+        "random": "c",
+        "place.h": "c"
     },
     "makefile.configureOnOpen": false
 }

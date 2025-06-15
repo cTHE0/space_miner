@@ -39,6 +39,7 @@ int main(void) {
     SDL_Texture **textTextures = loadTextTextures(fonts);
 
     initRects(textTextures);
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND); // Pour pouvoir dessiner carrée avec transparence
 
     // Variables pour mesurer les FPS
     Uint32 toShowFPS = SDL_GetTicks();
@@ -102,10 +103,10 @@ int main(void) {
 
     // POUR LE DEV 
     printf("(SDL_Rect){SCREEN_WIDTH * %.4f, SCREEN_HEIGHT * %.4f, SCREEN_WIDTH * %.4f, SCREEN_WIDTH * %.4f};\n", 
-           getEmp().x / (float)getScaleDev(), 
-           getEmp().y / (float)getScaleDev(), 
-           getEmp().w / (float)getScaleDev(), 
-           getEmp().h / (float)getScaleDev()
+           getEmp().x, 
+           getEmp().y, 
+           getEmp().w, 
+           getEmp().h
           );
     
     destroyImageTextures(imageTextures);
