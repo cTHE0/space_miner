@@ -806,15 +806,19 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship,
     }
 
     // Choix du tank
-    else if (currentTankIndex > 0 && 
-             (SDL_PointInRect(&mouse, &changeTankManagerLeft) || SDL_PointInRect(&mouse, &changeTankManagerLeft2))) {
+    else if ((SDL_PointInRect(&mouse, &changeTankManagerLeft) || SDL_PointInRect(&mouse, &changeTankManagerLeft2))) {
         currentTankIndex --;
+        if (currentTankIndex < 0) {
+            currentTankIndex += ship->cargo.compartmentsNumber;
+        }
         initTextShipWindow(textTextures, fonts, ship);
 
     } 
-    else if (currentTankIndex < ship->cargo.compartmentsNumber - 1 && 
-             (SDL_PointInRect(&mouse, &changeTankManagerRight) || SDL_PointInRect(&mouse, &changeTankManagerRight2))) {
+    else if ((SDL_PointInRect(&mouse, &changeTankManagerRight) || SDL_PointInRect(&mouse, &changeTankManagerRight2))) {
         currentTankIndex ++;
+        if (currentTankIndex > ship->cargo.compartmentsNumber - 1) {
+            currentTankIndex -= ship->cargo.compartmentsNumber;
+        }
         initTextShipWindow(textTextures, fonts, ship);
     }
 
@@ -848,13 +852,13 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship,
         initTextShipWindow(textTextures, fonts, ship);
     }
 
-    // Ameliroation de la fusee
+    // Amelioration de la fusee
     else if (SDL_PointInRect(&mouse, &upgradeShipButtonRect)) {
         ship->level += 1;
         initTextShipWindow(textTextures, fonts, ship);
     }
 
-    // Ameliroation de la fusee
+    // Amelioration d'un tank de la fusee
     else if (SDL_PointInRect(&mouse, &upgradeButtonTankRect)) {
         ship->cargo.compartmentsList[currentTankIndex].level += 1;
         initTextShipWindow(textTextures, fonts, ship);
