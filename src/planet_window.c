@@ -438,7 +438,7 @@ void planetWindowManageBuilds(SDL_Texture ***imageTextures, SDL_Texture **textTe
             // Affiche l'image de l'objet
             imageRect.x = firstBuildImageRect.x + firstBuildImageRect.w * i * GapBetweenBuildX;
             imageRect.y = firstBuildImageRect.y + firstBuildImageRect.h * j * GapBetweenBuildY;
-            SDL_RenderCopy(renderer, imageTextures[9][1], NULL, &imageRect);
+            SDL_RenderCopy(renderer, imageTextures[9][i+j*4], NULL, &imageRect);
             SDL_DrawEdgeOfRect(renderer, imageRect, 2);
 
             // Logo 'NEW'
