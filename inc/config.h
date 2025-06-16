@@ -12,7 +12,7 @@
 #define CST_TEXT_NUMBER 79
 #define FONT_NUMBER 1
 #define BUILD_TYPE_COUNT 12
-#define ASTEROID_COUNT 20 // nombre d'astéroids par système solaire
+#define ASTEROID_COUNT 500 // nombre d'astéroids par système solaire
 
 #define SPRITE_SHEETS_DELAY 100  // En nombre de tick
 #define WAIT_TIME_SHIP 1000  // En millisecondes

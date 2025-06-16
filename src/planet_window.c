@@ -558,7 +558,7 @@ void planetWindowOverviewBuild(SDL_Texture ***imageTextures, SDL_Texture **textT
 
     // Afficher l'image du batiment
     SDL_DrawEdgeOfRect(renderer, imageBuildRect, 3);
-    SDL_RenderCopy(renderer, imageTextures[9][1], NULL, &imageBuildRect);
+    SDL_RenderCopy(renderer, imageTextures[9][currentBuildIndex], NULL, &imageBuildRect);
 
     // Affichage du fond de la barre d'amelioration
     SDL_SetRenderDrawColor(renderer, 125, 197, 46, 255);

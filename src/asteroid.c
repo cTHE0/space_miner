@@ -1,4 +1,5 @@
 #include <SDL2/SDL.h>
+#include <stdlib.h>
 #include "asteroid.h"
 #include "config.h"
 #include "planet.h"
@@ -8,12 +9,13 @@
 #include <math.h>
 
 static SDL_Rect (*asteroids)[ASTEROID_COUNT]; //asteroids[0] = liste des ASTEROID_COUNT asteroid associés 1er soleil généré
-static int angle_speed_asteroids[ASTEROID_COUNT][2];
+static double angle_speed_asteroids[ASTEROID_COUNT][3];
 
 void initAngleSpeed(){
     for (int i=0; i<ASTEROID_COUNT; i++) {
-        angle_speed_asteroids[i][0] = (rand()%20) +  360/ASTEROID_COUNT; //angle
-        angle_speed_asteroids[i][1] = 1 + rand()%3;
+        angle_speed_asteroids[i][0] = i*360/ASTEROID_COUNT; //angle
+        angle_speed_asteroids[i][1] = (10 + rand()%30)*0.001;
+        angle_speed_asteroids[i][2] = SOLAR_SYSTEM_SIZE + SOLAR_SYSTEM_SIZE*(rand()%10)/100;
     }
 }
 
@@ -24,8 +26,6 @@ void initAsteroids(Planet *planets, int planet_count) {
     printf("%d, %d \n", INIT_PLANET_COUNT, planet_count);
     asteroids = malloc(nb_solar_systems*sizeof(SDL_Rect[ASTEROID_COUNT]));
     int s = 0;
-    printf("Nb solar syst: %d \n", nb_solar_systems);
-    printf("testy: %d \n", planets[1].id);
     for (int i=0; i<planet_count; i++) {
         if (planets[i].planetType == SUN) {  
             if (s >= nb_solar_systems) {
@@ -34,36 +34,32 @@ void initAsteroids(Planet *planets, int planet_count) {
             }
             printf("SUN! \n");
             for (int j=0; j<ASTEROID_COUNT; j++) {
-                printf("GOOD[j=%d]\n", j);
-                asteroids[s][j] = (SDL_Rect){planets[i].x+planets[i].radius/2 + SOLAR_SYSTEM_SIZE, planets[i].y+planets[i].radius/2, planets[i].radius, planets[i].radius};
+                asteroids[s][j] = (SDL_Rect){planets[i].x+planets[i].radius/2 + SOLAR_SYSTEM_SIZE, planets[i].y+planets[i].radius/2, planets[i].radius/5, planets[i].radius/5};
             }
-            printf("Fin génération syst %d \n", s);
             s++;
         }
     }
 }
 
-Uint32 last_asteroid_tick = 0;
-
 void updateAsteroids(Planet *planets, int planetCount) {
-    if (SDL_GetTicks() - last_asteroid_tick < ASTEROID_TICK) {
-        return;
-    }
-    last_asteroid_tick = SDL_GetTicks();
     double rad_angle;
     int s=0;
 
     for (int j=0; j<ASTEROID_COUNT; j++) {
-        angle_speed_asteroids[j][0] = (angle_speed_asteroids[j][0] + angle_speed_asteroids[j][1]) %360;
+        angle_speed_asteroids[j][0] = angle_speed_asteroids[j][0] + angle_speed_asteroids[j][1];
+        if (angle_speed_asteroids[j][0] > 360) {
+            angle_speed_asteroids[j][0] -= 360;
+        }
     }
 
     for (int i=0; i<planetCount; i++) {
         if (planets[i].planetType == SUN) {
             for (int j=0; j<ASTEROID_COUNT; j++) {
                 rad_angle = angle_speed_asteroids[j][0] * M_PI / 180;
-                asteroids[i][j].x = planets[i].x + planets[i].radius/2 + SOLAR_SYSTEM_SIZE*cos(rad_angle);
-                asteroids[i][j].y = planets[i].y + planets[i].radius/2 + SOLAR_SYSTEM_SIZE*sin(rad_angle);
+                asteroids[s][j].x = planets[i].x + planets[i].radius/2 + angle_speed_asteroids[j][2]*cos(rad_angle);
+                asteroids[s][j].y = planets[i].y + planets[i].radius/2 + angle_speed_asteroids[j][2]*sin(rad_angle);
             }
+            s++;
         }
     }
 }
@@ -77,7 +73,7 @@ void displayAsteroid(SDL_Texture ***imageTextures) {
             screenX = (asteroids[i][j].x - getCameraRect().x - asteroids[i][j].w - SCREEN_WIDTH / 2.f) * getCameraScale() + SCREEN_WIDTH / 2.f;  // (planets[i].x, planets[i].y) = coordonnees sur la map
             screenY = (asteroids[i][j].y - getCameraRect().y - asteroids[i][j].w - SCREEN_HEIGHT / 2.f) * getCameraScale() + SCREEN_HEIGHT / 2.f;  
             screenRadius = asteroids[i][j].w * getCameraScale();
-            SDL_RenderCopy(renderer, imageTextures[0][i%2], NULL, &(SDL_Rect){screenX, screenY, screenRadius, screenRadius});
+            SDL_RenderCopyEx(renderer, imageTextures[0][i%2], NULL, &(SDL_Rect){screenX, screenY, screenRadius, screenRadius}, 14*angle_speed_asteroids[j][0], NULL, SDL_FLIP_NONE);
         }
     }
 }
