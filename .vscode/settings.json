@@ -15,7 +15,9 @@
         "landing_page.h": "c",
         "random": "c",
         "place.h": "c",
-        "planet.h": "c"
+        "planet.h": "c",
+        "build.h": "c",
+        "sdl_ttf.h": "c"
     },
     "makefile.configureOnOpen": false
 }

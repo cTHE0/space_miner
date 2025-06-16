@@ -37,7 +37,7 @@ int main(void) {
     loadFonts(fonts);
 
     SDL_Texture ***imageTextures = loadTextures();
-    SDL_Texture **textTextures = loadTextTextures(fonts);
+    textTextures = loadTextTextures(fonts);
 
     initRects(textTextures);
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND); // Pour pouvoir dessiner carrée avec transparence
@@ -77,6 +77,7 @@ int main(void) {
                 updateBuilds(planets, ships, shipCount, planetCount);
                 updateCameraFollow(ships, planets);
                 updateAsteroids(planets,planetCount);
+                updateTotalOre(planets, planetCount);
                 displayGame(imageTextures, textTextures, ships, shipCount, planets, planetCount);
                 break;
             

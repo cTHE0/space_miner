@@ -7,6 +7,8 @@
 #include "ship.h"
 #include "build.h"
 
+#include "ore.h"
+#include "mine.h"
 typedef enum { SUN, PLANET } planetTypeEnum;
 
 typedef struct Ship Ship;

@@ -4,13 +4,15 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
+extern SDL_Texture **textTextures;
+
 typedef struct {
 	char text[128];    // Texte a afficher
 	SDL_Color color;  // Couleur du texte
 	TTF_Font *font;	  // Police de caractere du texte
 } TextToLoad;
 
-void renderNumber(SDL_Renderer *renderer, SDL_Texture **textTextures, int i, SDL_Rect dstRect);
+void renderNumber(SDL_Renderer *renderer, int i, SDL_Rect dstRect);
 
 void loadFonts(TTF_Font **fonts);
 	TTF_Font* loadFont(const char* path, int size);

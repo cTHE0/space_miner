@@ -8,8 +8,9 @@
 #include "renderer.h"
 #include "assets_gestion.h"
 
+SDL_Texture **textTextures;
 
-void renderNumber(SDL_Renderer *renderer, SDL_Texture **textTextures, int numberDisplayed, SDL_Rect destRect) {
+void renderNumber(SDL_Renderer *renderer, int numberDisplayed, SDL_Rect destRect) {
     int NbDigits = countDigits(numberDisplayed);
 
     char buffer[32] = {0};

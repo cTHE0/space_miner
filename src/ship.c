@@ -30,8 +30,8 @@ void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
         (*ships)[i].target.planet = &planets[(*ships)[i].target.id_spot];
         (*ships)[i].x = (*ships)[i].base.planet->x;
         (*ships)[i].y = (*ships)[i].base.planet->y;
-        (*ships)[i].w = 82;
-        (*ships)[i].h = 82;
+        (*ships)[i].w = 200;
+        (*ships)[i].h = 200;
         (*ships)[i].speed = (rand() / (float)RAND_MAX * 0.6 + 0.4) * SHIP_SPEED;
         (*ships)[i].level = 1;
         (*ships)[i].state = MOVING_TO_TARGET;
