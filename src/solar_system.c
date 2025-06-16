@@ -43,7 +43,7 @@ void generateSolarSystem(Planet *planets, int x, int y, int nbEntityGenerated, i
         newSun->builds[i].tank.currentCapacity = generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % (int)newSun->builds[i].tank.maxCapacity;  // Les planetes ne sont pas toutes initialement remplies
         randIndex ++;
     }
-    int r = 650 + generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % 50;
+    int r = 1050 + generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % 50;
     randIndex ++;
     newSun->radius = r;
     newSun->x = x;
@@ -70,7 +70,7 @@ void generateSolarSystem(Planet *planets, int x, int y, int nbEntityGenerated, i
         short planetIsAlone = 0;  // 0: la nouvelle planete est proche d'une autre, 1: la nouvelle planete est eloignee
         int rp, xp, yp;
         while (planetIsAlone == 0) {
-            rp = 200 + generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % 30;
+            rp = 400 + generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % 30;
             randIndex ++;
             xp = x - SOLAR_SYSTEM_SIZE / 2 + generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % SOLAR_SYSTEM_SIZE; // Abscisse planete
             randIndex ++;

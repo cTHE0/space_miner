@@ -9,7 +9,7 @@
 void renderMap(SDL_Texture *textureMap) {
     SDL_Rect destRect;
 
-    if (getCameraScale() > 0.05 ) {
+    if (getCameraScale() > 0.001 ) {
         destRect.w = MAP_SIZE * getCameraScale() / 100 ;  // Largeur adaptee au zoom
         destRect.h = MAP_SIZE * getCameraScale() / 100;  // Hauteur adaptee au zoom
 
