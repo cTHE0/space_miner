@@ -16,7 +16,7 @@ void initBuildsPlanet(Planet *planet) {
     for (int i = 0; i < BUILD_TYPE_COUNT; i++) {
         if (i < ORE_TYPE_COUNT) {
             planet->builds[i].type = ORE_STORE;
-            planet->builds[i].level = 0;
+            planet->builds[i].level = 1;
             planet->builds[i].tank = (Compartment){i, 0, 0, 0, 0, 1, 8000, 10000, 20};
         } else {
             planet->builds[i].type = NOTHING;

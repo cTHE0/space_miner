@@ -122,10 +122,21 @@ void initTextPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts, Planet *
 
     // Genere la texture qui donne le descriptif du batiment selectionne
     strcpy(descriptionText, "");
-    sprintf(descriptionText, "Description:\nA coal mine is dark, dusty,\nwith tunnels, machines, and\nworkers digging for coal.\n \nDetails: \nFunction        extraction coal\nDrain speed   13.2 m3/s\nLevel              0");
-    textTextures[34] = createTextTextureWithNewline(renderer, fonts[0], descriptionText, BLACK);
-    SDL_QueryTexture(textTextures[34], NULL, NULL, &textureWidth, &textureHeight);
-    infoBuildRect = (SDL_Rect){SCREEN_WIDTH * 0.516, SCREEN_HEIGHT * 0.575, (textureWidth * SCREEN_WIDTH) * 0.000232, (textureHeight * SCREEN_WIDTH) * 0.000232};
+    if (planets[getWindowId()].builds[currentBuildIndex].type == ORE_MINE) {
+        sprintf(descriptionText, "Description:\nA coal mine is dark, dusty,\nwith tunnels, machines, and\nworkers digging for coal.\n \nDetails: \nFunction        extraction coal\nDrain speed   %d m3/s\nLevel              %d",
+                planets[getWindowId()].builds[currentBuildIndex].mine.productivity,
+                planets[getWindowId()].builds[currentBuildIndex].level);
+        textTextures[34] = createTextTextureWithNewline(renderer, fonts[0], descriptionText, BLACK);
+        SDL_QueryTexture(textTextures[34], NULL, NULL, &textureWidth, &textureHeight);
+        infoBuildRect = (SDL_Rect){SCREEN_WIDTH * 0.516, SCREEN_HEIGHT * 0.575, (textureWidth * SCREEN_WIDTH) * 0.000232, (textureHeight * SCREEN_WIDTH) * 0.000232};
+    } else if (planets[getWindowId()].builds[currentBuildIndex].type == ORE_STORE) {
+        sprintf(descriptionText, "Description:\nA resource reservoir is a\nvast, metallic structure, filled\nwith coal, humming machines,\nand robotic workers managing stocks.\n \nDetails: \nFunction        extraction coal\nStorage   %d m3/s\nLevel              %d",
+                planets[getWindowId()].builds[currentBuildIndex].tank.maxCapacity,
+                planets[getWindowId()].builds[currentBuildIndex].level);
+        textTextures[34] = createTextTextureWithNewline(renderer, fonts[0], descriptionText, BLACK);
+        SDL_QueryTexture(textTextures[34], NULL, NULL, &textureWidth, &textureHeight);
+        infoBuildRect = (SDL_Rect){SCREEN_WIDTH * 0.516, SCREEN_HEIGHT * 0.575, (textureWidth * SCREEN_WIDTH) * 0.000232, (textureHeight * SCREEN_WIDTH) * 0.000232};
+    }
 }
 
 void initRectPlanetWindow(SDL_Texture **textTextures) {
@@ -256,7 +267,7 @@ void initRectPlanetWindow(SDL_Texture **textTextures) {
     // planetWindowNearestShips
        
     SDL_QueryTexture(textTextures[56], NULL, NULL, &textureWidth, &textureHeight);
-    category5TitleRect.x = windowRect.x + windowRect.w * 0.79;
+    category5TitleRect.x = windowRect.x + windowRect.w * 0.813;
     category5TitleRect.y = windowRect.y + windowRect.h * 0.53;
     category5TitleRect.w = textureWidth * windowRect.w * 0.0005;
     category5TitleRect.h = textureHeight * windowRect.w * 0.0005;
@@ -520,6 +531,7 @@ void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Planet *p
             case 3:
             case 4:
                 break;
+
             case 5:
             case 6:
             case 7:
@@ -529,10 +541,42 @@ void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Planet *p
                 planets[getWindowId()].builds[currentBuildIndex].level = 1;
                 planets[getWindowId()].builds[currentBuildIndex].mine = (Mine){currentBuildIndex - 5 , 1000};
                 break;
+
             case 10:
             case 11:
             default:
                 break;
         }
+        initTextPlanetWindow(textTextures, fonts, planets);
+    }
+
+    // Amelioration d'un nouveau batiment
+    else if (SDL_PointInRect(&mouse, &upgradeBarRect) && planets[getWindowId()].builds[currentBuildIndex].type != NOTHING) {        
+        switch (currentBuildIndex) {
+            case 0:
+            case 1:
+            case 2:
+            case 3:
+            case 4:  // Ameliorer un reservoir
+                planets[getWindowId()].builds[currentBuildIndex].level ++;
+                planets[getWindowId()].builds[currentBuildIndex].tank.maxCapacity *= 1.05;
+                break;
+
+            case 5:
+            case 6:
+            case 7:
+            case 8:
+            case 9:  // Ameliorer une mine
+                planets[getWindowId()].builds[currentBuildIndex].level ++;
+                planets[getWindowId()].builds[currentBuildIndex].mine.productivity *= 1.05;
+                break;
+
+            case 10:
+            case 11:
+            default:
+                break;
+        }
+
+        initTextPlanetWindow(textTextures, fonts, planets);
     }
 }
