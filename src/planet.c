@@ -15,7 +15,11 @@
 
 
 static Uint32 lastPlanetUpdateTime = 0;
+static int nbSolarSystems = 0;
 
+int getNbSolarSystems() {
+    return nbSolarSystems;
+}
 
 void generatePlanets(Planet **planets, int planetCount) {
     // Allocation du tableau de planètes
@@ -29,6 +33,7 @@ void generatePlanets(Planet **planets, int planetCount) {
     int nbEntityGenerated = 0;
     while (nbEntityGenerated < planetCount) {
         solarSystemCoordinator(&nbEntityGenerated, *planets, planetCount);
+        nbSolarSystems += 1;
     }
 
     // Initialisation des batiments et du systeme de rotation des planetes

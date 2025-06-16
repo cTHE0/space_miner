@@ -6,6 +6,8 @@
 #include "config.h"
 
 
+
+
 void solarSystemCoordinator(int *nbEntityGenerated, Planet *planets, int planetCount) {
     // Initialisation du nombre d'entites par systeme solaire
     static int maxEntity = 6;

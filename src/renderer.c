@@ -7,6 +7,7 @@
 #include "map.h"
 #include "config.h"
 #include "window.h"
+#include "asteroid.h"
 
 
 SDL_Renderer *renderer = NULL;
@@ -67,6 +68,7 @@ void displayGame(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship 
     renderMap(imageTextures[3][2]);
     renderPlanets(imageTextures, planets, planetCount);
     renderShips(imageTextures, ships, shipCount);
+    displayAsteroid(imageTextures);
     displayWindow(imageTextures, textTextures, ships, planets);
     SDL_RenderPresent(renderer);
 }

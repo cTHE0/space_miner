@@ -14,7 +14,8 @@
         "basic_ship_window.h": "c",
         "landing_page.h": "c",
         "random": "c",
-        "place.h": "c"
+        "place.h": "c",
+        "planet.h": "c"
     },
     "makefile.configureOnOpen": false
 }

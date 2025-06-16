@@ -13,6 +13,7 @@
 #include "text.h"
 #include "place.h"
 #include "build.h"
+#include "asteroid.h"
 
 
 const uint32_t currentSeed = 2;  // Peut prendre des valeurs entre 1 et 2**32-1
@@ -64,6 +65,7 @@ int main(void) {
                     generatePlanets(&planets, planetCount);
                     initShips(&ships, shipCount, planets, planetCount);
                     initCamera(planets);
+                    initAsteroids(planets, planetCount);
                 }
                 break;
             
@@ -74,6 +76,7 @@ int main(void) {
                 updatePlanets(planets, ships, shipCount, planetCount);
                 updateBuilds(planets, ships, shipCount, planetCount);
                 updateCameraFollow(ships, planets);
+                updateAsteroids(planets,planetCount);
                 displayGame(imageTextures, textTextures, ships, shipCount, planets, planetCount);
                 break;
             
@@ -99,6 +102,7 @@ int main(void) {
     if (gameBegun) {
         destroyShips(ships, shipCount);
         destroyPlanets(planets);
+        freeAsteroid();
     }
 
     // POUR LE DEV 
