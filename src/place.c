@@ -2,19 +2,20 @@
 
 #include <SDL2/SDL.h>
 #include "config.h"
+#include "math.h"
 
 
 /*
-(SDL_Rect){SCREEN_WIDTH * getEmp().x / getScaleDev(), SCREEN_HEIGHT * getEmp().y / getScaleDev(), SCREEN_WIDTH * getEmp().w / getScaleDev(), SCREEN_WIDTH * getEmp().h / getScaleDev()};
+(SDL_Rect){SCREEN_WIDTH * getEmp().x, SCREEN_HEIGHT * getEmp().y, SCREEN_WIDTH * getEmp().w, SCREEN_WIDTH * getEmp().h};
 
 (SDL_Rect){SCREEN_WIDTH * getEmp().x / getScaleDev(), SCREEN_HEIGHT * getEmp().y / getScaleDev(), SCREEN_WIDTH * textureWidth * getEmp().w / getScaleDev(), SCREEN_WIDTH * textureHeight * getEmp().h / getScaleDev()};
 */
 
-static SDL_Rect emplacement = {50, 50, 5, 5};
-static int scaleDev = 100;  // Puissance de 10
+static SDL_FRect emplacement = {0.2, 0.2, 0.05, 0.05};
+static float scaleDev = 0.01;  // Puissance de 10 (0.001, 0.01, 0.1, 1, 10, 100, ...)
 static int sign = 1;
 
-SDL_Rect getEmp(void) {
+SDL_FRect getEmp(void) {
     return emplacement;
 }
 
@@ -27,6 +28,10 @@ int getScaleDev(void) {
 }
 
 void setScaleDev(void) {
+    scaleDev *= pow(10, sign);
+    
+    /*  AFUEEEERRRRRA
+    
     if (scaleDev <= 1000 && sign == 1) {
         scaleDev *= 10;
 
@@ -41,9 +46,9 @@ void setScaleDev(void) {
         emplacement.y = emplacement.y / 10;
         emplacement.w = emplacement.w / 10;
         emplacement.h = emplacement.h / 10;
-    }
+    }*/
 
-    printf("New scale: %d\n", scaleDev);
+    printf("New scale: %f\n", scaleDev);
 
 }
 
@@ -53,10 +58,10 @@ void setSign(){
 }
 
 void modifEmp(int dx, int dy, int dw, int dh) {
-    emplacement.x += sign * dx;
-    emplacement.y += sign * dy;
-    emplacement.w += sign * dw;
-    emplacement.h += sign * dh;
+    emplacement.x += sign * scaleDev * dx;
+    emplacement.y += sign *scaleDev * dy;
+    emplacement.w += sign * scaleDev *dw;
+    emplacement.h += sign *scaleDev * dh;
 
-    printf("x:%.4f ; y:%.4f ; w:%.4f ; h:%.4f\n", emplacement.x / (float)scaleDev, emplacement.y / (float)scaleDev, emplacement.w / (float)scaleDev, emplacement.h / (float)scaleDev);
+    printf("x:%.4f ; y:%.4f ; w:%.4f ; h:%.4f\n", emplacement.x, emplacement.y, emplacement.w, emplacement.h);
 }

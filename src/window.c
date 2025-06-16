@@ -10,6 +10,7 @@
 #include "basic_ship_window.h"
 #include "ship_window.h"
 #include "planet_window.h"
+#include "info_view.h"
 
 
 static Window windowInfo = {NO_WINDOW, 0};
@@ -120,6 +121,7 @@ int clickOnPlanet(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets,
 }
 
 void displayWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships, Planet *planets) {
+    displayInfoView(imageTextures);
     switch (getWindowType()) {
         case PLANET_WINDOW:
             displayPlanetWindow(imageTextures, textTextures, planets);
