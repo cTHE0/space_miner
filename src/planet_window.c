@@ -51,6 +51,7 @@ static SDL_Rect windowRect,
                 textGeneralInfoRect,
                 firstNewTextBuildRect,
                 firstUpgradeBuildRect,
+                firstUpgradeBuildRect2,
                 firstBuildRect,
                 imageBuildRect,
                 upgradeBarRect,
@@ -304,6 +305,9 @@ void initRectPlanetWindow(SDL_Texture **textTextures) {
     SDL_QueryTexture(textTextures[63], NULL, NULL, &textureWidth, &textureHeight);
     firstUpgradeBuildRect = (SDL_Rect){SCREEN_WIDTH * 0.148, SCREEN_HEIGHT * 0.64, textureWidth * SCREEN_WIDTH * 0.0002, textureHeight * SCREEN_WIDTH * 0.0002};
     
+    SDL_QueryTexture(textTextures[78], NULL, NULL, &textureWidth, &textureHeight);
+    firstUpgradeBuildRect2 = (SDL_Rect){SCREEN_WIDTH * 0.158, SCREEN_HEIGHT * 0.64, textureWidth * SCREEN_WIDTH * 0.0002, textureHeight * SCREEN_WIDTH * 0.0002};
+    
     firstBuildRect = (SDL_Rect){SCREEN_WIDTH * 0.13, SCREEN_HEIGHT * 0.565, SCREEN_WIDTH * 0.07, SCREEN_WIDTH * 0.057};
 
 
@@ -321,7 +325,7 @@ void initRectPlanetWindow(SDL_Texture **textTextures) {
     updateButtonBuildRect = (SDL_Rect){SCREEN_WIDTH * 0.58, SCREEN_HEIGHT * 0.83, textureWidth * SCREEN_WIDTH * 0.0003, textureHeight * SCREEN_WIDTH * 0.0003};
 
     SDL_QueryTexture(textTextures[78], NULL, NULL, &textureWidth, &textureHeight);
-    updateButtonBuildRect2 = (SDL_Rect){SCREEN_WIDTH * 0.5905, SCREEN_HEIGHT * 0.83, textureWidth * SCREEN_WIDTH * 0.0003, textureHeight * SCREEN_WIDTH * 0.0003};
+    updateButtonBuildRect2 = (SDL_Rect){SCREEN_WIDTH * 0.59, SCREEN_HEIGHT * 0.83, textureWidth * SCREEN_WIDTH * 0.0003, textureHeight * SCREEN_WIDTH * 0.0003};
     
     upgradeBarRect = (SDL_Rect){SCREEN_WIDTH * 0.54, SCREEN_HEIGHT * 0.82, SCREEN_WIDTH * 0.12, SCREEN_WIDTH * 0.03};
 
@@ -502,9 +506,10 @@ void planetWindowManageBuilds(SDL_Texture ***imageTextures, SDL_Texture **textTe
     SDL_Rect barRect = firstBarBuildRect;
     SDL_Rect newTextRect = firstNewTextBuildRect;
     SDL_Rect upgradeRect = firstUpgradeBuildRect;
+    SDL_Rect upgradeRect2 = firstUpgradeBuildRect2;
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 3; j++) {
-            // Affiche la barre d'amelioration/creation
+            // Affiche du fond de la barre d'amelioration/creation
             SDL_SetRenderDrawColor(renderer, 125, 197, 46, 255);
             barRect.x = firstBarBuildRect.x + firstBuildImageRect.w * i * GapBetweenBuildX;
             barRect.y = firstBarBuildRect.y + firstBuildImageRect.h * j * GapBetweenBuildY;
@@ -514,20 +519,28 @@ void planetWindowManageBuilds(SDL_Texture ***imageTextures, SDL_Texture **textTe
             // Affiche l'image de l'objet
             imageRect.x = firstBuildImageRect.x + firstBuildImageRect.w * i * GapBetweenBuildX;
             imageRect.y = firstBuildImageRect.y + firstBuildImageRect.h * j * GapBetweenBuildY;
-            SDL_RenderCopy(renderer, imageTextures[9][i+j*4], NULL, &imageRect);
+            SDL_RenderCopy(renderer, imageTextures[9][i + j * 4], NULL, &imageRect);
             SDL_DrawEdgeOfRect(renderer, imageRect, 2);
 
-            // Logo 'NEW'
+            // Affiche le logo 'NEW'
             if (planet->builds[4 * j + i].level == 0) {
                 newTextRect.x = firstNewTextBuildRect.x + firstBuildImageRect.w * i * GapBetweenBuildX;
                 newTextRect.y = firstNewTextBuildRect.y + firstBuildImageRect.h * j * GapBetweenBuildY;
                 SDL_RenderCopy(renderer, textTextures[61], NULL, &newTextRect);
             }
 
+            // Affiche le logo 'NEW' et le texte dans la barre d'amelioration
+            if (planet->builds[4 * j + i].level == 0) {
+                upgradeRect2.x = firstUpgradeBuildRect2.x + firstBuildImageRect.w * i * GapBetweenBuildX;
+                upgradeRect2.y = firstUpgradeBuildRect2.y + firstBuildImageRect.h * j * GapBetweenBuildY;
+                SDL_RenderCopy(renderer, textTextures[78], NULL, &upgradeRect2);
+            } else if (planet->builds[4 * j + i].level > 0) {
+                upgradeRect.x = firstUpgradeBuildRect.x + firstBuildImageRect.w * i * GapBetweenBuildX;
+                upgradeRect.y = firstUpgradeBuildRect.y + firstBuildImageRect.h * j * GapBetweenBuildY;
+                SDL_RenderCopy(renderer, textTextures[63], NULL, &upgradeRect);
+            }
+
             // Logo 'Upgrade' / 'New build'
-            upgradeRect.x = firstUpgradeBuildRect.x + firstBuildImageRect.w * i * GapBetweenBuildX;
-            upgradeRect.y = firstUpgradeBuildRect.y + firstBuildImageRect.h * j * GapBetweenBuildY;
-            SDL_RenderCopy(renderer, textTextures[63], NULL, &upgradeRect);
         }
     }
 
