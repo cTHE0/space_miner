@@ -107,18 +107,19 @@ SDL_Texture **loadTextTextures(TTF_Font **fonts) {  // ATTENTION: ne pas oublier
                                             {"Upgrade", BLACK, fonts[0]},
                                             {"RESTART", BLACK, fonts[0]},
                                             {"Repair", BLACK, fonts[0]},
-                                            {"Coal1 Storage", BLACK, fonts[0]},  // Les noms des 12 objets achetables
-                                            {"Coal2 Storage", BLACK, fonts[0]},
-                                            {"Coal3 Storage", BLACK, fonts[0]},
-                                            {"Coal4 Storage", BLACK, fonts[0]},
-                                            {"Coal5 Storage", BLACK, fonts[0]},
-                                            {"Coal1 mine", BLACK, fonts[0]},
-                                            {"Coal2 mine", BLACK, fonts[0]},
-                                            {"Coal3 mine", BLACK, fonts[0]},
-                                            {"Coal4 mine", BLACK, fonts[0]},
-                                            {"Coal5 mine", BLACK, fonts[0]},
-                                            {"other object1", BLACK, fonts[0]},
-                                            {"other object2", BLACK, fonts[0]}
+                                            {"Fuel Storage", BLACK, fonts[0]},  // Les noms des 12 objets achetables
+                                            {"Iron Storage", BLACK, fonts[0]},
+                                            {"Gold Storage", BLACK, fonts[0]},
+                                            {"Joanium Storage", BLACK, fonts[0]},
+                                            {"Voidor Storage", BLACK, fonts[0]},
+                                            {"Fuel mine", BLACK, fonts[0]},
+                                            {"Iron mine", BLACK, fonts[0]},
+                                            {"Gold mine", BLACK, fonts[0]},
+                                            {"Joanium mine", BLACK, fonts[0]},
+                                            {"Voidor mine", BLACK, fonts[0]},
+                                            {"Factory", BLACK, fonts[0]},
+                                            {"Tower defence", BLACK, fonts[0]},
+                                            {"Build", BLACK, fonts[0]}
                                            };
 
     for (int i = 0; i < CST_TEXT_NUMBER; i++)
