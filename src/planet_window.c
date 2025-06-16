@@ -472,6 +472,9 @@ void planetWindowMineralAbundance(SDL_Texture ***imageTextures, SDL_Texture **te
             case ORE3:
                 SDL_RenderCopy(renderer, imageTextures[4][3], NULL, &currentLogoRect);
                 break;
+            case ORE4:
+                SDL_RenderCopy(renderer, imageTextures[4][4], NULL, &currentLogoRect);
+                break;
             default:
                 SDL_RenderCopy(renderer, imageTextures[4][0], NULL, &currentLogoRect);
                 break;
