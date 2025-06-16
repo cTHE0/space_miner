@@ -51,12 +51,14 @@ static SDL_Rect windowRect,
                 textGeneralInfoRect,
                 firstNewTextBuildRect,
                 firstUpgradeBuildRect,
+                firstUpgradeBuildRect2,
                 firstBuildRect,
                 imageBuildRect,
                 upgradeBarRect,
                 titleBuildRect,
                 infoBuildRect,
-                updateButtonBuildRect;
+                updateButtonBuildRect,
+                updateButtonBuildRect2;
 
 
 void initPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets) {
@@ -122,7 +124,76 @@ void initTextPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts, Planet *
 
     // Genere la texture qui donne le descriptif du batiment selectionne
     strcpy(descriptionText, "");
-    sprintf(descriptionText, "Description:\nA coal mine is dark, dusty,\nwith tunnels, machines, and\nworkers digging for coal.\n \nDetails: \nFunction        extraction coal\nDrain speed   13.2 m3/s\nLevel              0");
+    if (planets[getWindowId()].builds[currentBuildIndex].type == ORE_MINE && 
+        planets[getWindowId()].builds[currentBuildIndex].mine.ore == FUEL) {
+        sprintf(descriptionText, "Description:\nWork in extreme conditions\nto extract fuel, powering\n your ships for exploration.\n \nDetails: \nFunction        extraction coal\nDrain speed   %d m3/s\nLevel              %d",
+                planets[getWindowId()].builds[currentBuildIndex].mine.productivity,
+                planets[getWindowId()].builds[currentBuildIndex].level);
+    } 
+    else if (planets[getWindowId()].builds[currentBuildIndex].type == ORE_MINE && 
+             planets[getWindowId()].builds[currentBuildIndex].mine.ore == ORE1) {
+        sprintf(descriptionText, "Description:\nIron extraction is tough\nwork, but crucial for\nbuilding what's require.\n \nDetails: \nFunction        extraction coal\nDrain speed   %d m3/s\nLevel              %d",
+                planets[getWindowId()].builds[currentBuildIndex].mine.productivity,
+                planets[getWindowId()].builds[currentBuildIndex].level);
+    } 
+    else if (planets[getWindowId()].builds[currentBuildIndex].type == ORE_MINE && 
+             planets[getWindowId()].builds[currentBuildIndex].mine.ore == ORE2) {
+        sprintf(descriptionText, "Description:\nGold mining in remote space\nlocations is dangerous,\nbut essential for scientists.\n \nDetails: \nFunction        extraction coal\nDrain speed   %d m3/s\nLevel              %d",
+                planets[getWindowId()].builds[currentBuildIndex].mine.productivity,
+                planets[getWindowId()].builds[currentBuildIndex].level);
+    } 
+    else if (planets[getWindowId()].builds[currentBuildIndex].type == ORE_MINE && 
+             planets[getWindowId()].builds[currentBuildIndex].mine.ore == ORE3) {
+        sprintf(descriptionText, "Description:\nJoanium is mined in high-\npressure, toxic areas,\nfor youe advanced ships.\n \nDetails: \nFunction        extraction coal\nDrain speed   %d m3/s\nLevel              %d",
+                planets[getWindowId()].builds[currentBuildIndex].mine.productivity,
+                planets[getWindowId()].builds[currentBuildIndex].level);
+    } 
+    else if (planets[getWindowId()].builds[currentBuildIndex].type == ORE_MINE && 
+             planets[getWindowId()].builds[currentBuildIndex].mine.ore == ORE4) {
+        sprintf(descriptionText, "Description:\nMining voidor requires\nextreme effort, but it is\nneeded for high technology.\n \nDetails: \nFunction        extraction coal\nDrain speed   %d m3/s\nLevel              %d",
+                planets[getWindowId()].builds[currentBuildIndex].mine.productivity,
+                planets[getWindowId()].builds[currentBuildIndex].level);
+    } 
+    else if (planets[getWindowId()].builds[currentBuildIndex].type == ORE_STORE &&
+             planets[getWindowId()].builds[currentBuildIndex].tank.ore == FUEL) {
+        sprintf(descriptionText, "Description:\nA secure place for fuel.\nEnsure it's full for your\nspace journeys.\n \nDetails: \nFunction        extraction coal\nStorage         %d m3/s\nLevel              %d",
+                planets[getWindowId()].builds[currentBuildIndex].tank.maxCapacity,
+                planets[getWindowId()].builds[currentBuildIndex].level);
+    }
+    else if (planets[getWindowId()].builds[currentBuildIndex].type == ORE_STORE &&
+             planets[getWindowId()].builds[currentBuildIndex].tank.ore == ORE1) {
+        sprintf(descriptionText, "Description:\nHolds iron for repairs and\nupgrades. Keep it ready for\nemergencies.\n \nDetails: \nFunction        extraction coal\nStorage         %d m3/s\nLevel              %d",
+                planets[getWindowId()].builds[currentBuildIndex].tank.maxCapacity,
+                planets[getWindowId()].builds[currentBuildIndex].level);
+    }
+    else if (planets[getWindowId()].builds[currentBuildIndex].type == ORE_STORE &&
+             planets[getWindowId()].builds[currentBuildIndex].tank.ore == ORE2) {
+        sprintf(descriptionText, "Description:\nStores gold, vital for\nbuilding rockets. It has\nunique properties.\n \nDetails: \nFunction        extraction coal\nStorage         %d m3/s\nLevel              %d",
+                planets[getWindowId()].builds[currentBuildIndex].tank.maxCapacity,
+                planets[getWindowId()].builds[currentBuildIndex].level);
+    }
+    else if (planets[getWindowId()].builds[currentBuildIndex].type == ORE_STORE &&
+             planets[getWindowId()].builds[currentBuildIndex].tank.ore == ORE3) {
+        sprintf(descriptionText, "Description:\nStores Joanium, a rare and\nvaluable resource for\nadvanced tech.\n \nDetails: \nFunction        extraction coal\nStorage         %d m3/s\nLevel              %d",
+                planets[getWindowId()].builds[currentBuildIndex].tank.maxCapacity,
+                planets[getWindowId()].builds[currentBuildIndex].level);
+    }
+    else if (planets[getWindowId()].builds[currentBuildIndex].type == ORE_STORE &&
+             planets[getWindowId()].builds[currentBuildIndex].tank.ore == ORE4) {
+        sprintf(descriptionText, "Description:\nHolds Voidor, the rarest\nmineral. You'll need more\nthan luck!\n \nDetails: \nFunction        extraction coal\nStorage         %d m3/s\nLevel              %d",
+                planets[getWindowId()].builds[currentBuildIndex].tank.maxCapacity,
+                planets[getWindowId()].builds[currentBuildIndex].level);
+    }
+    else if (planets[getWindowId()].builds[currentBuildIndex].type == FACTORY) {
+        sprintf(descriptionText, "Description:\nThe factory builds rockets,\nfuel tanks, and many other\nessential things.");
+    }
+    else if (planets[getWindowId()].builds[currentBuildIndex].type == DEFENCE_TOWER) {
+        sprintf(descriptionText, "Description:\nIt's equipped with powerful\nweapons, defending all\nyour vital resources.");
+    }
+
+
+
+
     textTextures[34] = createTextTextureWithNewline(renderer, fonts[0], descriptionText, BLACK);
     SDL_QueryTexture(textTextures[34], NULL, NULL, &textureWidth, &textureHeight);
     infoBuildRect = (SDL_Rect){SCREEN_WIDTH * 0.516, SCREEN_HEIGHT * 0.575, (textureWidth * SCREEN_WIDTH) * 0.000232, (textureHeight * SCREEN_WIDTH) * 0.000232};
@@ -225,7 +296,7 @@ void initRectPlanetWindow(SDL_Texture **textTextures) {
     category3TitleRect.w = textureWidth * windowRect.w * 0.0005;
     category3TitleRect.h = textureHeight * windowRect.w * 0.0005;
 
-    firstBuildImageRect = (SDL_Rect){SCREEN_WIDTH * 0.144, SCREEN_HEIGHT * 0.566, SCREEN_WIDTH * 0.04, SCREEN_WIDTH * 0.04};
+    firstBuildImageRect = (SDL_Rect){SCREEN_WIDTH * 0.144, SCREEN_HEIGHT * 0.566, SCREEN_WIDTH * 0.041, SCREEN_WIDTH * 0.041};
     firstBarBuildRect = (SDL_Rect){SCREEN_WIDTH * 0.13, SCREEN_HEIGHT * 0.637, SCREEN_WIDTH * 0.07, SCREEN_WIDTH * 0.016};
 
     SDL_QueryTexture(textTextures[61], NULL, NULL, &textureWidth, &textureHeight);
@@ -233,6 +304,9 @@ void initRectPlanetWindow(SDL_Texture **textTextures) {
 
     SDL_QueryTexture(textTextures[63], NULL, NULL, &textureWidth, &textureHeight);
     firstUpgradeBuildRect = (SDL_Rect){SCREEN_WIDTH * 0.148, SCREEN_HEIGHT * 0.64, textureWidth * SCREEN_WIDTH * 0.0002, textureHeight * SCREEN_WIDTH * 0.0002};
+    
+    SDL_QueryTexture(textTextures[78], NULL, NULL, &textureWidth, &textureHeight);
+    firstUpgradeBuildRect2 = (SDL_Rect){SCREEN_WIDTH * 0.158, SCREEN_HEIGHT * 0.64, textureWidth * SCREEN_WIDTH * 0.0002, textureHeight * SCREEN_WIDTH * 0.0002};
     
     firstBuildRect = (SDL_Rect){SCREEN_WIDTH * 0.13, SCREEN_HEIGHT * 0.565, SCREEN_WIDTH * 0.07, SCREEN_WIDTH * 0.057};
 
@@ -249,6 +323,9 @@ void initRectPlanetWindow(SDL_Texture **textTextures) {
 
     SDL_QueryTexture(textTextures[63], NULL, NULL, &textureWidth, &textureHeight);
     updateButtonBuildRect = (SDL_Rect){SCREEN_WIDTH * 0.58, SCREEN_HEIGHT * 0.83, textureWidth * SCREEN_WIDTH * 0.0003, textureHeight * SCREEN_WIDTH * 0.0003};
+
+    SDL_QueryTexture(textTextures[78], NULL, NULL, &textureWidth, &textureHeight);
+    updateButtonBuildRect2 = (SDL_Rect){SCREEN_WIDTH * 0.59, SCREEN_HEIGHT * 0.83, textureWidth * SCREEN_WIDTH * 0.0003, textureHeight * SCREEN_WIDTH * 0.0003};
     
     upgradeBarRect = (SDL_Rect){SCREEN_WIDTH * 0.54, SCREEN_HEIGHT * 0.82, SCREEN_WIDTH * 0.12, SCREEN_WIDTH * 0.03};
 
@@ -256,7 +333,7 @@ void initRectPlanetWindow(SDL_Texture **textTextures) {
     // planetWindowNearestShips
        
     SDL_QueryTexture(textTextures[56], NULL, NULL, &textureWidth, &textureHeight);
-    category5TitleRect.x = windowRect.x + windowRect.w * 0.79;
+    category5TitleRect.x = windowRect.x + windowRect.w * 0.813;
     category5TitleRect.y = windowRect.y + windowRect.h * 0.53;
     category5TitleRect.w = textureWidth * windowRect.w * 0.0005;
     category5TitleRect.h = textureHeight * windowRect.w * 0.0005;
@@ -269,7 +346,7 @@ void displayPlanetWindow(SDL_Texture ***imageTextures, SDL_Texture **textTexture
     planetWindowContainerInfo(imageTextures, textTextures, planets);
     planetWindowMineralAbundance(imageTextures, textTextures, planets);
     planetWindowManageBuilds(imageTextures, textTextures, &planets[getWindowId()]);
-    planetWindowOverviewBuild(imageTextures, textTextures);
+    planetWindowOverviewBuild(imageTextures, textTextures, &planets[getWindowId()]);
     planetWindowNearestShips(imageTextures, textTextures);
 }
 
@@ -399,6 +476,9 @@ void planetWindowMineralAbundance(SDL_Texture ***imageTextures, SDL_Texture **te
             case ORE3:
                 SDL_RenderCopy(renderer, imageTextures[4][3], NULL, &currentLogoRect);
                 break;
+            case ORE4:
+                SDL_RenderCopy(renderer, imageTextures[4][4], NULL, &currentLogoRect);
+                break;
             default:
                 SDL_RenderCopy(renderer, imageTextures[4][0], NULL, &currentLogoRect);
                 break;
@@ -426,9 +506,10 @@ void planetWindowManageBuilds(SDL_Texture ***imageTextures, SDL_Texture **textTe
     SDL_Rect barRect = firstBarBuildRect;
     SDL_Rect newTextRect = firstNewTextBuildRect;
     SDL_Rect upgradeRect = firstUpgradeBuildRect;
+    SDL_Rect upgradeRect2 = firstUpgradeBuildRect2;
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 3; j++) {
-            // Affiche la barre d'amelioration/creation
+            // Affiche du fond de la barre d'amelioration/creation
             SDL_SetRenderDrawColor(renderer, 125, 197, 46, 255);
             barRect.x = firstBarBuildRect.x + firstBuildImageRect.w * i * GapBetweenBuildX;
             barRect.y = firstBarBuildRect.y + firstBuildImageRect.h * j * GapBetweenBuildY;
@@ -438,20 +519,28 @@ void planetWindowManageBuilds(SDL_Texture ***imageTextures, SDL_Texture **textTe
             // Affiche l'image de l'objet
             imageRect.x = firstBuildImageRect.x + firstBuildImageRect.w * i * GapBetweenBuildX;
             imageRect.y = firstBuildImageRect.y + firstBuildImageRect.h * j * GapBetweenBuildY;
-            SDL_RenderCopy(renderer, imageTextures[9][i+j*4], NULL, &imageRect);
+            SDL_RenderCopy(renderer, imageTextures[9][i + j * 4], NULL, &imageRect);
             SDL_DrawEdgeOfRect(renderer, imageRect, 2);
 
-            // Logo 'NEW'
-            if (planet->builds[4 * j + i].type == NOTHING) {
+            // Affiche le logo 'NEW'
+            if (planet->builds[4 * j + i].level == 0) {
                 newTextRect.x = firstNewTextBuildRect.x + firstBuildImageRect.w * i * GapBetweenBuildX;
                 newTextRect.y = firstNewTextBuildRect.y + firstBuildImageRect.h * j * GapBetweenBuildY;
                 SDL_RenderCopy(renderer, textTextures[61], NULL, &newTextRect);
             }
 
+            // Affiche le logo 'NEW' et le texte dans la barre d'amelioration
+            if (planet->builds[4 * j + i].level == 0) {
+                upgradeRect2.x = firstUpgradeBuildRect2.x + firstBuildImageRect.w * i * GapBetweenBuildX;
+                upgradeRect2.y = firstUpgradeBuildRect2.y + firstBuildImageRect.h * j * GapBetweenBuildY;
+                SDL_RenderCopy(renderer, textTextures[78], NULL, &upgradeRect2);
+            } else if (planet->builds[4 * j + i].level > 0) {
+                upgradeRect.x = firstUpgradeBuildRect.x + firstBuildImageRect.w * i * GapBetweenBuildX;
+                upgradeRect.y = firstUpgradeBuildRect.y + firstBuildImageRect.h * j * GapBetweenBuildY;
+                SDL_RenderCopy(renderer, textTextures[63], NULL, &upgradeRect);
+            }
+
             // Logo 'Upgrade' / 'New build'
-            upgradeRect.x = firstUpgradeBuildRect.x + firstBuildImageRect.w * i * GapBetweenBuildX;
-            upgradeRect.y = firstUpgradeBuildRect.y + firstBuildImageRect.h * j * GapBetweenBuildY;
-            SDL_RenderCopy(renderer, textTextures[63], NULL, &upgradeRect);
         }
     }
 
@@ -463,7 +552,7 @@ void planetWindowManageBuilds(SDL_Texture ***imageTextures, SDL_Texture **textTe
     SDL_DrawEdgeOfRect(renderer, edgeSelectedBuildRect, 3);
 }
 
-void planetWindowOverviewBuild(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
+void planetWindowOverviewBuild(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planet) {
     // Affichage du titre "Overview of build"
     SDL_RenderCopy(renderer, textTextures[55], NULL, &category4TitleRect);
 
@@ -471,14 +560,17 @@ void planetWindowOverviewBuild(SDL_Texture ***imageTextures, SDL_Texture **textT
     SDL_DrawEdgeOfRect(renderer, imageBuildRect, 3);
     SDL_RenderCopy(renderer, imageTextures[9][1], NULL, &imageBuildRect);
 
-    // Affichage de la barre d'amelioration
+    // Affichage du fond de la barre d'amelioration
     SDL_SetRenderDrawColor(renderer, 125, 197, 46, 255);
     SDL_RenderFillRect(renderer, &upgradeBarRect);
     SDL_DrawEdgeOfRect(renderer, upgradeBarRect, 3);
-    SDL_RenderCopy(renderer, textTextures[63], NULL, &updateButtonBuildRect);
 
     // Afficher le texte dans la barre d'amelioration
-    SDL_RenderCopy(renderer, textTextures[63], NULL, &updateButtonBuildRect);
+    if (planet->builds[currentBuildIndex].level == 0) {
+        SDL_RenderCopy(renderer, textTextures[78], NULL, &updateButtonBuildRect2);
+    } else if (planet->builds[currentBuildIndex].level > 0) {
+        SDL_RenderCopy(renderer, textTextures[63], NULL, &updateButtonBuildRect);   
+    }
 
     // Afficher le titre du batiment
     SDL_RenderCopy(renderer, textTextures[66 + currentBuildIndex], NULL, &titleBuildRect);
@@ -512,7 +604,7 @@ void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Planet *p
     }
 
     // Achat d'un nouveau batiment
-    if (SDL_PointInRect(&mouse, &upgradeBarRect) && planets[getWindowId()].builds[currentBuildIndex].type == NOTHING) {
+    if (SDL_PointInRect(&mouse, &upgradeBarRect) && planets[getWindowId()].builds[currentBuildIndex].level == 0) {
         switch (currentBuildIndex) {
             case 0:
             case 1:
@@ -520,19 +612,50 @@ void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Planet *p
             case 3:
             case 4:
                 break;
+
             case 5:
             case 6:
             case 7:
             case 8:
             case 9:  // Acheter une mine
-                planets[getWindowId()].builds[currentBuildIndex].type = ORE_MINE;
                 planets[getWindowId()].builds[currentBuildIndex].level = 1;
-                planets[getWindowId()].builds[currentBuildIndex].mine = (Mine){currentBuildIndex - 5 , 1000};
                 break;
+
             case 10:
             case 11:
             default:
                 break;
         }
+        initTextPlanetWindow(textTextures, fonts, planets);
+    }
+
+    // Amelioration d'un nouveau batiment
+    else if (SDL_PointInRect(&mouse, &upgradeBarRect) && planets[getWindowId()].builds[currentBuildIndex].level > 0) {        
+        switch (currentBuildIndex) {
+            case 0:
+            case 1:
+            case 2:
+            case 3:
+            case 4:  // Ameliorer un reservoir
+                planets[getWindowId()].builds[currentBuildIndex].level ++;
+                planets[getWindowId()].builds[currentBuildIndex].tank.maxCapacity *= 1.05;
+                break;
+
+            case 5:
+            case 6:
+            case 7:
+            case 8:
+            case 9:  // Ameliorer une mine
+                planets[getWindowId()].builds[currentBuildIndex].level ++;
+                planets[getWindowId()].builds[currentBuildIndex].mine.productivity *= 1.05;
+                break;
+
+            case 10:
+            case 11:
+            default:
+                break;
+        }
+
+        initTextPlanetWindow(textTextures, fonts, planets);
     }
 }

@@ -16,10 +16,17 @@ void initBuildsPlanet(Planet *planet) {
     for (int i = 0; i < BUILD_TYPE_COUNT; i++) {
         if (i < ORE_TYPE_COUNT) {
             planet->builds[i].type = ORE_STORE;
-            planet->builds[i].level = 0;
+            planet->builds[i].level = 1;
             planet->builds[i].tank = (Compartment){i, 0, 0, 0, 0, 1, 8000, 10000, 20};
-        } else {
-            planet->builds[i].type = NOTHING;
+        } else if (i < 5 + ORE_TYPE_COUNT) {
+            planet->builds[i].type = ORE_MINE;
+            planet->builds[i].level = 0;
+            planet->builds[i].mine = (Mine){i - 5 , 1000};
+        } else if (i == 10) {
+            planet->builds[i].type = FACTORY;
+            planet->builds[i].level = 0;
+        } else if (i == 11) {
+            planet->builds[i].type = DEFENCE_TOWER;
             planet->builds[i].level = 0;
         }
     }
@@ -34,7 +41,7 @@ void updateBuilds(Planet *planets, Ship *ships, int shipCount, int planetCount) 
 
     for (int i = 0; i < planetCount; i++) {
         for (int j = 0; j < BUILD_TYPE_COUNT; j++) {
-            if (planets[i].builds[j].type == NOTHING) {  // Il n'y a plus d'objet ensuite
+            if (planets[i].builds[j].type == NOTHING || planets[i].builds[j].level == 0) {  // Il n'y a plus d'objet ensuite
                 break;
             } 
 
