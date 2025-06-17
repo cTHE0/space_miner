@@ -3,7 +3,7 @@
 
 #define SCREEN_WIDTH 1920 // (autre 16/9 courant plus petit : 1280 par 720) 1920
 #define SCREEN_HEIGHT 1080  //1080
-#define MAP_SIZE 350000
+#define MAP_SIZE 700000
 #define SOLAR_SYSTEM_SIZE 16000  // Taille d'un cote (c'est un carre)
 
 #define INIT_PLANET_COUNT 56

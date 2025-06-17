@@ -16,7 +16,6 @@ int getTotalOre(Planet *planets, int planet_count, Ore ore_type) {
             }
         }
     }
-    printf("%d \n", res);
     return res;
 }
 
