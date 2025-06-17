@@ -42,6 +42,7 @@ void initInfoViewRects(SDL_Texture **textTextures) {
 
 void displayInfoView(SDL_Texture ***imageTextures) {
     static int coefGapBetweenOres = 6;
+
     // Affichage du fond de la barre en haut de l'ecran
     SDL_SetRenderDrawColor(renderer, 128, 128, 128, 170);  // gris, 50% transparent
     SDL_RenderFillRect(renderer, &upBarRect);
@@ -59,8 +60,8 @@ void displayInfoView(SDL_Texture ***imageTextures) {
         renderNumber(renderer, getTotalOreWithInt(i), currentvalueRect);
     }
 
-    // Afficher la barre a droite si SIDE_BAR_WINDOW pas ouverte
-    if (getWindowType() != SIDE_BAR_WINDOW) {
+    // Afficher la barre a droite
+    if (getWindowType() == NO_WINDOW || getWindowType() == BASIC_SHIP_WINDOW) {
         SDL_RenderCopy(renderer, imageTextures[2][7], NULL, &settingsRect);
         SDL_RenderFillRect(renderer, &rightBarRect);
         SDL_RenderCopy(renderer, imageTextures[2][2], NULL, &arrowRightBarRect);

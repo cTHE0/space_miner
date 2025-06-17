@@ -17,7 +17,6 @@ typedef struct Planet Planet;
 
 typedef struct {  // Notre destination
     SpotType type;
-    int id_spot;           // Permet de garder en memoire l'identifiant de la planet/fusee
     union {
         Planet *planet;    // Si c'est une planete
         Ship *ship;        // Si c'est une fusee, par ex une station spatiale
@@ -45,7 +44,7 @@ struct Ship {
     int frameIndex;
     Uint32 lastFrameTime;
     double angleWithPlanet; // Angle permettant de situer le ship sur la surface de la planète
-    int noise; // bruit, ondes EM émisent et attirant ennemis entre 0 et 100
+    int noise;              // bruit, ondes EM émisent et attirant ennemis entre 0 et 100
 };
 
 

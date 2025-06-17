@@ -75,7 +75,7 @@ int main(void) {
                 handleEvents(textTextures, fonts, &state, ships, shipCount, planets, planetCount);
                 updateShips(ships, shipCount);
                 updatePlanets(planets, ships, shipCount, planetCount);
-                updateBuilds(planets, ships, shipCount, planetCount);
+                updateBuilds(planets, planetCount);
                 updateCameraFollow(ships, planets);
                 updateAsteroids(planets,planetCount);
                 updateTotalOre(planets, planetCount);

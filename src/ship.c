@@ -24,10 +24,8 @@ void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
         (*ships)[i].idModel = rand() % 7;
         (*ships)[i].base.type = SPOT_PLANET;
         (*ships)[i].base.planet = &planets[1];  // La premiere planete est la base de chaque vaisseau
-        (*ships)[i].base.id_spot = 1;
         (*ships)[i].target.type = SPOT_PLANET;
-        (*ships)[i].target.id_spot = 2;
-        (*ships)[i].target.planet = &planets[(*ships)[i].target.id_spot];
+        (*ships)[i].target.planet = &planets[2];
         (*ships)[i].x = (*ships)[i].base.planet->x;
         (*ships)[i].y = (*ships)[i].base.planet->y;
         (*ships)[i].w = 200;
@@ -126,17 +124,18 @@ void updateShipMove(Ship *ship, Uint32 currentTime) {
             if (distance - ship->speed >= spotDest.planet->radius) {
                 ship->x += dx * ship->speed / distance;
                 ship->y += dy * ship->speed / distance;
-                if (ship->state == MOVING_TO_BASE) {
-                    ship->angleWithPlanet = computeAngleDeg(ship->x, ship->y, ship->base.planet->x, ship->base.planet->y) * M_PI / 180.0;
-                }
-                else if (ship->state == MOVING_TO_TARGET) {
-                    ship->angleWithPlanet = computeAngleDeg(ship->x, ship->y, ship->target.planet->x, ship->target.planet->y) * M_PI / 180.0;
-                } else {
-                    ship->angleWithPlanet = 0;
-                }
             } else {
                 ship->waitStartTime = currentTime;
                 ship->state = (ship->state == MOVING_TO_BASE) ? WAITING_ON_BASE : WAITING_ON_TARGET;
+
+                // Atterissage des fusees, actualisation de leur angle avec la planete
+                if (ship->state == WAITING_ON_BASE) {
+                    ship->angleWithPlanet = computeAngleDeg(ship->x + ship->w / 2, ship->y + ship->h / 2, ship->base.planet->x, ship->base.planet->y) * M_PI / 180.0;
+                } else if (ship->state == WAITING_ON_TARGET) {
+                    ship->angleWithPlanet = computeAngleDeg(ship->x + ship->w / 2, ship->y + ship->h / 2, ship->target.planet->x, ship->target.planet->y) * M_PI / 180.0;
+                } else {
+                    ship->angleWithPlanet = 0;
+                }
             }
             break;
         case SPOT_SHIP:

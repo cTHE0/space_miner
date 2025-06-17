@@ -7,7 +7,7 @@
 #define SOLAR_SYSTEM_SIZE 16000  // Taille d'un cote (c'est un carre)
 
 #define INIT_PLANET_COUNT 56
-#define INIT_SHIP_COUNT 40
+#define INIT_SHIP_COUNT 3
 #define ORE_TYPE_COUNT 5
 #define CST_TEXT_NUMBER 79
 #define FONT_NUMBER 1
@@ -16,7 +16,7 @@
 
 #define SPRITE_SHEETS_DELAY 100  // En nombre de tick
 #define WAIT_TIME_SHIP 1000  // En millisecondes
-#define WAIT_TIME_PLANET 2000  // En millisecondes
+#define WAIT_TIME_PLANET 5000  // En millisecondes
 #define REFRESH_TIME_BUILDS 1000  // En millisecondes
 #define TANKS_UPDATE_INTERVAL 200  // En millisecondes
 #define ASTEROID_TICK 300

@@ -24,7 +24,7 @@ typedef struct Build {
 
 void initBuildsPlanet(Planet *planet);
 void displayBuildsAroundPlanet(Planet *planet, int nb_build, SDL_Texture **build_textures_list, SDL_Point texture_dimensions);
-void updateBuilds(Planet *planets, Ship *ships, int shipCount, int planetCount);
+void updateBuilds(Planet *planets, int planetCount);
 void updateBuildMine(Build *builds, Mine *mine, int abundance);
 
 #endif

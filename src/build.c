@@ -32,7 +32,7 @@ void initBuildsPlanet(Planet *planet) {
     }
 }
 
-void updateBuilds(Planet *planets, Ship *ships, int shipCount, int planetCount) {
+void updateBuilds(Planet *planets, int planetCount) {
     if (SDL_GetTicks() < lastBuildUpdateTime + REFRESH_TIME_BUILDS) {
         return;
     }
@@ -41,8 +41,8 @@ void updateBuilds(Planet *planets, Ship *ships, int shipCount, int planetCount) 
 
     for (int i = 0; i < planetCount; i++) {
         for (int j = 0; j < BUILD_TYPE_COUNT; j++) {
-            if (planets[i].builds[j].type == NOTHING || planets[i].builds[j].level == 0) {  // Il n'y a plus d'objet ensuite
-                break;
+            if (planets[i].builds[j].type == NOTHING || planets[i].builds[j].level == 0) {
+                continue;
             } 
 
             switch (planets[i].builds[j].type) {

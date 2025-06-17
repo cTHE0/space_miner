@@ -177,7 +177,7 @@ void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *
         setWindowId((getWindowId() + 1) % shipCount);
         initBasicShipWindow(textTextures, fonts, &ships[getWindowId()]);
         setCenterCamera((SDL_Point){ships[getWindowId()].x + ships[getWindowId()].w / 2, ships[getWindowId()].y + ships[getWindowId()].h / 2});
-        changeCameraLastObjectSelected(getWindowId());
+        setCameraLastObjectSelected(getWindowId());
         updateCameraFollow(ships, NULL);
     }
     else if (SDL_PointInRect(&mouse, &leftArrowRect)) {
@@ -188,7 +188,7 @@ void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *
         }
         initBasicShipWindow(textTextures, fonts, &ships[getWindowId()]);
         setCenterCamera((SDL_Point){ships[getWindowId()].x + ships[getWindowId()].w / 2, ships[getWindowId()].y + ships[getWindowId()].h / 2});
-        changeCameraLastObjectSelected(getWindowId());
+        setCameraLastObjectSelected(getWindowId());
         updateCameraFollow(ships, NULL);
     }
 

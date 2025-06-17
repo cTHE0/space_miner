@@ -9,6 +9,8 @@
 
 #include "ore.h"
 #include "mine.h"
+
+
 typedef enum { SUN, PLANET } planetTypeEnum;
 
 typedef struct Ship Ship;
@@ -29,10 +31,12 @@ typedef struct Planet {
     int orbitCenterY;
 } Planet;
 
+
+void initPlanets(Planet **planets, int planetCount);
 int getNbSolarSystems(void);
 void updatePlanets(Planet *planets, Ship *ships, int shipCount, int planetCount);
-void initPlanets(Planet **planets, int planetCount);
 void renderPlanets(SDL_Texture ***imageTextures, Planet *planets, int planetCount);
 void destroyPlanets(Planet *planets);
+
 
 #endif
