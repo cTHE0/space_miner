@@ -57,14 +57,8 @@ SDL_Texture ***loadTextures(void) {
     for (int i = 0; i < nbCategories; i++) {
         imageTextures[i] = malloc(nbPicturesPerCategory[i] * sizeof(SDL_Texture*));
 
-        if (strcmp(foldersPath[i], "assets/img/5_others/") == 0) {  // Traitement specifique pour 'others'
-            imageTextures[i][0] = IMG_LoadTexture(renderer, "assets/img/5_others/0.png");
-            imageTextures[i][1] = IMG_LoadTextureWithAlpha("assets/img/5_others/1.png", 100);
-            imageTextures[i][2] = IMG_LoadTexture(renderer, "assets/img/5_others/2.png");
-            imageTextures[i][3] = IMG_LoadTextureWithAlpha("assets/img/5_others/3.png", 100);
-            imageTextures[i][4] = IMG_LoadTexture(renderer, "assets/img/5_others/4.png");
-            imageTextures[i][5] = IMG_LoadTexture(renderer, "assets/img/5_others/5.png");
-            imageTextures[i][6] = IMG_LoadTexture(renderer, "assets/img/5_others/6.png");
+        if (strcmp(foldersPath[i], "assets/img/_10_withAlpha/") == 0) {  // Traitement specifique pour pour les images transparentes
+            // imageTextures[i][0] = IMG_LoadTextureWithAlpha("assets/img/_10_withAlpha/0.png", 100);
         }
 
         // Chargement des textures pour chaque image dans chaque dossier
@@ -193,9 +187,9 @@ int compare(const void *a, const void *b) {  // Fonction de comparaison pour qso
 }
 
 void initRects(SDL_Texture **textTextures) {
-    initRectShipWindow(textTextures);
-    initRectPlanetWindow(textTextures);
-    initRectBasicShipWindow(textTextures);
+    initShipWindowRects(textTextures);
+    initPlanetWindowRects(textTextures);
+    initBasicShipWindowRects(textTextures);
     initInfoViewRects(textTextures);
 }
 

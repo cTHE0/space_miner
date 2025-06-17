@@ -216,7 +216,7 @@ void initTextShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship
     infoPerTankRect.h = textureHeight * windowRect.w * 0.00035;
 }
 
-void initRectShipWindow(SDL_Texture **textTextures) {  // Les rects sont initialises dans le main
+void initShipWindowRects(SDL_Texture **textTextures) {  // Les rects sont initialises dans le main
     int textureWidth, textureHeight;  // Permet de garder les proportions des textes
 
 
@@ -632,8 +632,8 @@ void ShipWindowTankManager(SDL_Texture ***imageTextures, SDL_Texture **textTextu
     SDL_RenderCopyEx(renderer, imageTextures[5][5], NULL, &flowInTankLeftRect, 0.0, NULL, SDL_FLIP_HORIZONTAL);
 
     // Affichage de la fusee
-    SDL_RenderCopy(renderer, imageTextures[7][13], &shipConditionSrcRect, &shipRightRect);
-    SDL_RenderCopy(renderer, imageTextures[7][13], &shipConditionSrcRect, &shipLeftRect);
+    SDL_RenderCopy(renderer, imageTextures[5][7], &shipConditionSrcRect, &shipRightRect);
+    SDL_RenderCopy(renderer, imageTextures[5][7], &shipConditionSrcRect, &shipLeftRect);
 
     // Affiche les deux lignes separatrices entre les deux fusees
     plotPath((SDL_Point){600, 670}, (SDL_Point){600, 950}, 10, 5, BLACK);
@@ -713,7 +713,7 @@ void ShipWindowTankCompo(SDL_Texture ***imageTextures, SDL_Texture **textTexture
     SDL_RenderCopy(renderer, textTextures[14], NULL, &category5TitleRect);
 
     // Affiche la fusee en arriere plan a droite (reservoir par dessus)
-    SDL_RenderCopy(renderer, imageTextures[7][13], &shipConditionSrcRect, &shipRightRect2);
+    SDL_RenderCopy(renderer, imageTextures[5][7], &shipConditionSrcRect, &shipRightRect2);
 
     // Affiche le contour du schema du 'main info'
     SDL_RenderDrawRect(renderer, &mainInfoTanksEdgeRect);
@@ -826,7 +826,7 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship,
     else if (SDL_PointInRect(&mouse, &baseDisplayedRect) || SDL_PointInRect(&mouse, &baseDisplayedRect2)) {
         if (ship->base.type == SPOT_PLANET) {
             setWindowType(PLANET_WINDOW);
-            setWindowId(ship->base.id_spot);
+            setWindowId(ship->base.planet->id);
             initTextPlanetWindow(textTextures, fonts, planets);
         } else {
             setWindowType(NO_WINDOW);
@@ -835,7 +835,7 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship,
     else if (SDL_PointInRect(&mouse, &targetDisplayedRect) || SDL_PointInRect(&mouse, &targetDisplayedRect2)) {
         if (ship->target.type == SPOT_PLANET) {
             setWindowType(PLANET_WINDOW);
-            setWindowId(ship->target.id_spot);
+            setWindowId(ship->target.planet->id);
             initTextPlanetWindow(textTextures, fonts, planets);
         } else {
             setWindowType(NO_WINDOW);

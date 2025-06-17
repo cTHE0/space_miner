@@ -7,14 +7,18 @@
 
 SDL_Rect openSideBarRect = (SDL_Rect){SCREEN_WIDTH * 0.8636, SCREEN_HEIGHT * 0.0520, SCREEN_WIDTH * 0.1370, SCREEN_WIDTH * 0.5280};
 
-void clickSideBar(SDL_Point mouse) {
+int clickSideBar(SDL_Point mouse) {
     SDL_Rect sideBarButtonRect = getSideBarButtonRect();
+
     if (SDL_PointInRect(&mouse, &sideBarButtonRect)) {
         setWindowType(SIDE_BAR_WINDOW);
+        return 1;
     }
+
+    return 0;
 }
 
-void displaySideBar() {
+void displaySideBar(void) {
     SDL_SetRenderDrawColor(renderer, 128, 128, 128, 170);
     SDL_RenderFillRect(renderer, &openSideBarRect);
 }

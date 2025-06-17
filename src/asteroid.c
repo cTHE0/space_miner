@@ -68,12 +68,13 @@ void displayAsteroid(SDL_Texture ***imageTextures) {
     float screenX;
     float screenY;
     float screenRadius;
+
     for (int i = 0; i < getNbSolarSystems(); i++) {
         for (int j = 0; j < ASTEROID_COUNT; j++) {
             screenX = (asteroids[i][j].x - getCameraRect().x - asteroids[i][j].w - SCREEN_WIDTH / 2.f) * getCameraScale() + SCREEN_WIDTH / 2.f;  // (planets[i].x, planets[i].y) = coordonnees sur la map
             screenY = (asteroids[i][j].y - getCameraRect().y - asteroids[i][j].w - SCREEN_HEIGHT / 2.f) * getCameraScale() + SCREEN_HEIGHT / 2.f;  
             screenRadius = asteroids[i][j].w * getCameraScale();
-            SDL_RenderCopyEx(renderer, imageTextures[0][i % 2], NULL, &(SDL_Rect){screenX, screenY, screenRadius, screenRadius}, 14*angle_speed_asteroids[j][0], NULL, SDL_FLIP_NONE);
+            SDL_RenderCopyEx(renderer, imageTextures[0][i % 2], NULL, &(SDL_Rect){screenX, screenY, screenRadius, screenRadius}, 14 * angle_speed_asteroids[j][0], NULL, SDL_FLIP_NONE);
         }
     }
 }

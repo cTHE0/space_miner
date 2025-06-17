@@ -21,7 +21,7 @@ int getNbSolarSystems() {
     return nbSolarSystems;
 }
 
-void generatePlanets(Planet **planets, int planetCount) {
+void initPlanets(Planet **planets, int planetCount) {
     // Allocation du tableau de planètes
     *planets = malloc(planetCount * sizeof(Planet));
     if (*planets == NULL) {
@@ -59,34 +59,36 @@ void generatePlanets(Planet **planets, int planetCount) {
 }
 
 void updatePlanets(Planet *planets, Ship *ships, int shipCount, int planetCount) {
-    if (SDL_GetTicks() > lastPlanetUpdateTime + WAIT_TIME_PLANET) {
-        lastPlanetUpdateTime += WAIT_TIME_PLANET;
+    if (SDL_GetTicks() < lastPlanetUpdateTime + WAIT_TIME_PLANET) {
+        return;
+    }
 
-        // Mise a jour des rotations des planètes
-        for (int i = 0; i < planetCount; i++) {
-            if (planets[i].planetType != SUN) {
-                // Mise à jour de l'angle
-                planets[i].orbitAngleDeg += planets[i].orbitSpeedDeg;
-                if (planets[i].orbitAngleDeg > 360.0)
-                    planets[i].orbitAngleDeg -= 360.0;
+    lastPlanetUpdateTime += WAIT_TIME_PLANET;
 
-                // Recalcule la position à partir du centre et du rayon
-                double angle = planets[i].orbitAngleDeg * M_PI / 180.0;
-                planets[i].x = (int)(planets[i].orbitCenterX + planets[i].orbitRadius * cos(angle));
-                planets[i].y = (int)(planets[i].orbitCenterY + planets[i].orbitRadius * sin(angle));
-            }
+    // Mise a jour des rotations des planètes
+    for (int i = 0; i < planetCount; i++) {
+        if (planets[i].planetType != SUN) {
+            // Mise à jour de l'angle
+            planets[i].orbitAngleDeg += planets[i].orbitSpeedDeg;
+            if (planets[i].orbitAngleDeg > 360.0)
+                planets[i].orbitAngleDeg -= 360.0;
+
+            // Recalcule la position à partir du centre et du rayon
+            double angle = planets[i].orbitAngleDeg * M_PI / 180.0;
+            planets[i].x = planets[i].orbitCenterX + planets[i].orbitRadius * cos(angle);
+            planets[i].y = planets[i].orbitCenterY + planets[i].orbitRadius * sin(angle);
         }
+    }
 
-        // Mise a jour des fusees posees dessus
-        for (int i = 0; i < shipCount; i++) {
-            if (ships[i].state == WAITING_ON_TARGET && ships[i].target.type && planets[ships[i].target.id_spot].planetType != SUN) {
-                ships[i].x = planets[ships[i].target.id_spot].x + planets[ships[i].target.id_spot].radius * cos(ships[i].angleWithPlanet) - ships[i].w / 2;
-                ships[i].y = planets[ships[i].target.id_spot].y + planets[ships[i].target.id_spot].radius * sin(ships[i].angleWithPlanet) - ships[i].w / 2;
-            }
-            else if (ships[i].state == WAITING_ON_BASE && ships[i].base.type && planets[ships[i].base.id_spot].planetType != SUN) {
-                ships[i].x = planets[ships[i].base.id_spot].x + planets[ships[i].base.id_spot].radius * cos(ships[i].angleWithPlanet) - ships[i].w / 2;
-                ships[i].y = planets[ships[i].base.id_spot].y + planets[ships[i].base.id_spot].radius * sin(ships[i].angleWithPlanet) - ships[i].w / 2;
-            }
+    // Mise a jour des fusees posees dessus
+    for (int i = 0; i < shipCount; i++) {
+        if (ships[i].state == WAITING_ON_TARGET && ships[i].target.type == SPOT_PLANET && planets[ships[i].target.planet->id].planetType != SUN) {
+            ships[i].x = planets[ships[i].target.planet->id].x + planets[ships[i].target.planet->id].radius * cos(ships[i].angleWithPlanet) - ships[i].w / 2;
+            ships[i].y = planets[ships[i].target.planet->id].y + planets[ships[i].target.planet->id].radius * sin(ships[i].angleWithPlanet) - ships[i].w / 2;
+        }
+        else if (ships[i].state == WAITING_ON_BASE && ships[i].base.type == SPOT_PLANET && planets[ships[i].base.planet->id].planetType != SUN) {
+            ships[i].x = planets[ships[i].base.planet->id].x + planets[ships[i].base.planet->id].radius * cos(ships[i].angleWithPlanet) - ships[i].w / 2;
+            ships[i].y = planets[ships[i].base.planet->id].y + planets[ships[i].base.planet->id].radius * sin(ships[i].angleWithPlanet) - ships[i].w / 2;
         }
     }
 }

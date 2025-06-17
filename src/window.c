@@ -47,11 +47,9 @@ void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, SDL_Point m
 
         case SIDE_BAR_WINDOW:
         case NO_WINDOW:
-            if (!clickOnShip(textTextures, fonts, ships, shipCount, mouse)) {
-                if (!clickOnPlanet(textTextures, fonts, planets, planetCount, mouse)){
-                    clickSideBar(mouse);
-                };
-            }
+            if (clickSideBar(mouse)) break;
+            if (clickOnShip(textTextures, fonts, ships, shipCount, mouse)) break;
+            if (clickOnPlanet(textTextures, fonts, planets, planetCount, mouse)) break;
             break;
 
         case BASIC_SHIP_WINDOW:
@@ -88,8 +86,8 @@ int clickOnShip(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, int s
         setWindowId(id);
         setWindowType(BASIC_SHIP_WINDOW); 
         initBasicShipWindow(textTextures, fonts, &ships[id]);
-        changeCameraLastObjectSelected(id);
-        changeCameraMode(FOLLOW_SHIP);
+        setCameraLastObjectSelected(id);
+        setCameraMode(FOLLOW_SHIP);
     }
 
     return id != -1;
@@ -117,8 +115,8 @@ int clickOnPlanet(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets,
         setWindowId(id);
         setWindowType(PLANET_WINDOW);
         initPlanetWindow(textTextures, fonts, planets);
-        changeCameraLastObjectSelected(id);
-        changeCameraMode(FOLLOW_PLANET);
+        setCameraLastObjectSelected(id);
+        setCameraMode(FOLLOW_PLANET);
     }
 
     return id != -1;
@@ -126,6 +124,7 @@ int clickOnPlanet(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets,
 
 void displayWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships, Planet *planets) {
     displayInfoView(imageTextures);
+    
     switch (getWindowType()) {
         case PLANET_WINDOW:
             displayPlanetWindow(imageTextures, textTextures, planets);

@@ -3,8 +3,8 @@
 
 #include <SDL2/SDL.h>
 
-void clickSideBar(SDL_Point mouse);
+int clickSideBar(SDL_Point mouse);
 
-void displaySideBar();
+void displaySideBar(void);
 
 #endif

@@ -37,13 +37,12 @@ int main(void) {
     TTF_Font *fonts[FONT_NUMBER] = {0};
     loadFonts(fonts);
 
-    loadNumbers(fonts[0]);
-
     SDL_Texture ***imageTextures = loadTextures();
     SDL_Texture **textTextures = loadTextTextures(fonts);
 
+    loadNumbers(fonts[0]);
+
     initRects(textTextures);
-    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND); // Pour pouvoir dessiner carrée avec transparence
 
     // Variables pour mesurer les FPS
     Uint32 toShowFPS = SDL_GetTicks();
@@ -65,7 +64,7 @@ int main(void) {
 
                 if (state == GAME) {
                     gameBegun = 1;
-                    generatePlanets(&planets, planetCount);
+                    initPlanets(&planets, planetCount);
                     initShips(&ships, shipCount, planets, planetCount);
                     initCamera(planets);
                     initAsteroids(planets, planetCount);
@@ -77,7 +76,7 @@ int main(void) {
                 handleEvents(textTextures, fonts, &state, ships, shipCount, planets, planetCount);
                 updateShips(ships, shipCount);
                 updatePlanets(planets, ships, shipCount, planetCount);
-                updateBuilds(planets, ships, shipCount, planetCount);
+                updateBuilds(planets, planetCount);
                 updateCameraFollow(ships, planets);
                 updateAsteroids(planets,planetCount);
                 updateTotalOre(planets, planetCount);
@@ -111,12 +110,7 @@ int main(void) {
     }
 
     // POUR LE DEV 
-    printf("(SDL_Rect){SCREEN_WIDTH * %.4f, SCREEN_HEIGHT * %.4f, SCREEN_WIDTH * %.4f, SCREEN_WIDTH * %.4f};\n", 
-           getEmp().x, 
-           getEmp().y, 
-           getEmp().w, 
-           getEmp().h
-          );
+    printf("(SDL_Rect){SCREEN_WIDTH * %.4f, SCREEN_HEIGHT * %.4f, SCREEN_WIDTH * %.4f, SCREEN_WIDTH * %.4f};\n", getEmp().x, getEmp().y, getEmp().w, getEmp().h);
     
     destroyImageTextures(imageTextures);
     destroyTextTextures(textTextures);

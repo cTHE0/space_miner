@@ -55,6 +55,8 @@ void initSDL(SDL_Window **window) {
         SDL_Quit();  // Nettoyer SDL
         return;
     }
+
+    // Pour pouvoir dessiner carrée avec transparence
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
 }
 
