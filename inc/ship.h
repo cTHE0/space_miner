@@ -45,6 +45,7 @@ struct Ship {
     int frameIndex;
     Uint32 lastFrameTime;
     double angleWithPlanet; // Angle permettant de situer le ship sur la surface de la planète
+    int noise; // bruit, ondes EM émisent et attirant ennemis entre 0 et 100
 };
 
 

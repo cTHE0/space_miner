@@ -7,7 +7,7 @@
 #define SOLAR_SYSTEM_SIZE 16000  // Taille d'un cote (c'est un carre)
 
 #define INIT_PLANET_COUNT 56
-#define INIT_SHIP_COUNT 4
+#define INIT_SHIP_COUNT 40
 #define ORE_TYPE_COUNT 5
 #define CST_TEXT_NUMBER 79
 #define FONT_NUMBER 1
