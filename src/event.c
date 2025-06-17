@@ -45,7 +45,7 @@ void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, GameState *state
                     getWindowType() != PLANET_WINDOW && 
                     getWindowType() != SHIP_WINDOW && 
                     getWindowType() != BASIC_SHIP_WINDOW) {
-                    changeCameraMode(NORMAL);
+                    setCameraMode(NORMAL);
                 }
                 break;
 
@@ -67,7 +67,7 @@ void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, GameState *state
                     translateCamera(-dx / getCameraScale(), -dy / getCameraScale());
                     lastMouse = (SDL_Point){event.motion.x, event.motion.y};
                     click = 0;
-                    changeCameraMode(NORMAL);
+                    setCameraMode(NORMAL);
                     if (getWindowType() == BASIC_SHIP_WINDOW && getButtonSelected() == NO_BUTTON) {
                         setWindowType(NO_WINDOW);
                     }
