@@ -7,6 +7,7 @@
 #include "config.h"
 #include "text.h"
 #include "ore.h"
+#include "window.h"
 
 static SDL_Rect upBarRect, 
                 upBarValuesRect,
@@ -15,6 +16,10 @@ static SDL_Rect upBarRect,
                 firstIconUpBarRect,
                 settingsRect,
                 firstValueUpBarRect;
+
+SDL_Rect getSideBarButtonRect() {
+    return rightBarRect;
+}
 
 void initInfoViewRects(SDL_Texture **textTextures) {
     int textureWidth, textureHeight;
@@ -54,8 +59,10 @@ void displayInfoView(SDL_Texture ***imageTextures) {
         renderNumber(renderer, getTotalOreWithInt(i), currentvalueRect);
     }
 
-    // Afficher la barre a droite
-    SDL_RenderCopy(renderer, imageTextures[2][7], NULL, &settingsRect);
-    SDL_RenderFillRect(renderer, &rightBarRect);
-    SDL_RenderCopy(renderer, imageTextures[2][2], NULL, &arrowRightBarRect);
+    // Afficher la barre a droite si SIDE_BAR_WINDOW pas ouverte
+    if (getWindowType() != SIDE_BAR_WINDOW) {
+        SDL_RenderCopy(renderer, imageTextures[2][7], NULL, &settingsRect);
+        SDL_RenderFillRect(renderer, &rightBarRect);
+        SDL_RenderCopy(renderer, imageTextures[2][2], NULL, &arrowRightBarRect);
+    }
 }

@@ -51,7 +51,7 @@ void setCenterCamera(SDL_Point newCenter) {
 }
 
 void zoomCamera(float zoomFactor) {
-    if ((getWindowType() != NO_WINDOW) && (getWindowType() != BASIC_SHIP_WINDOW)) {
+    if (getWindowType() != NO_WINDOW && getWindowType() != SIDE_BAR_WINDOW && getWindowType() != BASIC_SHIP_WINDOW) {
         return;
     }
     
@@ -88,7 +88,7 @@ void zoomCamera(float zoomFactor) {
 }
 
 void translateCamera(float dx, float dy) {
-    if ((getWindowType() != NO_WINDOW) && (getWindowType() != BASIC_SHIP_WINDOW)){
+    if (getWindowType() != NO_WINDOW && getWindowType() != SIDE_BAR_WINDOW && (getWindowType() != BASIC_SHIP_WINDOW)){
         return;
     }
 

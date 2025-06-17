@@ -21,7 +21,7 @@ void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
     for (int i = 0; i < shipCount; i++) {
         (*ships)[i].shiptype = TRANSPORTER;
         (*ships)[i].id = i;
-        (*ships)[i].idModel = rand() % 12;
+        (*ships)[i].idModel = rand() % 7;
         (*ships)[i].base.type = SPOT_PLANET;
         (*ships)[i].base.planet = &planets[1];  // La premiere planete est la base de chaque vaisseau
         (*ships)[i].base.id_spot = 1;
@@ -39,6 +39,7 @@ void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
         (*ships)[i].currentLife = rand() % (int)(*ships)[i].maxLife;
         (*ships)[i].fuelConsumption = 1;  // Consommation d'essence par intervalle de temps TANKS_UPDATE_INTERVAL
         (*ships)[i].range = 300;
+        (*ships)[i].noise = 50;
 
         (*ships)[i].waitStartTime = 0;
         (*ships)[i].frameIndex = rand() % 4;  // Desynchronisation des fusees

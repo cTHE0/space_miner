@@ -20,7 +20,7 @@ void renderMap(SDL_Texture ***imageTextures) {
                 destRect.x = ((i * 7000 - getCameraRect().x - SCREEN_WIDTH / 2.f) * getCameraScale() + SCREEN_WIDTH / 2.f);
                 destRect.y = ((j * 7000 - getCameraRect().y - SCREEN_HEIGHT / 2.f) * getCameraScale() + SCREEN_HEIGHT / 2.f);
 
-                SDL_RenderCopy(renderer, imageTextures[3][11], NULL, &destRect);
+                SDL_RenderCopy(renderer, imageTextures[3][4], NULL, &destRect);
             }
         }
     }
@@ -34,7 +34,7 @@ void renderMap(SDL_Texture ***imageTextures) {
                 destRect.x = ((i * 7000 - getCameraRect().x - SCREEN_WIDTH / 2.f) * getCameraScale() + SCREEN_WIDTH / 2.f);
                 destRect.y = ((j * 7000 - getCameraRect().y - SCREEN_HEIGHT / 2.f) * getCameraScale() + SCREEN_HEIGHT / 2.f);
 
-                SDL_RenderCopy(renderer, imageTextures[3][8], NULL, &destRect);
+                SDL_RenderCopy(renderer, imageTextures[3][3], NULL, &destRect);
             }
         }
     }   
