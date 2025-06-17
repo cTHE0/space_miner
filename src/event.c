@@ -41,7 +41,10 @@ void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, GameState *state
                     click = 1;
                     lastMouse = (SDL_Point){event.button.x, event.button.y};
                 }
-                if ((getCameraMode() == FOLLOW_SHIP || getCameraMode() == FOLLOW_PLANET) && getWindowType() != PLANET_WINDOW && getWindowType() != SHIP_WINDOW && getWindowType() != BASIC_SHIP_WINDOW) {
+                if ((getCameraMode() == FOLLOW_SHIP || getCameraMode() == FOLLOW_PLANET) && 
+                    getWindowType() != PLANET_WINDOW && 
+                    getWindowType() != SHIP_WINDOW && 
+                    getWindowType() != BASIC_SHIP_WINDOW) {
                     changeCameraMode(NORMAL);
                 }
                 break;

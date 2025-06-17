@@ -21,7 +21,7 @@ int getNbSolarSystems() {
     return nbSolarSystems;
 }
 
-void generatePlanets(Planet **planets, int planetCount) {
+void initPlanets(Planet **planets, int planetCount) {
     // Allocation du tableau de planètes
     *planets = malloc(planetCount * sizeof(Planet));
     if (*planets == NULL) {

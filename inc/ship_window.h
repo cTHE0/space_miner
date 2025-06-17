@@ -8,7 +8,7 @@
 
 
 void initShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship);
-void initRectShipWindow(SDL_Texture **textTextures);
+void initShipWindowRects(SDL_Texture **textTextures);
 void initTextShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship);
 
 void displayShipWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships);

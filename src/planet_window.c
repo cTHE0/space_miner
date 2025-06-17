@@ -58,7 +58,8 @@ static SDL_Rect windowRect,
                 titleBuildRect,
                 infoBuildRect,
                 updateButtonBuildRect,
-                updateButtonBuildRect2;
+                updateButtonBuildRect2,
+                logoUpdateButtonBuildRect;
 
 
 void initPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets) {
@@ -199,7 +200,7 @@ void initTextPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts, Planet *
     infoBuildRect = (SDL_Rect){SCREEN_WIDTH * 0.516, SCREEN_HEIGHT * 0.575, (textureWidth * SCREEN_WIDTH) * 0.000232, (textureHeight * SCREEN_WIDTH) * 0.000232};
 }
 
-void initRectPlanetWindow(SDL_Texture **textTextures) {
+void initPlanetWindowRects(SDL_Texture **textTextures) {
     int textureWidth, textureHeight;  // Permet de garder les proportions des textes
 
 
@@ -328,6 +329,8 @@ void initRectPlanetWindow(SDL_Texture **textTextures) {
     updateButtonBuildRect2 = (SDL_Rect){SCREEN_WIDTH * 0.59, SCREEN_HEIGHT * 0.83, textureWidth * SCREEN_WIDTH * 0.0003, textureHeight * SCREEN_WIDTH * 0.0003};
     
     upgradeBarRect = (SDL_Rect){SCREEN_WIDTH * 0.54, SCREEN_HEIGHT * 0.82, SCREEN_WIDTH * 0.12, SCREEN_WIDTH * 0.03};
+
+    logoUpdateButtonBuildRect = (SDL_Rect){SCREEN_WIDTH * 0.5490, SCREEN_HEIGHT * 0.8270, SCREEN_WIDTH * 0.0200, SCREEN_WIDTH * 0.0200};
 
 
     // planetWindowNearestShips
@@ -577,6 +580,9 @@ void planetWindowOverviewBuild(SDL_Texture ***imageTextures, SDL_Texture **textT
 
     // Afficher la description du batiment
     SDL_RenderCopy(renderer, textTextures[34], NULL, &infoBuildRect);
+
+    // Afficher l'engrenage pour ameliorer un batiment
+    SDL_RenderCopy(renderer, imageTextures[2][7], NULL, &logoUpdateButtonBuildRect);
 }
 
 void planetWindowNearestShips(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
@@ -618,7 +624,10 @@ void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Planet *p
             case 7:
             case 8:
             case 9:  // Acheter une mine
-                planets[getWindowId()].builds[currentBuildIndex].level = 1;
+                if (planets[getWindowId()].builds[1].tank.currentCapacity > 100) {
+                    planets[getWindowId()].builds[1].tank.currentCapacity -= 100;  // Prix a payer
+                    planets[getWindowId()].builds[currentBuildIndex].level = 1;
+                }
                 break;
 
             case 10:
@@ -637,8 +646,11 @@ void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Planet *p
             case 2:
             case 3:
             case 4:  // Ameliorer un reservoir
-                planets[getWindowId()].builds[currentBuildIndex].level ++;
-                planets[getWindowId()].builds[currentBuildIndex].tank.maxCapacity *= 1.05;
+                if (planets[getWindowId()].builds[1].tank.currentCapacity > 100) {
+                    planets[getWindowId()].builds[1].tank.currentCapacity -= 100;  // Prix a payer
+                    planets[getWindowId()].builds[currentBuildIndex].level ++;
+                    planets[getWindowId()].builds[currentBuildIndex].tank.maxCapacity *= 1.05;
+                }
                 break;
 
             case 5:
@@ -646,8 +658,11 @@ void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Planet *p
             case 7:
             case 8:
             case 9:  // Ameliorer une mine
-                planets[getWindowId()].builds[currentBuildIndex].level ++;
-                planets[getWindowId()].builds[currentBuildIndex].mine.productivity *= 1.05;
+                if (planets[getWindowId()].builds[1].tank.currentCapacity > 100) {
+                    planets[getWindowId()].builds[1].tank.currentCapacity -= 100;  // Prix a payer
+                    planets[getWindowId()].builds[currentBuildIndex].level ++;
+                    planets[getWindowId()].builds[currentBuildIndex].mine.productivity *= 1.05;
+                }
                 break;
 
             case 10:

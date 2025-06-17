@@ -5,7 +5,7 @@
 #include "renderer.h"
 
 
-int bg_button_a_afficher = 0;
+static int bg_button_a_afficher = 0;
 
 static lpFrameControler lpFrameController = {0, 0, 0, 0};
 
@@ -15,29 +15,20 @@ static SDL_Rect bgButton1Rect,
 
 
 void initLandingPageRects(void) {
-    bgButton1Rect.x = SCREEN_WIDTH * 0.53;
-    bgButton1Rect.y = SCREEN_HEIGHT * 0.458;
-    bgButton1Rect.w = SCREEN_WIDTH * 0.3;
-    bgButton1Rect.h = SCREEN_HEIGHT * 0.07;
-
-    bgButton2Rect.x = SCREEN_WIDTH * 0.53;
-    bgButton2Rect.y = SCREEN_HEIGHT * 0.578;
-    bgButton2Rect.w = SCREEN_WIDTH * 0.3;
-    bgButton2Rect.h = SCREEN_HEIGHT * 0.07;
-
-    bgButton3Rect.x = SCREEN_WIDTH * 0.53;
-    bgButton3Rect.y = SCREEN_HEIGHT * 0.698;
-    bgButton3Rect.w = SCREEN_WIDTH * 0.3;
-    bgButton3Rect.h = SCREEN_HEIGHT * 0.07;
+    bgButton1Rect = (SDL_Rect){SCREEN_WIDTH * 0.53, SCREEN_HEIGHT * 0.458, SCREEN_WIDTH * 0.3, SCREEN_HEIGHT * 0.07};
+    bgButton2Rect = (SDL_Rect){SCREEN_WIDTH * 0.53, SCREEN_HEIGHT * 0.578, SCREEN_WIDTH * 0.3, SCREEN_HEIGHT * 0.07};
+    bgButton3Rect = (SDL_Rect){SCREEN_WIDTH * 0.53, SCREEN_HEIGHT * 0.698, SCREEN_WIDTH * 0.3, SCREEN_HEIGHT * 0.07};
 }
 
 
 void handleMenuEvents(GameState *state) {   // Gere les evenements du menu
     SDL_Event event;
+
     while (SDL_PollEvent(&event)) {
         int x, y;
         SDL_GetMouseState(&x, &y);
         SDL_Point point = {x, y};
+
         switch (event.type) {
 
             case SDL_QUIT:       // Quitter depuis le menu
@@ -77,10 +68,13 @@ void handleMenuEvents(GameState *state) {   // Gere les evenements du menu
 
             case SDL_MOUSEBUTTONUP:
                 if (event.button.button == SDL_BUTTON_LEFT) {
-                    if (bg_button_a_afficher != 0) {  // Si la souris est dans les zones des boutons
-                        if (bg_button_a_afficher == 1 || bg_button_a_afficher == 2) {
+                    switch (bg_button_a_afficher) {
+                        case 1:
+                        case 2:
                             *state = GAME;
-                        }
+                            break;
+                        default:
+                            break;
                     }
                 }
                 break;

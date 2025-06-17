@@ -52,7 +52,7 @@ void initTextBasicShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship 
     windowTitleRect.h = textureHeight * SCREEN_HEIGHT * 0.0004;
 }
 
-void initRectBasicShipWindow(SDL_Texture **textTextures) {
+void initBasicShipWindowRects(SDL_Texture **textTextures) {
     int textureWidth, textureHeight;
 
     bgRect.x = SCREEN_WIDTH * 0.1; 

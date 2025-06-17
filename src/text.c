@@ -133,8 +133,7 @@ SDL_Texture **loadTextTextures(TTF_Font **fonts) {  // ATTENTION: ne pas oublier
                                             {"Build", BLACK, fonts[0]}
                                            };
 
-    for (int i = 0; i < CST_TEXT_NUMBER; i++)
- {
+    for (int i = 0; i < CST_TEXT_NUMBER; i++) {
         textTextures[i] = createTextTexture(cstTexts[i].font, cstTexts[i].color, cstTexts[i].text);
     }
 

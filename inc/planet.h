@@ -31,7 +31,7 @@ typedef struct Planet {
 
 int getNbSolarSystems(void);
 void updatePlanets(Planet *planets, Ship *ships, int shipCount, int planetCount);
-void generatePlanets(Planet **planets, int planetCount);
+void initPlanets(Planet **planets, int planetCount);
 void renderPlanets(SDL_Texture ***imageTextures, Planet *planets, int planetCount);
 void destroyPlanets(Planet *planets);
 

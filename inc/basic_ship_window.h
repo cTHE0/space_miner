@@ -12,7 +12,7 @@ void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *
 void choosingNewBaseOrTarget(Ship *ships, int shipCount, Planet *planets, int planetCount, SDL_Point mouse);
 int clickOnBasicShipWindow(SDL_Point mouse);
 
-void initRectBasicShipWindow(SDL_Texture **textTextures);
+void initBasicShipWindowRects(SDL_Texture **textTextures);
 void initBasicShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship);
 void initTextBasicShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship);
 

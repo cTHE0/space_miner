@@ -216,7 +216,7 @@ void initTextShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship
     infoPerTankRect.h = textureHeight * windowRect.w * 0.00035;
 }
 
-void initRectShipWindow(SDL_Texture **textTextures) {  // Les rects sont initialises dans le main
+void initShipWindowRects(SDL_Texture **textTextures) {  // Les rects sont initialises dans le main
     int textureWidth, textureHeight;  // Permet de garder les proportions des textes
 
 
