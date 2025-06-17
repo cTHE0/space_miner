@@ -20,6 +20,7 @@
 #define REFRESH_TIME_BUILDS 1000  // En millisecondes
 #define TANKS_UPDATE_INTERVAL 200  // En millisecondes
 #define ASTEROID_TICK 300
+#define ENEMY_GENERATION_PERIOD 10000
 
 #define STEP_TRANSLATION 40
 #define SHIP_SPEED 10.f

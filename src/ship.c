@@ -8,7 +8,19 @@
 #include "config.h"
 #include "renderer.h"
 #include "tools.h"
+#include "enemy.h"
 
+void addShip(Ship *ship, Ship **ships, int *shipCount) {
+    printf("ancienne taille: %d", *shipCount);
+    (*shipCount)++;
+    printf("realloc nv_taille = %d \n", *shipCount);
+    *ships = (Ship *)realloc(*ships, (*shipCount) * sizeof(Ship));
+    if (*ships == NULL) {
+        exit(1);
+    }
+
+    (*ships)[*shipCount -1] = *ship;
+}
 
 void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
     *ships = malloc(shipCount * sizeof(Ship));

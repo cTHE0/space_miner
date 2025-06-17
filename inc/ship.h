@@ -8,7 +8,7 @@
 
 typedef enum { MOVING_TO_TARGET, MOVING_TO_BASE, WAITING_ON_TARGET, WAITING_ON_BASE, OUT_OF_FUEL, BROKE, STOPPED_MOVING_TO_TARGET, STOPPED_MOVING_TO_BASE, STOPPED_WAITING_ON_TARGET, STOPPED_WAITING_ON_BASE } ShipState;
 
-typedef enum { TRANSPORTER, EXPLORER, DEFENDER } ShipType;
+typedef enum { TRANSPORTER, EXPLORER, DEFENDER, ENEMY } ShipType;
 
 typedef enum {SPOT_NONE, SPOT_PLANET, SPOT_POINT, SPOT_SHIP} SpotType;  // Vers quel genre se destination se dirige-t-on ?
 
@@ -48,7 +48,7 @@ struct Ship {
     int noise; // bruit, ondes EM émisent et attirant ennemis entre 0 et 100
 };
 
-
+void addShip(Ship *ship, Ship **ships, int *shipCount);
 void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount);
 void updateShips(Ship *ships, int shipCount);
     void updateShipAnimation(Ship *ship, Uint32 currentTime);

@@ -14,6 +14,7 @@
 #include "place.h"
 #include "build.h"
 #include "asteroid.h"
+#include "enemy.h"
 
 
 const uint32_t currentSeed = 2;  // Peut prendre des valeurs entre 1 et 2**32-1
@@ -80,6 +81,7 @@ int main(void) {
                 updateCameraFollow(ships, planets);
                 updateAsteroids(planets,planetCount);
                 updateTotalOre(planets, planetCount);
+                generateEnemies(&ships, &shipCount);
                 displayGame(imageTextures, textTextures, ships, shipCount, planets, planetCount);
                 break;
             
