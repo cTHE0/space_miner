@@ -18,7 +18,7 @@ int getTotalOre(Planet *planets, int planetCount, Ore oreType) {
             }
         }
     }
-
+    
     return res;
 }
 
