@@ -17,12 +17,12 @@ typedef struct Planet Planet;
 
 typedef struct {  // Notre destination
     SpotType type;
+    int id_spot;           // Permet de garder en memoire l'identifiant de la planet/fusee
     union {
         Planet *planet;    // Si c'est une planete
         Ship *ship;        // Si c'est une fusee, par ex une station spatiale
         SDL_Point point;   // Si c'est un point libre sur la map, par ex pour partir en exploration
     };
-    int id_spot;           // Permet de garder en memoire l'identifiant de la planet/fusee
 } Spot;
 
 struct Ship {

@@ -79,13 +79,13 @@ void updatePlanets(Planet *planets, Ship *ships, int shipCount, int planetCount)
 
         // Mise a jour des fusees posees dessus
         for (int i = 0; i < shipCount; i++) {
-            if (ships[i].state == WAITING_ON_TARGET && planets[ships[i].target.id_spot].planetType != SUN) {
-                ships[i].x = planets[ships[i].target.id_spot].x + planets[ships[i].target.id_spot].radius * cos(ships[i].angleWithPlanet);
-                ships[i].y = planets[ships[i].target.id_spot].y + planets[ships[i].target.id_spot].radius * sin(ships[i].angleWithPlanet);
+            if (ships[i].state == WAITING_ON_TARGET && ships[i].target.type && planets[ships[i].target.id_spot].planetType != SUN) {
+                ships[i].x = planets[ships[i].target.id_spot].x + planets[ships[i].target.id_spot].radius * cos(ships[i].angleWithPlanet) - ships[i].w / 2;
+                ships[i].y = planets[ships[i].target.id_spot].y + planets[ships[i].target.id_spot].radius * sin(ships[i].angleWithPlanet) - ships[i].w / 2;
             }
-            else if (ships[i].state == WAITING_ON_BASE && planets[ships[i].base.id_spot].planetType != SUN) {
-                ships[i].x = planets[ships[i].base.id_spot].x + planets[ships[i].base.id_spot].radius * cos(ships[i].angleWithPlanet);
-                ships[i].y = planets[ships[i].base.id_spot].y + planets[ships[i].base.id_spot].radius * sin(ships[i].angleWithPlanet);
+            else if (ships[i].state == WAITING_ON_BASE && ships[i].base.type && planets[ships[i].base.id_spot].planetType != SUN) {
+                ships[i].x = planets[ships[i].base.id_spot].x + planets[ships[i].base.id_spot].radius * cos(ships[i].angleWithPlanet) - ships[i].w / 2;
+                ships[i].y = planets[ships[i].base.id_spot].y + planets[ships[i].base.id_spot].radius * sin(ships[i].angleWithPlanet) - ships[i].w / 2;
             }
         }
     }
