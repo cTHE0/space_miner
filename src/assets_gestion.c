@@ -8,6 +8,7 @@
 #include "ship_window.h"
 #include "planet_window.h"
 #include "basic_ship_window.h"
+#include "info_view.h"
 
 
 static int nbCategories;   // Initialisation
@@ -195,6 +196,7 @@ void initRects(SDL_Texture **textTextures) {
     initRectShipWindow(textTextures);
     initRectPlanetWindow(textTextures);
     initRectBasicShipWindow(textTextures);
+    initInfoViewRects(textTextures);
 }
 
 void destroyImageTextures(SDL_Texture ***imageTextures) {

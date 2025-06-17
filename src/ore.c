@@ -1,29 +1,31 @@
 #include "ore.h"
 #include "planet.h"
 
-int total_ore[ORE_TYPE_COUNT];
+
+static int totalOre[ORE_TYPE_COUNT];
+
 
 int getTotalOreWithInt(int i) {
-    return total_ore[i];
+    return totalOre[i];
 }
 
-int getTotalOre(Planet *planets, int planet_count, Ore ore_type) {
+int getTotalOre(Planet *planets, int planetCount, Ore oreType) {
     int res = 0;
-    for (int i=0; i<planet_count; i++) {
-        for (int build_type = 0; build_type<BUILD_TYPE_COUNT; build_type++) {
-            if (planets[i].builds[build_type].type == ORE_STORE || planets[i].builds[build_type].tank.ore == ore_type) {
-                res += planets[i].builds->tank.currentCapacity;
+    for (int i = 0; i < planetCount; i++) {
+        for (int buildType = 0; buildType < BUILD_TYPE_COUNT; buildType++) {
+            if (planets[i].builds[buildType].type == ORE_STORE && planets[i].builds[buildType].tank.ore == oreType) {
+                res += planets[i].builds[buildType].tank.currentCapacity;
             }
         }
     }
-    printf("%d \n", res);
+
     return res;
 }
 
-void updateTotalOre(Planet *planets, int planet_count) {
-    total_ore[0] = getTotalOre(planets, planet_count, FUEL);
-    total_ore[1] = getTotalOre(planets, planet_count, ORE1);
-    total_ore[2] = getTotalOre(planets, planet_count, ORE2);
-    total_ore[3] = getTotalOre(planets, planet_count, ORE3);
-    total_ore[4] = getTotalOre(planets, planet_count, ORE4);
+void updateTotalOre(Planet *planets, int planetCount) {
+    totalOre[0] = getTotalOre(planets, planetCount, FUEL);
+    totalOre[1] = getTotalOre(planets, planetCount, ORE1);
+    totalOre[2] = getTotalOre(planets, planetCount, ORE2);
+    totalOre[3] = getTotalOre(planets, planetCount, ORE3);
+    totalOre[4] = getTotalOre(planets, planetCount, ORE4);
 }

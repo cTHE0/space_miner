@@ -29,7 +29,7 @@ typedef struct Planet {
     int orbitCenterY;
 } Planet;
 
-int getNbSolarSystems();
+int getNbSolarSystems(void);
 void updatePlanets(Planet *planets, Ship *ships, int shipCount, int planetCount);
 void generatePlanets(Planet **planets, int planetCount);
 void renderPlanets(SDL_Texture ***imageTextures, Planet *planets, int planetCount);

@@ -17,5 +17,6 @@ void initBasicShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *shi
 void initTextBasicShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship);
 
 void setButtonSelected(BasicShipWindowButton newButton);
+BasicShipWindowButton getButtonSelected(void);
 
 #endif

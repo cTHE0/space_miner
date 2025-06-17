@@ -8,7 +8,17 @@
 #include "renderer.h"
 #include "assets_gestion.h"
 
-SDL_Texture **textTextures;
+
+static SDL_Texture *numberTextures[10];
+
+
+void loadNumbers(TTF_Font *font) {
+    char digit[2] = "0";
+    for (int i = 0; i < 10; i++) {
+        digit[0] = '0' + i;
+        numberTextures[i] = createTextTexture(font, (SDL_Color){0, 0, 0, 255}, digit);
+    }
+}
 
 void renderNumber(SDL_Renderer *renderer, int numberDisplayed, SDL_Rect destRect) {
     int NbDigits = countDigits(numberDisplayed);
@@ -19,7 +29,7 @@ void renderNumber(SDL_Renderer *renderer, int numberDisplayed, SDL_Rect destRect
     for (int i = 0; i < NbDigits; i++) {
         char d = buffer[i];
         if (d >= '0' && d <= '9') {
-            SDL_RenderCopy(renderer, textTextures[22 + (int)(d - '0')], NULL, &destRect);
+            SDL_RenderCopy(renderer, numberTextures[(int)(d - '0')], NULL, &destRect);
             destRect.x += destRect.w;  // Avance vers la droite pour le chiffre suivant
         }
     }

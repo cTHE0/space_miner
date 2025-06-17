@@ -65,7 +65,9 @@ void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, GameState *state
                     lastMouse = (SDL_Point){event.motion.x, event.motion.y};
                     click = 0;
                     changeCameraMode(NORMAL);
-                    setWindowType(NO_WINDOW);
+                    if (getWindowType() == BASIC_SHIP_WINDOW && getButtonSelected() == NO_BUTTON) {
+                        setWindowType(NO_WINDOW);
+                    }
                 }
                 break;
 

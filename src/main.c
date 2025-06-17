@@ -36,8 +36,10 @@ int main(void) {
     TTF_Font *fonts[FONT_NUMBER] = {0};
     loadFonts(fonts);
 
+    loadNumbers(fonts[0]);
+
     SDL_Texture ***imageTextures = loadTextures();
-    textTextures = loadTextTextures(fonts);
+    SDL_Texture **textTextures = loadTextTextures(fonts);
 
     initRects(textTextures);
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND); // Pour pouvoir dessiner carrée avec transparence
