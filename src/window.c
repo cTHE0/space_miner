@@ -11,6 +11,7 @@
 #include "ship_window.h"
 #include "planet_window.h"
 #include "info_view.h"
+#include "side_bar_window.h"
 
 
 static Window windowInfo = {NO_WINDOW, 0};
@@ -44,9 +45,12 @@ void setWindowId(int newId) {
 void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, SDL_Point mouse, Ship *ships, int shipCount, Planet *planets, int planetCount) {
     switch (getWindowType()) {
 
+        case SIDE_BAR_WINDOW:
         case NO_WINDOW:
             if (!clickOnShip(textTextures, fonts, ships, shipCount, mouse)) {
-                clickOnPlanet(textTextures, fonts, planets, planetCount, mouse);
+                if (!clickOnPlanet(textTextures, fonts, planets, planetCount, mouse)){
+                    clickSideBar(mouse);
+                };
             }
             break;
 
@@ -133,6 +137,10 @@ void displayWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Shi
             
         case SHIP_WINDOW:
             displayShipWindow(imageTextures, textTextures, ships);
+            break;
+
+        case SIDE_BAR_WINDOW:
+            displaySideBar();
             break;
             
         default:

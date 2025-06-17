@@ -17,7 +17,8 @@
         "place.h": "c",
         "planet.h": "c",
         "build.h": "c",
-        "sdl_ttf.h": "c"
+        "sdl_ttf.h": "c",
+        "side_bar_window.h": "c"
     },
     "makefile.configureOnOpen": false
 }
