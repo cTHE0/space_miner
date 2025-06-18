@@ -190,11 +190,14 @@ void objetInSelectionCircle(SDL_Texture **textTextures, TTF_Font **fonts, Ship *
 
     for (int i = 0; i < shipCount; i++) {
         object = (SDL_Point){ships[i].x + ships[i].w / 2, ships[i].y + ships[i].h / 2};
-        if (distancePointPoint(&object, &centerSelectionCircle) 
+        
+        if (distancePointPoint(&object, &centerSelectionCircle) -  ships[i].w / 2
             < distancePointPoint(&currentMouse, &centerSelectionCircle)) {
-            setWindowType(SHIP_WINDOW);
+            setWindowType(BASIC_SHIP_WINDOW);
             setWindowId(i);
-            initShipWindow(textTextures, fonts, &ships[i]);
+            initBasicShipWindow(textTextures, fonts, &ships[i]);
+            setCameraLastObjectSelected(i);
+            setCameraMode(FOLLOW_SHIP);
             return;
         }
     }
@@ -210,7 +213,3 @@ void objetInSelectionCircle(SDL_Texture **textTextures, TTF_Font **fonts, Ship *
         }
     }
 }
-
-/*
-(ShipOnScreen.x - SCREEN_WIDTH / 2.f) / getCameraScale() + getCameraRect().x + SCREEN_WIDTH / 2.f = ships[i].x
-*/

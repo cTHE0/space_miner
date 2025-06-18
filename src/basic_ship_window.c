@@ -31,10 +31,6 @@ static SDL_Rect bgRect,
 
 
 void initBasicShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship) {
-    initTextBasicShipWindow(textTextures, fonts, ship);
-}
-
-void initTextBasicShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship) {
     int textureWidth, textureHeight;
     TextToLoad newText;
 
