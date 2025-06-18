@@ -7,9 +7,8 @@
 #include "ship.h"
 
 
-void initPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets);
 void initPlanetWindowRects(SDL_Texture **textTextures);
-void initTextPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets);
+void initPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets);
 
 void displayPlanetWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planets);
 void planetWindowFoundations(SDL_Texture ***imageTextures, SDL_Texture **textTextures);

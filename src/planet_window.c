@@ -63,10 +63,6 @@ static SDL_Rect windowRect,
 
 
 void initPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets) {
-    initTextPlanetWindow(textTextures, fonts, planets);  // rects initialises dans le main
-}
-
-void initTextPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets) {
     int textureWidth, textureHeight;
     TextToLoad newText;
 
@@ -604,7 +600,7 @@ void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Planet *p
             edgeSelectedBuildRect.y = firstBuildRect.y + firstBuildImageRect.h * j * GapBetweenBuildY;
             if (SDL_PointInRect(&mouse, &edgeSelectedBuildRect)) {
                 currentBuildIndex = j * 4 + i;
-                initTextPlanetWindow(textTextures, fonts, planets);
+                initPlanetWindow(textTextures, fonts, planets);
             }
         }
     }
@@ -635,7 +631,7 @@ void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Planet *p
             default:
                 break;
         }
-        initTextPlanetWindow(textTextures, fonts, planets);
+        initPlanetWindow(textTextures, fonts, planets);
     }
 
     // Amelioration d'un nouveau batiment
@@ -671,6 +667,6 @@ void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Planet *p
                 break;
         }
 
-        initTextPlanetWindow(textTextures, fonts, planets);
+        initPlanetWindow(textTextures, fonts, planets);
     }
 }

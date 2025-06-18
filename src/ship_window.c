@@ -92,11 +92,8 @@ static SDL_Rect srcRectShip = {0, 0, 64, 64},
                 logoRepairButtonShipInfoRect,
                 currentVisualNarrowRect;
 
-void initShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship) {
-    initTextShipWindow(textTextures, fonts, ship);
-}
 
-void initTextShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship) {
+void initShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship) {
     int textureWidth, textureHeight;
     TextToLoad newText;
 
@@ -811,7 +808,7 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship,
         if (currentTankIndex < 0) {
             currentTankIndex += ship->cargo.compartmentsNumber;
         }
-        initTextShipWindow(textTextures, fonts, ship);
+        initShipWindow(textTextures, fonts, ship);
 
     } 
     else if ((SDL_PointInRect(&mouse, &changeTankManagerRight) || SDL_PointInRect(&mouse, &changeTankManagerRight2))) {
@@ -819,7 +816,7 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship,
         if (currentTankIndex > ship->cargo.compartmentsNumber - 1) {
             currentTankIndex -= ship->cargo.compartmentsNumber;
         }
-        initTextShipWindow(textTextures, fonts, ship);
+        initShipWindow(textTextures, fonts, ship);
     }
 
     // Ouverture de la fenetre de la planete (depuis la fenetre d'info. de la fusee)
@@ -827,7 +824,7 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship,
         if (ship->base.type == SPOT_PLANET) {
             setWindowType(PLANET_WINDOW);
             setWindowId(ship->base.planet->id);
-            initTextPlanetWindow(textTextures, fonts, planets);
+            initPlanetWindow(textTextures, fonts, planets);
         } else {
             setWindowType(NO_WINDOW);
         }
@@ -836,7 +833,7 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship,
         if (ship->target.type == SPOT_PLANET) {
             setWindowType(PLANET_WINDOW);
             setWindowId(ship->target.planet->id);
-            initTextPlanetWindow(textTextures, fonts, planets);
+            initPlanetWindow(textTextures, fonts, planets);
         } else {
             setWindowType(NO_WINDOW);
         }
@@ -849,19 +846,19 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship,
         if (ship->currentLife > ship->maxLife) {
             ship->currentLife = ship->maxLife;
         }
-        initTextShipWindow(textTextures, fonts, ship);
+        initShipWindow(textTextures, fonts, ship);
     }
 
     // Amelioration de la fusee
     else if (SDL_PointInRect(&mouse, &upgradeShipButtonRect)) {
         ship->level += 1;
-        initTextShipWindow(textTextures, fonts, ship);
+        initShipWindow(textTextures, fonts, ship);
     }
 
     // Amelioration d'un tank de la fusee
     else if (SDL_PointInRect(&mouse, &upgradeButtonTankRect)) {
         ship->cargo.compartmentsList[currentTankIndex].level += 1;
-        initTextShipWindow(textTextures, fonts, ship);
+        initShipWindow(textTextures, fonts, ship);
     }
 
     // Systeme d'arret d'urgence de la fusee
@@ -872,19 +869,19 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship,
             switch (ship->state) {
                 case WAITING_ON_BASE:
                     ship->state = STOPPED_WAITING_ON_BASE;
-                    initTextShipWindow(textTextures, fonts, ship);
+                    initShipWindow(textTextures, fonts, ship);
                     break;
                 case WAITING_ON_TARGET:
                     ship->state = STOPPED_WAITING_ON_TARGET;
-                    initTextShipWindow(textTextures, fonts, ship);
+                    initShipWindow(textTextures, fonts, ship);
                     break;
                 case MOVING_TO_BASE:
                     ship->state = STOPPED_MOVING_TO_BASE;
-                    initTextShipWindow(textTextures, fonts, ship);
+                    initShipWindow(textTextures, fonts, ship);
                     break;
                 case MOVING_TO_TARGET:
                     ship->state = STOPPED_MOVING_TO_TARGET;
-                    initTextShipWindow(textTextures, fonts, ship);
+                    initShipWindow(textTextures, fonts, ship);
                     break;
                 default:
                     break;
@@ -896,19 +893,19 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship,
             switch (ship->state) {
                 case STOPPED_WAITING_ON_BASE:
                     ship->state = WAITING_ON_BASE;
-                    initTextShipWindow(textTextures, fonts, ship);
+                    initShipWindow(textTextures, fonts, ship);
                     break;
                 case STOPPED_WAITING_ON_TARGET:
                     ship->state = WAITING_ON_TARGET;
-                    initTextShipWindow(textTextures, fonts, ship);
+                    initShipWindow(textTextures, fonts, ship);
                     break;
                 case STOPPED_MOVING_TO_BASE:
                     ship->state = MOVING_TO_BASE;
-                    initTextShipWindow(textTextures, fonts, ship);
+                    initShipWindow(textTextures, fonts, ship);
                     break;
                 case STOPPED_MOVING_TO_TARGET:
                     ship->state = MOVING_TO_TARGET;
-                    initTextShipWindow(textTextures, fonts, ship);
+                    initShipWindow(textTextures, fonts, ship);
                     break;
                 default:
                     break;

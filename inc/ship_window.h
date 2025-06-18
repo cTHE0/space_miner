@@ -7,9 +7,8 @@
 #include "ship.h"
 
 
-void initShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship);
 void initShipWindowRects(SDL_Texture **textTextures);
-void initTextShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship);
+void initShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship);
 
 void displayShipWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships);
 void ShipWindowFondations(SDL_Texture ***imageTextures, SDL_Texture **textTextures);

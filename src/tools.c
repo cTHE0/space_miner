@@ -115,6 +115,10 @@ float distanceShipShip(Ship *ship1, Ship *ship2) {
     return sqrt(carre(ship1->x + ship1->w / 2. - (ship2->x + ship2->w / 2.)) + carre(ship1->y + ship1->h / 2. - (ship2->y + ship2->h / 2.)));
 }
 
+float distancePointPoint(SDL_Point *p1, SDL_Point *p2) {
+    return sqrt(carre(p1->x - p2->x) + carre(p1->y - p2->y));
+}
+
 static char arrayOfSyllabes[405][5] = {0};  // MODIFIER '385' SI BESOIN
 static int sizeArrayOfSyllabes = 405;  // Nombre de syllabes differentes
 
@@ -407,3 +411,32 @@ SDL_Texture* createTextTextureWithNewline(SDL_Renderer* renderer, TTF_Font* font
     return finalTexture;
 }
 
+void drawCircle(SDL_Renderer *renderer, SDL_Color color, int xc, int yc, int r) {  // Algorithme de Bresenham
+    int x = 0, y = r;
+    int p = 3 - 2 * r;
+
+        SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, 255);
+
+    // Tracer les huit octants du cercle
+    while (x <= y) {
+        // Dessiner les huit points symétriques
+        SDL_RenderDrawPoint(renderer, xc + x, yc + y);
+        SDL_RenderDrawPoint(renderer, xc - x, yc + y);
+        SDL_RenderDrawPoint(renderer, xc + x, yc - y);
+        SDL_RenderDrawPoint(renderer, xc - x, yc - y);
+        SDL_RenderDrawPoint(renderer, xc + y, yc + x);
+        SDL_RenderDrawPoint(renderer, xc - y, yc + x);
+        SDL_RenderDrawPoint(renderer, xc + y, yc - x);
+        SDL_RenderDrawPoint(renderer, xc - y, yc - x);
+
+        x++;
+
+        // Mise à jour de la condition selon l'algorithme de Bresenham
+        if (p < 0) {
+            p = p + 4 * x + 6;
+        } else {
+            y--;
+            p = p + 4 * (x - y) + 10;
+        }
+    }
+}

@@ -72,6 +72,7 @@ void displayGame(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship 
     renderShips(imageTextures, ships, shipCount);
     displayAsteroid(imageTextures);
     displayWindow(imageTextures, textTextures, ships, planets);
+    displaySelectionCircle(renderer);
     SDL_RenderPresent(renderer);
 }
 

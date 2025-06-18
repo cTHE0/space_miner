@@ -15,6 +15,7 @@ void *moveToEnd(void *list, int nb_elem, int type_size, int index);
 float distanceShipPlanet(Ship *ship, Planet *planet);
 float distancePlanetPlanet(Planet *planet1, Planet *planet2);
 float distanceShipShip(Ship *ship1, Ship *ship2);
+float distancePointPoint(SDL_Point *p1, SDL_Point *p2);
 
 void initArrayOfSyllabes(void);
 void generateRandomName(char randomString[64], unsigned int seed, int index);
@@ -34,5 +35,8 @@ int countDigits(int n);
 double computeAngleDeg(int x, int y, int cx, int cy);
 
 SDL_Texture* createTextTextureWithNewline(SDL_Renderer* renderer, TTF_Font* font, const char* text, SDL_Color color);
+
+void drawCircle(SDL_Renderer *renderer, SDL_Color color, int xc, int yc, int r);
+
 
 #endif

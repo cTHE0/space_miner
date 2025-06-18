@@ -12,14 +12,20 @@
 #include "planet_window.h"
 #include "info_view.h"
 #include "side_bar_window.h"
+#include "tools.h"
+#include "event.h"
+#include "assets_gestion.h"
 
+
+static int selectionMode = 0;
+static SDL_Point centerSelectionCircle;
 
 static Window windowInfo = {NO_WINDOW, 0};
 
 static const SDL_Rect windowRect = {(1 - 0.8) * SCREEN_WIDTH / 2., 
-                       (1 - 0.8) * SCREEN_HEIGHT / 2., 
-                       SCREEN_WIDTH * 0.8,
-                       SCREEN_HEIGHT * 0.8};
+                                    (1 - 0.8) * SCREEN_HEIGHT / 2., 
+                                    SCREEN_WIDTH * 0.8,
+                                    SCREEN_HEIGHT * 0.8};
 
 
 int clickOnWindow(SDL_Point mouse) {
@@ -47,9 +53,23 @@ void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, SDL_Point m
 
         case SIDE_BAR_WINDOW:
         case NO_WINDOW:
-            if (clickSideBar(mouse)) break;
-            if (clickOnShip(textTextures, fonts, ships, shipCount, mouse)) break;
-            if (clickOnPlanet(textTextures, fonts, planets, planetCount, mouse)) break;
+            if (clickSideBar(mouse)) {
+                selectionMode = 0;
+            } else if (clickOnShip(textTextures, fonts, ships, shipCount, mouse)) {
+                selectionMode = 0;
+            } else if (clickOnPlanet(textTextures, fonts, planets, planetCount, mouse)) {
+                selectionMode = 0;
+            }
+
+            // Si rien n'a ete clique, on s'occupe du mode 'selection'
+            else if (selectionMode == 0) {
+                selectionMode = 1;
+                centerSelectionCircle = (SDL_Point){mouse.x, mouse.y};
+            } else if (selectionMode == 1) {
+                selectionMode = 0;
+                objetInSelectionCircle(textTextures, fonts, ships, shipCount, planets, planetCount);
+            }
+
             break;
 
         case BASIC_SHIP_WINDOW:
@@ -146,3 +166,51 @@ void displayWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Shi
             break;
     }
 }
+
+void displaySelectionCircle(SDL_Renderer *renderer) {
+    if (selectionMode == 1) {
+        SDL_Point currentMouse = getMouseCoordinates();
+        float radius = distancePointPoint(&centerSelectionCircle, &currentMouse);
+
+        // Eviter que le cercle soit trop grand
+        if (radius > SCREEN_WIDTH / 4) {  
+            radius = SCREEN_WIDTH / 4;
+        }
+        
+        drawCircle(renderer, WHITE, centerSelectionCircle.x, centerSelectionCircle.y, radius);
+    }
+}
+
+void objetInSelectionCircle(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, int shipCount, Planet *planets, int planetCount) {
+    SDL_Point currentMouseScreen = getMouseCoordinates();  // Dans le referentiel de l'ecran
+    SDL_Point currentMouse = {(currentMouseScreen.x - SCREEN_WIDTH / 2.f) / getCameraScale() + getCameraRect().x + SCREEN_WIDTH / 2.f,
+                              (currentMouseScreen.y - SCREEN_HEIGHT / 2.f) / getCameraScale() + getCameraRect().y + SCREEN_HEIGHT / 2.f
+                             };  // Dans le referentiel de la map, pas de l'ecran
+    SDL_Point object;
+
+    for (int i = 0; i < shipCount; i++) {
+        object = (SDL_Point){ships[i].x + ships[i].w / 2, ships[i].y + ships[i].h / 2};
+        if (distancePointPoint(&object, &centerSelectionCircle) 
+            < distancePointPoint(&currentMouse, &centerSelectionCircle)) {
+            setWindowType(SHIP_WINDOW);
+            setWindowId(i);
+            initShipWindow(textTextures, fonts, &ships[i]);
+            return;
+        }
+    }
+
+    for (int i = 0; i < planetCount; i++) {
+        object = (SDL_Point){planets[i].x, planets[i].y};
+        if (distancePointPoint(&object, &centerSelectionCircle) - planets[i].radius 
+            < distancePointPoint(&currentMouse, &centerSelectionCircle)) {
+            setWindowType(PLANET_WINDOW);
+            setWindowId(i);
+            initPlanetWindow(textTextures, fonts, planets);
+            return;
+        }
+    }
+}
+
+/*
+(ShipOnScreen.x - SCREEN_WIDTH / 2.f) / getCameraScale() + getCameraRect().x + SCREEN_WIDTH / 2.f = ships[i].x
+*/
