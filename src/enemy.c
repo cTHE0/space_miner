@@ -20,15 +20,11 @@ void generateEnemies(Ship **ships, int *shipCount) {
 
 void generateEnemy(Ship targetShip, Ship **ships, int *shipCount) {
     Ship enemyShip;
-    enemyShip.shiptype = MOVING_TO_TARGET;
+    enemyShip.shiptype = ENEMY;
     enemyShip.id = *shipCount;
-    enemyShip.idModel = 7;
-    enemyShip.base.type = SPOT_PLANET;
-    enemyShip.base.planet = targetShip.base.planet;  // La premiere planete est la base de chaque vaisseau
-    enemyShip.base.id_spot = 1;
-    enemyShip.target.type = SPOT_PLANET;
-    enemyShip.target.id_spot = 2;
-    enemyShip.target.planet = targetShip.target.planet;
+    enemyShip.idModel = 6;
+    enemyShip.base.type = SPOT_NONE;
+    enemyShip.target.type = SPOT_NONE;
     enemyShip.x = targetShip.x + rand() % 5000 - 2500;
     enemyShip.y = targetShip.y + rand() % 5000 - 2500;
     enemyShip.w = 200;
