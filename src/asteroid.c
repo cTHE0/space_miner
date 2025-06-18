@@ -10,56 +10,52 @@
 
 
 static SDL_Rect (*asteroids)[ASTEROID_COUNT];  // asteroids[0] = liste des ASTEROID_COUNT asteroid associés 1er soleil généré
-static double angle_speed_asteroids[ASTEROID_COUNT][3];
+static double asteroidsData[ASTEROID_COUNT][3];
 
 
 void initAngleSpeed(void) {
     for (int i = 0; i < ASTEROID_COUNT; i++) {
-        angle_speed_asteroids[i][0] = i * 360 / ASTEROID_COUNT;  // angle
-        angle_speed_asteroids[i][1] = (10 + rand() % 30) * 0.001;
-        angle_speed_asteroids[i][2] = SOLAR_SYSTEM_SIZE + SOLAR_SYSTEM_SIZE * (rand() % 10) / 100;
+        asteroidsData[i][0] = i * 360.f / ASTEROID_COUNT;  // Position angulaire
+        asteroidsData[i][1] = (10 + rand() % 30) * 0.001;  // Vitesse angulaire
+        asteroidsData[i][2] = SOLAR_SYSTEM_SIZE * 0.75 * (1 + (rand() % 10) / 100.f); // Distance du soleil
     }
 }
 
-void initAsteroids(Planet *planets, int planet_count) {
+void initAsteroids(Planet *planets, int planetCount) {
     initAngleSpeed();
 
-    int nb_solar_systems = getNbSolarSystems();
-    asteroids = malloc(nb_solar_systems * sizeof(SDL_Rect[ASTEROID_COUNT]));
-    int s = 0;
-    for (int i = 0; i < planet_count; i++) {
-        if (planets[i].planetType == SUN) {  
-            if (s >= nb_solar_systems) {
-                fprintf(stderr, "ERREUR: Trop de soleils par rapport à la mémoire allouée!\n");
-                exit(EXIT_FAILURE);
-            }
+    asteroids = malloc(getNbSolarSystems() * sizeof(SDL_Rect[ASTEROID_COUNT]));
+
+    int counterSun = 0;
+    for (int i = 0; i < planetCount; i++) {
+        if (planets[i].planetType == SUN) { 
             for (int j = 0; j < ASTEROID_COUNT; j++) {
-                asteroids[s][j] = (SDL_Rect){planets[i].x + planets[i].radius / 2 + SOLAR_SYSTEM_SIZE, planets[i].y + planets[i].radius / 2, planets[i].radius / 5, planets[i].radius / 5};
+                asteroids[counterSun][j] = (SDL_Rect){0, 0, planets[i].radius / (3 + j % 5), planets[i].radius / (4 + j % 3)};
             }
-            s++;
+            counterSun++;
         }
     }
 }
 
 void updateAsteroids(Planet *planets, int planetCount) {
-    double rad_angle;
-    int s=0;
+    double angle;  // en radian
+    int counterSun = 0;
 
     for (int j = 0; j < ASTEROID_COUNT; j++) {
-        angle_speed_asteroids[j][0] = angle_speed_asteroids[j][0] + angle_speed_asteroids[j][1];
-        if (angle_speed_asteroids[j][0] > 360) {
-            angle_speed_asteroids[j][0] -= 360;
+        asteroidsData[j][0] += asteroidsData[j][1];
+        if (asteroidsData[j][0] > 360) {
+            asteroidsData[j][0] -= 360;
         }
     }
 
     for (int i = 0; i < planetCount; i++) {
         if (planets[i].planetType == SUN) {
             for (int j = 0; j < ASTEROID_COUNT; j++) {
-                rad_angle = angle_speed_asteroids[j][0] * M_PI / 180;
-                asteroids[s][j].x = planets[i].x + planets[i].radius / 2 + angle_speed_asteroids[j][2] * cos(rad_angle);
-                asteroids[s][j].y = planets[i].y + planets[i].radius / 2 + angle_speed_asteroids[j][2] * sin(rad_angle);
+                angle = (i * 10 + asteroidsData[j][0]) * M_PI / 180;
+                asteroids[counterSun][j].x = planets[i].x + asteroidsData[j][2] * cos(angle);
+                asteroids[counterSun][j].y = planets[i].y + asteroidsData[j][2] * sin(angle);
             }
-            s++;
+            counterSun++;
         }
     }
 }
@@ -74,7 +70,7 @@ void displayAsteroid(SDL_Texture ***imageTextures) {
             screenX = (asteroids[i][j].x - getCameraRect().x - asteroids[i][j].w - SCREEN_WIDTH / 2.f) * getCameraScale() + SCREEN_WIDTH / 2.f;  // (planets[i].x, planets[i].y) = coordonnees sur la map
             screenY = (asteroids[i][j].y - getCameraRect().y - asteroids[i][j].w - SCREEN_HEIGHT / 2.f) * getCameraScale() + SCREEN_HEIGHT / 2.f;  
             screenRadius = asteroids[i][j].w * getCameraScale();
-            SDL_RenderCopyEx(renderer, imageTextures[0][i % 2], NULL, &(SDL_Rect){screenX, screenY, screenRadius, screenRadius}, 14 * angle_speed_asteroids[j][0], NULL, SDL_FLIP_NONE);
+            SDL_RenderCopyEx(renderer, imageTextures[0][i % 2], NULL, &(SDL_Rect){screenX, screenY, screenRadius, screenRadius}, 14 * asteroidsData[j][0] * (1 - 2 * i % 2), NULL, SDL_FLIP_NONE);
         }
     }
 }

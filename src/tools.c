@@ -226,7 +226,7 @@ void plotPath(SDL_Point origin, SDL_Point destination, int dashLength, int gapLe
     }  
 }
 
-void SDL_DrawEdgeOfRect(SDL_Renderer *renderer, SDL_Rect rect, int lineWidth) {
+void SDL_DrawEdgeOfRect(SDL_Renderer *renderer, SDL_Rect rect, int lineWidth) {  // Le trait est a l'interieur du rect
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
     for (int i = 0; i < lineWidth; i++) {
@@ -235,6 +235,37 @@ void SDL_DrawEdgeOfRect(SDL_Renderer *renderer, SDL_Rect rect, int lineWidth) {
         rect.y += 1;
         rect.w -= 2;
         rect.h -= 2;
+    }
+}
+
+void SDL_DrawEdgeOfRect2(SDL_Renderer *renderer, SDL_Rect rect, int lineWidth) { // Le trait est centre au rect
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+
+    // Tracer le trait au niveau du rect
+    SDL_RenderDrawRect(renderer, &rect);
+
+    for (int i = 0; i < (lineWidth - 1) / 2; i++) {
+        // Cote interieur
+        rect.x += 1 * (i + 1);
+        rect.y += 1 * (i + 1);
+        rect.w -= 2 * (i + 1);
+        rect.h -= 2 * (i + 1);
+        SDL_RenderDrawRect(renderer, &rect);
+
+        // Cote exterieur
+        rect.x -= 2 * (i + 1);
+        rect.y -= 2 * (i + 1);
+        rect.w += 4 * (i + 1);
+        rect.h += 4 * (i + 1);
+        SDL_RenderDrawRect(renderer, &rect);
+
+        // Remettre le rect comme initialement
+        rect.x -= 2 * (i + 1);
+        rect.y -= 2 * (i + 1);
+        rect.w += 4 * (i + 1);
+        rect.h += 4 * (i + 1);
+
+
     }
 }
 

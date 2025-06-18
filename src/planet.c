@@ -17,7 +17,7 @@
 static Uint32 lastPlanetUpdateTime = 0;
 static int nbSolarSystems = 0;
 
-int getNbSolarSystems() {
+int getNbSolarSystems(void) {
     return nbSolarSystems;
 }
 
@@ -33,7 +33,7 @@ void initPlanets(Planet **planets, int planetCount) {
     int nbEntityGenerated = 0;
     while (nbEntityGenerated < planetCount) {
         solarSystemCoordinator(&nbEntityGenerated, *planets, planetCount);
-        nbSolarSystems += 1;
+        nbSolarSystems ++;
     }
 
     // Initialisation des batiments et du systeme de rotation des planetes

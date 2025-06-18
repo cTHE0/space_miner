@@ -4,38 +4,36 @@
 #include "camera.h"
 #include "config.h"
 #include "renderer.h"
+#include "tools.h"
 
 
 void renderMap(SDL_Texture ***imageTextures) {
-    SDL_Rect destRect;
+    SDL_Rect destRect = {0, 0, AREA_SIZE * getCameraScale(), AREA_SIZE * getCameraScale()};
 
-
-    if (getCameraScale() > 0.025 ) {
-        destRect.w = MAP_SIZE * getCameraScale() / 100 ;  // Largeur adaptee au zoom
-        destRect.h = MAP_SIZE * getCameraScale() / 100;  // Hauteur adaptee au zoom
-
-        for (int i = 0; i < 100; i++){
-            for (int j = 0; j < 100; j++){
+    if (getCameraScale() > LIMIT_UNZOOM) {
+        for (int i = 0; i < NUMBER_OF_AREA_PER_WIDTH; i++){
+            for (int j = 0; j < NUMBER_OF_AREA_PER_WIDTH; j++){
                 // Appliquer le decalage et le zoom de la camera
-                destRect.x = ((i * 7000 - getCameraRect().x - SCREEN_WIDTH / 2.f) * getCameraScale() + SCREEN_WIDTH / 2.f);
-                destRect.y = ((j * 7000 - getCameraRect().y - SCREEN_HEIGHT / 2.f) * getCameraScale() + SCREEN_HEIGHT / 2.f);
+                destRect.x = ((i * AREA_SIZE - getCameraRect().x - SCREEN_WIDTH / 2.f) * getCameraScale() + SCREEN_WIDTH / 2.f);
+                destRect.y = ((j * AREA_SIZE - getCameraRect().y - SCREEN_HEIGHT / 2.f) * getCameraScale() + SCREEN_HEIGHT / 2.f);
 
-                SDL_RenderCopy(renderer, imageTextures[3][4], NULL, &destRect);
+                SDL_RenderCopy(renderer, imageTextures[3][7], NULL, &destRect);
+            }
+        }
+    } else {
+        // Affichage du fond
+        SDL_SetRenderDrawColor(renderer, 18, 52, 73, 255);
+        SDL_RenderFillRect(renderer, NULL);
+
+        // Affichage des bordures
+        for (int i = 0; i < NUMBER_OF_AREA_PER_WIDTH; i++) {
+            for (int j = 0; j < NUMBER_OF_AREA_PER_WIDTH; j++ ) {
+                // Appliquer le decalage et le zoom de la camera
+                destRect.x = ((i * AREA_SIZE - getCameraRect().x - SCREEN_WIDTH / 2.f) * getCameraScale() + SCREEN_WIDTH / 2.f);
+                destRect.y = ((j * AREA_SIZE - getCameraRect().y - SCREEN_HEIGHT / 2.f) * getCameraScale() + SCREEN_HEIGHT / 2.f);
+
+                SDL_DrawEdgeOfRect2(renderer, destRect, 3);
             }
         }
     }
-    else {
-        destRect.w = MAP_SIZE * getCameraScale() / 100 ;  // Largeur adaptee au zoom
-        destRect.h = MAP_SIZE * getCameraScale() / 100;  // Hauteur adaptee au zoom
-
-        for (int i = 0; i < 100; i++){
-            for (int j = 0; j < 100; j++){
-                // Appliquer le decalage et le zoom de la camera
-                destRect.x = ((i * 7000 - getCameraRect().x - SCREEN_WIDTH / 2.f) * getCameraScale() + SCREEN_WIDTH / 2.f);
-                destRect.y = ((j * 7000 - getCameraRect().y - SCREEN_HEIGHT / 2.f) * getCameraScale() + SCREEN_HEIGHT / 2.f);
-
-                SDL_RenderCopy(renderer, imageTextures[3][3], NULL, &destRect);
-            }
-        }
-    }   
 }
