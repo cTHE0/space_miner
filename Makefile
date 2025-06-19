@@ -4,19 +4,19 @@ LDFLAGS = -lm -lSDL2 -lSDL2_gfx -lSDL2_image -lSDL2_ttf
 OBJDIR  = obj
 OBJ     = $(SRC:src/%.c=$(OBJDIR)/%.o)
 EXEC    = void_reign
-SRC     = src/main.c            src/camera.c          src/event.c           src/renderer.c        \
-          src/ore.c             src/assets_gestion.c  src/map.c             src/text.c            \
-          src/solar_system.c    src/landing_page.c    src/window.c          src/ship_window.c     \
-          src/planet_window.c   src/tools.c           src/planet.c          src/ship.c 			  \
-		  src/place.c           src/build.c           src/basic_ship_window.c  src/info_view.c    \
-		  src/asteroid.c        src/side_bar_window.c src/enemy.c
+SRC     = src/main.c            src/camera.c          src/event.c           src/renderer.c         \
+          src/ore.c             src/assets_gestion.c  src/map.c             src/text.c             \
+          src/solar_system.c    src/landing_page.c    src/window.c          src/ship_window.c      \
+          src/planet_window.c   src/tools.c           src/planet.c          src/ship.c 			   \
+		  src/place.c           src/build.c           src/info_view.c       src/basic_ship_window.c\
+		  src/asteroid.c        src/side_bar_window.c src/enemy.c           src/tile.c             
 	      
-INCLUDE = inc/camera.h          inc/planet.h          inc/event.h           inc/renderer.h        \
-          inc/ship.h            inc/ore.h             inc/map.h             inc/assets_gestion.h  \
-          inc/text.h            inc/config.h          inc/tools.h           inc/landing_page.h    \
+INCLUDE = inc/camera.h          inc/planet.h          inc/event.h           inc/renderer.h         \
+          inc/ship.h            inc/ore.h             inc/map.h             inc/assets_gestion.h   \
+          inc/text.h            inc/config.h          inc/tools.h           inc/landing_page.h     \
           inc/window.h	        inc/solar_system.h    inc/place.h           inc/basic_ship_window.h\
 		  inc/build.h           inc/mine.h            inc/info_view.h       inc/asteroid.h         \
-		  inc/side_bar_window.h inc/enemy.h
+		  inc/side_bar_window.h inc/enemy.h           inc/tile.h
 
 # Dependances automatiques
 DEPS = $(OBJ:$(OBJDIR)/%.o=$(OBJDIR)/%.d)

@@ -31,7 +31,7 @@ int getWindowId(void);
 void setWindowType(WindowType newType);
 void setWindowId(int newId);
 
-void displaySelectionCircle(SDL_Renderer *renderer);
+void displaySelectionCircle(void);
 void objetInSelectionCircle(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, int shipCount, Planet *planets, int planetCount);
 
 #endif

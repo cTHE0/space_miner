@@ -15,6 +15,7 @@
 #include "build.h"
 #include "asteroid.h"
 #include "enemy.h"
+#include "tile.h"
 
 
 const uint32_t currentSeed = 1;  // Peut prendre des valeurs entre 1 et 2**32-1
@@ -68,6 +69,7 @@ int main(void) {
                     initShips(&ships, shipCount, planets, planetCount);
                     initCamera(planets);
                     initAsteroids(planets, planetCount);
+                    initTiles();
                 }
                 break;
             
@@ -107,6 +109,7 @@ int main(void) {
         destroyShips(ships, shipCount);
         destroyPlanets(planets);
         freeAsteroid();
+        destroyTuiles();
     }
 
     // POUR LE DEV 

@@ -20,7 +20,7 @@ void loadNumbers(TTF_Font *font) {
     }
 }
 
-void renderNumber(SDL_Renderer *renderer, int numberDisplayed, SDL_Rect destRect) {
+void renderNumber(int numberDisplayed, SDL_Rect destRect) {
     int NbDigits = countDigits(numberDisplayed);
 
     char buffer[32] = {0};

@@ -57,7 +57,7 @@ void displayInfoView(SDL_Texture ***imageTextures) {
 
         // Affichage des valeurs
         currentvalueRect.x = firstValueUpBarRect.x + coefGapBetweenOres * firstIconUpBarRect.w * i;
-        renderNumber(renderer, getTotalOreWithInt(i), currentvalueRect);
+        renderNumber(getTotalOreWithInt(i), currentvalueRect);
     }
 
     // Afficher la barre a droite

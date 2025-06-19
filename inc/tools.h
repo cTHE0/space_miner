@@ -7,6 +7,7 @@
 #include "ship.h"
 
 #define carre(x) (x) * (x)
+#define SQRT3 1.73205080757d
 
 void *supprElemList(void *list, int *nb_elem, int type_size, int i);
 void *swapElements(void *list, int nb_elem, int type_size, int i, int j);
@@ -25,8 +26,8 @@ uint8_t generateRandNb8(uint32_t seed, int index);  // Alternative pour les peti
 
 void plotPath(SDL_Point origin, SDL_Point destination, int dashLength, int gapLength, SDL_Color color);
 
-void SDL_DrawEdgeOfRect(SDL_Renderer *renderer, SDL_Rect rect, int lineWidth);
-void SDL_DrawEdgeOfRect2(SDL_Renderer *renderer, SDL_Rect rect, int lineWidth);
+void SDL_DrawEdgeOfRect(SDL_Rect rect, int lineWidth);
+void SDL_DrawEdgeOfRect2(SDL_Rect rect, int lineWidth);
 
 int power(int number, int power);
 int extractOneDigit(int number, int position);
@@ -34,9 +35,10 @@ int countDigits(int n);
 
 double computeAngleDeg(int x, int y, int cx, int cy);
 
-SDL_Texture* createTextTextureWithNewline(SDL_Renderer* renderer, TTF_Font* font, const char* text, SDL_Color color);
+SDL_Texture* createTextTextureWithNewline(TTF_Font* font, const char* text, SDL_Color color);
 
-void drawCircle(SDL_Renderer *renderer, SDL_Color color, int xc, int yc, int r);
-void drawHexagon(SDL_Renderer *renderer, SDL_Point center, int sizeSide);
+void drawCircle(SDL_Color color, int xc, int yc, int r);
+void drawHexagon(SDL_Point center, int sizeSide);
+
 
 #endif

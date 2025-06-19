@@ -167,7 +167,7 @@ void displayWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Shi
     }
 }
 
-void displaySelectionCircle(SDL_Renderer *renderer) {
+void displaySelectionCircle(void) {
     if (selectionMode == 1) {
         SDL_Point currentMouse = getMouseCoordinates();
         float radius = distancePointPoint(&centerSelectionCircle, &currentMouse);
@@ -177,7 +177,7 @@ void displaySelectionCircle(SDL_Renderer *renderer) {
             radius = SCREEN_WIDTH / 4;
         }
         
-        drawCircle(renderer, WHITE, centerSelectionCircle.x, centerSelectionCircle.y, radius);
+        drawCircle(WHITE, centerSelectionCircle.x, centerSelectionCircle.y, radius);
     }
 }
 

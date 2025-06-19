@@ -1,12 +1,16 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#include <stdint.h>
+
+
 #define SCREEN_WIDTH 1920 // Dimensions 16/9 courantes : 1280x720, 1920x1080
 #define SCREEN_HEIGHT 1080
 #define MAP_SIZE AREA_SIZE * NUMBER_OF_AREA_PER_WIDTH
 #define AREA_SIZE 20000  // une parcelle = une image carree de background
 #define NUMBER_OF_AREA_PER_WIDTH 10  // Nombre de parcelle par cote
 #define SOLAR_SYSTEM_SIZE 16000  // Taille d'un cote (c'est un carre)
+#define SIZE_HEXAGON 500  // Taille dans le referentiel de la map d'un seul cote d'un hexagone
 
 #define INIT_PLANET_COUNT 30
 #define INIT_SHIP_COUNT 3

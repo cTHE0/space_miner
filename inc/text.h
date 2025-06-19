@@ -13,7 +13,7 @@ typedef struct {
 } TextToLoad;
 
 void loadNumbers(TTF_Font *font);
-void renderNumber(SDL_Renderer *renderer, int i, SDL_Rect dstRect);
+void renderNumber(int i, SDL_Rect dstRect);
 
 void loadFonts(TTF_Font **fonts);
 	TTF_Font* loadFont(const char* path, int size);

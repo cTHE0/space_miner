@@ -230,7 +230,7 @@ void plotPath(SDL_Point origin, SDL_Point destination, int dashLength, int gapLe
     }  
 }
 
-void SDL_DrawEdgeOfRect(SDL_Renderer *renderer, SDL_Rect rect, int lineWidth) {  // Le trait est a l'interieur du rect
+void SDL_DrawEdgeOfRect(SDL_Rect rect, int lineWidth) {  // Le trait est a l'interieur du rect
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
     for (int i = 0; i < lineWidth; i++) {
@@ -242,7 +242,7 @@ void SDL_DrawEdgeOfRect(SDL_Renderer *renderer, SDL_Rect rect, int lineWidth) { 
     }
 }
 
-void SDL_DrawEdgeOfRect2(SDL_Renderer *renderer, SDL_Rect rect, int lineWidth) { // Le trait est centre au rect
+void SDL_DrawEdgeOfRect2(SDL_Rect rect, int lineWidth) { // Le trait est centre au rect
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
     // Tracer le trait au niveau du rect
@@ -325,7 +325,7 @@ double computeAngleDeg(int x, int y, int cx, int cy) {
     return angle;
 }
 
-SDL_Texture* createTextTextureWithNewline(SDL_Renderer* renderer, TTF_Font* font, const char* text, SDL_Color color) {
+SDL_Texture* createTextTextureWithNewline(TTF_Font* font, const char* text, SDL_Color color) {
     // Calculer la largeur maximale et la hauteur totale des lignes de texte
     int totalHeight = 0;
     int maxWidth = 0;
@@ -411,7 +411,7 @@ SDL_Texture* createTextTextureWithNewline(SDL_Renderer* renderer, TTF_Font* font
     return finalTexture;
 }
 
-void drawCircle(SDL_Renderer *renderer, SDL_Color color, int xc, int yc, int r) {  // Algorithme de Bresenham
+void drawCircle(SDL_Color color, int xc, int yc, int r) {  // Algorithme de Bresenham
     int x = 0, y = r;
     int p = 3 - 2 * r;
 
@@ -441,11 +441,11 @@ void drawCircle(SDL_Renderer *renderer, SDL_Color color, int xc, int yc, int r) 
     }
 }
 
-void drawHexagon(SDL_Renderer *renderer, SDL_Point center, int sizeSide) {
+void drawHexagon(SDL_Point center, int sizeSide) {
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
     // Creation des variables redondantes
-    double u = sizeSide * sqrt(3) / 2,
+    double u = sizeSide * SQRT3 / 2,
            v = sizeSide / 2;
 
     // Creation des deux points pour tracer les lignes
@@ -469,6 +469,4 @@ void drawHexagon(SDL_Renderer *renderer, SDL_Point center, int sizeSide) {
 
     p1 = (SDL_Point){center.x - v, center.y - u};
     SDL_RenderDrawLine(renderer, p1.x, p1.y, p2.x, p2.y);
-
-
 }
