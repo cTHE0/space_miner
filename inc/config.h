@@ -10,7 +10,7 @@
 #define AREA_SIZE 20000  // une parcelle = une image carree de background
 #define NUMBER_OF_AREA_PER_WIDTH 10  // Nombre de parcelle par cote
 #define SOLAR_SYSTEM_SIZE 16000  // Taille d'un cote (c'est un carre)
-#define SIZE_HEXAGON 500  // Taille dans le referentiel de la map d'un seul cote d'un hexagone
+#define SIZE_HEXAGON 1000  // Taille dans le referentiel de la map d'un seul cote d'un hexagone
 #define NUMBER_OF_HEXAGON_PER_WIDTH (MAP_SIZE / (SIZE_HEXAGON * 1.5) + 1)
 #define NUMBER_OF_HEXAGON_PER_HEIGHT (int)(MAP_SIZE / (SIZE_HEXAGON * SQRT3) + 2)
 

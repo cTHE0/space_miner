@@ -47,6 +47,7 @@ void displayTiles(void) {
 
             if (getBit(bitArray, j * NUMBER_OF_HEXAGON_PER_HEIGHT + i) == 1) {
                 drawHexagon(centerHexagon, SIZE_HEXAGON * getCameraScale());
+
             }
         }
     }
@@ -56,7 +57,7 @@ void updateTiles(Ship *ships, int shipCount) {
     int i, j;  // Numero de la tuile ou est la fusee
 
     for (int k = 0; k < shipCount; k++) {
-        j = (ships[k].x + ships[k].w / 2 + SIZE_HEXAGON) / (SIZE_HEXAGON * 1.5);
+        j = (ships[k].x + ships[k].w / 2 + SIZE_HEXAGON * 0.75) / (SIZE_HEXAGON * 1.5);
         i = (ships[k].y + ships[k].h / 2 + SIZE_HEXAGON * SQRT3 / 2.f * ((j % 2 == 0) ? 1 : 0)) / (SIZE_HEXAGON * SQRT3);
         if (getBit(bitArray, j * NUMBER_OF_HEXAGON_PER_HEIGHT + i) == 1) {
             setBit(bitArray, j * NUMBER_OF_HEXAGON_PER_HEIGHT + i, 0);
