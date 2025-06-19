@@ -182,33 +182,36 @@ void displaySelectionCircle(SDL_Renderer *renderer) {
 }
 
 void objetInSelectionCircle(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, int shipCount, Planet *planets, int planetCount) {
-    SDL_Point currentMouseScreen = getMouseCoordinates();  // Dans le referentiel de l'ecran
-    SDL_Point currentMouse = {(currentMouseScreen.x - SCREEN_WIDTH / 2.f) / getCameraScale() + getCameraRect().x + SCREEN_WIDTH / 2.f,
-                              (currentMouseScreen.y - SCREEN_HEIGHT / 2.f) / getCameraScale() + getCameraRect().y + SCREEN_HEIGHT / 2.f
-                             };  // Dans le referentiel de la map, pas de l'ecran
+    SDL_Point currentMouse = getMouseCoordinates();  // Dans le referentiel de l'ecran
     SDL_Point object;
 
     for (int i = 0; i < shipCount; i++) {
-        object = (SDL_Point){ships[i].x + ships[i].w / 2, ships[i].y + ships[i].h / 2};
-        
+        object = (SDL_Point){(ships[i].x + ships[i].w / 2 - getCameraRect().x - SCREEN_WIDTH / 2.0f) * getCameraScale() + SCREEN_WIDTH / 2.0f,
+                             (ships[i].y + ships[i].h / 2 - getCameraRect().y - SCREEN_HEIGHT / 2.0f) * getCameraScale() + SCREEN_HEIGHT / 2.0f
+                            };
         if (distancePointPoint(&object, &centerSelectionCircle) -  ships[i].w / 2
             < distancePointPoint(&currentMouse, &centerSelectionCircle)) {
             setWindowType(BASIC_SHIP_WINDOW);
             setWindowId(i);
-            initBasicShipWindow(textTextures, fonts, &ships[i]);
+            initBasicShipWindow(textTextures, fonts, &(ships[i]));        
             setCameraLastObjectSelected(i);
             setCameraMode(FOLLOW_SHIP);
+            updateCameraFollow(ships, NULL);
+            printf("fusee %d dans cercle\n", i);
             return;
         }
     }
 
     for (int i = 0; i < planetCount; i++) {
-        object = (SDL_Point){planets[i].x, planets[i].y};
-        if (distancePointPoint(&object, &centerSelectionCircle) - planets[i].radius 
+        object = (SDL_Point){(planets[i].x - getCameraRect().x - SCREEN_WIDTH / 2.0f) * getCameraScale() + SCREEN_WIDTH / 2.0f,
+                             (planets[i].y - getCameraRect().y - SCREEN_HEIGHT / 2.0f) * getCameraScale() + SCREEN_HEIGHT / 2.0f
+                            };
+        if (distancePointPoint(&object, &centerSelectionCircle) - planets[i].radius * getCameraScale()
             < distancePointPoint(&currentMouse, &centerSelectionCircle)) {
             setWindowType(PLANET_WINDOW);
             setWindowId(i);
             initPlanetWindow(textTextures, fonts, planets);
+            printf("planete %d dans cercle\n", i);
             return;
         }
     }
