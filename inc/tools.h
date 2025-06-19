@@ -37,6 +37,6 @@ double computeAngleDeg(int x, int y, int cx, int cy);
 SDL_Texture* createTextTextureWithNewline(SDL_Renderer* renderer, TTF_Font* font, const char* text, SDL_Color color);
 
 void drawCircle(SDL_Renderer *renderer, SDL_Color color, int xc, int yc, int r);
-
+void drawHexagon(SDL_Renderer *renderer, SDL_Point center, int sizeSide);
 
 #endif

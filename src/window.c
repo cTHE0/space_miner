@@ -197,7 +197,6 @@ void objetInSelectionCircle(SDL_Texture **textTextures, TTF_Font **fonts, Ship *
             setCameraLastObjectSelected(i);
             setCameraMode(FOLLOW_SHIP);
             updateCameraFollow(ships, NULL);
-            printf("fusee %d dans cercle\n", i);
             return;
         }
     }
@@ -211,7 +210,6 @@ void objetInSelectionCircle(SDL_Texture **textTextures, TTF_Font **fonts, Ship *
             setWindowType(PLANET_WINDOW);
             setWindowId(i);
             initPlanetWindow(textTextures, fonts, planets);
-            printf("planete %d dans cercle\n", i);
             return;
         }
     }

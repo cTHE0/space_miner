@@ -440,3 +440,35 @@ void drawCircle(SDL_Renderer *renderer, SDL_Color color, int xc, int yc, int r) 
         }
     }
 }
+
+void drawHexagon(SDL_Renderer *renderer, SDL_Point center, int sizeSide) {
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+
+    // Creation des variables redondantes
+    double u = sizeSide * sqrt(3) / 2,
+           v = sizeSide / 2;
+
+    // Creation des deux points pour tracer les lignes
+    SDL_Point p1 = {center.x - v, center.y - u},  // Depart au trait vertical le plus haut
+              p2 = {center.x + v, center.y - u};
+
+    // Tracer tous les traits
+    SDL_RenderDrawLine(renderer, p1.x, p1.y, p2.x, p2.y);
+
+    p1 = (SDL_Point){center.x + sizeSide, center.y};
+    SDL_RenderDrawLine(renderer, p1.x, p1.y, p2.x, p2.y);
+
+    p2 = (SDL_Point){center.x + v, center.y + u};
+    SDL_RenderDrawLine(renderer, p1.x, p1.y, p2.x, p2.y);
+
+    p1 = (SDL_Point){center.x - v, center.y + u};
+    SDL_RenderDrawLine(renderer, p1.x, p1.y, p2.x, p2.y);
+
+    p2 = (SDL_Point){center.x - sizeSide, center.y};
+    SDL_RenderDrawLine(renderer, p1.x, p1.y, p2.x, p2.y);
+
+    p1 = (SDL_Point){center.x - v, center.y - u};
+    SDL_RenderDrawLine(renderer, p1.x, p1.y, p2.x, p2.y);
+
+
+}
