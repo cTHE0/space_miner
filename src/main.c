@@ -82,6 +82,7 @@ int main(void) {
                 updateCameraFollow(ships, planets);
                 updateAsteroids(planets,planetCount);
                 updateTotalOre(planets, planetCount);
+                updateTiles(ships, shipCount);
                 generateEnemies(&ships, &shipCount);
                 displayGame(imageTextures, textTextures, ships, shipCount, planets, planetCount);
                 break;
@@ -109,7 +110,7 @@ int main(void) {
         destroyShips(ships, shipCount);
         destroyPlanets(planets);
         freeAsteroid();
-        destroyTuiles();
+        destroyTiles();
     }
 
     // POUR LE DEV 

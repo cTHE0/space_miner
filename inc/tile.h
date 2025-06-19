@@ -8,10 +8,12 @@
 void initTiles(void);
 void displayTiles(void);
 
+void updateTiles(Ship *ships, int shipCount);
+
 void setBit(uint8_t *array, int index, int value);
 int getBit(uint8_t *array, int index);
 
-void destroyTuiles(void);
+void destroyTiles(void);
 
 
 #endif

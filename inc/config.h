@@ -11,6 +11,8 @@
 #define NUMBER_OF_AREA_PER_WIDTH 10  // Nombre de parcelle par cote
 #define SOLAR_SYSTEM_SIZE 16000  // Taille d'un cote (c'est un carre)
 #define SIZE_HEXAGON 500  // Taille dans le referentiel de la map d'un seul cote d'un hexagone
+#define NUMBER_OF_HEXAGON_PER_WIDTH (MAP_SIZE / (SIZE_HEXAGON * 1.5) + 1)
+#define NUMBER_OF_HEXAGON_PER_HEIGHT (int)(MAP_SIZE / (SIZE_HEXAGON * SQRT3) + 2)
 
 #define INIT_PLANET_COUNT 30
 #define INIT_SHIP_COUNT 3
@@ -26,7 +28,7 @@
 #define REFRESH_TIME_BUILDS 1000  // En millisecondes
 #define TANKS_UPDATE_INTERVAL 200  // En millisecondes
 #define ASTEROID_TICK 300
-#define ENEMY_GENERATION_PERIOD 10000
+#define ENEMY_GENERATION_PERIOD 100000
 
 #define STEP_TRANSLATION 40
 #define LIMIT_UNZOOM 0.05
