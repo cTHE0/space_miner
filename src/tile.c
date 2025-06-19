@@ -7,7 +7,7 @@
 
 
 static uint8_t *bitArray;  // Chaque bit représente un booléen
-
+static Uint32 lastTileUpdateTime = 0;
 
 void initTiles(void) {
     int bitCount = (NUMBER_OF_HEXAGON_PER_WIDTH + 1) * (NUMBER_OF_HEXAGON_PER_HEIGHT + 1);
@@ -36,14 +36,14 @@ void displayTiles(void) {
     }
 
     SDL_Point centerHexagon;
-    for (int i = (getCameraRect().y + (1 - 1 / getCameraScale()) * SCREEN_HEIGHT / 2.f) / SIZE_HEXAGON / sqrt(3); 
-         i < (getCameraRect().y + (1 + 1 / getCameraScale()) * SCREEN_HEIGHT / 2.f) / SIZE_HEXAGON / sqrt(3) + 0.5; 
+    for (int i = (getCameraRect().y + (1 - 1 / getCameraScale()) * SCREEN_HEIGHT / 2.f) / (SIZE_HEXAGON * SQRT3); 
+         i < (getCameraRect().y + (1 + 1 / getCameraScale()) * SCREEN_HEIGHT / 2.f) / (SIZE_HEXAGON * SQRT3) + 0.5; 
          i++) {
-        for (int j = (getCameraRect().x + (1 - 1 / getCameraScale()) * SCREEN_WIDTH / 2.f ) / SIZE_HEXAGON / 1.5; 
-             j < (getCameraRect().x + SCREEN_WIDTH * 1.5f / getCameraScale()) / SIZE_HEXAGON / 1.5; 
+        for (int j = (getCameraRect().x + (1 - 1 / getCameraScale()) * SCREEN_WIDTH / 2.f ) / (SIZE_HEXAGON * 1.5); 
+             j < (getCameraRect().x + SCREEN_WIDTH * 1.5f / getCameraScale()) / (SIZE_HEXAGON * 1.5); 
              j++) {
             centerHexagon.x = (SIZE_HEXAGON * 1.5 * j - getCameraRect().x - SCREEN_WIDTH / 2.f) * getCameraScale() + SCREEN_WIDTH / 2.f;
-            centerHexagon.y = (SIZE_HEXAGON * sqrt(3) * (i + 0.5 * ((j % 2 == 0) ? 0 : 1)) - getCameraRect().y - SCREEN_HEIGHT / 2.f) * getCameraScale() + SCREEN_HEIGHT / 2.f;
+            centerHexagon.y = (SIZE_HEXAGON * SQRT3 * (i + 0.5 * ((j % 2 == 0) ? 0 : 1)) - getCameraRect().y - SCREEN_HEIGHT / 2.f) * getCameraScale() + SCREEN_HEIGHT / 2.f;
 
             if (getBit(bitArray, j * NUMBER_OF_HEXAGON_PER_HEIGHT + i) == 1) {
                 drawHexagon(centerHexagon, SIZE_HEXAGON * getCameraScale());
@@ -54,6 +54,12 @@ void displayTiles(void) {
 }
 
 void updateTiles(Ship *ships, int shipCount) {
+    if (SDL_GetTicks() < lastTileUpdateTime + REFRESH_TIME_TILE) {
+        return;
+    }
+
+    lastTileUpdateTime += REFRESH_TIME_TILE;
+
     int i, j;  // Numero de la tuile ou est la fusee
 
     for (int k = 0; k < shipCount; k++) {
