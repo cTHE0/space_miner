@@ -2,6 +2,7 @@
 #define ASSETS_GESTION_H
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
 
 SDL_Texture* IMG_LoadTextureWithAlpha(const char* filePath, Uint8 alpha);
 SDL_Texture ***loadTextures(void);
@@ -9,8 +10,10 @@ SDL_Texture ***loadTextures(void);
 	char **foldersPathFunction(const char *path);
 	int *filesNbFunction(char **foldersPath);
 	int compare(const void *a, const void *b);
-void destroyImageTextures(SDL_Texture ***imageTextures);
 void initRects(SDL_Texture **textTextures);
+void initSounds(Mix_Chunk ***sounds);
+void destroyImageTextures(SDL_Texture ***imageTextures);
+void freeSongs(Mix_Chunk **sounds);
 
 #define BLACK (SDL_Color){0, 0, 0, 255}
 #define WHITE (SDL_Color){255, 255, 255, 255}

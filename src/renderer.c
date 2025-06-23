@@ -2,6 +2,7 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_mixer.h>
 #include "planet.h"
 #include "ship.h"
 #include "map.h"
@@ -15,8 +16,8 @@ SDL_Renderer *renderer = NULL;
 
 
 void initSDL(SDL_Window **window) {
-    // Initialiser SDL (video)
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+    // Initialiser SDL (vidéo et audio)
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
         printf("Erreur d'initialisation de SDL : %s\n", SDL_GetError());
         return;
     }
@@ -24,42 +25,56 @@ void initSDL(SDL_Window **window) {
     // Initialiser SDL_image (pour supporter les images PNG)
     if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
         printf("Erreur d'initialisation de SDL_image : %s\n", IMG_GetError());
-        SDL_Quit();  // Fermer SDL avant de sortir
+        SDL_Quit();
         return;
     }
 
     // Initialiser SDL_ttf (pour les polices)
     if (TTF_Init() == -1) {
         printf("Erreur d'initialisation de SDL_ttf : %s\n", TTF_GetError());
-        IMG_Quit();  // Nettoyer SDL_image
-        SDL_Quit();  // Nettoyer SDL
+        IMG_Quit();
+        SDL_Quit();
         return;
     }
 
-    // Creer la fenetre
+    // Initialiser SDL_mixer (pour le son)
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+        printf("Erreur d'initialisation de SDL_mixer : %s\n", Mix_GetError());
+        TTF_Quit();
+        IMG_Quit();
+        SDL_Quit();
+        return;
+    }
+    Mix_Volume(0, MIX_MAX_VOLUME * 0.2);
+    Mix_Volume(1, MIX_MAX_VOLUME);
+
+    // Créer la fenêtre
     *window = SDL_CreateWindow("VOID REIGN: THE MINERALS WAR", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     if (*window == NULL) {
-        printf("Erreur de creation de la fenetre : %s\n", SDL_GetError());
-        TTF_Quit();  // Nettoyer SDL_ttf
-        IMG_Quit();  // Nettoyer SDL_image
-        SDL_Quit();  // Nettoyer SDL
+        printf("Erreur de création de la fenêtre : %s\n", SDL_GetError());
+        Mix_CloseAudio();
+        TTF_Quit();
+        IMG_Quit();
+        SDL_Quit();
         return;
     }
 
-    // Creer le renderer
+    // Créer le renderer
     renderer = SDL_CreateRenderer(*window, -1, SDL_RENDERER_ACCELERATED);
     if (renderer == NULL) {
-        printf("Erreur de creation du renderer : %s\n", SDL_GetError());
-        SDL_DestroyWindow(*window);  // Nettoyer la fenetre
-        TTF_Quit();  // Nettoyer SDL_ttf
-        IMG_Quit();  // Nettoyer SDL_image
-        SDL_Quit();  // Nettoyer SDL
+        printf("Erreur de création du renderer : %s\n", SDL_GetError());
+        SDL_DestroyWindow(*window);
+        Mix_CloseAudio();
+        TTF_Quit();
+        IMG_Quit();
+        SDL_Quit();
         return;
     }
 
-    // Pour pouvoir dessiner carrée avec transparence
-    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
+    // Pour pouvoir dessiner avec transparence
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 }
+
 
 void clearScreen(void) {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -83,5 +98,6 @@ void quitSDL(SDL_Window *window) {
     SDL_DestroyWindow(window);
     TTF_Quit();
     IMG_Quit();
+    Mix_CloseAudio();
     SDL_Quit();
 }

@@ -2,6 +2,7 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 #include "planet.h"
 #include "ship.h"
 #include "camera.h"
@@ -19,7 +20,7 @@ SDL_Point getMouseCoordinates(void) {
     return mouse;
 }
 
-void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, GameState *state, Ship *ships, int shipCount, Planet *planets, int planetCount) {
+void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, GameState *state, Ship *ships, int shipCount, Planet *planets, int planetCount) {
     static SDL_Point lastMouse;
     static int dragging_camera = 0;
     static int click = 0;
@@ -46,7 +47,7 @@ void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, GameState *state
             case SDL_MOUSEBUTTONUP:
                 if (event.button.button == SDL_BUTTON_LEFT) {
                     if (click) { // Ou a-t-on lache le clic gauche ?
-                        openWindowGestion(textTextures, fonts, lastMouse, ships, shipCount, planets, planetCount);
+                        openWindowGestion(textTextures, fonts, sounds, lastMouse, ships, shipCount, planets, planetCount);
                     }
                     dragging_camera = 0;
                     click = 0;

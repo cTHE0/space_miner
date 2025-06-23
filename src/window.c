@@ -3,6 +3,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 #include "planet.h"
 #include "ship.h"
 #include "config.h"
@@ -15,6 +16,9 @@
 #include "tools.h"
 #include "event.h"
 #include "assets_gestion.h"
+#include "asteroid.h"
+#include "tile.h"
+#include "enemy.h"
 
 
 static int selectionMode = 0;
@@ -48,7 +52,7 @@ void setWindowId(int newId) {
     windowInfo.id = newId;
 }
 
-void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, SDL_Point mouse, Ship *ships, int shipCount, Planet *planets, int planetCount) {
+void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, SDL_Point mouse, Ship *ships, int shipCount, Planet *planets, int planetCount) {
     switch (getWindowType()) {
 
         case SIDE_BAR_WINDOW:
@@ -57,8 +61,10 @@ void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, SDL_Point m
                 selectionMode = 0;
             } else if (clickOnShip(textTextures, fonts, ships, shipCount, mouse)) {
                 selectionMode = 0;
+                Mix_PlayChannel(1, sounds[1], 0);
             } else if (clickOnPlanet(textTextures, fonts, planets, planetCount, mouse)) {
                 selectionMode = 0;
+                Mix_PlayChannel(1, sounds[1], 0);
             }
 
             // Si rien n'a ete clique, on s'occupe du mode 'selection'
@@ -213,4 +219,15 @@ void objetInSelectionCircle(SDL_Texture **textTextures, TTF_Font **fonts, Ship *
             return;
         }
     }
+}
+
+void updateGame(Ship *ships, int shipCount, Planet *planets, int planetCount) {
+    updateShips(ships, shipCount);
+    updatePlanets(planets, ships, shipCount, planetCount);
+    updateBuilds(planets, planetCount);
+    updateCameraFollow(ships, planets);
+    updateAsteroids(planets,planetCount);
+    updateTotalOre(planets, planetCount);
+    updateTiles(ships, shipCount);
+    updateEnemies(&ships, &shipCount);    
 }

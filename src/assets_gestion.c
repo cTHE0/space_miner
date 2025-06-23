@@ -4,6 +4,7 @@
 #include <SDL2/SDL_image.h>
 #include <string.h>
 #include <dirent.h>
+#include <SDL2/SDL_mixer.h>
 #include "renderer.h"
 #include "ship_window.h"
 #include "planet_window.h"
@@ -191,6 +192,26 @@ void initRects(SDL_Texture **textTextures) {
     initPlanetWindowRects(textTextures);
     initBasicShipWindowRects(textTextures);
     initInfoViewRects(textTextures);
+}
+
+void initSounds(Mix_Chunk ***sounds) {
+    // Allocation du tableau de sons
+    *sounds = malloc(SONGS_NUMBER * sizeof(Mix_Chunk*));
+
+    // Chargement des effets sonores
+    (*sounds)[0] = Mix_LoadWAV("assets/songs/20250613-184110.mp3");
+    (*sounds)[1] = Mix_LoadWAV("assets/songs/20250613 173819.mp3");
+    if ((*sounds)[0] == NULL) {
+        printf("Erreur de chargement du son : %s\n", Mix_GetError());
+        return;
+    }
+}
+
+void freeSongs(Mix_Chunk **sounds) {
+    for (int i = 0; i < SONGS_NUMBER; i++) {
+        Mix_FreeChunk(sounds[i]);
+    }
+    free(sounds);
 }
 
 void destroyImageTextures(SDL_Texture ***imageTextures) {

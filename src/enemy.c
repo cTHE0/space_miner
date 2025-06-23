@@ -5,7 +5,7 @@
 
 static Uint32 lastEnemyGenerationTime = 0;
 
-void generateEnemies(Ship **ships, int *shipCount) {
+void updateEnemies(Ship **ships, int *shipCount) {
     Uint32 now = SDL_GetTicks();
     if (now - lastEnemyGenerationTime > ENEMY_GENERATION_PERIOD){
         lastEnemyGenerationTime = now;

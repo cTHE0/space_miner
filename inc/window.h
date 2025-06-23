@@ -3,6 +3,7 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 #include "planet.h"
 #include "ship.h"
 
@@ -15,7 +16,7 @@ typedef struct {
 
 void displayWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships, Planet *planets);
 
-void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, SDL_Point mouse, Ship *ships, int shipCount, Planet *planets, int planetCount);
+void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, SDL_Point mouse, Ship *ships, int shipCount, Planet *planets, int planetCount);
 
 int whichShipIsClicked(Ship *ships, int shipCount, SDL_Point mouse);
 int clickOnShip(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, int shipCount, SDL_Point mouse);
@@ -33,5 +34,8 @@ void setWindowId(int newId);
 
 void displaySelectionCircle(void);
 void objetInSelectionCircle(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, int shipCount, Planet *planets, int planetCount);
+
+void updateGame(Ship *ships, int shipCount, Planet *planets, int planetCount);
+
 
 #endif

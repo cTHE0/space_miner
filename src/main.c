@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <SDL2/SDL.h>
 #include <time.h>
+#include <SDL2/SDL_mixer.h>
 #include "planet.h"
 #include "ship.h"
 #include "camera.h"
@@ -16,6 +17,7 @@
 #include "asteroid.h"
 #include "enemy.h"
 #include "tile.h"
+#include "window.h"
 
 
 const uint32_t currentSeed = 1;  // Peut prendre des valeurs entre 1 et 2**32-1
@@ -28,6 +30,9 @@ int main(void) {
 
     SDL_Window *window;
     initSDL(&window);
+
+    Mix_Chunk **sounds;
+    initSounds(&sounds);
 
     Ship *ships = NULL;
     int shipCount = INIT_SHIP_COUNT;
@@ -70,20 +75,14 @@ int main(void) {
                     initCamera(planets);
                     initAsteroids(planets, planetCount);
                     initTiles();
+                    Mix_PlayChannel(0, sounds[0], -1);
                 }
                 break;
             
             case GAME:
                 initRects(textTextures);  // A SUPPRIMER, SEULEMENT POUR LE DEV
-                handleEvents(textTextures, fonts, &state, ships, shipCount, planets, planetCount);
-                updateShips(ships, shipCount);
-                updatePlanets(planets, ships, shipCount, planetCount);
-                updateBuilds(planets, planetCount);
-                updateCameraFollow(ships, planets);
-                updateAsteroids(planets,planetCount);
-                updateTotalOre(planets, planetCount);
-                updateTiles(ships, shipCount);
-                generateEnemies(&ships, &shipCount);
+                handleEvents(textTextures, fonts, sounds, &state, ships, shipCount, planets, planetCount);
+                updateGame(ships, shipCount, planets, planetCount);
                 displayGame(imageTextures, textTextures, ships, shipCount, planets, planetCount);
                 break;
             
@@ -119,6 +118,7 @@ int main(void) {
     destroyImageTextures(imageTextures);
     destroyTextTextures(textTextures);
     destroyFonts(fonts);
+    freeSongs(sounds);
     quitSDL(window);
     return 0;
 }

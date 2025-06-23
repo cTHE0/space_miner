@@ -19,6 +19,7 @@
 #define ORE_TYPE_COUNT 5
 #define CST_TEXT_NUMBER 79
 #define FONT_NUMBER 1
+#define SONGS_NUMBER 2
 #define BUILD_TYPE_COUNT 12
 #define ASTEROID_COUNT 500 // nombre d'astéroids par système solaire
 
