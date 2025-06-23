@@ -4,9 +4,10 @@
 #include "camera.h"
 #include "config.h"
 #include "tools.h"
+#include "renderer.h"
 
 
-static uint8_t *bitArray;  // Chaque bit représente un booléen
+static uint8_t *tilesMatrix;  // Chaque bit représente un booléen
 static Uint32 lastTileUpdateTime = 0;
 
 void initTiles(void) {
@@ -14,39 +15,38 @@ void initTiles(void) {
     int byteCount = (bitCount + 7) / 8;  // arrondi vers le haut
 
     // Allocation du tableau de tuiles
-    bitArray = malloc(byteCount * sizeof(uint8_t));
+    tilesMatrix = malloc(byteCount * sizeof(uint8_t));
 
     // Remplissage du tableau de tuiles
     for (int i = 0; i < NUMBER_OF_HEXAGON_PER_HEIGHT; i++) {
         for (int j = 0; j < NUMBER_OF_HEXAGON_PER_WIDTH; j++) {
-            setBit(bitArray, j * NUMBER_OF_HEXAGON_PER_HEIGHT + i, 1);
+            setBit(i, j, 1);
         }
     }
-
-    // for (int i = 0; i < NUMBER_OF_HEXAGON_PER_HEIGHT; i++) {
-    //     for (int j = 0; j < 2; j++) {
-    //         setBit(bitArray, j * NUMBER_OF_HEXAGON_PER_HEIGHT + i, 1);
-    //     }
-    // }
 }
 
-void displayTiles(void) {
+void displayTiles(SDL_Texture ***imageTextures) {
     if (getCameraScale() < LIMIT_UNZOOM) {  // Affichage des tuiles ssi l'on n'a pas trop dezoome
         return;
     }
 
-    SDL_Point centerHexagon;
+    // SDL_Point centerHexagon;
+    SDL_Rect tileImgRect = {0, 0, SIZE_HEXAGON * 2 * getCameraScale(), SIZE_HEXAGON * SQRT3 * getCameraScale()};
     for (int i = (getCameraRect().y + (1 - 1 / getCameraScale()) * SCREEN_HEIGHT / 2.f) / (SIZE_HEXAGON * SQRT3); 
          i < (getCameraRect().y + (1 + 1 / getCameraScale()) * SCREEN_HEIGHT / 2.f) / (SIZE_HEXAGON * SQRT3) + 0.5; 
          i++) {
         for (int j = (getCameraRect().x + (1 - 1 / getCameraScale()) * SCREEN_WIDTH / 2.f ) / (SIZE_HEXAGON * 1.5); 
              j < (getCameraRect().x + SCREEN_WIDTH * 1.5f / getCameraScale()) / (SIZE_HEXAGON * 1.5); 
              j++) {
-            centerHexagon.x = (SIZE_HEXAGON * 1.5 * j - getCameraRect().x - SCREEN_WIDTH / 2.f) * getCameraScale() + SCREEN_WIDTH / 2.f;
-            centerHexagon.y = (SIZE_HEXAGON * SQRT3 * (i + 0.5 * ((j % 2 == 0) ? 0 : 1)) - getCameraRect().y - SCREEN_HEIGHT / 2.f) * getCameraScale() + SCREEN_HEIGHT / 2.f;
+            // centerHexagon.x = (SIZE_HEXAGON * 1.5 * j - getCameraRect().x - SCREEN_WIDTH / 2.f) * getCameraScale() + SCREEN_WIDTH / 2.f;
+            // centerHexagon.y = (SIZE_HEXAGON * SQRT3 * (i + 0.5 * ((j % 2 == 0) ? 0 : 1)) - getCameraRect().y - SCREEN_HEIGHT / 2.f) * getCameraScale() + SCREEN_HEIGHT / 2.f;
 
-            if (getBit(bitArray, j * NUMBER_OF_HEXAGON_PER_HEIGHT + i) == 1) {
-                drawHexagon(centerHexagon, SIZE_HEXAGON * getCameraScale());
+            tileImgRect.x = (SIZE_HEXAGON * 1.5 * j - SIZE_HEXAGON - getCameraRect().x - SCREEN_WIDTH / 2.f) * getCameraScale() + SCREEN_WIDTH / 2.f;
+            tileImgRect.y = (SIZE_HEXAGON * SQRT3 * (i + 0.5 * ((j % 2 == 0) ? 0 : 1)) - SIZE_HEXAGON * SQRT3 / 2 - getCameraRect().y - SCREEN_HEIGHT / 2.f) * getCameraScale() + SCREEN_HEIGHT / 2.f;
+
+            if (getBit(i, j) == 1) {
+                SDL_RenderCopy(renderer, imageTextures[3][10], NULL, &tileImgRect);
+                // drawHexagon(centerHexagon, SIZE_HEXAGON * getCameraScale());
 
             }
         }
@@ -65,29 +65,31 @@ void updateTiles(Ship *ships, int shipCount) {
     for (int k = 0; k < shipCount; k++) {
         j = (ships[k].x + ships[k].w / 2 + SIZE_HEXAGON * 0.75) / (SIZE_HEXAGON * 1.5);
         i = (ships[k].y + ships[k].h / 2 + SIZE_HEXAGON * SQRT3 / 2.f * ((j % 2 == 0) ? 1 : 0)) / (SIZE_HEXAGON * SQRT3);
-        if (getBit(bitArray, j * NUMBER_OF_HEXAGON_PER_HEIGHT + i) == 1) {
-            setBit(bitArray, j * NUMBER_OF_HEXAGON_PER_HEIGHT + i, 0);
+        if (getBit(i, j) == 1) {
+            setBit(i, j, 0);
         }
     }
 }
 
-void setBit(uint8_t *array, int index, int value) {  // Set a bit to true or false
+void setBit(int i, int j, int value) {  // Raisonnemer matriciellement pour i et j
+    int index = j * NUMBER_OF_HEXAGON_PER_HEIGHT + i;
     size_t byteIndex = index / 8;
     size_t bitIndex = index % 8;
 
     if (value)
-        array[byteIndex] |= (1 << bitIndex);
+        tilesMatrix[byteIndex] |= (1 << bitIndex);
     else
-        array[byteIndex] &= ~(1 << bitIndex);
+        tilesMatrix[byteIndex] &= ~(1 << bitIndex);
 }
 
-int getBit(uint8_t *array, int index) {  // Get the boolean value at a specific index
+int getBit(int i, int j) {  // Raisonnemer matriciellement pour i et j
+    int index = j * NUMBER_OF_HEXAGON_PER_HEIGHT + i;
     size_t byteIndex = index / 8;
     size_t bitIndex = index % 8;
 
-    return (array[byteIndex] >> bitIndex) & 1;
+    return (tilesMatrix[byteIndex] >> bitIndex) & 1;
 }
 
 void destroyTiles(void) {
-    free(bitArray);
+    free(tilesMatrix);
 }
