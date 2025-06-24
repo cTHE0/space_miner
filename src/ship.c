@@ -11,13 +11,13 @@
 #include "enemy.h"
 
 void addShip(Ship *ship, Ship **ships, int *shipCount) {
-    (*shipCount)++;
-    *ships = (Ship *)realloc(*ships, (*shipCount) * sizeof(Ship));
+    *ships = (Ship*)realloc(*ships, (*shipCount + 1) * sizeof(Ship));
     if (*ships == NULL) {
         exit(1);
     }
 
-    (*ships)[*shipCount -1] = *ship;
+    (*ships)[*shipCount] = *ship;
+    (*shipCount)++;
 }
 
 void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {

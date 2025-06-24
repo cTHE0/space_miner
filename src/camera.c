@@ -82,7 +82,7 @@ void zoomCamera(float zoomFactor) {
             // Maintenant que la camera ne risque pas de depasser :
             camera.scale *= zoomFactor;
         }
-    } else if (camera.scale < 6) {  // zoomFactor >= 1 implicite 
+    } else if (camera.scale < 2) {  // zoomFactor >= 1 implicite 
         camera.scale *= zoomFactor;
     }
     
