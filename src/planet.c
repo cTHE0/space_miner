@@ -32,7 +32,7 @@ void initPlanets(Planet **planets, int planetCount) {
     // Génération des planètes via la fonction système solaire
     int nbEntityGenerated = 0;
     while (nbEntityGenerated < planetCount) {
-        solarSystemCoordinator(&nbEntityGenerated, *planets, planetCount);
+        nbEntityGenerated += generateSolarSystem(*planets, planetCount, nbEntityGenerated);
         nbSolarSystems ++;
     }
 

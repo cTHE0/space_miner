@@ -3,7 +3,10 @@
 
 #include "planet.h"
 
-void solarSystemCoordinator(int *nbEntityGenerated, Planet *planets, int planetCount);
-void generateSolarSystem(Planet *planets, int x, int y, int i, int nb_planets_ss);
+
+int generateSolarSystem(Planet *planets, int planetCount, int nbEntityGenerated);
+void freeAreaForSS(Planet *planets, int nbEntityGenerated);
+void freeAreaForPlanet(Planet *planets, int currentIndexPlanet, int nbEntityGenerated);
+
 
 #endif
