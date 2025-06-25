@@ -45,7 +45,7 @@ void initSDL(SDL_Window **window) {
         SDL_Quit();
         return;
     }
-    Mix_Volume(0, MIX_MAX_VOLUME * 0.2);
+    Mix_Volume(0, MIX_MAX_VOLUME);
     Mix_Volume(1, MIX_MAX_VOLUME);
 
     // Créer la fenêtre
