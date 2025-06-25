@@ -10,7 +10,7 @@ void updateEnemies(Ship **ships, int *shipCount) {
     if (now - lastEnemyGenerationTime > ENEMY_GENERATION_PERIOD){
         lastEnemyGenerationTime = now;
         int nb_ships = *shipCount;
-        for (int i=0; i< nb_ships; i++) {
+        for (int i = 0; i < nb_ships; i++) {
             if ((*ships)[i].shiptype != ENEMY) {
                 generateEnemy((*ships)[i], ships, shipCount);
             }
@@ -49,42 +49,5 @@ void generateEnemy(Ship targetShip, Ship **ships, int *shipCount) {
     enemyShip.destRect.h = 0;
     enemyShip.angleWithPlanet = 0;
 
-    // Allocation des compartiments
-    Cargo *cargo = &enemyShip.cargo;
-
-    cargo->compartmentsNumber = 3;
-    cargo->compartmentsList = malloc(cargo->compartmentsNumber * sizeof(Compartment));
-    if (cargo->compartmentsList == NULL) {
-        printf("Erreur d'allocation memoire pour les compartiments du vaisseau %d!\n", *shipCount);
-        
-        // Liberer la memoire des vaisseaux deja crees
-        for (int j = 0; j < *shipCount; j++) {
-            free(cargo->compartmentsList);
-        }
-        free(*ships);
-        return;
-    }
-    for (int j = 0; j < enemyShip.cargo.compartmentsNumber; j++) {  // Ici, chaque compartiment contient de l'essence
-        cargo->compartmentsList[j].ore = rand() % 4;
-        cargo->compartmentsList[j].maxCapacity = 1000;
-        cargo->compartmentsList[j].currentCapacity = 700;
-        cargo->compartmentsList[j].flowSpeed = 20;
-        cargo->compartmentsList[j].level = 1;
-
-        // Pour tester le systeme de ressource
-        // Faire une interface graphique pour gerer ca proprement
-        if (cargo->compartmentsList[j].ore == FUEL) {
-            cargo->compartmentsList[j].flowBase_in = FUEL;
-            cargo->compartmentsList[j].flowBase_out = EMPTY;
-            cargo->compartmentsList[j].flowTarget_in = FUEL;
-            cargo->compartmentsList[j].flowTarget_out = EMPTY;
-        } else {
-            cargo->compartmentsList[j].flowBase_in = EMPTY;
-            cargo->compartmentsList[j].flowBase_out = cargo->compartmentsList[j].ore;
-            cargo->compartmentsList[j].flowTarget_in = cargo->compartmentsList[j].ore;
-            cargo->compartmentsList[j].flowTarget_out = EMPTY;
-        }
-    }
-
-    addShip(&enemyShip, ships, shipCount);
+    addShip(enemyShip, ships, shipCount);
 }

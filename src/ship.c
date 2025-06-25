@@ -10,14 +10,14 @@
 #include "tools.h"
 #include "enemy.h"
 
-void addShip(Ship *ship, Ship **ships, int *shipCount) {
-    *ships = (Ship*)realloc(*ships, (*shipCount + 1) * sizeof(Ship));
+void addShip(Ship newShip, Ship **ships, int *shipCount) {
+    *ships = realloc(*ships, (*shipCount + 1) * sizeof(Ship));
     if (*ships == NULL) {
         exit(1);
     }
 
-    (*ships)[*shipCount] = *ship;
-    (*shipCount)++;
+    (*ships)[*shipCount] = newShip;
+    (*shipCount) ++;
 }
 
 void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
@@ -121,6 +121,10 @@ void updateShipMove(Ship *ship, Uint32 currentTime) {
         return;
     }
 
+    if (ship->shiptype == ENEMY) {
+        return;
+    }
+
     float dx;
     float dy;
     float distance;
@@ -181,6 +185,10 @@ void updateShipMove(Ship *ship, Uint32 currentTime) {
 
 void updateShipTanks(Ship *ship, Uint32 currentTime) {  // Gere depot/recuperation des minerais/essence, et consommation essence
     if (currentTime - ship->lastRefreshFilling < TANKS_UPDATE_INTERVAL) {  // Actualisation chaque seconde
+        return;
+    }
+
+    if (ship->shiptype == ENEMY) {
         return;
     }
 

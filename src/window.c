@@ -221,13 +221,13 @@ void objetInSelectionCircle(SDL_Texture **textTextures, TTF_Font **fonts, Ship *
     }
 }
 
-void updateGame(Ship *ships, int shipCount, Planet *planets, int planetCount) {
-    updateShips(ships, shipCount);
-    updatePlanets(planets, ships, shipCount, planetCount);
+void updateGame(Ship **ships, int *shipCount, Planet *planets, int planetCount) {
+    updateShips(*ships, *shipCount);
+    updatePlanets(planets, *ships, *shipCount, planetCount);
     updateBuilds(planets, planetCount);
-    updateCameraFollow(ships, planets);
+    updateCameraFollow(*ships, planets);
     updateAsteroids(planets,planetCount);
     updateTotalOre(planets, planetCount);
-    updateTiles(ships, shipCount);
-    updateEnemies(&ships, &shipCount);    
+    updateTiles(*ships, *shipCount);
+    updateEnemies(ships, shipCount);    
 }
