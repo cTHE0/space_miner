@@ -65,8 +65,8 @@ void freeAreaForSS(Planet *planets, int nbEntityGenerated) {
         freeArea = 1;
         for (int i = 0; i < nbEntityGenerated; i++) {
             if (planets[i].planetType == SUN &&
-                fabsf(planets[i].x - planets[nbEntityGenerated].x) < SOLAR_SYSTEM_SIZE &&
-                fabsf(planets[i].y - planets[nbEntityGenerated].y) < SOLAR_SYSTEM_SIZE) {
+                fabsf(planets[i].x - planets[nbEntityGenerated].x) < 1.7f * SOLAR_SYSTEM_SIZE &&  // 1.7f : prise en compte des asteroides
+                fabsf(planets[i].y - planets[nbEntityGenerated].y) < 1.7f * SOLAR_SYSTEM_SIZE) {
                 freeArea = 0;
                 planets[nbEntityGenerated].x = SOLAR_SYSTEM_SIZE + generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % (MAP_SIZE - 2 * SOLAR_SYSTEM_SIZE); randIndex ++;
                 planets[nbEntityGenerated].y = SOLAR_SYSTEM_SIZE + generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % (MAP_SIZE - 2 * SOLAR_SYSTEM_SIZE); randIndex ++;
