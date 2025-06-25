@@ -30,23 +30,19 @@ void displayTiles(SDL_Texture ***imageTextures) {
         return;
     }
 
-    // SDL_Point centerHexagon;
-    SDL_Rect tileImgRect = {0, 0, SIZE_HEXAGON * 2 * getCameraScale(), SIZE_HEXAGON * SQRT3 * getCameraScale()};
+    static int antiGapBetweenTiles = 15;
+    SDL_Rect tileImgRect = {0, 0, (SIZE_HEXAGON * 2 + antiGapBetweenTiles * 2) * getCameraScale(), (SIZE_HEXAGON * SQRT3 + antiGapBetweenTiles * 2) * getCameraScale()};
     for (int i = (getCameraRect().y + (1 - 1 / getCameraScale()) * SCREEN_HEIGHT / 2.f) / (SIZE_HEXAGON * SQRT3); 
          i < (getCameraRect().y + (1 + 1 / getCameraScale()) * SCREEN_HEIGHT / 2.f) / (SIZE_HEXAGON * SQRT3) + 0.5; 
          i++) {
         for (int j = (getCameraRect().x + (1 - 1 / getCameraScale()) * SCREEN_WIDTH / 2.f ) / (SIZE_HEXAGON * 1.5); 
              j < (getCameraRect().x + SCREEN_WIDTH * 1.5f / getCameraScale()) / (SIZE_HEXAGON * 1.5) + 1; 
              j++) {
-            // centerHexagon.x = (SIZE_HEXAGON * 1.5 * j - getCameraRect().x - SCREEN_WIDTH / 2.f) * getCameraScale() + SCREEN_WIDTH / 2.f;
-            // centerHexagon.y = (SIZE_HEXAGON * SQRT3 * (i + 0.5 * ((j % 2 == 0) ? 0 : 1)) - getCameraRect().y - SCREEN_HEIGHT / 2.f) * getCameraScale() + SCREEN_HEIGHT / 2.f;
-
-            tileImgRect.x = (SIZE_HEXAGON * 1.5 * j - SIZE_HEXAGON - getCameraRect().x - SCREEN_WIDTH / 2.f) * getCameraScale() + SCREEN_WIDTH / 2.f;
-            tileImgRect.y = (SIZE_HEXAGON * SQRT3 * (i + 0.5 * ((j % 2 == 0) ? 0 : 1)) - SIZE_HEXAGON * SQRT3 / 2 - getCameraRect().y - SCREEN_HEIGHT / 2.f) * getCameraScale() + SCREEN_HEIGHT / 2.f;
+            tileImgRect.x = (SIZE_HEXAGON * 1.5 * j - SIZE_HEXAGON - getCameraRect().x - SCREEN_WIDTH / 2.f - antiGapBetweenTiles) * getCameraScale() + SCREEN_WIDTH / 2.f;  // Le -5 perdu au milieu : contre les approximations et ecarts entre tuiles
+            tileImgRect.y = (SIZE_HEXAGON * SQRT3 * (i + 0.5 * ((j % 2 == 0) ? 0 : 1)) - SIZE_HEXAGON * SQRT3 / 2 - getCameraRect().y - SCREEN_HEIGHT / 2.f - antiGapBetweenTiles) * getCameraScale() + SCREEN_HEIGHT / 2.f;
 
             if (getBit(i, j) == 1) {
-                //drawHexagon(centerHexagon, SIZE_HEXAGON * getCameraScale());
-                SDL_RenderCopy(renderer, imageTextures[3][10], NULL, &tileImgRect);
+                SDL_RenderCopy(renderer, imageTextures[3][11], NULL, &tileImgRect);
 
             }
         }
