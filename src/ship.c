@@ -451,7 +451,9 @@ void renderShipBars(Ship ship, SDL_Point ShipOnScreen) {
 
 void destroyShips(Ship *ships, int shipCount) {
     for (int i = 0; i < shipCount; i++) {
-        free(ships[i].cargo.compartmentsList);
+        if (ships[i].shiptype == TRANSPORTER) {
+            free(ships[i].cargo.compartmentsList);
+        }
     }
     free(ships);
 }
