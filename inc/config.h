@@ -19,7 +19,7 @@
 #define ORE_TYPE_COUNT 5
 #define CST_TEXT_NUMBER 79
 #define FONT_NUMBER 1
-#define SONGS_NUMBER 2
+#define SONGS_NUMBER 11
 #define BUILD_TYPE_COUNT 12
 #define ASTEROID_COUNT 500 // nombre d'astéroids par système solaire
 
@@ -29,7 +29,7 @@
 #define REFRESH_TIME_BUILDS 1000  // En millisecondes
 #define TANKS_UPDATE_INTERVAL 200  // En millisecondes
 #define ASTEROID_TICK 300
-#define ENEMY_GENERATION_PERIOD 10000
+#define ENEMY_GENERATION_PERIOD 1000000
 #define REFRESH_TIME_TILE 500
 
 #define STEP_TRANSLATION 40

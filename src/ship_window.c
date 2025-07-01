@@ -1,6 +1,7 @@
 #include "ship_window.h"
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
 #include "planet.h"
 #include "ship.h"
 #include "config.h"
@@ -797,8 +798,9 @@ void ShipWindowTankCompo(SDL_Texture ***imageTextures, SDL_Texture **textTexture
     SDL_RenderCopy(renderer, imageTextures[2][7], NULL, &logoUpgradeButtonTankInfoRect);
 }
 
-void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship, Planet *planets, SDL_Point mouse) {
+void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, Ship *ship, Planet *planets, SDL_Point mouse) {
     if (SDL_PointInRect(&mouse, &WindowCrossRect) || !clickOnWindow(mouse)) {
+        Mix_PlayChannel(1, sounds[10], 0);
         setWindowType(NO_WINDOW);
     }
 
@@ -809,6 +811,7 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship,
             currentTankIndex += ship->cargo.compartmentsNumber;
         }
         initShipWindow(textTextures, fonts, ship);
+        Mix_PlayChannel(1, sounds[7], 0);
 
     } 
     else if ((SDL_PointInRect(&mouse, &changeTankManagerRight) || SDL_PointInRect(&mouse, &changeTankManagerRight2))) {
@@ -817,6 +820,7 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship,
             currentTankIndex -= ship->cargo.compartmentsNumber;
         }
         initShipWindow(textTextures, fonts, ship);
+        Mix_PlayChannel(1, sounds[7], 0);
     }
 
     // Ouverture de la fenetre de la planete (depuis la fenetre d'info. de la fusee)
@@ -847,18 +851,21 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship,
             ship->currentLife = ship->maxLife;
         }
         initShipWindow(textTextures, fonts, ship);
+        Mix_PlayChannel(1, sounds[6], 0);
     }
 
     // Amelioration de la fusee
     else if (SDL_PointInRect(&mouse, &upgradeShipButtonRect)) {
         ship->level += 1;
         initShipWindow(textTextures, fonts, ship);
+        Mix_PlayChannel(1, sounds[5], 0);
     }
 
     // Amelioration d'un tank de la fusee
     else if (SDL_PointInRect(&mouse, &upgradeButtonTankRect)) {
         ship->cargo.compartmentsList[currentTankIndex].level += 1;
         initShipWindow(textTextures, fonts, ship);
+        Mix_PlayChannel(1, sounds[5], 0);
     }
 
     // Systeme d'arret d'urgence de la fusee
@@ -866,6 +873,7 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship,
         // Arret d'urgence de la fusee
         if (ship->state != STOPPED_MOVING_TO_BASE && ship->state != STOPPED_MOVING_TO_TARGET && 
             ship->state != STOPPED_WAITING_ON_BASE && ship->state != STOPPED_WAITING_ON_TARGET) {
+            Mix_PlayChannel(1, sounds[8], 0);
             switch (ship->state) {
                 case WAITING_ON_BASE:
                     ship->state = STOPPED_WAITING_ON_BASE;
@@ -890,6 +898,7 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship,
 
         // Redemarrage des moteur apres arret d'urgence
         else {
+            Mix_PlayChannel(1, sounds[9], 0);
             switch (ship->state) {
                 case STOPPED_WAITING_ON_BASE:
                     ship->state = WAITING_ON_BASE;

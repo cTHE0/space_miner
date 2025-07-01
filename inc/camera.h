@@ -17,7 +17,7 @@ typedef struct {
 
 void initCamera(Planet *planets);
 
-void updateCameraFollow(Ship *ships,Planet *planets);
+void updateCameraFollow(Ship *ships, Planet *planets);
 
 void setCameraLastObjectSelected(int lastObjectSelected);
 SDL_Rect getCameraRect(void);

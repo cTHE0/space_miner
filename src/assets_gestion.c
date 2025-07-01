@@ -201,9 +201,21 @@ void initSounds(Mix_Chunk ***sounds) {
     // Chargement des effets sonores
     (*sounds)[0] = Mix_LoadWAV("assets/songs/20250613-184110.mp3");
     (*sounds)[1] = Mix_LoadWAV("assets/songs/20250613 173819.mp3");
-    if ((*sounds)[0] == NULL) {
-        printf("Erreur de chargement du son : %s\n", Mix_GetError());
-        return;
+    (*sounds)[2] = Mix_LoadWAV("assets/songs/mixkit-bonus-earned-in-video-game-2058.wav");
+    (*sounds)[3] = Mix_LoadWAV("assets/songs/mixkit-martial-arts-fast-punch-2047.wav");
+    (*sounds)[4] = Mix_LoadWAV("assets/songs/mixkit-mechanical-crate-pick-up-3154.wav");
+    (*sounds)[5] = Mix_LoadWAV("assets/songs/mixkit-player-jumping-in-a-video-game-2043.wav");
+    (*sounds)[6] = Mix_LoadWAV("assets/songs/mixkit-metallic-sword-strike-2160.wav");
+    (*sounds)[7] = Mix_LoadWAV("assets/songs/mixkit-metal-arrow-fast-hit-2770.wav");
+    (*sounds)[8] = Mix_LoadWAV("assets/songs/mixkit-wrong-answer-bass-buzzer-948.wav");
+    (*sounds)[9] = Mix_LoadWAV("assets/songs/mixkit-sci-fi-positive-notification-266.wav");
+    (*sounds)[10] = Mix_LoadWAV("assets/songs/mixkit-blow-breaking-the-air-2057.wav");
+
+    for (int i = 0; i < SONGS_NUMBER; i++) {
+        if ((*sounds)[i] == NULL) {
+            printf("Erreur de chargement du son %d: %s\n", i, Mix_GetError());
+            return;
+        }
     }
 }
 

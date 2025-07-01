@@ -12,6 +12,8 @@
 #include "ore.h"
 #include "build.h"
 #include "ship.h"
+#include "window.h"
+#include "basic_ship_window.h"
 
 
 static Uint32 lastPlanetUpdateTime = 0;
@@ -78,6 +80,11 @@ void updatePlanets(Planet *planets, Ship *ships, int shipCount, int planetCount)
             planets[i].x = planets[i].orbitCenterX + planets[i].orbitRadius * cos(angle);
             planets[i].y = planets[i].orbitCenterY + planets[i].orbitRadius * sin(angle);
         }
+    }
+
+    // Mise a jour fleche de la fenetre d'info basique des fusees
+    if (getWindowType() == BASIC_SHIP_WINDOW) {
+        updateNarrowBasicShipWindow(&ships[getWindowId()]);
     }
 
     // Mise a jour des fusees posees dessus

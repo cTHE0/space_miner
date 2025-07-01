@@ -71,7 +71,7 @@ int main(void) {
                 if (state == GAME) {
                     gameBegun = 1;
                     initPlanets(&planets, planetCount);
-                    initShips(&ships, shipCount, planets, planetCount);
+                    initShips(&ships, shipCount, planets);
                     initCamera(planets);
                     initAsteroids(planets, planetCount);
                     initTiles();

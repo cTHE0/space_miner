@@ -58,13 +58,14 @@ void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
         case SIDE_BAR_WINDOW:
         case NO_WINDOW:
             if (clickSideBar(mouse)) {
+                Mix_PlayChannel(1, sounds[7], 0);
                 selectionMode = 0;
             } else if (clickOnShip(textTextures, fonts, ships, shipCount, mouse)) {
                 selectionMode = 0;
-                Mix_PlayChannel(1, sounds[1], 0);
+                Mix_PlayChannel(1, sounds[4], 0);
             } else if (clickOnPlanet(textTextures, fonts, planets, planetCount, mouse)) {
                 selectionMode = 0;
-                Mix_PlayChannel(1, sounds[1], 0);
+                Mix_PlayChannel(1, sounds[3], 0);
             }
 
             // Si rien n'a ete clique, on s'occupe du mode 'selection'
@@ -73,21 +74,21 @@ void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
                 centerSelectionCircle = (SDL_Point){mouse.x, mouse.y};
             } else if (selectionMode == 1) {
                 selectionMode = 0;
-                objetInSelectionCircle(textTextures, fonts, ships, shipCount, planets, planetCount);
+                objetInSelectionCircle(textTextures, fonts, sounds, ships, shipCount, planets, planetCount);
             }
 
             break;
 
         case BASIC_SHIP_WINDOW:
-            basicShipWindowGestion(textTextures, fonts, ships, shipCount, planets, planetCount, mouse);
+            basicShipWindowGestion(textTextures, fonts, sounds, ships, shipCount, planets, planetCount, mouse);
             break;
 
         case SHIP_WINDOW:
-            shipWindowGestion(textTextures, fonts, &ships[getWindowId()], planets, mouse);
+            shipWindowGestion(textTextures, fonts, sounds, &ships[getWindowId()], planets, mouse);
             break;
 
         case PLANET_WINDOW:
-            planetWindowGestion(textTextures, fonts, planets, mouse);
+            planetWindowGestion(textTextures, fonts, sounds, planets, mouse);
             break;
 
         default:
@@ -110,7 +111,7 @@ int clickOnShip(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, int s
 
     if (id != -1) {  // Si un ship a etait clique...
         setWindowId(id);
-        setWindowType(BASIC_SHIP_WINDOW); 
+        setWindowType(BASIC_SHIP_WINDOW);
         initBasicShipWindow(textTextures, fonts, &ships[id]);
         setCameraLastObjectSelected(id);
         setCameraMode(FOLLOW_SHIP);
@@ -187,7 +188,7 @@ void displaySelectionCircle(void) {
     }
 }
 
-void objetInSelectionCircle(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, int shipCount, Planet *planets, int planetCount) {
+void objetInSelectionCircle(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, Ship *ships, int shipCount, Planet *planets, int planetCount) {
     SDL_Point currentMouse = getMouseCoordinates();  // Dans le referentiel de l'ecran
     SDL_Point object;
 
@@ -197,6 +198,7 @@ void objetInSelectionCircle(SDL_Texture **textTextures, TTF_Font **fonts, Ship *
                             };
         if (distancePointPoint(&object, &centerSelectionCircle) -  ships[i].w / 2
             < distancePointPoint(&currentMouse, &centerSelectionCircle)) {
+            Mix_PlayChannel(1, sounds[4], 0);
             setWindowType(BASIC_SHIP_WINDOW);
             setWindowId(i);
             initBasicShipWindow(textTextures, fonts, &(ships[i]));        
@@ -213,6 +215,7 @@ void objetInSelectionCircle(SDL_Texture **textTextures, TTF_Font **fonts, Ship *
                             };
         if (distancePointPoint(&object, &centerSelectionCircle) - planets[i].radius * getCameraScale()
             < distancePointPoint(&currentMouse, &centerSelectionCircle)) {
+            Mix_PlayChannel(1, sounds[3], 0);
             setWindowType(PLANET_WINDOW);
             setWindowId(i);
             initPlanetWindow(textTextures, fonts, planets);

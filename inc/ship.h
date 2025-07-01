@@ -48,7 +48,7 @@ struct Ship {
 };
 
 void addShip(Ship newShip, Ship **ships, int *shipCount);
-void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount);
+void initShips(Ship **ships, int shipCount, Planet *planets);
 void updateShips(Ship *ships, int shipCount);
     void updateShipAnimation(Ship *ship, Uint32 currentTime);
     void updateShipMove(Ship *ship, Uint32 currentTime);

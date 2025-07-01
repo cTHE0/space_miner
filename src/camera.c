@@ -29,9 +29,10 @@ void setCameraLastObjectSelected(int lastObjectSelected) {
     camera.last_object_selected = lastObjectSelected;
 }
 
-void updateCameraFollow(Ship *ships,Planet *planets) {
+void updateCameraFollow(Ship *ships, Planet *planets) {
     if (cameraMode == FOLLOW_SHIP) {
-        setCenterCamera((SDL_Point){ships[camera.last_object_selected].x + ships[camera.last_object_selected].w/2, ships[camera.last_object_selected].y+ ships[camera.last_object_selected].h/2});
+        setCenterCamera((SDL_Point){ships[camera.last_object_selected].x + ships[camera.last_object_selected].w / 2, 
+                                    ships[camera.last_object_selected].y + ships[camera.last_object_selected].h / 2});
     }
     else if (cameraMode == FOLLOW_PLANET) {
         setCenterCamera((SDL_Point){planets[camera.last_object_selected].x, planets[camera.last_object_selected].y});
@@ -47,8 +48,28 @@ float getCameraScale(void) {
 }
 
 void setCenterCamera(SDL_Point newCenter) {
-    camera.rect.x = newCenter.x - SCREEN_WIDTH / 2;
-    camera.rect.y = newCenter.y - SCREEN_HEIGHT / 2;
+    SDL_Point cameraScreen = (SDL_Point){(newCenter.x - SCREEN_WIDTH / 2) * getCameraScale(),
+                                         (newCenter.y - SCREEN_HEIGHT / 2) * getCameraScale()};  // Coordonnees de la camera sur l'ecran
+     
+    if (cameraScreen.x < SCREEN_WIDTH / 2.f) {    // Empeche la camera de sortir de l'ecran horizontalement
+        camera.rect.x = (1 + 1 / getCameraScale()) * SCREEN_WIDTH / 2;
+    } 
+    else if ((newCenter.x + SCREEN_WIDTH / 2.f - MAP_SIZE) * camera.scale > -SCREEN_WIDTH / 2.f) {
+        camera.rect.x = MAP_SIZE - (2 + 1 / camera.scale) * SCREEN_WIDTH / 2.f;
+    } 
+    else {
+        camera.rect.x = newCenter.x - SCREEN_WIDTH / 2;
+    }
+
+    if (cameraScreen.y < SCREEN_HEIGHT / 2) {    // Empeche la camera de sortir de l'ecran verticalement
+        camera.rect.y = (1 + 1 / getCameraScale()) * SCREEN_HEIGHT / 2;
+    } 
+    else if ((newCenter.y + SCREEN_HEIGHT / 2.f - MAP_SIZE) * camera.scale > -SCREEN_HEIGHT / 2.f) {
+        camera.rect.y = MAP_SIZE - (2 + 1 / camera.scale) * SCREEN_HEIGHT / 2.f;
+    } 
+    else {
+        camera.rect.y = newCenter.y - SCREEN_HEIGHT / 2;
+    }
 }
 
 void zoomCamera(float zoomFactor) {

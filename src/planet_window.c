@@ -1,6 +1,7 @@
 #include "planet_window.h"
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
 #include "planet.h"
 #include "ship.h"
 #include "config.h"
@@ -586,9 +587,10 @@ void planetWindowNearestShips(SDL_Texture ***imageTextures, SDL_Texture **textTe
     SDL_RenderCopy(renderer, textTextures[56], NULL, &category5TitleRect);
 }
 
-void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets, SDL_Point mouse) {
+void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, Planet *planets, SDL_Point mouse) {
     if (SDL_PointInRect(&mouse, &WindowCrossRect) || !clickOnWindow(mouse)) {
         setWindowType(NO_WINDOW);
+        Mix_PlayChannel(1, sounds[10], 0);
     }
 
     // Choix du batiment
@@ -601,6 +603,7 @@ void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Planet *p
             if (SDL_PointInRect(&mouse, &edgeSelectedBuildRect)) {
                 currentBuildIndex = j * 4 + i;
                 initPlanetWindow(textTextures, fonts, planets);
+                Mix_PlayChannel(1, sounds[7], 0);
             }
         }
     }
@@ -623,6 +626,7 @@ void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Planet *p
                 if (planets[getWindowId()].builds[1].tank.currentCapacity > 100) {
                     planets[getWindowId()].builds[1].tank.currentCapacity -= 100;  // Prix a payer
                     planets[getWindowId()].builds[currentBuildIndex].level = 1;
+                    Mix_PlayChannel(1, sounds[5], 0);
                 }
                 break;
 
@@ -646,6 +650,7 @@ void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Planet *p
                     planets[getWindowId()].builds[1].tank.currentCapacity -= 100;  // Prix a payer
                     planets[getWindowId()].builds[currentBuildIndex].level ++;
                     planets[getWindowId()].builds[currentBuildIndex].tank.maxCapacity *= 1.05;
+                    Mix_PlayChannel(1, sounds[5], 0);
                 }
                 break;
 
@@ -658,6 +663,7 @@ void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Planet *p
                     planets[getWindowId()].builds[1].tank.currentCapacity -= 100;  // Prix a payer
                     planets[getWindowId()].builds[currentBuildIndex].level ++;
                     planets[getWindowId()].builds[currentBuildIndex].mine.productivity *= 1.05;
+                    Mix_PlayChannel(1, sounds[5], 0);
                 }
                 break;
 

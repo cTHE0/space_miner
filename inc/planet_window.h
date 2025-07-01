@@ -3,6 +3,7 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 #include "planet.h"
 #include "ship.h"
 
@@ -19,6 +20,6 @@ void planetWindowManageBuilds(SDL_Texture ***imageTextures, SDL_Texture **textTe
 void planetWindowOverviewBuild(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planet);
 void planetWindowNearestShips(SDL_Texture ***imageTextures, SDL_Texture **textTextures);
 
-void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets, SDL_Point mouse);
+void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, Planet *planets, SDL_Point mouse);
 
 #endif

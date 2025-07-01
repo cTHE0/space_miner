@@ -20,7 +20,7 @@ void addShip(Ship newShip, Ship **ships, int *shipCount) {
     (*shipCount) ++;
 }
 
-void initShips(Ship **ships, int shipCount, Planet *planets, int planetCount) {
+void initShips(Ship **ships, int shipCount, Planet *planets) {
     *ships = malloc(shipCount * sizeof(Ship));
 
     if (*ships == NULL) {
