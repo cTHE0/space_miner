@@ -1,12 +1,13 @@
+#include "asteroid.h"
+
 #include <SDL2/SDL.h>
 #include <stdlib.h>
-#include "asteroid.h"
+#include <math.h>
 #include "config.h"
 #include "planet.h"
 #include "renderer.h"
 #include "assets_gestion.h"
 #include "camera.h"
-#include <math.h>
 
 
 static SDL_Rect (*asteroids)[ASTEROID_COUNT];  // asteroids[0] = liste des ASTEROID_COUNT asteroid associés 1er soleil généré
@@ -25,6 +26,10 @@ void initAsteroids(Planet *planets, int planetCount) {
     initAngleSpeed();
 
     asteroids = malloc(getNbSolarSystems() * sizeof(SDL_Rect[ASTEROID_COUNT]));
+    if (asteroids == NULL) {
+        printf("Erreur d'allocation de mémoire pour les astéroïdes.\n");
+        return;  // Ou gérer l'erreur d'une autre manière
+    }
 
     int counterSun = 0;
     for (int i = 0; i < planetCount; i++) {

@@ -43,7 +43,7 @@ static SDL_Point centerBaseCoord,
                  centerTargetCoord;
 
 
-void initBasicShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship) {
+void initBasicShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *currentShip, Ship *ships, Planet *planets) {
     int textureWidth, textureHeight;
     TextToLoad newText;
 
@@ -61,35 +61,35 @@ void initBasicShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *shi
     windowTitleRect.h = textureHeight * SCREEN_HEIGHT * 0.0004;
 
     // Calcul des coordonnees de la base et de la cible dans le referentiel de la map
-    updateNarrowBasicShipWindow(ship);
+    updateNarrowBasicShipWindow(ships, planets, currentShip);
 }
 
-void updateNarrowBasicShipWindow(Ship *ship) {  // Calcul des coordonnees de la base et de la cible dans le referentiel de la map
-    switch (ship->base.type) {
+void updateNarrowBasicShipWindow(Ship *ships, Planet *planets, Ship *currentShip) {  // Calcul des coordonnees de la base et de la cible dans le referentiel de la map
+    switch (currentShip->base.type) {
         case SPOT_PLANET:
-            centerBaseCoord = (SDL_Point){ship->base.planet->x, ship->base.planet->y};
+            centerBaseCoord = (SDL_Point){planets[currentShip->base.id_planet].x, planets[currentShip->base.id_planet].y};
             break;
         case SPOT_SHIP:
-            centerBaseCoord = (SDL_Point){ship->base.ship->x + ship->base.ship->w / 2, 
-                                          ship->base.ship->y + ship->base.ship->h / 2};
+            centerBaseCoord = (SDL_Point){ships[currentShip->base.id_ship].x + ships[currentShip->base.id_ship].w / 2, 
+                                          ships[currentShip->base.id_ship].y + ships[currentShip->base.id_ship].h / 2};
             break;
         case SPOT_POINT:
-            centerBaseCoord = ship->base.point;
+            centerBaseCoord = currentShip->base.point;
             break;
         default:
             centerBaseCoord = (SDL_Point){1000, 1000};
             break;
     }
-    switch (ship->target.type) {
+    switch (currentShip->target.type) {
         case SPOT_PLANET:
-            centerTargetCoord = (SDL_Point){ship->target.planet->x, ship->target.planet->y};
+            centerTargetCoord = (SDL_Point){planets[currentShip->target.id_planet].x, planets[currentShip->target.id_planet].y};
             break;
         case SPOT_SHIP:
-            centerTargetCoord = (SDL_Point){ship->target.ship->x + ship->target.ship->w / 2, 
-                                            ship->target.ship->y + ship->target.ship->h / 2};
+            centerTargetCoord = (SDL_Point){ships[currentShip->target.id_ship].x + ships[currentShip->target.id_ship].w / 2, 
+                                            ships[currentShip->target.id_ship].y + ships[currentShip->target.id_ship].h / 2};
             break;
         case SPOT_POINT:
-            centerTargetCoord = ship->target.point;
+            centerTargetCoord = currentShip->target.point;
             break;
         default:
             centerTargetCoord = (SDL_Point){0, 0};
@@ -314,7 +314,7 @@ void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Ch
     else if (SDL_PointInRect(&mouse, &rightArrowRect)) {
         Mix_PlayChannel(1, sounds[4], 0);
         setWindowId((getWindowId() + 1) % shipCount);
-        initBasicShipWindow(textTextures, fonts, &ships[getWindowId()]);
+        initBasicShipWindow(textTextures, fonts, &ships[getWindowId()], ships, planets);
         setCenterCamera((SDL_Point){ships[getWindowId()].x + ships[getWindowId()].w / 2, ships[getWindowId()].y + ships[getWindowId()].h / 2});
         setCameraLastObjectSelected(getWindowId());
         updateCameraFollow(ships, NULL);
@@ -327,7 +327,7 @@ void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Ch
         } else {
             setWindowId(getWindowId() - 1);
         }
-        initBasicShipWindow(textTextures, fonts, &ships[getWindowId()]);
+        initBasicShipWindow(textTextures, fonts, &ships[getWindowId()], ships, planets);
         setCenterCamera((SDL_Point){ships[getWindowId()].x + ships[getWindowId()].w / 2, ships[getWindowId()].y + ships[getWindowId()].h / 2});
         setCameraLastObjectSelected(getWindowId());
         updateCameraFollow(ships, NULL);
@@ -340,12 +340,12 @@ void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Ch
             case BASE_BUTTON:  // Equivaut a faire if (BASE_BUTTON || TARGET_BUTTON) {...}
             case TARGET_BUTTON:
                 choosingNewBaseOrTarget(ships, shipCount, planets, planetCount, mouse);
-                initBasicShipWindow(textTextures, fonts, &ships[getWindowId()]);
+                initBasicShipWindow(textTextures, fonts, &ships[getWindowId()], ships, planets);
                 Mix_PlayChannel(1, sounds[7], 0);
                 break;
 
             case NO_BUTTON:
-                if (!clickOnShip(textTextures, fonts, ships, shipCount, mouse) && 
+                if (!clickOnShip(textTextures, fonts, ships, shipCount, planets, mouse) && 
                     !clickOnPlanet(textTextures, fonts, planets, planetCount, mouse)) {
                     if (SDL_PointInRect(&mouse, &crossRect) || !clickOnBasicShipWindow(mouse)) {
                         setWindowType(NO_WINDOW);
@@ -369,10 +369,10 @@ void choosingNewBaseOrTarget(Ship *ships, int shipCount, Planet *planets, int pl
 
     if (planetChosen != -1) {  // La nouvelle cible est une planete
         spotDest->type = SPOT_PLANET;
-        spotDest->planet = &planets[planetChosen];
+        spotDest->id_planet = planetChosen;
     } else if (shipChosen != -1) {  // La nouvelle cible est un ship (par ex. une station spatiale, orbitale ou un vaisseau de ravitaillement)
         spotDest->type = SPOT_SHIP;
-        spotDest->ship = &ships[shipChosen];
+        spotDest->id_ship = shipChosen;
     } else {  // La nouvelle target est un point random de l'espace
         spotDest->type = SPOT_POINT;
         spotDest->point = (SDL_Point){(mouse.x - SCREEN_WIDTH / 2.f) / getCameraScale() + getCameraRect().x + SCREEN_WIDTH / 2.f,

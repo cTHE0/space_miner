@@ -64,7 +64,7 @@ int main(void) {
 
         switch (gameState) {
             case LANDING_PAGE:
-                handleMenuEvents(sounds, &gameState, &gameBegun, &ships, shipCount, &planets, planetCount);
+                handleMenuEvents(sounds, &gameState, &gameBegun, &ships, &shipCount, &planets, &planetCount);
                 updateFrameIndex();
                 displayMenu(imageTextures, textTextures);
                 break;

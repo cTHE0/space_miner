@@ -23,6 +23,10 @@ int getNbSolarSystems(void) {
     return nbSolarSystems;
 }
 
+void setNbSolarSystems(int nbSS) {
+    nbSolarSystems = nbSS;
+}
+
 void initPlanets(Planet **planets, int planetCount) {
     // Allocation du tableau de planètes
     *planets = malloc(planetCount * sizeof(Planet));
@@ -84,18 +88,18 @@ void updatePlanets(Planet *planets, Ship *ships, int shipCount, int planetCount)
 
     // Mise a jour fleche de la fenetre d'info basique des fusees
     if (getWindowType() == BASIC_SHIP_WINDOW) {
-        updateNarrowBasicShipWindow(&ships[getWindowId()]);
+        updateNarrowBasicShipWindow(ships, planets, &ships[getWindowId()]);
     }
 
     // Mise a jour des fusees posees dessus
     for (int i = 0; i < shipCount; i++) {
-        if (ships[i].state == WAITING_ON_TARGET && ships[i].target.type == SPOT_PLANET && planets[ships[i].target.planet->id].planetType != SUN) {
-            ships[i].x = planets[ships[i].target.planet->id].x + planets[ships[i].target.planet->id].radius * cos(ships[i].angleWithPlanet) - ships[i].w / 2;
-            ships[i].y = planets[ships[i].target.planet->id].y + planets[ships[i].target.planet->id].radius * sin(ships[i].angleWithPlanet) - ships[i].w / 2;
+        if (ships[i].state == WAITING_ON_TARGET && ships[i].target.type == SPOT_PLANET && planets[ships[i].target.id_planet].planetType != SUN) {
+            ships[i].x = planets[ships[i].target.id_planet].x + planets[ships[i].target.id_planet].radius * cos(ships[i].angleWithPlanet) - ships[i].w / 2;
+            ships[i].y = planets[ships[i].target.id_planet].y + planets[ships[i].target.id_planet].radius * sin(ships[i].angleWithPlanet) - ships[i].w / 2;
         }
-        else if (ships[i].state == WAITING_ON_BASE && ships[i].base.type == SPOT_PLANET && planets[ships[i].base.planet->id].planetType != SUN) {
-            ships[i].x = planets[ships[i].base.planet->id].x + planets[ships[i].base.planet->id].radius * cos(ships[i].angleWithPlanet) - ships[i].w / 2;
-            ships[i].y = planets[ships[i].base.planet->id].y + planets[ships[i].base.planet->id].radius * sin(ships[i].angleWithPlanet) - ships[i].w / 2;
+        else if (ships[i].state == WAITING_ON_BASE && ships[i].base.type == SPOT_PLANET && planets[ships[i].base.id_planet].planetType != SUN) {
+            ships[i].x = planets[ships[i].base.id_planet].x + planets[ships[i].base.id_planet].radius * cos(ships[i].angleWithPlanet) - ships[i].w / 2;
+            ships[i].y = planets[ships[i].base.id_planet].y + planets[ships[i].base.id_planet].radius * sin(ships[i].angleWithPlanet) - ships[i].w / 2;
         }
     }
 }

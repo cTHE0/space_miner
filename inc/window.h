@@ -20,7 +20,7 @@ void displayWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Shi
 void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, GameState *gameState, SDL_Point mouse, Ship *ships, int shipCount, Planet *planets, int planetCount);
 
 int whichShipIsClicked(Ship *ships, int shipCount, SDL_Point mouse);
-int clickOnShip(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, int shipCount, SDL_Point mouse);
+int clickOnShip(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, int shipCount, Planet *planets, SDL_Point mouse);
 
 int whichPlanetIsClicked(Planet *planets, int planetCount, SDL_Point mouse);
 int clickOnPlanet(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets, int planetCount, SDL_Point mouse);

@@ -25,7 +25,7 @@ void initLandingPageRects(void) {
 }
 
 
-void handleMenuEvents(Mix_Chunk **sounds, GameState *gameState, short *gameBegun, Ship **ships, int shipCount, Planet **planets, int planetCount) {   // Gere les evenements du menu
+void handleMenuEvents(Mix_Chunk **sounds, GameState *gameState, short *gameBegun, Ship **ships, int *shipCount, Planet **planets, int *planetCount) {   // Gere les evenements du menu
     SDL_Event event;
 
     while (SDL_PollEvent(&event)) {
@@ -74,7 +74,18 @@ void handleMenuEvents(Mix_Chunk **sounds, GameState *gameState, short *gameBegun
                 if (event.button.button == SDL_BUTTON_LEFT) {
                     switch (bg_button_a_afficher) {
                         case 1:
+                            chargingGame(ships, shipCount, planets, planetCount);
+                            initCamera(*planets);
+                            initAsteroids(*planets, *planetCount);
+                            initTiles();
+                            *gameState = GAME;
+                            break;
                         case 2:
+                            initPlanets(planets, *planetCount);
+                            initShips(ships, *shipCount, *planets);
+                            initCamera(*planets);
+                            initAsteroids(*planets, *planetCount);
+                            initTiles();
                             *gameState = GAME;
                             break;
                         default:
@@ -91,11 +102,6 @@ void handleMenuEvents(Mix_Chunk **sounds, GameState *gameState, short *gameBegun
     // La partie s'est-elle lancee ?
     if (*gameState == GAME) {
         *gameBegun = 1;
-        initPlanets(planets, planetCount);
-        initShips(ships, shipCount, *planets);
-        initCamera(*planets);
-        initAsteroids(*planets, planetCount);
-        initTiles();
         Mix_PlayChannel(0, sounds[0], -1);
     }
 }
@@ -175,4 +181,63 @@ void displayMenu(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
     SDL_RenderCopy(renderer, textTextures[3], NULL, &text3Rect);  // Affiche "Settings"
 
     SDL_RenderPresent(renderer);
+}
+
+void chargingGame(Ship **ships, int *shipCount, Planet **planets, int *planetCount) {
+    FILE *backup = fopen(NAME_BACKUP, "rb");  // Ouvre le fichier en mode binaire
+    if (!backup) {
+        printf("Erreur lors de l'ouverture du fichier pour le chargement.\n");
+        return;
+    }
+
+    // Lire le nombre de fusees stockés dans le fichier
+    size_t itemsRead = fread(shipCount, sizeof(int), 1, backup);
+    if (itemsRead != 1) {
+        printf("Error reading the backup file (downloading shipCount).\n");
+        fclose(backup);
+        return;
+    }
+
+    itemsRead = fread(planetCount, sizeof(int), 1, backup);
+    if (itemsRead != 1) {
+        printf("Error reading the backup file (downloading planetCount).\n");
+        fclose(backup);
+        return;
+    }
+
+    // Allouer dynamiquement la mémoire pour la liste des fusees et des planetes
+    *ships = malloc(sizeof(Ship) * (*shipCount));
+    *planets = malloc(sizeof(Planet) * (*planetCount));
+    if (!*ships || !*planets) {
+        printf("Erreur d'allocation de mémoire pour les fusees/planetes.\n");
+        fclose(backup);
+        return;
+    }
+
+    // Charger le tableau de fusees puis de planetes depuis le fichier
+    itemsRead = fread(*ships, sizeof(Ship), *shipCount, backup);
+    if (itemsRead != (size_t)(*shipCount)) {
+        printf("Error reading the backup file (downloading ships).\n");
+        fclose(backup);
+        return;
+    }
+
+    itemsRead = fread(*planets, sizeof(Planet), *planetCount, backup);
+    if (itemsRead != (size_t)(*planetCount)) {
+        printf("Error reading the backup file (downloading planets).\n");
+        fclose(backup);
+        return;
+    }
+
+    // Initialise le nombre de systeme solaire dans la vairbale static appropriee
+    int nbSS = 0;
+    for (int i = 0; i < *planetCount; i++) {
+        if ((*planets)[i].planetType == SUN) {
+            nbSS ++;
+        }
+    }
+    setNbSolarSystems(nbSS);
+
+    // Fermeture du fichier de lecture de sauvegarde
+    fclose(backup);
 }

@@ -8,8 +8,8 @@
 
 
 void initBasicShipWindowRects(SDL_Texture **textTextures);
-void initBasicShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship);
-	void updateNarrowBasicShipWindow(Ship *ship);
+void initBasicShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *currentShip, Ship *ships, Planet *planets);
+	void updateNarrowBasicShipWindow(Ship *ships, Planet *planets, Ship *currentShip);
 
 typedef enum { NO_BUTTON, SHIP_WINDOW_BUTTON, BASE_BUTTON, TARGET_BUTTON, ATTACK_BUTTON } BasicShipWindowButton;
 

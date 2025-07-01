@@ -27,6 +27,9 @@ void displayMenu(SDL_Texture ***imageTextures, SDL_Texture **textTextures);
 
 void updateFrameIndex(void);
 
-void handleMenuEvents(Mix_Chunk **sounds, GameState *gameState, short *gameBegun, Ship **ships, int shipCount, Planet **planets, int planetCount);
+void handleMenuEvents(Mix_Chunk **sounds, GameState *gameState, short *gameBegun, Ship **ships, int *shipCount, Planet **planets, int *planetCount);
+
+void chargingGame(Ship **ships, int *shipCount, Planet **planets, int *planetCount);
+
 
 #endif

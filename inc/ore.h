@@ -1,6 +1,10 @@
 #ifndef ORE_H
 #define ORE_H
 
+
+#include "config.h"
+
+
 typedef struct Planet Planet;
 
 typedef enum { FUEL, ORE1, ORE2, ORE3, ORE4, EMPTY } Ore;  // Types de minerais, essence et missiles stockes
@@ -18,8 +22,8 @@ typedef struct {  // Un seul compartiment
 
 
 typedef struct {  // Cargaison constituee de plusieurs compartiments
-    int compartmentsNumber;
-    Compartment *compartmentsList;
+    int compartmentsNumber;  // inferieur a MAX_COMPARTMENTS_PER_SHIP
+    Compartment compartmentsList[MAX_COMPARTMENTS_PER_SHIP];
 } Cargo;
 
 int getTotalOreWithInt(int i);

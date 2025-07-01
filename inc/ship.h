@@ -18,9 +18,9 @@ typedef struct Planet Planet;
 typedef struct {  // Notre destination
     SpotType type;
     union {
-        Planet *planet;    // Si c'est une planete
-        Ship *ship;        // Si c'est une fusee, par ex une station spatiale
-        SDL_Point point;   // Si c'est un point libre sur la map, par ex pour partir en exploration
+        int id_planet;    // Si c'est une planete
+        int id_ship;      // Si c'est une fusee, par ex une station spatiale
+        SDL_Point point;  // Si c'est un point libre sur la map, par ex pour partir en exploration
     };
 } Spot;
 
@@ -49,18 +49,18 @@ struct Ship {
 
 void addShip(Ship newShip, Ship **ships, int *shipCount);
 void initShips(Ship **ships, int shipCount, Planet *planets);
-void updateShips(Ship *ships, int shipCount);
+void updateShips(Ship *ships, Planet *planets, int shipCount);
     void updateShipAnimation(Ship *ship, Uint32 currentTime);
-    void updateShipMove(Ship *ship, Uint32 currentTime);
-    void updateShipTanks(Ship *ship, Uint32 currentTime);
+    void updateShipMove(Ship *ships, Ship *currentShip, Planet *planets, Uint32 currentTime);
+    void updateShipTanks(Ship *ship, Planet *planets, Uint32 currentTime);
         void fuelConsumption(Ship *ship);
-        void OreFillingOrEmptying(Ship *ships);
-        void isShipOnPlanet(Ship *ship);
+        void OreFillingOrEmptying(Ship *ships, Planet *planets);
+        void isShipOnPlanet(Ship *ship, Planet *planets);
     
 int haveFuel(Ship *ship);
 
-void displayShips(SDL_Texture ***textureShip, Ship *ships, int shipCount);
-    void renderShipImage(SDL_Texture *spriteSheet, Ship ship, SDL_Point ShipOnScreen);
+void displayShips(SDL_Texture ***textureShip, Ship *ships, int shipCount, Planet *planets);
+    void renderShipImage(SDL_Texture *spriteSheet, Ship *ships, Planet *planets, Ship currentShip, SDL_Point ShipOnScreen);
     void renderShipBars(Ship ship, SDL_Point ShipOnScreen);
 
 int globalTankCapacity(Ship *ship);

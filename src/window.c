@@ -62,7 +62,7 @@ void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
             if (clickSideBar(mouse)) {
                 Mix_PlayChannel(1, sounds[7], 0);
                 selectionMode = 0;
-            } else if (clickOnShip(textTextures, fonts, ships, shipCount, mouse)) {
+            } else if (clickOnShip(textTextures, fonts, ships, shipCount, planets, mouse)) {
                 selectionMode = 0;
                 Mix_PlayChannel(1, sounds[4], 0);
             } else if (clickOnPlanet(textTextures, fonts, planets, planetCount, mouse)) {
@@ -112,13 +112,13 @@ int whichShipIsClicked(Ship *ships, int shipCount, SDL_Point mouse) {
     return -1;
 }
 
-int clickOnShip(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, int shipCount, SDL_Point mouse) {
+int clickOnShip(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, int shipCount, Planet *planets, SDL_Point mouse) {
     int id = whichShipIsClicked(ships, shipCount, mouse); // id du ship selectionne ou -1 sinon
 
     if (id != -1) {  // Si un ship a etait clique...
         setWindowId(id);
         setWindowType(BASIC_SHIP_WINDOW);
-        initBasicShipWindow(textTextures, fonts, &ships[id]);
+        initBasicShipWindow(textTextures, fonts, &ships[id], ships, planets);
         setCameraLastObjectSelected(id);
         setCameraMode(FOLLOW_SHIP);
     }
@@ -168,7 +168,7 @@ void displayWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Shi
             break;
             
         case SHIP_WINDOW:
-            displayShipWindow(imageTextures, textTextures, ships);
+            displayShipWindow(imageTextures, textTextures, ships, planets);
             break;
 
         case SIDE_BAR_WINDOW:
@@ -211,7 +211,7 @@ void objetInSelectionCircle(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Ch
             Mix_PlayChannel(1, sounds[4], 0);
             setWindowType(BASIC_SHIP_WINDOW);
             setWindowId(i);
-            initBasicShipWindow(textTextures, fonts, &(ships[i]));        
+            initBasicShipWindow(textTextures, fonts, &(ships[i]), ships, planets);        
             setCameraLastObjectSelected(i);
             setCameraMode(FOLLOW_SHIP);
             updateCameraFollow(ships, NULL);
@@ -235,7 +235,7 @@ void objetInSelectionCircle(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Ch
 }
 
 void updateGame(Ship **ships, int *shipCount, Planet *planets, int planetCount) {
-    updateShips(*ships, *shipCount);
+    updateShips(*ships, planets, *shipCount);
     updatePlanets(planets, *ships, *shipCount, planetCount);
     updateBuilds(planets, planetCount);
     updateCameraFollow(*ships, planets);

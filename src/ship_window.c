@@ -100,7 +100,7 @@ void initShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship) {
 
     // Importe le nom de la base de la fusee
     if (ship->base.type == SPOT_PLANET) {
-        generateRandomName(baseName, currentSeed, ship->base.planet->id);
+        generateRandomName(baseName, currentSeed, ship->base.id_planet);
         strcpy(newText.text, (const char*)baseName);
         newText.color = BLACK;
         newText.font = fonts[0];
@@ -118,7 +118,7 @@ void initShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship) {
 
     if (ship->target.type == SPOT_PLANET) {
         // Importe le nom de la cible de la fusee
-        generateRandomName(targetName, currentSeed, ship->target.planet->id);
+        generateRandomName(targetName, currentSeed, ship->target.id_planet);
         strcpy(newText.text, (const char*)targetName);
         newText.color = BLACK;
         newText.font = fonts[0];
@@ -463,10 +463,10 @@ void initShipWindowRects(SDL_Texture **textTextures) {  // Les rects sont initia
     currentVisualNarrowRect = (SDL_Rect){SCREEN_WIDTH * 0.8400, SCREEN_HEIGHT * 0.7950, SCREEN_WIDTH * 0.0190, SCREEN_WIDTH * 0.0200};
 }
 
-void displayShipWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
+void displayShipWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships, Planet *planets) {
     ShipWindowFondations(imageTextures, textTextures);
-    ShipWindowTravelInfo(imageTextures, textTextures, ships);
-    ShipWindowTankManager(imageTextures, textTextures, ships);
+    ShipWindowTravelInfo(imageTextures, textTextures, ships, planets);
+    ShipWindowTankManager(imageTextures, textTextures, ships, planets);
     ShipWindowShipCond(imageTextures, textTextures, ships);
     ShipWindowShipModel(imageTextures, textTextures);
     ShipWindowTankCompo(imageTextures, textTextures, ships);
@@ -491,19 +491,19 @@ void ShipWindowFondations(SDL_Texture ***imageTextures, SDL_Texture **textTextur
     SDL_RenderFillRect(renderer, &windowLine5Rect);  // Barre horizontale droite haut
 }
 
-void ShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
+void ShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships, Planet *planets) {
     // Affichage du titre "Travel information"
     SDL_RenderCopy(renderer, textTextures[5], NULL, &category1TitleRect);
 
     // Affichage des deux planetes
     int idPicture;
     if (ships[getWindowId()].base.type == SPOT_PLANET) {
-        idPicture = (ships[getWindowId()].base.planet->planetType == SUN) ? 9 : generateRandNb8(currentSeed, ships[getWindowId()].base.planet->id) % 7 + 1;
+        idPicture = (planets[ships[getWindowId()].base.id_planet].planetType == SUN) ? 9 : generateRandNb8(currentSeed, ships[getWindowId()].base.id_planet) % 7 + 1;
         SDL_RenderCopy(renderer, imageTextures[6][idPicture], NULL, &baseDisplayedRect);
     }
 
     if (ships[getWindowId()].target.type == SPOT_PLANET) {
-        idPicture = (ships[getWindowId()].target.planet->planetType == SUN) ? 9 : generateRandNb8(currentSeed, ships[getWindowId()].target.planet->id) % 7 + 1;
+        idPicture = (planets[ships[getWindowId()].target.id_planet].planetType == SUN) ? 9 : generateRandNb8(currentSeed, ships[getWindowId()].target.id_planet) % 7 + 1;
         SDL_RenderCopy(renderer, imageTextures[6][idPicture], NULL, &targetDisplayedRect);
     }
 
@@ -532,8 +532,8 @@ void ShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextur
     if (ships[getWindowId()].base.type == SPOT_PLANET && ships[getWindowId()].target.type == SPOT_PLANET) {
         if (ships[getWindowId()].state == MOVING_TO_TARGET || ships[getWindowId()].state == WAITING_ON_BASE) {  
             // Fraction du chemin parcourue
-            f = distanceShipPlanet(&ships[getWindowId()], ships[getWindowId()].base.planet)
-                / (distancePlanetPlanet(ships[getWindowId()].target.planet, ships[getWindowId()].base.planet) - ships[getWindowId()].base.planet->radius - ships[getWindowId()].target.planet->radius);
+            f = distanceShipPlanet(&ships[getWindowId()], &planets[ships[getWindowId()].base.id_planet])
+                / (distancePlanetPlanet(&planets[ships[getWindowId()].target.id_planet], &planets[ships[getWindowId()].base.id_planet]) - planets[ships[getWindowId()].base.id_planet].radius - planets[ships[getWindowId()].target.id_planet].radius);
             f = (f > 1) ? 1 : f;
 
             // Tracer la fleche
@@ -553,8 +553,8 @@ void ShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextur
 
         } else if (ships[getWindowId()].state == MOVING_TO_BASE || ships[getWindowId()].state == WAITING_ON_TARGET) { 
             // Fraction du chemin parcourue
-            f = distanceShipPlanet(&ships[getWindowId()], ships[getWindowId()].base.planet)
-                / (distancePlanetPlanet(ships[getWindowId()].target.planet, ships[getWindowId()].base.planet) - ships[getWindowId()].base.planet->radius - ships[getWindowId()].target.planet->radius);
+            f = distanceShipPlanet(&ships[getWindowId()], &planets[ships[getWindowId()].base.id_planet])
+                / (distancePlanetPlanet(&planets[ships[getWindowId()].target.id_planet], &planets[ships[getWindowId()].base.id_planet]) - planets[ships[getWindowId()].base.id_planet].radius - planets[ships[getWindowId()].target.id_planet].radius);
             f = (f > 1) ? 1 : f;
 
             // Tracer la fleche
@@ -573,8 +573,8 @@ void ShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextur
             SDL_RenderCopyEx(renderer, imageTextures[7][ships[getWindowId()].idModel], &srcRectShip, &destRectShip, 270, NULL, SDL_FLIP_NONE);
         } else {
             // Fraction du chemin parcourue
-            f = distanceShipPlanet(&ships[getWindowId()], ships[getWindowId()].base.planet)
-                / (distancePlanetPlanet(ships[getWindowId()].target.planet, ships[getWindowId()].base.planet) - ships[getWindowId()].base.planet->radius - ships[getWindowId()].target.planet->radius);
+            f = distanceShipPlanet(&ships[getWindowId()], &planets[ships[getWindowId()].base.id_planet])
+                / (distancePlanetPlanet(&planets[ships[getWindowId()].target.id_planet], &planets[ships[getWindowId()].base.id_planet]) - planets[ships[getWindowId()].base.id_planet].radius - planets[ships[getWindowId()].target.id_planet].radius);
             f = (f > 1) ? 1 : f;
 
             // Tracer la fleche
@@ -598,7 +598,7 @@ void ShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextur
     }
 }
 
-void ShipWindowTankManager(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
+void ShipWindowTankManager(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships, Planet *planets) {
     // Affichage du titre "Tank manager"
     SDL_RenderCopy(renderer, textTextures[8], NULL, &category2TitleRect);
 
@@ -606,12 +606,12 @@ void ShipWindowTankManager(SDL_Texture ***imageTextures, SDL_Texture **textTextu
     int idPicture;
 
     if (ships[getWindowId()].base.type == SPOT_PLANET) {
-        idPicture = (ships[getWindowId()].base.planet->planetType == SUN) ? 9 : generateRandNb8(currentSeed, ships[getWindowId()].base.planet->id) % 7 + 1;
+        idPicture = (planets[ships[getWindowId()].base.id_planet].planetType == SUN) ? 9 : generateRandNb8(currentSeed, ships[getWindowId()].base.id_planet) % 7 + 1;
         SDL_RenderCopy(renderer, imageTextures[6][idPicture], NULL, &baseDisplayedRect2);
     }
 
     if (ships[getWindowId()].target.type == SPOT_PLANET) {
-        idPicture = (ships[getWindowId()].target.planet->planetType == SUN) ? 9 : generateRandNb8(currentSeed, ships[getWindowId()].target.planet->id) % 7 + 1;
+        idPicture = (planets[ships[getWindowId()].target.id_planet].planetType == SUN) ? 9 : generateRandNb8(currentSeed, ships[getWindowId()].target.id_planet) % 7 + 1;
         SDL_RenderCopy(renderer, imageTextures[6][idPicture], NULL, &targetDisplayedRect2);
     }
 
@@ -827,7 +827,7 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
     else if (SDL_PointInRect(&mouse, &baseDisplayedRect) || SDL_PointInRect(&mouse, &baseDisplayedRect2)) {
         if (ship->base.type == SPOT_PLANET) {
             setWindowType(PLANET_WINDOW);
-            setWindowId(ship->base.planet->id);
+            setWindowId(ship->base.id_planet);
             initPlanetWindow(textTextures, fonts, planets);
         } else {
             setWindowType(NO_WINDOW);
@@ -836,7 +836,7 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
     else if (SDL_PointInRect(&mouse, &targetDisplayedRect) || SDL_PointInRect(&mouse, &targetDisplayedRect2)) {
         if (ship->target.type == SPOT_PLANET) {
             setWindowType(PLANET_WINDOW);
-            setWindowId(ship->target.planet->id);
+            setWindowId(ship->target.id_planet);
             initPlanetWindow(textTextures, fonts, planets);
         } else {
             setWindowType(NO_WINDOW);

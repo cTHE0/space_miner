@@ -33,11 +33,11 @@ void initShips(Ship **ships, int shipCount, Planet *planets) {
         (*ships)[i].id = i;
         (*ships)[i].idModel = rand() % 7;
         (*ships)[i].base.type = SPOT_PLANET;
-        (*ships)[i].base.planet = &planets[1];  // La premiere planete est la base de chaque vaisseau
+        (*ships)[i].base.id_planet = 1;  // La premiere planete est la base de chaque vaisseau
         (*ships)[i].target.type = SPOT_PLANET;
-        (*ships)[i].target.planet = &planets[2];
-        (*ships)[i].x = (*ships)[i].base.planet->x;
-        (*ships)[i].y = (*ships)[i].base.planet->y;
+        (*ships)[i].target.id_planet = 2;
+        (*ships)[i].x = planets[(*ships)[i].base.id_planet].x;
+        (*ships)[i].y = planets[(*ships)[i].base.id_planet].y;
         (*ships)[i].w = 200;
         (*ships)[i].h = 200;
         (*ships)[i].speed = (rand() / (float)RAND_MAX * 0.6 + 0.4) * SHIP_SPEED;
@@ -64,17 +64,6 @@ void initShips(Ship **ships, int shipCount, Planet *planets) {
         Cargo *cargo = &(*ships)[i].cargo;
 
         cargo->compartmentsNumber = 3;
-        cargo->compartmentsList = malloc(cargo->compartmentsNumber * sizeof(Compartment));
-        if (cargo->compartmentsList == NULL) {
-            printf("Erreur d'allocation memoire pour les compartiments du vaisseau %d!\n", i);
-            
-            // Liberer la memoire des vaisseaux deja crees
-            for (int j = 0; j < i; j++) {
-                free(cargo->compartmentsList);
-            }
-            free(*ships);
-            return;
-        }
         for (int j = 0; j < (*ships)[i].cargo.compartmentsNumber; j++) {  // Ici, chaque compartiment contient de l'essence
             cargo->compartmentsList[j].ore = rand() % 4;
             cargo->compartmentsList[j].maxCapacity = 1000;
@@ -99,13 +88,13 @@ void initShips(Ship **ships, int shipCount, Planet *planets) {
     }
 }
 
-void updateShips(Ship *ships, int shipCount) { 
+void updateShips(Ship *ships, Planet *planets, int shipCount) { 
     Uint32 currentTime = SDL_GetTicks();
 
     for (int i = 0; i < shipCount; i++) {
         updateShipAnimation(&ships[i], currentTime);  // Permet de changer de frame du sprite sheet de la fusee i
-        updateShipMove(&ships[i], currentTime);
-        updateShipTanks(&ships[i], currentTime);
+        updateShipMove(ships, &ships[i], planets, currentTime);
+        updateShipTanks(&ships[i], planets, currentTime);
     }
 }
 
@@ -116,66 +105,66 @@ void updateShipAnimation(Ship *ship, Uint32 currentTime) {  // Pour animation de
     }
 }
 
-void updateShipMove(Ship *ship, Uint32 currentTime) {
-    if (ship->state != MOVING_TO_BASE && ship->state != MOVING_TO_TARGET) { // La fusee bouge-t-elle ?
+void updateShipMove(Ship *ships, Ship *currentShip, Planet *planets, Uint32 currentTime) {
+    if (currentShip->state != MOVING_TO_BASE && currentShip->state != MOVING_TO_TARGET) { // La fusee bouge-t-elle ?
         return;
     }
 
-    if (ship->shiptype == ENEMY) {
+    if (currentShip->shiptype == ENEMY) {
         return;
     }
 
     float dx;
     float dy;
     float distance;
-    Spot spotDest = (ship->state == MOVING_TO_BASE) ? ship->base : ship->target;
+    Spot spotDest = (currentShip->state == MOVING_TO_BASE) ? currentShip->base : currentShip->target;
     switch (spotDest.type) {
         case SPOT_PLANET:
-            dx = spotDest.planet->x - (ship->x + ship->w / 2.);
-            dy = spotDest.planet->y - (ship->y + ship->h / 2.);
+            dx = planets[spotDest.id_planet].x - (currentShip->x + currentShip->w / 2.);
+            dy = planets[spotDest.id_planet].y - (currentShip->y + currentShip->h / 2.);
             distance = sqrt(dx * dx + dy * dy);
 
-            if (distance - ship->speed >= spotDest.planet->radius) {
-                ship->x += dx * ship->speed / distance;
-                ship->y += dy * ship->speed / distance;
+            if (distance - currentShip->speed >= planets[spotDest.id_planet].radius) {
+                currentShip->x += dx * currentShip->speed / distance;
+                currentShip->y += dy * currentShip->speed / distance;
             } else {
-                ship->waitStartTime = currentTime;
-                ship->state = (ship->state == MOVING_TO_BASE) ? WAITING_ON_BASE : WAITING_ON_TARGET;
+                currentShip->waitStartTime = currentTime;
+                currentShip->state = (currentShip->state == MOVING_TO_BASE) ? WAITING_ON_BASE : WAITING_ON_TARGET;
 
                 // Atterissage des fusees, actualisation de leur angle avec la planete
-                if (ship->state == WAITING_ON_BASE) {
-                    ship->angleWithPlanet = computeAngleDeg(ship->x + ship->w / 2, ship->y + ship->h / 2, ship->base.planet->x, ship->base.planet->y) * M_PI / 180.0;
-                } else if (ship->state == WAITING_ON_TARGET) {
-                    ship->angleWithPlanet = computeAngleDeg(ship->x + ship->w / 2, ship->y + ship->h / 2, ship->target.planet->x, ship->target.planet->y) * M_PI / 180.0;
+                if (currentShip->state == WAITING_ON_BASE) {
+                    currentShip->angleWithPlanet = computeAngleDeg(currentShip->x + currentShip->w / 2, currentShip->y + currentShip->h / 2, planets[currentShip->base.id_planet].x, planets[currentShip->base.id_planet].y) * M_PI / 180.0;
+                } else if (currentShip->state == WAITING_ON_TARGET) {
+                    currentShip->angleWithPlanet = computeAngleDeg(currentShip->x + currentShip->w / 2, currentShip->y + currentShip->h / 2, planets[currentShip->target.id_planet].x, planets[currentShip->target.id_planet].y) * M_PI / 180.0;
                 } else {
-                    ship->angleWithPlanet = 0;
+                    currentShip->angleWithPlanet = 0;
                 }
             }
             break;
         case SPOT_SHIP:
-            dx = spotDest.ship->x + spotDest.ship->w / 2. - (ship->x + ship->w / 2.);
-            dy = spotDest.ship->y + spotDest.ship->h / 2. - (ship->y + ship->h / 2.);
+            dx = ships[spotDest.id_ship].x + ships[spotDest.id_ship].w / 2. - (currentShip->x + currentShip->w / 2.);
+            dy = ships[spotDest.id_ship].y + ships[spotDest.id_ship].h / 2. - (currentShip->y + currentShip->h / 2.);
             distance = sqrt(dx * dx + dy * dy);
 
-            if (distance - ship->speed >= (spotDest.ship->h + ship->h) / 2) {
-                ship->x += dx * ship->speed / distance;
-                ship->y += dy * ship->speed / distance;
+            if (distance - currentShip->speed >= (ships[spotDest.id_ship].h + currentShip->h) / 2) {
+                currentShip->x += dx * currentShip->speed / distance;
+                currentShip->y += dy * currentShip->speed / distance;
             } else {
-                ship->waitStartTime = currentTime;
-                ship->state = (ship->state == MOVING_TO_BASE) ? WAITING_ON_BASE : WAITING_ON_TARGET;
+                currentShip->waitStartTime = currentTime;
+                currentShip->state = (currentShip->state == MOVING_TO_BASE) ? WAITING_ON_BASE : WAITING_ON_TARGET;
             }
             break;
         case SPOT_POINT:
-            dx = spotDest.point.x - (ship->x + ship->w / 2.);
-            dy = spotDest.point.y - (ship->y + ship->h / 2.);
+            dx = spotDest.point.x - (currentShip->x + currentShip->w / 2.);
+            dy = spotDest.point.y - (currentShip->y + currentShip->h / 2.);
             distance = sqrt(dx * dx + dy * dy);
 
-            if (distance - ship->speed > 0) {
-                ship->x += dx * ship->speed / distance;
-                ship->y += dy * ship->speed / distance;
+            if (distance - currentShip->speed > 0) {
+                currentShip->x += dx * currentShip->speed / distance;
+                currentShip->y += dy * currentShip->speed / distance;
             } else {
-                ship->waitStartTime = currentTime;
-                ship->state = (ship->state == MOVING_TO_BASE) ? MOVING_TO_TARGET : MOVING_TO_BASE;
+                currentShip->waitStartTime = currentTime;
+                currentShip->state = (currentShip->state == MOVING_TO_BASE) ? MOVING_TO_TARGET : MOVING_TO_BASE;
             }
             break;
         default:
@@ -183,7 +172,7 @@ void updateShipMove(Ship *ship, Uint32 currentTime) {
     }
 }
 
-void updateShipTanks(Ship *ship, Uint32 currentTime) {  // Gere depot/recuperation des minerais/essence, et consommation essence
+void updateShipTanks(Ship *ship, Planet *planets, Uint32 currentTime) {  // Gere depot/recuperation des minerais/essence, et consommation essence
     if (currentTime - ship->lastRefreshFilling < TANKS_UPDATE_INTERVAL) {  // Actualisation chaque seconde
         return;
     }
@@ -200,9 +189,9 @@ void updateShipTanks(Ship *ship, Uint32 currentTime) {  // Gere depot/recuperati
             (ship->state == WAITING_ON_TARGET && ship->target.type != SPOT_PLANET)) {  // Pas de transfert de ressource ailleurs que sur une planet (actuellement !)
             return;
         }
-        OreFillingOrEmptying(ship);
+        OreFillingOrEmptying(ship, planets);
     } else if (ship->state == OUT_OF_FUEL) {
-        isShipOnPlanet(ship);
+        isShipOnPlanet(ship, planets);
     }
 }
 
@@ -226,7 +215,7 @@ void fuelConsumption(Ship *ship) {
     }
 }
 
-void OreFillingOrEmptying(Ship *ship) {
+void OreFillingOrEmptying(Ship *ship, Planet *planets) {
     if ((ship->state == WAITING_ON_BASE && ship->base.type != SPOT_PLANET) ||
         (ship->state == WAITING_ON_TARGET && ship->target.type != SPOT_PLANET)) {  // La fusee est-elle sur une planete ?
         return;
@@ -234,7 +223,7 @@ void OreFillingOrEmptying(Ship *ship) {
 
     int modified = 0;  // Verifie s'il s'est passe qch (1:oui, 0:non)
     Cargo *cargo = &ship->cargo;
-    Planet *landingPlanet = (ship->state == WAITING_ON_BASE) ? ship->base.planet : ship->target.planet;
+    Planet *landingPlanet = (ship->state == WAITING_ON_BASE) ? &planets[ship->base.id_planet] : &planets[ship->target.id_planet];
 
     for (int i = 0; i < cargo->compartmentsNumber; i++) {
         if (ship->state == WAITING_ON_BASE) {
@@ -354,19 +343,19 @@ int haveFuel(Ship *ship) {
     return 0;
 }
 
-void isShipOnPlanet(Ship *ship) {
+void isShipOnPlanet(Ship *ship, Planet *planets) {
     if (ship->base.type == SPOT_PLANET) {
-        if (distanceShipPlanet(ship, ship->base.planet) < ship->base.planet->radius) {
+        if (distanceShipPlanet(ship, &planets[ship->base.id_planet]) < planets[ship->base.id_planet].radius) {
             ship->state = WAITING_ON_BASE;
         }
     } else if (ship->target.type == SPOT_PLANET) {
-        if (distanceShipPlanet(ship, ship->target.planet) < ship->target.planet->radius) {
+        if (distanceShipPlanet(ship, &planets[ship->target.id_planet]) < planets[ship->target.id_planet].radius) {
             ship->state = WAITING_ON_TARGET;
         }
     }
 }
 
-void displayShips(SDL_Texture ***imageTextures, Ship *ships, int shipCount) {
+void displayShips(SDL_Texture ***imageTextures, Ship *ships, int shipCount, Planet *planets) {
     for (int i = 0; i < shipCount; i++) {
         // Calcul des coordonnees a l'ecran, du point en haut a gauche de la fusee
         SDL_Point ShipOnScreen = (SDL_Point){(ships[i].x - getCameraRect().x - SCREEN_WIDTH / 2.f) * getCameraScale() + SCREEN_WIDTH / 2.f,
@@ -374,7 +363,7 @@ void displayShips(SDL_Texture ***imageTextures, Ship *ships, int shipCount) {
 
         if (ShipOnScreen.x >= -ships[i].w * getCameraScale() && ShipOnScreen.x <= SCREEN_WIDTH && 
             ShipOnScreen.y >= -ships[i].h * getCameraScale() && ShipOnScreen.y <= SCREEN_HEIGHT + ships[i].h * getCameraScale()) {  // Si la fusee est dans l'ecran 
-            renderShipImage(imageTextures[7][ships[i].idModel], ships[i], ShipOnScreen);
+            renderShipImage(imageTextures[7][ships[i].idModel], ships, planets, ships[i], ShipOnScreen);
             // renderShipBars(ships[i], ShipOnScreen);
             ships[i].destRect.x = ShipOnScreen.x;
             ships[i].destRect.y = ShipOnScreen.y;
@@ -384,20 +373,20 @@ void displayShips(SDL_Texture ***imageTextures, Ship *ships, int shipCount) {
     }
 }
 
-void renderShipImage(SDL_Texture *textureShip, Ship ship, SDL_Point ShipOnScreen) {
+void renderShipImage(SDL_Texture *textureShip, Ship *ships, Planet *planets, Ship currentShip, SDL_Point ShipOnScreen) {
     // Calcul de l'angle en degres de l'image de la fusee
     float angle;
-    Spot spotDest = (ship.state == WAITING_ON_BASE || ship.state == MOVING_TO_BASE) ? ship.base : ship.target;
+    Spot spotDest = (currentShip.state == WAITING_ON_BASE || currentShip.state == MOVING_TO_BASE) ? currentShip.base : currentShip.target;
 
     switch (spotDest.type) {
         case SPOT_PLANET:
-            angle = atan2(spotDest.planet->y - (ship.y + ship.h / 2.f), spotDest.planet->x - (ship.x + ship.w / 2.f)) * 180.0f / M_PI;
+            angle = atan2(planets[spotDest.id_planet].y - (currentShip.y + currentShip.h / 2.f), planets[spotDest.id_planet].x - (currentShip.x + currentShip.w / 2.f)) * 180.0f / M_PI;
             break;
         case SPOT_SHIP:
-            angle = atan2((spotDest.ship->y + spotDest.ship->h / 2.f) - (ship.y + ship.h / 2.f), (spotDest.ship->x + spotDest.ship->w) - (ship.x + ship.w / 2.f)) * 180.0f / M_PI;
+            angle = atan2((ships[spotDest.id_ship].y + ships[spotDest.id_ship].h / 2.f) - (currentShip.y + currentShip.h / 2.f), (ships[spotDest.id_ship].x + ships[spotDest.id_ship].w) - (currentShip.x + currentShip.w / 2.f)) * 180.0f / M_PI;
             break;
         case SPOT_POINT:
-            angle = atan2(spotDest.point.y - (ship.y + ship.h / 2.f), spotDest.point.x - (ship.x + ship.w / 2.f)) * 180.0f / M_PI;
+            angle = atan2(spotDest.point.y - (currentShip.y + currentShip.h / 2.f), spotDest.point.x - (currentShip.x + currentShip.w / 2.f)) * 180.0f / M_PI;
             break;
         default:
             angle = 0;
@@ -405,11 +394,11 @@ void renderShipImage(SDL_Texture *textureShip, Ship ship, SDL_Point ShipOnScreen
     }
 
     // Ajuste l'angle en fonction du sens de deplacement
-    angle +=(ship.state == MOVING_TO_BASE || ship.state == MOVING_TO_TARGET) ? 90 : -90;
+    angle +=(currentShip.state == MOVING_TO_BASE || currentShip.state == MOVING_TO_TARGET) ? 90 : -90;
 
     // Creation des variables necessaires a l'affichage
-    SDL_Rect srcRect = {ship.frameIndex * 64, 0, 64, 64};  // Frame actuelle sur le sprite sheet
-    SDL_Rect destRect = {ShipOnScreen.x, ShipOnScreen.y, ship.w * getCameraScale(), ship.h * getCameraScale()};  // Position et taille affichee
+    SDL_Rect srcRect = {currentShip.frameIndex * 64, 0, 64, 64};  // Frame actuelle sur le sprite sheet
+    SDL_Rect destRect = {ShipOnScreen.x, ShipOnScreen.y, currentShip.w * getCameraScale(), currentShip.h * getCameraScale()};  // Position et taille affichee
     SDL_Point center = {destRect.w / 2, destRect.h / 2};  // Definition du point de rotation (au centre du sprite)
 
     // Dessin des fusees avec rotation
@@ -450,11 +439,6 @@ void renderShipBars(Ship ship, SDL_Point ShipOnScreen) {
 }
 
 void destroyShips(Ship *ships, int shipCount) {
-    for (int i = 0; i < shipCount; i++) {
-        if (ships[i].shiptype == TRANSPORTER) {
-            free(ships[i].cargo.compartmentsList);
-        }
-    }
     free(ships);
 }
 
