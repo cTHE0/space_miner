@@ -29,7 +29,7 @@ void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **soun
     while (SDL_PollEvent(&event)) {
         switch (event.type) {
             case SDL_QUIT:
-                *gameState = QUIT;
+                setWindowType(PAUSE_WINDOW);
                 break;
                 
             case SDL_MOUSEWHEEL:
