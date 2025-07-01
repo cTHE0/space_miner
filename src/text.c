@@ -130,7 +130,13 @@ SDL_Texture **loadTextTextures(TTF_Font **fonts) {  // ATTENTION: ne pas oublier
                                             {"Voidor mine", BLACK, fonts[0]},
                                             {"Factory", BLACK, fonts[0]},
                                             {"Tower defence", BLACK, fonts[0]},
-                                            {"Build", BLACK, fonts[0]}
+                                            {"Build", BLACK, fonts[0]},
+                                            {"Back to game", BLACK, fonts[0]},
+                                            {"Advancements", BLACK, fonts[0]},
+                                            {"Settings", BLACK, fonts[0]},
+                                            {"Save and quit", BLACK, fonts[0]},
+                                            {"Report bugs", BLACK, fonts[0]},
+                                            {"Statistics", BLACK, fonts[0]}
                                            };
 
     for (int i = 0; i < CST_TEXT_NUMBER; i++) {

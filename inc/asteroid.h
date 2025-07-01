@@ -8,6 +8,6 @@
 void initAsteroids(Planet *planets, int planetCount);
 void updateAsteroids(Planet *planets, int planetCount);
 void displayAsteroid(SDL_Texture ***imageTextures);
-void freeAsteroid(void);
+void destroyAsteroids(void);
 
 #endif

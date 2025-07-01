@@ -1,8 +1,12 @@
 #include "landing_page.h"
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
 #include "config.h"
 #include "renderer.h"
+#include "camera.h"
+#include "asteroid.h"
+#include "tile.h"
 
 
 static int bg_button_a_afficher = 0;
@@ -21,7 +25,7 @@ void initLandingPageRects(void) {
 }
 
 
-void handleMenuEvents(GameState *state) {   // Gere les evenements du menu
+void handleMenuEvents(Mix_Chunk **sounds, GameState *gameState, short *gameBegun, Ship **ships, int shipCount, Planet **planets, int planetCount) {   // Gere les evenements du menu
     SDL_Event event;
 
     while (SDL_PollEvent(&event)) {
@@ -32,20 +36,20 @@ void handleMenuEvents(GameState *state) {   // Gere les evenements du menu
         switch (event.type) {
 
             case SDL_QUIT:       // Quitter depuis le menu
-                *state = QUIT;
+                *gameState = QUIT;
                 break;
 
             case SDL_KEYDOWN:
                 switch (event.key.keysym.sym) {
                     case SDLK_ESCAPE:      // Quitter depuis le menu
-                        *state = QUIT;
+                        *gameState = QUIT;
                         break;
                     case SDLK_TAB:
                         bg_button_a_afficher = bg_button_a_afficher % 3 + 1;
                         break;
                     case SDLK_RETURN:
                         if (bg_button_a_afficher == 1 || bg_button_a_afficher == 2){
-                            *state = GAME;
+                            *gameState = GAME;
                         }
                         break;
                     default:
@@ -71,7 +75,7 @@ void handleMenuEvents(GameState *state) {   // Gere les evenements du menu
                     switch (bg_button_a_afficher) {
                         case 1:
                         case 2:
-                            *state = GAME;
+                            *gameState = GAME;
                             break;
                         default:
                             break;
@@ -82,6 +86,17 @@ void handleMenuEvents(GameState *state) {   // Gere les evenements du menu
             default:
                 break;
         }
+    }
+
+    // La partie s'est-elle lancee ?
+    if (*gameState == GAME) {
+        *gameBegun = 1;
+        initPlanets(planets, planetCount);
+        initShips(ships, shipCount, *planets);
+        initCamera(*planets);
+        initAsteroids(*planets, planetCount);
+        initTiles();
+        Mix_PlayChannel(0, sounds[0], -1);
     }
 }
 

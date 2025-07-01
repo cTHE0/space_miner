@@ -56,38 +56,28 @@ int main(void) {
     int frameCount = 0;
 
     // Lancement de Void Reign
-    GameState state = LANDING_PAGE;
+    GameState gameState = LANDING_PAGE;
 
-    while (state != QUIT) {
+    while (gameState != QUIT) {
         frameCount++;
         toLimitFPS = SDL_GetTicks();
 
-        switch (state) {
+        switch (gameState) {
             case LANDING_PAGE:
-                handleMenuEvents(&state);
+                handleMenuEvents(sounds, &gameState, &gameBegun, &ships, shipCount, &planets, planetCount);
                 updateFrameIndex();
                 displayMenu(imageTextures, textTextures);
-
-                if (state == GAME) {
-                    gameBegun = 1;
-                    initPlanets(&planets, planetCount);
-                    initShips(&ships, shipCount, planets);
-                    initCamera(planets);
-                    initAsteroids(planets, planetCount);
-                    initTiles();
-                    Mix_PlayChannel(0, sounds[0], -1);
-                }
                 break;
             
             case GAME:
                 initRects(textTextures);  // A SUPPRIMER, SEULEMENT POUR LE DEV
-                handleEvents(textTextures, fonts, sounds, &state, ships, shipCount, planets, planetCount);
+                handleEvents(textTextures, fonts, sounds, &gameState, ships, shipCount, planets, planetCount);
                 updateGame(&ships, &shipCount, planets, planetCount);
                 displayGame(imageTextures, textTextures, ships, shipCount, planets, planetCount);
                 break;
             
             default:
-                state = QUIT;
+                gameState = QUIT;
                 break;
         }
 
@@ -108,13 +98,13 @@ int main(void) {
     if (gameBegun) {
         destroyShips(ships, shipCount);
         destroyPlanets(planets);
-        freeAsteroid();
+        destroyAsteroids();
         destroyTiles();
     }
 
     // POUR LE DEV 
     printf("(SDL_Rect){SCREEN_WIDTH * %.4f, SCREEN_HEIGHT * %.4f, SCREEN_WIDTH * %.4f, SCREEN_WIDTH * %.4f};\n", getEmp().x, getEmp().y, getEmp().w, getEmp().h);
-    
+
     destroyImageTextures(imageTextures);
     destroyTextTextures(textTextures);
     destroyFonts(fonts);

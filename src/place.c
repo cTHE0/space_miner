@@ -28,27 +28,13 @@ int getScaleDev(void) {
 }
 
 void setScaleDev(void) {
-    scaleDev *= pow(10, sign);
-    
-    /*  AFUEEEERRRRRA
-    
-    if (scaleDev <= 1000 && sign == 1) {
+    if (scaleDev <= 0.01 && sign == 1) {
         scaleDev *= 10;
-
-        emplacement.x = emplacement.x * 10;
-        emplacement.y = emplacement.y * 10;
-        emplacement.w = emplacement.w * 10;
-        emplacement.h = emplacement.h * 10;
-    } else if (scaleDev >= 100 && sign == -1) {
+    } else if (scaleDev >= 0.0001 && sign == -1) {
         scaleDev /= 10;
+    }
 
-        emplacement.x = emplacement.x / 10;
-        emplacement.y = emplacement.y / 10;
-        emplacement.w = emplacement.w / 10;
-        emplacement.h = emplacement.h / 10;
-    }*/
-
-    printf("New scale: %f\n", scaleDev);
+    printf("New scale: %.4f\n", scaleDev);
 
 }
 

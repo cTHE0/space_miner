@@ -6,8 +6,9 @@
 #include <SDL2/SDL_mixer.h>
 #include "planet.h"
 #include "ship.h"
+#include "landing_page.h"
 
-typedef enum {NO_WINDOW, SHIP_WINDOW, PLANET_WINDOW, DEFENDER_WINDOW, ENNEMY_WINDOW, BASIC_SHIP_WINDOW, SIDE_BAR_WINDOW} WindowType;
+typedef enum {NO_WINDOW, SHIP_WINDOW, PLANET_WINDOW, DEFENDER_WINDOW, ENNEMY_WINDOW, BASIC_SHIP_WINDOW, SIDE_BAR_WINDOW, PAUSE_WINDOW} WindowType;
 
 typedef struct {
     WindowType type;  // Type de fenetre affiche (d'une fusee, planete, attaquant, etc)
@@ -16,7 +17,7 @@ typedef struct {
 
 void displayWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships, Planet *planets);
 
-void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, SDL_Point mouse, Ship *ships, int shipCount, Planet *planets, int planetCount);
+void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, GameState *gameState, SDL_Point mouse, Ship *ships, int shipCount, Planet *planets, int planetCount);
 
 int whichShipIsClicked(Ship *ships, int shipCount, SDL_Point mouse);
 int clickOnShip(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, int shipCount, SDL_Point mouse);

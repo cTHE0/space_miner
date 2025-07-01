@@ -13,12 +13,14 @@
 #include "planet_window.h"
 #include "info_view.h"
 #include "side_bar_window.h"
+#include "pause_window.h"
 #include "tools.h"
 #include "event.h"
 #include "assets_gestion.h"
 #include "asteroid.h"
 #include "tile.h"
 #include "enemy.h"
+#include "landing_page.h"
 
 
 static int selectionMode = 0;
@@ -52,7 +54,7 @@ void setWindowId(int newId) {
     windowInfo.id = newId;
 }
 
-void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, SDL_Point mouse, Ship *ships, int shipCount, Planet *planets, int planetCount) {
+void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, GameState *gameState, SDL_Point mouse, Ship *ships, int shipCount, Planet *planets, int planetCount) {
     switch (getWindowType()) {
 
         case SIDE_BAR_WINDOW:
@@ -89,6 +91,10 @@ void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
 
         case PLANET_WINDOW:
             planetWindowGestion(textTextures, fonts, sounds, planets, mouse);
+            break;
+
+        case PAUSE_WINDOW:
+            pauseWindowGestion(textTextures, fonts, sounds, gameState, mouse, ships, shipCount, planets, planetCount);
             break;
 
         default:
@@ -167,6 +173,10 @@ void displayWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Shi
 
         case SIDE_BAR_WINDOW:
             displaySideBar();
+            break;
+
+        case PAUSE_WINDOW:
+            displayPauseWindow(imageTextures, textTextures);
             break;
             
         default:

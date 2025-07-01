@@ -2,9 +2,12 @@
 #define LANDING_PAGE_H
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
+#include "ship.h"
+#include "planet.h"
 
-// etats possibles du jeu
-typedef enum {
+
+typedef enum {  // etats possibles du jeu
     LANDING_PAGE,
     GAME,
     QUIT
@@ -17,14 +20,13 @@ typedef struct {
     Uint32 lastFrameTime2;   // Date au dernier changement de frame du spritesheet des asteroide du menu
 } lpFrameControler;
 
-// Affiche le menu principal i.e: landing page
+
 void initLandingPageRects(void);
 
 void displayMenu(SDL_Texture ***imageTextures, SDL_Texture **textTextures);
 
 void updateFrameIndex(void);
 
-// Gere les evenements du menu
-void handleMenuEvents(GameState *state);
+void handleMenuEvents(Mix_Chunk **sounds, GameState *gameState, short *gameBegun, Ship **ships, int shipCount, Planet **planets, int planetCount);
 
 #endif

@@ -366,7 +366,7 @@ void isShipOnPlanet(Ship *ship) {
     }
 }
 
-void renderShips(SDL_Texture ***imageTextures, Ship *ships, int shipCount) {
+void displayShips(SDL_Texture ***imageTextures, Ship *ships, int shipCount) {
     for (int i = 0; i < shipCount; i++) {
         // Calcul des coordonnees a l'ecran, du point en haut a gauche de la fusee
         SDL_Point ShipOnScreen = (SDL_Point){(ships[i].x - getCameraRect().x - SCREEN_WIDTH / 2.f) * getCameraScale() + SCREEN_WIDTH / 2.f,

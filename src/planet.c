@@ -100,7 +100,7 @@ void updatePlanets(Planet *planets, Ship *ships, int shipCount, int planetCount)
     }
 }
 
-void renderPlanets(SDL_Texture ***imageTextures, Planet *planets, int planetCount) {
+void displayPlanets(SDL_Texture ***imageTextures, Planet *planets, int planetCount) {
     for (int i = 0; i < planetCount; i++) {
         //(screenX, screenY) = coordonnees sur l'ecran physique, du point en haut a gauche du rect de la planete
         float screenX = (planets[i].x - getCameraRect().x - planets[i].radius - SCREEN_WIDTH / 2.f) * getCameraScale() + SCREEN_WIDTH / 2.f;  // (planets[i].x, planets[i].y) = coordonnees sur la map

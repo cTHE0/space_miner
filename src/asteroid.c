@@ -75,6 +75,6 @@ void displayAsteroid(SDL_Texture ***imageTextures) {
     }
 }
 
-void freeAsteroid(void) {
+void destroyAsteroids(void) {
     free(asteroids);
 }

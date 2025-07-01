@@ -10,6 +10,7 @@
 #include "planet_window.h"
 #include "basic_ship_window.h"
 #include "info_view.h"
+#include "pause_window.h"
 
 
 static int nbCategories;   // Initialisation
@@ -192,6 +193,7 @@ void initRects(SDL_Texture **textTextures) {
     initPlanetWindowRects(textTextures);
     initBasicShipWindowRects(textTextures);
     initInfoViewRects(textTextures);
+    initPauseWindowRects(textTextures);
 }
 
 void initSounds(Mix_Chunk ***sounds) {

@@ -7,7 +7,7 @@
 #include "tools.h"
 
 
-void renderMap(SDL_Texture ***imageTextures) {
+void displayMap(SDL_Texture ***imageTextures) {
     SDL_Rect destRect = {0, 0, AREA_SIZE * getCameraScale(), AREA_SIZE * getCameraScale()};
 
     if (getCameraScale() > LIMIT_UNZOOM) {

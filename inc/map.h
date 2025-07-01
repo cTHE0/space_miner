@@ -3,6 +3,6 @@
 
 #include <SDL2/SDL.h>
 
-void renderMap(SDL_Texture ***imageTextures);
+void displayMap(SDL_Texture ***imageTextures);
 
 #endif

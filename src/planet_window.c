@@ -424,7 +424,7 @@ void planetWindowContainerInfo(SDL_Texture ***imageTextures, SDL_Texture **textT
 
         // Afficher le bord du reservoir
         currentOreRect.w = planetFirstResourceRect.w;
-        SDL_DrawEdgeOfRect(currentOreRect, 3);
+        SDL_DrawEdgeOfRect(currentOreRect, 3, BLACK);
 
         // Pour afficher le prochain reservoir
         currentOreRect.y -= 1.05 * planetFirstResourceRect.h;
@@ -485,7 +485,7 @@ void planetWindowMineralAbundance(SDL_Texture ***imageTextures, SDL_Texture **te
         }
 
         // Afficher le bord du reservoir
-        SDL_DrawEdgeOfRect(currentOreRect, 3);
+        SDL_DrawEdgeOfRect(currentOreRect, 3, BLACK);
 
         // Pour afficher le prochain reservoir
         currentOreRect.y -= 1.4 * planetFirstResourceRect2.h;
@@ -514,13 +514,13 @@ void planetWindowManageBuilds(SDL_Texture ***imageTextures, SDL_Texture **textTe
             barRect.x = firstBarBuildRect.x + firstBuildImageRect.w * i * GapBetweenBuildX;
             barRect.y = firstBarBuildRect.y + firstBuildImageRect.h * j * GapBetweenBuildY;
             SDL_RenderFillRect(renderer, &barRect);
-            SDL_DrawEdgeOfRect(barRect, 2);
+            SDL_DrawEdgeOfRect(barRect, 2, BLACK);
 
             // Affiche l'image de l'objet
             imageRect.x = firstBuildImageRect.x + firstBuildImageRect.w * i * GapBetweenBuildX;
             imageRect.y = firstBuildImageRect.y + firstBuildImageRect.h * j * GapBetweenBuildY;
             SDL_RenderCopy(renderer, imageTextures[9][i + j * 4], NULL, &imageRect);
-            SDL_DrawEdgeOfRect(imageRect, 2);
+            SDL_DrawEdgeOfRect(imageRect, 2, BLACK);
 
             // Affiche le logo 'NEW'
             if (planet->builds[4 * j + i].level == 0) {
@@ -549,7 +549,7 @@ void planetWindowManageBuilds(SDL_Texture ***imageTextures, SDL_Texture **textTe
 
     edgeSelectedBuildRect.x = firstBuildRect.x + firstBuildImageRect.w * (currentBuildIndex % 4) * GapBetweenBuildX;
     edgeSelectedBuildRect.y = firstBuildRect.y + firstBuildImageRect.h * (currentBuildIndex / 4) * GapBetweenBuildY;
-    SDL_DrawEdgeOfRect(edgeSelectedBuildRect, 3);
+    SDL_DrawEdgeOfRect(edgeSelectedBuildRect, 3, BLACK);
 }
 
 void planetWindowOverviewBuild(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planet) {
@@ -557,13 +557,13 @@ void planetWindowOverviewBuild(SDL_Texture ***imageTextures, SDL_Texture **textT
     SDL_RenderCopy(renderer, textTextures[55], NULL, &category4TitleRect);
 
     // Afficher l'image du batiment
-    SDL_DrawEdgeOfRect(imageBuildRect, 3);
+    SDL_DrawEdgeOfRect(imageBuildRect, 3, BLACK);
     SDL_RenderCopy(renderer, imageTextures[9][currentBuildIndex], NULL, &imageBuildRect);
 
     // Affichage du fond de la barre d'amelioration
     SDL_SetRenderDrawColor(renderer, 125, 197, 46, 255);
     SDL_RenderFillRect(renderer, &upgradeBarRect);
-    SDL_DrawEdgeOfRect(upgradeBarRect, 3);
+    SDL_DrawEdgeOfRect(upgradeBarRect, 3, BLACK);
 
     // Afficher le texte dans la barre d'amelioration
     if (planet->builds[currentBuildIndex].level == 0) {

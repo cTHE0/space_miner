@@ -17,7 +17,7 @@
 #define INIT_PLANET_COUNT 200
 #define INIT_SHIP_COUNT 3
 #define ORE_TYPE_COUNT 5
-#define CST_TEXT_NUMBER 79
+#define CST_TEXT_NUMBER 85
 #define FONT_NUMBER 1
 #define SONGS_NUMBER 11
 #define BUILD_TYPE_COUNT 12
@@ -36,6 +36,7 @@
 #define LIMIT_UNZOOM 0.05
 #define SHIP_SPEED 10.f
 #define FPS 60
+#define NAME_BACKUP "backups/backup1"
 
 extern const uint32_t currentSeed;
 

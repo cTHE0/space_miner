@@ -214,7 +214,7 @@ void initShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship) {
     infoPerTankRect.h = textureHeight * windowRect.w * 0.00035;
 }
 
-void initShipWindowRects(SDL_Texture **textTextures) {  // Les rects sont initialises dans le main
+void initShipWindowRects(SDL_Texture **textTextures) {  // Les rects sont initialises dans assets_gestion.c
     int textureWidth, textureHeight;  // Permet de garder les proportions des textes
 
 
@@ -518,7 +518,7 @@ void ShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextur
     } else {
         SDL_RenderCopy(renderer, textTextures[43], NULL, &stopBoutonRect);
     }
-        SDL_DrawEdgeOfRect(edgeStopButtonRect, 5);
+        SDL_DrawEdgeOfRect(edgeStopButtonRect, 5, BLACK);
 
     // Affichage "OUT OF FUEL!"
     if (ships[getWindowId()].state == OUT_OF_FUEL) {
@@ -623,7 +623,7 @@ void ShipWindowTankManager(SDL_Texture ***imageTextures, SDL_Texture **textTextu
     SDL_RenderCopyEx(renderer, imageTextures[2][2], NULL, &changeTankManagerRight, 0, NULL, SDL_FLIP_HORIZONTAL);
 
     // Affichage bordure du choix de tank
-    SDL_DrawEdgeOfRect(edgeTankChoosenButtonRect, 5);
+    SDL_DrawEdgeOfRect(edgeTankChoosenButtonRect, 5, BLACK);
 
     // Affichage du flux de minerais
     SDL_RenderCopy(renderer, imageTextures[5][5], NULL, &flowInTankRightRect);
@@ -671,12 +671,12 @@ void ShipWindowShipCond(SDL_Texture ***imageTextures, SDL_Texture **textTextures
     SDL_RenderFillRect(renderer, &currentLifeShipRect);
 
     // Affiche le fond de la barre de vie
-    SDL_DrawEdgeOfRect(maxLifeShipRect, 3);
+    SDL_DrawEdgeOfRect(maxLifeShipRect, 3, BLACK);
 
     // Affiche le bouton de reparation du vaisseau
     SDL_SetRenderDrawColor(renderer, 255, 232, 207, 255);
     SDL_RenderFillRect(renderer, &repareShipButtonRect);
-    SDL_DrawEdgeOfRect(repareShipButtonRect, 3);
+    SDL_DrawEdgeOfRect(repareShipButtonRect, 3, BLACK);
     SDL_RenderCopy(renderer, textTextures[65], NULL, &repareShipButtonRect2);
 
     // Affichage du pourcentage de sante de la fusee
@@ -698,7 +698,7 @@ void ShipWindowShipModel(SDL_Texture ***imageTextures, SDL_Texture **textTexture
     // Affiche le bouton d'amelioration du vaisseau
     SDL_SetRenderDrawColor(renderer, 125, 197, 46, 255);
     SDL_RenderFillRect(renderer, &upgradeShipButtonRect);
-    SDL_DrawEdgeOfRect(upgradeShipButtonRect, 3);
+    SDL_DrawEdgeOfRect(upgradeShipButtonRect, 3, BLACK);
     SDL_RenderCopy(renderer, textTextures[63], NULL, &upgradeShipButtonRect2);
 
     // Afficher le logo du bouton d'amelioration
@@ -757,7 +757,7 @@ void ShipWindowTankCompo(SDL_Texture ***imageTextures, SDL_Texture **textTexture
 
         // Afficher le bord du tank
         currentTankRect.w = shipFirstCompartmentRect.w;
-        SDL_DrawEdgeOfRect(currentTankRect, 3);
+        SDL_DrawEdgeOfRect(currentTankRect, 3, BLACK);
 
         // Afficher le numero du tank
         SDL_RenderCopy(renderer, textTextures[48 + i], NULL, &currentNumberRect);
@@ -783,7 +783,7 @@ void ShipWindowTankCompo(SDL_Texture ***imageTextures, SDL_Texture **textTexture
     SDL_RenderCopy(renderer, textTextures[15 + currentTankIndex], NULL, &infoPerTankRect);
 
     // Affichage bordure du choix de tank
-    SDL_DrawEdgeOfRect(edgeTankChoosenButtonRect2, 5);
+    SDL_DrawEdgeOfRect(edgeTankChoosenButtonRect2, 5, BLACK);
 
     // Affiche la description du tank 
     SDL_RenderCopy(renderer, textTextures[35], NULL, &tankInfoRect);
@@ -791,7 +791,7 @@ void ShipWindowTankCompo(SDL_Texture ***imageTextures, SDL_Texture **textTexture
     // Affiche le bouton d'amelioration du tank
     SDL_SetRenderDrawColor(renderer, 125, 197, 46, 255);
     SDL_RenderFillRect(renderer, &upgradeButtonTankRect);
-    SDL_DrawEdgeOfRect(upgradeButtonTankRect, 3);
+    SDL_DrawEdgeOfRect(upgradeButtonTankRect, 3, BLACK);
     SDL_RenderCopy(renderer, textTextures[63], NULL, &upgradeButtonTankRect2);
 
     // Afficher le logo du bouton d'amelioration du tank

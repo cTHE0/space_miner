@@ -279,7 +279,7 @@ void basicShipWindowInfos(SDL_Texture ***imageTextures, SDL_Texture ** textTextu
 
         // Afficher le bord du tank
         currentTankRect.w = shipFirstCompartmentRect.w;
-        SDL_DrawEdgeOfRect(currentTankRect, 3);
+        SDL_DrawEdgeOfRect(currentTankRect, 3, BLACK);
 
         // Afficher le numero du tank
         SDL_RenderCopy(renderer, textTextures[48 + i], NULL, &currentNumberRect);

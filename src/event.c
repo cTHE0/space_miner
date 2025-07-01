@@ -20,7 +20,7 @@ SDL_Point getMouseCoordinates(void) {
     return mouse;
 }
 
-void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, GameState *state, Ship *ships, int shipCount, Planet *planets, int planetCount) {
+void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, GameState *gameState, Ship *ships, int shipCount, Planet *planets, int planetCount) {
     static SDL_Point lastMouse;
     static int dragging_camera = 0;
     static int click = 0;
@@ -29,7 +29,7 @@ void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **soun
     while (SDL_PollEvent(&event)) {
         switch (event.type) {
             case SDL_QUIT:
-                *state = QUIT;
+                *gameState = QUIT;
                 break;
                 
             case SDL_MOUSEWHEEL:
@@ -47,7 +47,7 @@ void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **soun
             case SDL_MOUSEBUTTONUP:
                 if (event.button.button == SDL_BUTTON_LEFT) {
                     if (click) { // Ou a-t-on lache le clic gauche ?
-                        openWindowGestion(textTextures, fonts, sounds, lastMouse, ships, shipCount, planets, planetCount);
+                        openWindowGestion(textTextures, fonts, sounds, gameState, lastMouse, ships, shipCount, planets, planetCount);
                     }
                     dragging_camera = 0;
                     click = 0;
@@ -77,7 +77,7 @@ void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **soun
                         if (getWindowType() != NO_WINDOW) {
                             setWindowType(NO_WINDOW);
                         } else {
-                            *state = QUIT;
+                            setWindowType(PAUSE_WINDOW);
                         }
                         click = 0;
                         break;

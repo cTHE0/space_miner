@@ -230,8 +230,8 @@ void plotPath(SDL_Point origin, SDL_Point destination, int dashLength, int gapLe
     }  
 }
 
-void SDL_DrawEdgeOfRect(SDL_Rect rect, int lineWidth) {  // Le trait est a l'interieur du rect
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+void SDL_DrawEdgeOfRect(SDL_Rect rect, int lineWidth, SDL_Color color) {  // Le trait est a l'interieur du rect
+    SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
 
     for (int i = 0; i < lineWidth; i++) {
         SDL_RenderDrawRect(renderer, &rect);
