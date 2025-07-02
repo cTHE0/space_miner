@@ -181,7 +181,7 @@ void updateShipTanks(Ship *ship, Planet *planets, Uint32 currentTime) {  // Gere
         return;
     }
 
-    ship->lastRefreshFilling += TANKS_UPDATE_INTERVAL;
+    ship->lastRefreshFilling = currentTime;
     if ((ship->state == MOVING_TO_TARGET || ship->state == MOVING_TO_BASE)) {  // Cas ou la fusee est en mouvement
         fuelConsumption(ship);
     } else if (ship->state == WAITING_ON_BASE || ship->state == WAITING_ON_TARGET) {

@@ -178,7 +178,6 @@ void initShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship) {
     percentShipHealthRect = (SDL_Rect){SCREEN_WIDTH * 0.747, SCREEN_HEIGHT * 0.245, SCREEN_WIDTH * textureWidth * 0.0002, SCREEN_WIDTH * textureHeight * 0.0002};
     
     // Mise a jour des donnees de la fusee (description de gauche)
-
     strcpy(descriptionText, "");
     sprintf(descriptionText, "Model               Basic Rocket\nProduction No %d\nLevel                %d\nMove speed     %.2f km/s",
             getWindowId() + 1,
