@@ -37,7 +37,7 @@ void updateBuilds(Planet *planets, int planetCount) {
         return;
     }
 
-    lastBuildUpdateTime += REFRESH_TIME_BUILDS;
+    lastBuildUpdateTime = SDL_GetTicks();
 
     for (int i = 0; i < planetCount; i++) {
         for (int j = 0; j < BUILD_TYPE_COUNT; j++) {

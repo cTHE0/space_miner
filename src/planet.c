@@ -69,7 +69,7 @@ void updatePlanets(Planet *planets, Ship *ships, int shipCount, int planetCount)
         return;
     }
 
-    lastPlanetUpdateTime += WAIT_TIME_PLANET;
+    lastPlanetUpdateTime = SDL_GetTicks();
 
     // Mise a jour des rotations des planètes
     for (int i = 0; i < planetCount; i++) {

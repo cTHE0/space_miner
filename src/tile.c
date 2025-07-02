@@ -69,7 +69,7 @@ void updateTiles(Ship *ships, int shipCount) {
         return;
     }
 
-    lastTileUpdateTime += REFRESH_TIME_TILE;
+    lastTileUpdateTime = SDL_GetTicks();
 
     int i, j;  // Numero de la tuile ou est la fusee
 

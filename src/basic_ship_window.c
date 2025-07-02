@@ -36,8 +36,7 @@ static SDL_Rect bgRect,
                 shipFirstCompartmentRect,
                 shipFirstCompartmentLogoRect,
                 shipFirstCompartmentNumberRect,
-                logoBaseRect,
-                logoTargetRect;
+                logoBaseTargetRect;
 
 static SDL_Point centerBaseCoord,
                  centerTargetCoord;
@@ -165,9 +164,6 @@ void initBasicShipWindowRects(SDL_Texture **textTextures) {
     shipFirstCompartmentLogoRect = (SDL_Rect){SCREEN_WIDTH * 0.76600, SCREEN_HEIGHT * 0.7940, SCREEN_WIDTH * 0.0200, SCREEN_WIDTH * 0.0200};
 
     shipFirstCompartmentNumberRect = (SDL_Rect){SCREEN_WIDTH * 0.8070, SCREEN_HEIGHT * 0.7870, SCREEN_WIDTH * 0.0200, SCREEN_WIDTH * 0.0280};
-
-    logoBaseRect = (SDL_Rect){0, 0, SCREEN_WIDTH * 0.0700, SCREEN_WIDTH * 0.0700};
-    logoTargetRect = (SDL_Rect){0, 0, SCREEN_WIDTH * 0.0700, SCREEN_WIDTH * 0.0700};
 }
 
 void displayBasicShipWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
@@ -217,18 +213,25 @@ void basicShipWindowNarrowBaseTarget(SDL_Texture ***imageTextures) {
     plotPath(centerBaseCoordScreen, centerTargetCoordScreen, 10, 5, WHITE);
 
     // Affichage du logo home
-    logoBaseRect.w = 0.300 * SCREEN_WIDTH * getCameraScale();
-    logoBaseRect.h = 0.300 * SCREEN_WIDTH * getCameraScale();
-    logoBaseRect.x = centerBaseCoordScreen.x - logoBaseRect.w / 2;
-    logoBaseRect.y = centerBaseCoordScreen.y - logoBaseRect.w / 2;
-    SDL_RenderCopy(renderer, imageTextures[5][9], NULL, &logoBaseRect);
+    logoBaseTargetRect.w = 0.300 * SCREEN_WIDTH * getCameraScale();
+    logoBaseTargetRect.h = 0.300 * SCREEN_WIDTH * getCameraScale();
+    logoBaseTargetRect.x = centerBaseCoordScreen.x - logoBaseTargetRect.w / 2;
+    logoBaseTargetRect.y = centerBaseCoordScreen.y - logoBaseTargetRect.w / 2;
+    SDL_RenderCopy(renderer, imageTextures[5][9], NULL, &logoBaseTargetRect);
 
     // Affichage du logo target
-    logoTargetRect.w = 0.300 * SCREEN_WIDTH * getCameraScale();
-    logoTargetRect.h = 0.300 * SCREEN_WIDTH * getCameraScale();
-    logoTargetRect.x = centerTargetCoordScreen.x - logoTargetRect.w / 2;
-    logoTargetRect.y = centerTargetCoordScreen.y - logoTargetRect.w / 2;
-    SDL_RenderCopy(renderer, imageTextures[5][8], NULL, &logoTargetRect);
+    logoBaseTargetRect.x = centerTargetCoordScreen.x - logoBaseTargetRect.w / 2;
+    logoBaseTargetRect.y = centerTargetCoordScreen.y - logoBaseTargetRect.w / 2;
+    SDL_RenderCopy(renderer, imageTextures[5][8], NULL, &logoBaseTargetRect);
+
+    // Afficher un logo 'target'/'home' lors de changement de destination
+    logoBaseTargetRect.x = getMouseCoordinates().x - logoBaseTargetRect.w / 2;
+    logoBaseTargetRect.y = getMouseCoordinates().y - logoBaseTargetRect.w / 2;
+    if (buttonSelected == BASE_BUTTON) {
+        SDL_RenderCopy(renderer, imageTextures[5][9], NULL, &logoBaseTargetRect);
+    } else if (buttonSelected == TARGET_BUTTON) {
+        SDL_RenderCopy(renderer, imageTextures[5][8], NULL, &logoBaseTargetRect);
+    }
 }
 
 void basicShipWindowInfos(SDL_Texture ***imageTextures, SDL_Texture ** textTextures, Ship *ships) {

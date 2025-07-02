@@ -6,14 +6,15 @@
 static Uint32 lastEnemyGenerationTime = 0;
 
 void updateEnemies(Ship **ships, int *shipCount) {
-    Uint32 now = SDL_GetTicks();
-    if (now - lastEnemyGenerationTime > ENEMY_GENERATION_PERIOD){
-        lastEnemyGenerationTime = now;
-        int nb_ships = *shipCount;
-        for (int i = 0; i < nb_ships; i++) {
-            if ((*ships)[i].shiptype != ENEMY) {
-                generateEnemy((*ships)[i], ships, shipCount);
-            }
+    if (SDL_GetTicks() - lastEnemyGenerationTime < ENEMY_GENERATION_PERIOD) {
+        return;
+    }
+
+    lastEnemyGenerationTime = SDL_GetTicks();
+    int nb_ships = *shipCount;
+    for (int i = 0; i < nb_ships; i++) {
+        if ((*ships)[i].shiptype != ENEMY) {
+            generateEnemy((*ships)[i], ships, shipCount);
         }
     }
 }
