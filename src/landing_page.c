@@ -77,7 +77,6 @@ void handleMenuEvents(Mix_Chunk **sounds, GameState *gameState, short *gameBegun
                             chargingGame(ships, shipCount, planets, planetCount);
                             initCamera(*planets);
                             initAsteroids(*planets, *planetCount);
-                            initTiles();
                             *gameState = GAME;
                             break;
                         case 2:
@@ -190,7 +189,7 @@ void chargingGame(Ship **ships, int *shipCount, Planet **planets, int *planetCou
         return;
     }
 
-    // Lire le nombre de fusees stockés dans le fichier
+    // Lire le nombre de fusees stockees dans le fichier
     size_t itemsRead = fread(shipCount, sizeof(int), 1, backup);
     if (itemsRead != 1) {
         printf("Error reading the backup file (downloading shipCount).\n");
@@ -198,12 +197,16 @@ void chargingGame(Ship **ships, int *shipCount, Planet **planets, int *planetCou
         return;
     }
 
+    // Lire le nombre de planetes stockees
     itemsRead = fread(planetCount, sizeof(int), 1, backup);
     if (itemsRead != 1) {
         printf("Error reading the backup file (downloading planetCount).\n");
         fclose(backup);
         return;
     }
+
+    // Initialiser la variable static 'byteCount' de tile.c
+    setByteCount();
 
     // Allouer dynamiquement la mémoire pour la liste des fusees et des planetes
     *ships = malloc(sizeof(Ship) * (*shipCount));
@@ -214,7 +217,16 @@ void chargingGame(Ship **ships, int *shipCount, Planet **planets, int *planetCou
         return;
     }
 
-    // Charger le tableau de fusees puis de planetes depuis le fichier
+    // Allouer dynamiquement la mémoire pour la liste des tuiles
+    uint8_t **tilesMatrixMalloc = getTilesMatrix();
+    *tilesMatrixMalloc = malloc(sizeof(uint8_t) * *getByteCount());
+    if (!*tilesMatrixMalloc) {
+        printf("Erreur d'allocation de mémoire pour les tuiles.\n");
+        fclose(backup);
+        return;
+    }
+
+    // Charger le tableau de fusees
     itemsRead = fread(*ships, sizeof(Ship), *shipCount, backup);
     if (itemsRead != (size_t)(*shipCount)) {
         printf("Error reading the backup file (downloading ships).\n");
@@ -222,9 +234,18 @@ void chargingGame(Ship **ships, int *shipCount, Planet **planets, int *planetCou
         return;
     }
 
+    // Charger le tableau de planetes
     itemsRead = fread(*planets, sizeof(Planet), *planetCount, backup);
     if (itemsRead != (size_t)(*planetCount)) {
         printf("Error reading the backup file (downloading planets).\n");
+        fclose(backup);
+        return;
+    }
+
+    // Charger le tableau de tuiles
+    itemsRead = fread(*tilesMatrixMalloc, sizeof(uint8_t), *getByteCount(), backup);
+    if (itemsRead != (size_t)(*getByteCount())) {
+        printf("Error reading the backup file (downloading tiles).\n");
         fclose(backup);
         return;
     }

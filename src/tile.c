@@ -9,10 +9,11 @@
 
 static uint8_t *tilesMatrix;  // Chaque bit représente un booléen
 static Uint32 lastTileUpdateTime = 0;
+static int byteCount;  // Nombre d'octets necessaires pour allouer le tableau tilesMatrix
 
 void initTiles(void) {
-    int bitCount = (NUMBER_OF_HEXAGON_PER_WIDTH + 1) * (NUMBER_OF_HEXAGON_PER_HEIGHT + 1);
-    int byteCount = (bitCount + 7) / 8;  // arrondi vers le haut
+    // Initialise la variable static 'byteCount'
+    setByteCount();
 
     // Allocation du tableau de tuiles
     tilesMatrix = malloc(byteCount * sizeof(uint8_t));
@@ -24,6 +25,20 @@ void initTiles(void) {
         }
     }
 }
+
+uint8_t **getTilesMatrix(void) {
+    return &tilesMatrix;
+}
+
+int *getByteCount(void) {
+    return &byteCount;
+}
+
+void setByteCount(void) {
+    int bitCount = (NUMBER_OF_HEXAGON_PER_WIDTH + 1) * (NUMBER_OF_HEXAGON_PER_HEIGHT + 1);
+    byteCount = (bitCount + 7) / 8;  // Arrondi vers le haut
+}
+
 
 void displayTiles(SDL_Texture ***imageTextures) {
     if (getCameraScale() < LIMIT_UNZOOM) {  // Affichage des tuiles ssi l'on n'a pas trop dezoome

@@ -13,6 +13,10 @@ void updateTiles(Ship *ships, int shipCount);
 void setBit(int i, int j, int value);
 int getBit(int i, int j);
 
+int *getByteCount(void);
+void setByteCount(void);
+uint8_t **getTilesMatrix(void);
+
 void destroyTiles(void);
 
 

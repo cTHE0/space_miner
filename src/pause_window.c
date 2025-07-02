@@ -10,6 +10,7 @@
 #include "window.h"
 #include "planet.h"
 #include "ship.h"
+#include "tile.h"
 
 
 static SDL_Rect windowRect,
@@ -124,13 +125,15 @@ void saveGame(Ship *ships, int shipCount, Planet *planets, int planetCount) {
         return;
     }
 
-    // Sauvegarder le nombre de fusees/planetes au début du fichier
+    // Sauvegarder le nombre de fusees/planetes/tuiles au début du fichier
     fwrite(&shipCount, sizeof(int), 1, backup);
     fwrite(&planetCount, sizeof(int), 1, backup);
 
-    // Sauvegarder chaque fusee puis planete dans le fichier
+    // Sauvegarder chaque fusee/planete/tuile dans le fichier
     fwrite(ships, sizeof(Ship), shipCount, backup);
     fwrite(planets, sizeof(Planet), planetCount, backup);
+    fwrite(*getTilesMatrix(), sizeof(uint8_t), *getByteCount(), backup);
 
+    // Fermeture du fichier de sauvegarde
     fclose(backup);
 }
