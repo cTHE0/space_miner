@@ -216,7 +216,7 @@ void OreFillingOrEmptying(Ship *ship, Planet *planets) {
         (ship->state == WAITING_ON_TARGET && ship->target.type != SPOT_PLANET)) {  // Pas de transfert de ressource ailleurs que sur une planet (actuellement !)
         return;
     }
-    printf("aaa:%p\n",ship);
+    
     int modified = 0;  // Verifie s'il s'est passe qch (1:oui, 0:non)
     Cargo *cargo = &ship->cargo;
     Planet *landingPlanet = (ship->state == WAITING_ON_BASE) ? &planets[ship->base.id_planet] : &planets[ship->target.id_planet];
@@ -240,7 +240,6 @@ void OreFillingOrEmptying(Ship *ship, Planet *planets) {
                 if (landingPlanet->builds[cargo->compartmentsList[i].flowBase_in].tank.currentCapacity < 0.f) {
                     landingPlanet->builds[cargo->compartmentsList[i].flowBase_in].tank.currentCapacity = 0.f;
                 }
-    printf("zz:compart %d\n",i);
                 modified = 1;
                 break;
             }
@@ -262,7 +261,6 @@ void OreFillingOrEmptying(Ship *ship, Planet *planets) {
                 if (landingPlanet->builds[cargo->compartmentsList[i].flowBase_out].tank.currentCapacity > landingPlanet->builds[cargo->compartmentsList[i].flowBase_out].tank.maxCapacity) {
                     landingPlanet->builds[cargo->compartmentsList[i].flowBase_out].tank.currentCapacity = landingPlanet->builds[cargo->compartmentsList[i].flowBase_out].tank.maxCapacity;
                 }
-    printf("eee\n");
                 modified = 1;
                 break;
             }
@@ -293,7 +291,6 @@ void OreFillingOrEmptying(Ship *ship, Planet *planets) {
                 if (landingPlanet->builds[cargo->compartmentsList[i].flowTarget_in].tank.currentCapacity < 0.f) {
                     landingPlanet->builds[cargo->compartmentsList[i].flowTarget_in].tank.currentCapacity = 0.f;
                 }
-    printf("rrr\n");
                 modified = 1;
                 break;
             }
@@ -315,7 +312,6 @@ void OreFillingOrEmptying(Ship *ship, Planet *planets) {
                 if (landingPlanet->builds[cargo->compartmentsList[i].flowTarget_out].tank.currentCapacity > landingPlanet->builds[cargo->compartmentsList[i].flowTarget_out].tank.maxCapacity) {
                     landingPlanet->builds[cargo->compartmentsList[i].flowTarget_out].tank.currentCapacity = landingPlanet->builds[cargo->compartmentsList[i].flowTarget_out].tank.maxCapacity;
                 }
-    printf("ttt\n");
                 modified = 1;
                 break;
             }
@@ -329,7 +325,6 @@ void OreFillingOrEmptying(Ship *ship, Planet *planets) {
         }
     }
 
-    printf("bbb:%d,%d,%d\n",modified,haveFuel(ship),fuelInShip(ship));
     // Si les transferts de matieres sont finis, changer l'etat de la fusee
     if (!modified && haveFuel(ship)) {
         ship->state = (ship->state == WAITING_ON_BASE) ? MOVING_TO_TARGET : MOVING_TO_BASE;
