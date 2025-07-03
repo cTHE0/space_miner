@@ -64,6 +64,8 @@ void displayShips(SDL_Texture ***textureShip, Ship *ships, int shipCount, Planet
     void renderShipImage(SDL_Texture *spriteSheet, Ship *ships, Planet *planets, Ship currentShip, SDL_Point ShipOnScreen);
     void renderShipBars(Ship ship, SDL_Point ShipOnScreen);
 
+int fuelInShip(Ship *ship);
+
 int globalTankCapacity(Ship *ship);
 
 void destroyShips(Ship *ships);

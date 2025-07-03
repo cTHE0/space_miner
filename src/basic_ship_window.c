@@ -14,6 +14,7 @@
 #include "assets_gestion.h"
 #include "text.h"
 #include "place.h"
+#include "planet_window.h"
 
 
 static BasicShipWindowButton buttonSelected = NO_BUTTON; // Lequel des 3 boutons est selectionne ? Au debut, aucun des boutons n'est selectionne
@@ -48,7 +49,7 @@ static SDL_Rect bgRect,
                 tankCompoTitleRect;
 
 
-void initBasicShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *currentShip, Ship *ships, Planet *planets) {
+void initBasicShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, Planet *planets) {
     int textureWidth, textureHeight;
     TextToLoad newText;
 
@@ -63,15 +64,54 @@ void initBasicShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *cur
     shipTypeTitleRect = (SDL_Rect){SCREEN_WIDTH * 0.29, SCREEN_HEIGHT * 0.95, textureWidth * SCREEN_HEIGHT * 0.0005, textureHeight * SCREEN_HEIGHT * 0.0005};
 
     // Calcul des coordonnees de la base et de la cible dans le referentiel de la map
-    updateNarrowBasicShipWindow(ships, planets, currentShip);
+    updateNarrowBasicShipWindow(ships, planets, &ships[getWindowId()]);
 
     // Genere la texture qui donne le descriptif de la fusee
     char descriptionText[512];
-    sprintf(descriptionText, "Type of ship       transporter\nState                  out of fuel\nFuel range          2.4 light year\nMove speed        27 km/s");
+
+    char shiptype[32] = "";
+    if (ships[getWindowId()].shiptype == TRANSPORTER) {
+        strcpy(shiptype, "transporter");
+    } else if (ships[getWindowId()].shiptype == ENEMY) {
+        strcpy(shiptype, "enemy");
+    } else {
+        strcpy(shiptype, "unknown");
+    }
+
+    char shipState[32] = "";
+    switch (ships[getWindowId()].state) {
+        case MOVING_TO_BASE:
+        case MOVING_TO_TARGET:
+            strcpy(shipState, "in flight");
+            break;
+        case WAITING_ON_BASE:
+        case WAITING_ON_TARGET:
+            strcpy(shipState, "dest. reached");
+            break;
+        case STOPPED_WAITING_ON_BASE:
+        case STOPPED_WAITING_ON_TARGET:
+        case STOPPED_MOVING_TO_BASE:
+        case STOPPED_MOVING_TO_TARGET:
+            strcpy(shipState, "stopped");
+            break;
+        case OUT_OF_FUEL:
+            strcpy(shipState, "out of fuel");
+            break;
+        case BROKEN:
+            strcpy(shipState, "broken");
+            break;
+        default:
+            strcpy(shipState, "unknown");
+            break;
+    }
+    sprintf(descriptionText, "Type of ship       %s\nState                  %s\nFuel range          %d km\nMove speed        %d km/s",
+            shiptype,
+            shipState,
+            fuelInShip(&ships[getWindowId()]) / ships[getWindowId()].fuelConsumption,
+            (int)(ships[getWindowId()].speed * 40));
     textTextures[34] = createTextTextureWithNewline(fonts[0], descriptionText, BLACK);
     SDL_QueryTexture(textTextures[34], NULL, NULL, &textureWidth, &textureHeight);
     generalInfoRect = (SDL_Rect){SCREEN_WIDTH * 0.14, SCREEN_HEIGHT * 0.8, textureWidth * SCREEN_WIDTH * 0.00025, textureHeight * SCREEN_WIDTH * 0.00025};
-
 }
 
 void updateNarrowBasicShipWindow(Ship *ships, Planet *planets, Ship *currentShip) {  // Calcul des coordonnees de la base et de la cible dans le referentiel de la map
@@ -105,7 +145,6 @@ void updateNarrowBasicShipWindow(Ship *ships, Planet *planets, Ship *currentShip
             centerTargetCoord = (SDL_Point){0, 0};
             break;
     }
-
 }
 
 void initBasicShipWindowRects(SDL_Texture **textTextures) {
@@ -275,7 +314,7 @@ void basicShipWindowGeneralInfo(SDL_Texture ***imageTextures, SDL_Texture ** tex
     SDL_RenderCopy(renderer, textTextures[33], NULL, &shipTypeTitleRect);
 
     // Affiche le fond de la fusee selectionnee
-    SDL_SetRenderDrawColor(renderer, 150, 150, 150, 255);
+    SDL_SetRenderDrawColor(renderer, 190, 190, 190, 255);
     SDL_RenderFillRect(renderer, &shipTypeEdgeImgRect);
 
     // Affiche le bord de la fusee selectionnee
@@ -413,8 +452,10 @@ void basicShipWindowTankCompo(SDL_Texture ***imageTextures, SDL_Texture ** textT
             case ORE3:
                 SDL_RenderCopy(renderer, imageTextures[4][3], NULL, &currentLogoRect);
                 break;
-            default:
+            case ORE4:
                 SDL_RenderCopy(renderer, imageTextures[4][4], NULL, &currentLogoRect);
+                break;
+            default:
                 break;
         }
 
@@ -448,7 +489,7 @@ void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Ch
     else if (SDL_PointInRect(&mouse, &rightArrowRect)) {
         Mix_PlayChannel(1, sounds[4], 0);
         setWindowId((getWindowId() + 1) % shipCount);
-        initBasicShipWindow(textTextures, fonts, &ships[getWindowId()], ships, planets);
+        initBasicShipWindow(textTextures, fonts, ships, planets);
         setCenterCamera((SDL_Point){ships[getWindowId()].x + ships[getWindowId()].w / 2, ships[getWindowId()].y + ships[getWindowId()].h / 2});
         setCameraLastObjectSelected(getWindowId());
         updateCameraFollow(ships, NULL);
@@ -461,10 +502,30 @@ void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Ch
         } else {
             setWindowId(getWindowId() - 1);
         }
-        initBasicShipWindow(textTextures, fonts, &ships[getWindowId()], ships, planets);
+        initBasicShipWindow(textTextures, fonts, ships, planets);
         setCenterCamera((SDL_Point){ships[getWindowId()].x + ships[getWindowId()].w / 2, ships[getWindowId()].y + ships[getWindowId()].h / 2});
         setCameraLastObjectSelected(getWindowId());
         updateCameraFollow(ships, NULL);
+    }
+
+    // Ouverture de la fenetre de la planete (depuis la fenetre d'info. de la fusee)
+    else if (SDL_PointInRect(&mouse, &baseDisplayedRect)) {
+        if (ships[getWindowId()].base.type == SPOT_PLANET) {
+            setWindowType(PLANET_WINDOW);
+            setWindowId(ships[getWindowId()].base.id_planet);
+            initPlanetWindow(textTextures, fonts, planets);
+            setCameraLastObjectSelected(ships[getWindowId()].base.id_planet);
+            setCameraMode(FOLLOW_PLANET);
+        }
+    }
+    else if (SDL_PointInRect(&mouse, &targetDisplayedRect)) {
+        if (ships[getWindowId()].target.type == SPOT_PLANET) {
+            setWindowType(PLANET_WINDOW);
+            setWindowId(ships[getWindowId()].target.id_planet);
+            initPlanetWindow(textTextures, fonts, planets);
+            setCameraLastObjectSelected(ships[getWindowId()].target.id_planet);
+            setCameraMode(FOLLOW_PLANET);
+        }
     }
 
     // Aucun des boutons de la fenetre n'a ete clique :
@@ -474,7 +535,7 @@ void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Ch
             case BASE_BUTTON:  // Equivaut a faire if (BASE_BUTTON || TARGET_BUTTON) {...}
             case TARGET_BUTTON:
                 choosingNewBaseOrTarget(ships, shipCount, planets, planetCount, mouse);
-                initBasicShipWindow(textTextures, fonts, &ships[getWindowId()], ships, planets);
+                initBasicShipWindow(textTextures, fonts, ships, planets);
                 Mix_PlayChannel(1, sounds[7], 0);
                 break;
 

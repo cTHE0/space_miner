@@ -169,6 +169,7 @@ void generateEnemy(Ship targetShip, Ship **ships, int *shipCount) {
     enemyShip.h = 200;
     enemyShip.speed = (rand() / (float)RAND_MAX * 0.6 + 0.4) * SHIP_SPEED;
     enemyShip.level = 1;
+    
     enemyShip.maxLife = 100;
     enemyShip.currentLife = 100;
     enemyShip.fuelConsumption = 1;  // Consommation d'essence par intervalle de temps TANKS_UPDATE_INTERVAL

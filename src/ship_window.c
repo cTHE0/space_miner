@@ -13,6 +13,7 @@
 #include "planet_window.h"
 #include "basic_ship_window.h"
 #include "place.h"
+#include "camera.h"
 
 
 // Declaration des rectangles et variables propres a la fenetre d'informations des fusees
@@ -749,8 +750,10 @@ void ShipWindowTankCompo(SDL_Texture ***imageTextures, SDL_Texture **textTexture
             case ORE3:
                 SDL_RenderCopy(renderer, imageTextures[4][3], NULL, &currentLogoRect);
                 break;
-            default:
+            case ORE4:
                 SDL_RenderCopy(renderer, imageTextures[4][4], NULL, &currentLogoRect);
+                break;
+            default:
                 break;
         }
 
@@ -828,8 +831,8 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
             setWindowType(PLANET_WINDOW);
             setWindowId(ship->base.id_planet);
             initPlanetWindow(textTextures, fonts, planets);
-        } else {
-            setWindowType(NO_WINDOW);
+            setCameraLastObjectSelected(ship->target.id_planet);
+            setCameraMode(FOLLOW_PLANET);
         }
     }
     else if (SDL_PointInRect(&mouse, &targetDisplayedRect) || SDL_PointInRect(&mouse, &targetDisplayedRect2)) {
@@ -837,8 +840,8 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
             setWindowType(PLANET_WINDOW);
             setWindowId(ship->target.id_planet);
             initPlanetWindow(textTextures, fonts, planets);
-        } else {
-            setWindowType(NO_WINDOW);
+            setCameraLastObjectSelected(ship->target.id_planet);
+            setCameraMode(FOLLOW_PLANET);
         }
     }
 
