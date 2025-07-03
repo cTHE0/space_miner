@@ -9,9 +9,10 @@ typedef struct {
     double angle;
     int speed;
     int i; //indice du laser
+    int target_id; //indice du ship qui est visé
 } Laser;
 
-void addLaser(SDL_Rect rect, SDL_Point target_coords, float angle, int speed);
+void addLaser(SDL_Rect rect, SDL_Point target_coords, int target_id, float angle, int speed);
 void deleteLaser(int i);
 void updateEnemies(Ship **ships, int *shipCount);
 void updateLasers(Ship **ships, int *shipCount, Mix_Chunk **sounds);

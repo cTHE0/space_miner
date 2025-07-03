@@ -20,6 +20,35 @@ void addShip(Ship newShip, Ship **ships, int *shipCount) {
     (*shipCount) ++;
 }
 
+void deleteShip(int index, Ship **ships, int *shipCount) {
+    if (index < 0 || index >= *shipCount) {
+        fprintf(stderr, "Indice de vaisseau invalide : %d\n", index);
+        return;
+    }
+
+    // Décale tous les éléments après l'indice vers la gauche
+    for (int i = index; i < *shipCount - 1; i++) {
+        (*ships)[i] = (*ships)[i + 1];
+        (*ships)[i].id = i;  // Met à jour les IDs internes si tu t'en sers ailleurs
+    }
+
+    (*shipCount)--;
+
+    if (*shipCount > 0) {
+        Ship *temp = realloc(*ships, (*shipCount) * sizeof(Ship));
+        if (temp != NULL) {
+            *ships = temp;
+        } else {
+            fprintf(stderr, "Erreur realloc après suppression (ancienne mémoire conservée)\n");
+        }
+    } else {
+        // Plus de vaisseaux
+        free(*ships);
+        *ships = NULL;
+    }
+}
+
+
 void initShips(Ship **ships, int shipCount, Planet *planets) {
     *ships = malloc(shipCount * sizeof(Ship));
 
@@ -95,6 +124,9 @@ void updateShips(Ship *ships, Planet *planets, int shipCount) {
         updateShipAnimation(&ships[i], currentTime);  // Permet de changer de frame du sprite sheet de la fusee i
         updateShipMove(ships, &ships[i], planets, currentTime);
         updateShipTanks(&ships[i], planets, currentTime);
+        if (ships[i].currentLife < 0) {
+            // SUPPRIMER SHIP SANS VIE ICI
+        }
     }
 }
 

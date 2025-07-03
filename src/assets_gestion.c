@@ -197,6 +197,12 @@ void initRects(SDL_Texture **textTextures) {
 }
 
 void initSounds(Mix_Chunk ***sounds) {
+    // Allouer 255 canaux pour jouer plusieurs sons en même temps
+    int allocated = Mix_AllocateChannels(255);
+    if (allocated < 255) {
+        printf("Seulement %d canaux audio ont été alloués sur 255 demandés\n", allocated);
+    }
+
     // Allocation du tableau de sons
     *sounds = malloc(SONGS_NUMBER * sizeof(Mix_Chunk*));
 
@@ -212,7 +218,10 @@ void initSounds(Mix_Chunk ***sounds) {
     (*sounds)[8] = Mix_LoadWAV("assets/songs/mixkit-wrong-answer-bass-buzzer-948.wav");
     (*sounds)[9] = Mix_LoadWAV("assets/songs/mixkit-sci-fi-positive-notification-266.wav");
     (*sounds)[10] = Mix_LoadWAV("assets/songs/mixkit-blow-breaking-the-air-2057.wav");
+    (*sounds)[11] = Mix_LoadWAV("assets/songs/star_wars.wav");
+    (*sounds)[12] = Mix_LoadWAV("assets/songs/explosion.wav");
 
+    // Vérification des chargements
     for (int i = 0; i < SONGS_NUMBER; i++) {
         if ((*sounds)[i] == NULL) {
             printf("Erreur de chargement du son %d: %s\n", i, Mix_GetError());
@@ -220,6 +229,7 @@ void initSounds(Mix_Chunk ***sounds) {
         }
     }
 }
+
 
 void freeSongs(Mix_Chunk **sounds) {
     for (int i = 0; i < SONGS_NUMBER; i++) {

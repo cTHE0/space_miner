@@ -14,11 +14,11 @@ static Uint32 lastLaserGenerationTime = 0;
 Laser *lasers = NULL;
 int lasersCount = 0;
 
-void addLaser(SDL_Rect rect, SDL_Point target_coords, float angle, int speed) {
+void addLaser(SDL_Rect rect, SDL_Point target_coords, int target_id, float angle, int speed) {
     Laser *temp = realloc(lasers, (lasersCount + 1) * sizeof(Laser));
     if (temp != NULL) {
         lasers = temp;
-        lasers[lasersCount] = (Laser){rect, target_coords, angle, speed, lasersCount};
+        lasers[lasersCount] = (Laser){rect, target_coords, angle, speed, lasersCount, target_id};
         lasersCount++;
     } else {
         printf("ERREUR reallocation mémoire laser\n");
@@ -81,16 +81,37 @@ void updateLasers(Ship **ships, int *shipCount, Mix_Chunk **sounds) {
         distance = dist(dx, dy, 0, 0);
 
         if (distance <= 10) {
+            // Mémorise l'ID de la cible AVANT de supprimer le laser
+            int target_id = lasers[i].target_id;
+
+            // Supprime le laser
             deleteLaser(i);
+
+            // Applique les dégâts si la cible est valide
+            if (target_id >= 0 && target_id < *shipCount) {
+                (*ships)[target_id].currentLife -= DAMAGE;
+                Mix_PlayChannel(-1, sounds[12], 0); // Explosion
+            } else {
+                fprintf(stderr, "ID de cible invalide : %d (ships count = %d)\n", target_id, *shipCount);
+            }
+
         } else {
+            // Avance le laser vers la cible
             lasers[i].rect.x += dx * lasers[i].speed / distance;
             lasers[i].rect.y += dy * lasers[i].speed / distance;
-            lasers[i].angle = computeAngleDeg(lasers[i].target_coords.x, lasers[i].target_coords.y, lasers[i].rect.x, lasers[i].rect.y);
+
+            // Met à jour l’angle pour le rendu visuel
+            lasers[i].angle = computeAngleDeg(
+                lasers[i].target_coords.x,
+                lasers[i].target_coords.y,
+                lasers[i].rect.x,
+                lasers[i].rect.y
+            );
         }
     }
 
     // Génère de nouveaux lasers à intervalle régulier
-    if (SDL_GetTicks() - lastLaserGenerationTime  + rand()%LASER_GENERATION_PERIOD/2 >= LASER_GENERATION_PERIOD) {
+    if (SDL_GetTicks() - lastLaserGenerationTime + rand() % (LASER_GENERATION_PERIOD / 2) >= LASER_GENERATION_PERIOD) {
         lastLaserGenerationTime = SDL_GetTicks();
 
         for (int i = 0; i < *shipCount; i++) {
@@ -109,14 +130,16 @@ void updateLasers(Ship **ships, int *shipCount, Mix_Chunk **sounds) {
                     (*ships)[target_id].y
                 };
 
-                addLaser(rect, target_coords, 0, 20);
-                Mix_PlayChannel(1, sounds[5], 0);
+                // Crée un laser
+                addLaser(rect, target_coords, target_id, 0, 20);
+                Mix_PlayChannel(-1, sounds[11], 0); // Son laser
             } else {
-                fprintf(stderr, "ID cible invalide : %d (shipCount = %d)\n", target_id, *shipCount);
+                fprintf(stderr, "ID cible invalide lors de la génération : %d (shipCount = %d)\n", target_id, *shipCount);
             }
         }
     }
 }
+
 
 
 void renderLasers(SDL_Texture ***imageTextures) {
