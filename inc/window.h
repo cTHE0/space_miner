@@ -36,7 +36,7 @@ void setWindowId(int newId);
 void displaySelectionCircle(void);
 void objetInSelectionCircle(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, Ship *ships, int shipCount, Planet *planets, int planetCount);
 
-void updateGame(Ship **ships, int *shipCount, Planet *planets, int planetCount);
+void updateGame(Ship **ships, int *shipCount, Planet *planets, int planetCount, Mix_Chunk **sounds);
 
 
 #endif

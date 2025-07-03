@@ -234,7 +234,7 @@ void objetInSelectionCircle(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Ch
     }
 }
 
-void updateGame(Ship **ships, int *shipCount, Planet *planets, int planetCount) {
+void updateGame(Ship **ships, int *shipCount, Planet *planets, int planetCount, Mix_Chunk **sounds) {
     updateShips(*ships, planets, *shipCount);
     updatePlanets(planets, *ships, *shipCount, planetCount);
     updateBuilds(planets, planetCount);
@@ -243,4 +243,5 @@ void updateGame(Ship **ships, int *shipCount, Planet *planets, int planetCount) 
     updateTotalOre(planets, planetCount);
     updateTiles(*ships, *shipCount);
     updateEnemies(ships, shipCount);    
+    updateLasers(ships, shipCount, sounds);
 }

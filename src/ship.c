@@ -106,17 +106,14 @@ void updateShipAnimation(Ship *ship, Uint32 currentTime) {  // Pour animation de
 }
 
 void updateShipMove(Ship *ships, Ship *currentShip, Planet *planets, Uint32 currentTime) {
-    if (currentShip->state != MOVING_TO_BASE && currentShip->state != MOVING_TO_TARGET) { // La fusee bouge-t-elle ?
-        return;
-    }
-
-    if (currentShip->shiptype == ENEMY) {
+    if (currentShip->state != MOVING_TO_BASE && currentShip->state != MOVING_TO_TARGET && currentShip->state !=ATTACKING_SHIP) { // La fusee bouge-t-elle ?
         return;
     }
 
     float dx;
     float dy;
     float distance;
+    // Si currentShip->state == MOVING_TO_TARGET OU ATTACKING_SHIP alors la dest est stockée dans currentShip->target
     Spot spotDest = (currentShip->state == MOVING_TO_BASE) ? currentShip->base : currentShip->target;
     switch (spotDest.type) {
         case SPOT_PLANET:
@@ -146,12 +143,22 @@ void updateShipMove(Ship *ships, Ship *currentShip, Planet *planets, Uint32 curr
             dy = ships[spotDest.id_ship].y + ships[spotDest.id_ship].h / 2. - (currentShip->y + currentShip->h / 2.);
             distance = sqrt(dx * dx + dy * dy);
 
-            if (distance - currentShip->speed >= (ships[spotDest.id_ship].h + currentShip->h) / 2) {
-                currentShip->x += dx * currentShip->speed / distance;
-                currentShip->y += dy * currentShip->speed / distance;
-            } else {
-                currentShip->waitStartTime = currentTime;
-                currentShip->state = (currentShip->state == MOVING_TO_BASE) ? WAITING_ON_BASE : WAITING_ON_TARGET;
+            if (currentShip->state == ATTACKING_SHIP) {
+                //Gestion différente si notre ship est en combat (que ce soit un allié ou enemy peu importe)
+                //On s'arrête dès que la cible est à portée
+                if (distance >= currentShip->range) {
+                    currentShip->x += dx * currentShip->speed / distance;
+                    currentShip->y += dy * currentShip->speed / distance;
+                }
+            }
+            else {
+                if (distance - currentShip->speed >= (ships[spotDest.id_ship].h + currentShip->h) / 2) {
+                    currentShip->x += dx * currentShip->speed / distance;
+                    currentShip->y += dy * currentShip->speed / distance;
+                } else {
+                    currentShip->waitStartTime = currentTime;
+                    currentShip->state = (currentShip->state == MOVING_TO_BASE) ? WAITING_ON_BASE : WAITING_ON_TARGET;
+                }
             }
             break;
         case SPOT_POINT:
@@ -384,6 +391,10 @@ void renderShipImage(SDL_Texture *textureShip, Ship *ships, Planet *planets, Shi
             break;
         case SPOT_SHIP:
             angle = atan2((ships[spotDest.id_ship].y + ships[spotDest.id_ship].h / 2.f) - (currentShip.y + currentShip.h / 2.f), (ships[spotDest.id_ship].x + ships[spotDest.id_ship].w) - (currentShip.x + currentShip.w / 2.f)) * 180.0f / M_PI;
+            if (currentShip.state == ATTACKING_SHIP) {
+                //Eviter que les ships n'attaquent en arrière
+                angle += 180;
+            }
             break;
         case SPOT_POINT:
             angle = atan2(spotDest.point.y - (currentShip.y + currentShip.h / 2.f), spotDest.point.x - (currentShip.x + currentShip.w / 2.f)) * 180.0f / M_PI;

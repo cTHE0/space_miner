@@ -10,6 +10,7 @@
 #include "window.h"
 #include "asteroid.h"
 #include "tile.h"
+#include "enemy.h"
 
 
 SDL_Renderer *renderer = NULL;
@@ -86,6 +87,7 @@ void displayGame(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship 
     displayMap(imageTextures);
     displayPlanets(imageTextures, planets, planetCount);
     displayShips(imageTextures, ships, shipCount, planets);
+    renderLasers(imageTextures);
     displayAsteroid(imageTextures);
     displayTiles(imageTextures);
     displayWindow(imageTextures, textTextures, ships, planets);

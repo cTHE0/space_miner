@@ -40,5 +40,6 @@ SDL_Texture* createTextTextureWithNewline(TTF_Font* font, const char* text, SDL_
 void drawCircle(SDL_Color color, int xc, int yc, int r);
 void drawHexagon(SDL_Point center, int sizeSide);
 
+float dist(int xa, int ya, int xb, int yb);
 
 #endif

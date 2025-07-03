@@ -315,15 +315,19 @@ int extractOneDigit(int number, int position) {  // 'position' demarre a 0, de d
     return number;
 }
 
+// Calcule l'angle en degrés entre deux points : (cx, cy) = base, (x, y) = direction
 double computeAngleDeg(int x, int y, int cx, int cy) {
+    // L'angle est calculé depuis la base (cx, cy) vers la direction (x, y)
     double angle = atan2(y - cy, x - cx) * 180.0 / M_PI;
 
+    // Si l'angle est négatif, on le ramène dans [0, 360°)
     if (angle < 0) {
         angle += 360.0;
     }
 
     return angle;
 }
+
 
 SDL_Texture* createTextTextureWithNewline(TTF_Font* font, const char* text, SDL_Color color) {
     // Calculer la largeur maximale et la hauteur totale des lignes de texte
@@ -469,4 +473,8 @@ void drawHexagon(SDL_Point center, int sizeSide) {
 
     p1 = (SDL_Point){center.x - v, center.y - u};
     SDL_RenderDrawLine(renderer, p1.x, p1.y, p2.x, p2.y);
+}
+
+float dist(int xa, int ya, int xb, int yb) {
+    return sqrt((xa-xb)*(xa-xb) + (ya-yb)*(ya-yb));
 }
