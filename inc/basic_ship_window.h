@@ -13,10 +13,12 @@ void initBasicShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *cur
 
 typedef enum { NO_BUTTON, SHIP_WINDOW_BUTTON, BASE_BUTTON, TARGET_BUTTON, ATTACK_BUTTON } BasicShipWindowButton;
 
-void displayBasicShipWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships);
-	void basicShipWindowFondations(SDL_Texture ***imageTextures, SDL_Texture ** textTextures);
-	void basicShipWindowNarrowBaseTarget(SDL_Texture ***imageTextures);
-	void basicShipWindowInfos(SDL_Texture ***imageTextures, SDL_Texture ** textTextures, Ship *ships);
+void displayBasicShipWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships, Planet *planets);
+	void basicShipWindowFondations(SDL_Texture ***imageTextures);
+	void basicShipWindowNarrowBaseTarget(SDL_Texture ***imageTextures, SDL_Texture ** textTextures);
+	void basicShipWindowGeneralInfo(SDL_Texture ***imageTextures, SDL_Texture ** textTextures, Ship *ships);
+	void basicShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture ** textTextures, Ship *ships, Planet *planets);
+	void basicShipWindowTankCompo(SDL_Texture ***imageTextures, SDL_Texture ** textTextures, Ship *ships);
 void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, Ship *ships, int shipCount, Planet *planets, int planetCount, SDL_Point mouse);
 void choosingNewBaseOrTarget(Ship *ships, int shipCount, Planet *planets, int planetCount, SDL_Point mouse);
 int clickOnBasicShipWindow(SDL_Point mouse);

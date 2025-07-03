@@ -26,12 +26,12 @@ int generateSolarSystem(Planet *planets, int planetCount, int nbEntityGenerated)
 
         // Gestion abondance
         for (int i = 0; i < 5; i++) {
-            planets[j].abundance[i] = generateRandNb8(currentSeed, nbEntityGenerated + randIndex) % 100; randIndex ++;
+            planets[j].abundance[i] = 5 + generateRandNb8(currentSeed, nbEntityGenerated + randIndex) % 96; randIndex ++;
         }
         
         // Gestion des reservoirs
         for (int i = 0; i < ORE_TYPE_COUNT; i++) {
-            planets[j].builds[i].tank.maxCapacity = 1 + generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % 10000; randIndex ++;
+            planets[j].builds[i].tank.maxCapacity = generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % 10000; randIndex ++;
             planets[j].builds[i].tank.currentCapacity = generateRandNb32(currentSeed, nbEntityGenerated + randIndex) % (int)planets[j].builds[i].tank.maxCapacity; randIndex ++;  // Les planetes ne sont pas toutes initialement remplies randIndex ++;
         }
 

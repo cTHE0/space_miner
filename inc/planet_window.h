@@ -18,7 +18,7 @@ void planetWindowContainerInfo(SDL_Texture ***imageTextures, SDL_Texture **textT
 void planetWindowMineralAbundance(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planets);
 void planetWindowManageBuilds(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planet);
 void planetWindowOverviewBuild(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planet);
-void planetWindowNearestShips(SDL_Texture ***imageTextures, SDL_Texture **textTextures);
+void planetWindowNearestShips(SDL_Texture **textTextures);
 
 void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, Planet *planets, SDL_Point mouse);
 

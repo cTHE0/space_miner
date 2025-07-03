@@ -17,50 +17,61 @@
 
 
 static BasicShipWindowButton buttonSelected = NO_BUTTON; // Lequel des 3 boutons est selectionne ? Au debut, aucun des boutons n'est selectionne
-
+static SDL_Point centerBaseCoord, centerTargetCoord;
 static SDL_Rect bgRect,
                 shipPictureRect,
                 leftArrowRect, 
                 rightArrowRect,
                 line1Rect,
+                line2Rect,
                 crossRect,
                 button1Rect,
                 button2Rect,
-                windowTitleRect,
+                shipTypeTitleRect,
                 selectNewBaseRect,
                 selectNewTargetRect,
-                shipConditionSrcRect,
                 shipBgRect,
-                mainInfoTanksEdgeRect,
-                mainInfoTanksInfoRect,
+                generalInfoTitleRect,
                 shipFirstCompartmentRect,
                 shipFirstCompartmentLogoRect,
                 shipFirstCompartmentNumberRect,
-                logoBaseTargetRect;
-
-static SDL_Point centerBaseCoord,
-                 centerTargetCoord;
+                logoBaseTargetRect,
+                generalInfoRect,
+                shipTypeImgRect,
+                shipSrcRect,
+                shipTypeEdgeImgRect,
+                targetDisplayedRect,
+                baseDisplayedRect,
+                narrowRect,
+                destRectShip,
+                travelInfoTitleRect,
+                tankCompoTitleRect;
 
 
 void initBasicShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *currentShip, Ship *ships, Planet *planets) {
     int textureWidth, textureHeight;
     TextToLoad newText;
 
-    // Importe la texture decrivant le titre de la page d'info. de la fusee
-    sprintf(newText.text, "Ship #%d – Basic Rocket", getWindowId() + 1);  // Construction "de Ship #1,887 – Basic Rocket"
+    // Importe la texture decrivant le titre de fusee selectionnee
+    sprintf(newText.text, "Basic transporter (level %d)", ships[getWindowId()].level);  // Construction "de Ship #1,887 – Basic Rocket"
     newText.color = BLACK;
     newText.font = fonts[0];
 
     updateTextTexture(&textTextures[33], newText);
 
     SDL_QueryTexture(textTextures[33], NULL, NULL, &textureWidth, &textureHeight);
-    windowTitleRect.x = SCREEN_WIDTH * 0.28;
-    windowTitleRect.y = SCREEN_HEIGHT * 0.753;
-    windowTitleRect.w = textureWidth * SCREEN_HEIGHT * 0.0004;
-    windowTitleRect.h = textureHeight * SCREEN_HEIGHT * 0.0004;
+    shipTypeTitleRect = (SDL_Rect){SCREEN_WIDTH * 0.29, SCREEN_HEIGHT * 0.95, textureWidth * SCREEN_HEIGHT * 0.0005, textureHeight * SCREEN_HEIGHT * 0.0005};
 
     // Calcul des coordonnees de la base et de la cible dans le referentiel de la map
     updateNarrowBasicShipWindow(ships, planets, currentShip);
+
+    // Genere la texture qui donne le descriptif de la fusee
+    char descriptionText[512];
+    sprintf(descriptionText, "Type of ship       transporter\nState                  out of fuel\nFuel range          2.4 light year\nMove speed        27 km/s");
+    textTextures[34] = createTextTextureWithNewline(fonts[0], descriptionText, BLACK);
+    SDL_QueryTexture(textTextures[34], NULL, NULL, &textureWidth, &textureHeight);
+    generalInfoRect = (SDL_Rect){SCREEN_WIDTH * 0.14, SCREEN_HEIGHT * 0.8, textureWidth * SCREEN_WIDTH * 0.00025, textureHeight * SCREEN_WIDTH * 0.00025};
+
 }
 
 void updateNarrowBasicShipWindow(Ship *ships, Planet *planets, Ship *currentShip) {  // Calcul des coordonnees de la base et de la cible dans le referentiel de la map
@@ -120,10 +131,8 @@ void initBasicShipWindowRects(SDL_Texture **textTextures) {
     rightArrowRect.w = SCREEN_HEIGHT * 0.031; 
     rightArrowRect.h = SCREEN_HEIGHT * 0.031; 
 
-    line1Rect.x = SCREEN_WIDTH * 0.272; 
-    line1Rect.y = SCREEN_HEIGHT * 0.78; 
-    line1Rect.w = SCREEN_WIDTH * 0.627; 
-    line1Rect.h = 3; 
+    line1Rect = (SDL_Rect){SCREEN_WIDTH * 0.4400, SCREEN_HEIGHT * 0.7500, 3, SCREEN_WIDTH * 0.1420};  // Premiere ligne verticale
+    line2Rect = (SDL_Rect){SCREEN_WIDTH * 0.72, SCREEN_HEIGHT * 0.7500, 3, SCREEN_WIDTH * 0.1420};  // Premiere ligne verticale
 
     crossRect.x = SCREEN_WIDTH * 0.885; 
     crossRect.y = SCREEN_HEIGHT * 0.757; 
@@ -152,35 +161,48 @@ void initBasicShipWindowRects(SDL_Texture **textTextures) {
     selectNewTargetRect.w = textureWidth * SCREEN_HEIGHT * 0.0004;
     selectNewTargetRect.h = textureHeight * SCREEN_HEIGHT * 0.0004;
 
-    shipConditionSrcRect = (SDL_Rect){0, 0, 64, 64};
-    shipBgRect = (SDL_Rect){SCREEN_WIDTH * 0.6330, SCREEN_HEIGHT * 0.700, SCREEN_WIDTH * 0.3500, SCREEN_WIDTH * 0.2700};
-    mainInfoTanksEdgeRect = (SDL_Rect){SCREEN_WIDTH * 0.7460, SCREEN_HEIGHT * 0.6410, SCREEN_WIDTH * 0.1300, SCREEN_WIDTH * 0.1350};
+    shipBgRect = (SDL_Rect){SCREEN_WIDTH * 0.6450, SCREEN_HEIGHT * 0.73, SCREEN_WIDTH * 0.3, SCREEN_WIDTH * 0.2300};
 
-    SDL_QueryTexture(textTextures[47], NULL, NULL, &textureWidth, &textureHeight);
-    mainInfoTanksInfoRect = (SDL_Rect){SCREEN_WIDTH * 0.62, SCREEN_HEIGHT * 0.84, SCREEN_WIDTH * textureWidth * 0.0003, SCREEN_WIDTH * textureHeight * 0.0003};
+    SDL_QueryTexture(textTextures[52], NULL, NULL, &textureWidth, &textureHeight);
+    generalInfoTitleRect = (SDL_Rect){SCREEN_WIDTH * 0.14, SCREEN_HEIGHT * 0.76, SCREEN_WIDTH * textureWidth * 0.0004, SCREEN_WIDTH * textureHeight * 0.0004};
 
-    shipFirstCompartmentRect = (SDL_Rect){SCREEN_WIDTH * 0.7890, SCREEN_HEIGHT * 0.7930, SCREEN_WIDTH * 0.0500, SCREEN_WIDTH * 0.0210};
+    SDL_QueryTexture(textTextures[5], NULL, NULL, &textureWidth, &textureHeight);
+    travelInfoTitleRect = (SDL_Rect){SCREEN_WIDTH * 0.455, SCREEN_HEIGHT * 0.76, SCREEN_WIDTH * textureWidth * 0.0004, SCREEN_WIDTH * textureHeight * 0.0004};
 
-    shipFirstCompartmentLogoRect = (SDL_Rect){SCREEN_WIDTH * 0.76600, SCREEN_HEIGHT * 0.7940, SCREEN_WIDTH * 0.0200, SCREEN_WIDTH * 0.0200};
+    SDL_QueryTexture(textTextures[14], NULL, NULL, &textureWidth, &textureHeight);
+    tankCompoTitleRect = (SDL_Rect){SCREEN_WIDTH * 0.735, SCREEN_HEIGHT * 0.76, SCREEN_WIDTH * textureWidth * 0.0004, SCREEN_WIDTH * textureHeight * 0.0004};
 
-    shipFirstCompartmentNumberRect = (SDL_Rect){SCREEN_WIDTH * 0.8070, SCREEN_HEIGHT * 0.7870, SCREEN_WIDTH * 0.0200, SCREEN_WIDTH * 0.0280};
+    shipFirstCompartmentRect = (SDL_Rect){SCREEN_WIDTH * 0.78, SCREEN_HEIGHT * 0.9130, SCREEN_WIDTH * 0.0400, SCREEN_WIDTH * 0.0210};
+
+    shipFirstCompartmentLogoRect = (SDL_Rect){SCREEN_WIDTH * 0.755, SCREEN_HEIGHT * 0.9140, SCREEN_WIDTH * 0.0200, SCREEN_WIDTH * 0.0200};
+
+    shipFirstCompartmentNumberRect = (SDL_Rect){SCREEN_WIDTH * 0.792, SCREEN_HEIGHT * 0.9070, SCREEN_WIDTH * 0.0200, SCREEN_WIDTH * 0.0280};
+
+    shipTypeImgRect = (SDL_Rect){SCREEN_WIDTH * 0.3080, SCREEN_HEIGHT * 0.7700, SCREEN_WIDTH * 0.1000, SCREEN_WIDTH * 0.1000};
+
+    shipTypeEdgeImgRect = (SDL_Rect){SCREEN_WIDTH * 0.3050, SCREEN_HEIGHT * 0.7660, SCREEN_WIDTH * 0.1100, SCREEN_WIDTH * 0.0990};
+
+    shipSrcRect = (SDL_Rect){0, 0, 64, 64};
+
+    targetDisplayedRect = (SDL_Rect){SCREEN_WIDTH * 0.645, SCREEN_HEIGHT * 0.8200, SCREEN_WIDTH * 0.060, SCREEN_WIDTH * 0.060};
+    baseDisplayedRect = (SDL_Rect){SCREEN_WIDTH * 0.455, SCREEN_HEIGHT * 0.8200, SCREEN_WIDTH * 0.0600, SCREEN_WIDTH * 0.0600};
+
+    narrowRect = (SDL_Rect){baseDisplayedRect.x + baseDisplayedRect.w, baseDisplayedRect.y + baseDisplayedRect.h * 0.5, 4, 15};
+
+    destRectShip = (SDL_Rect){baseDisplayedRect.x + baseDisplayedRect.w, baseDisplayedRect.y + baseDisplayedRect.h * 0.13, SCREEN_WIDTH * 0.05, SCREEN_WIDTH * 0.05};
 }
 
-void displayBasicShipWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
-    basicShipWindowNarrowBaseTarget(imageTextures);
-    basicShipWindowFondations(imageTextures, textTextures);
-    basicShipWindowInfos(imageTextures, textTextures, ships);
+void displayBasicShipWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships, Planet *planets) {
+    basicShipWindowNarrowBaseTarget(imageTextures, textTextures);
+    basicShipWindowFondations(imageTextures);
+    basicShipWindowGeneralInfo(imageTextures, textTextures, ships);
+    basicShipWindowTravelInfo(imageTextures, textTextures, ships, planets);
+    basicShipWindowTankCompo(imageTextures, textTextures, ships);
 }
 
-void basicShipWindowFondations(SDL_Texture ***imageTextures, SDL_Texture ** textTextures) {
+void basicShipWindowFondations(SDL_Texture ***imageTextures) {
     // Afficher le fond de la fenetre
     SDL_RenderCopy(renderer, imageTextures[5][3], NULL, &bgRect);
-
-    // Afficher le nom de la fusee
-    SDL_RenderCopy(renderer, textTextures[33], NULL, &windowTitleRect);
-
-    // Afficher l'image 'reelle' de la fusee
-    SDL_RenderCopy(renderer, imageTextures[8][0], NULL, &shipPictureRect);
 
     // Afficher les fleches pour naviguer entre les fusees
     SDL_RenderCopy(renderer, imageTextures[2][2], NULL, &leftArrowRect);
@@ -191,7 +213,8 @@ void basicShipWindowFondations(SDL_Texture ***imageTextures, SDL_Texture ** text
 
     // Afficher les lignes structurant la page
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_RenderFillRect(renderer, &line1Rect);  
+    SDL_RenderFillRect(renderer, &line1Rect);
+    SDL_RenderFillRect(renderer, &line2Rect);
 
     // Afficher le fond des boutons au-dessus de la fenetre
     SDL_SetRenderDrawColor(renderer, 180, 180, 180, 255);
@@ -203,7 +226,7 @@ void basicShipWindowFondations(SDL_Texture ***imageTextures, SDL_Texture ** text
     SDL_RenderCopy(renderer, imageTextures[2][5], NULL, &button2Rect);
 }
 
-void basicShipWindowNarrowBaseTarget(SDL_Texture ***imageTextures) {
+void basicShipWindowNarrowBaseTarget(SDL_Texture ***imageTextures, SDL_Texture ** textTextures) {
     // Affichage du trait reliant base et cible
     SDL_Point centerBaseCoordScreen = {(centerBaseCoord.x - getCameraRect().x - SCREEN_WIDTH / 2.f) * getCameraScale() + SCREEN_WIDTH / 2.f,
                                        (centerBaseCoord.y - getCameraRect().y - SCREEN_HEIGHT / 2.f) * getCameraScale() + SCREEN_HEIGHT / 2.f};
@@ -232,17 +255,132 @@ void basicShipWindowNarrowBaseTarget(SDL_Texture ***imageTextures) {
     } else if (buttonSelected == TARGET_BUTTON) {
         SDL_RenderCopy(renderer, imageTextures[5][8], NULL, &logoBaseTargetRect);
     }
+
+    // Affiche 'select a new base/target' quand necessaire
+    if (buttonSelected == BASE_BUTTON) {
+        SDL_RenderCopy(renderer, textTextures[45], NULL, &selectNewBaseRect);
+    } else if (buttonSelected == TARGET_BUTTON) {
+        SDL_RenderCopy(renderer, textTextures[46], NULL, &selectNewTargetRect);
+    }
 }
 
-void basicShipWindowInfos(SDL_Texture ***imageTextures, SDL_Texture ** textTextures, Ship *ships) {
+void basicShipWindowGeneralInfo(SDL_Texture ***imageTextures, SDL_Texture ** textTextures, Ship *ships) {
+    // Affiche le titre 'General information'
+    SDL_RenderCopy(renderer, textTextures[52], NULL, &generalInfoTitleRect);
+
+    // Affiche la description des informations generales
+    SDL_RenderCopy(renderer, textTextures[34], NULL, &generalInfoRect);
+
+    // Afficher le nom de la fusee
+    SDL_RenderCopy(renderer, textTextures[33], NULL, &shipTypeTitleRect);
+
+    // Affiche le fond de la fusee selectionnee
+    SDL_SetRenderDrawColor(renderer, 150, 150, 150, 255);
+    SDL_RenderFillRect(renderer, &shipTypeEdgeImgRect);
+
+    // Affiche le bord de la fusee selectionnee
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderDrawRect(renderer, &shipTypeEdgeImgRect);
+
+    // Affiche l'image du model de fusee selectionne
+    SDL_RenderCopy(renderer, imageTextures[7][ships[getWindowId()].idModel], &shipSrcRect, &shipTypeImgRect);
+}
+
+void basicShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture ** textTextures, Ship *ships, Planet *planets) {
+    // Affiche le titre 'Travel information'
+    SDL_RenderCopy(renderer, textTextures[5], NULL, &travelInfoTitleRect);
+
+    // Affichage des deux planetes
+    int idPicture;
+    if (ships[getWindowId()].base.type == SPOT_PLANET) {
+        idPicture = (planets[ships[getWindowId()].base.id_planet].planetType == SUN) ? 9 : generateRandNb8(currentSeed, ships[getWindowId()].base.id_planet) % 7 + 1;
+        SDL_RenderCopy(renderer, imageTextures[6][idPicture], NULL, &baseDisplayedRect);
+    }
+
+    if (ships[getWindowId()].target.type == SPOT_PLANET) {
+        idPicture = (planets[ships[getWindowId()].target.id_planet].planetType == SUN) ? 9 : generateRandNb8(currentSeed, ships[getWindowId()].target.id_planet) % 7 + 1;
+        SDL_RenderCopy(renderer, imageTextures[6][idPicture], NULL, &targetDisplayedRect);
+    }
+
+    // Affichage du systeme de progression de la fusee dans l'espace
+    int dp = targetDisplayedRect.x - baseDisplayedRect.x - baseDisplayedRect.w;  // Distance en pixel entre 2 planetes sur fenetre
+    float f;
+    
+    if (ships[getWindowId()].shiptype == TRANSPORTER && ships[getWindowId()].base.type == SPOT_PLANET && ships[getWindowId()].target.type == SPOT_PLANET) {
+        if (ships[getWindowId()].state == MOVING_TO_TARGET || ships[getWindowId()].state == WAITING_ON_BASE) {  
+            // Fraction du chemin parcourue
+            f = distanceShipPlanet(&ships[getWindowId()], &planets[ships[getWindowId()].base.id_planet])
+                / (distancePlanetPlanet(&planets[ships[getWindowId()].target.id_planet], &planets[ships[getWindowId()].base.id_planet]) - planets[ships[getWindowId()].base.id_planet].radius - planets[ships[getWindowId()].target.id_planet].radius);
+            f = (f > 1) ? 1 : f;
+
+            // Tracer la fleche
+            narrowRect.x = baseDisplayedRect.x + baseDisplayedRect.w;
+            SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+            while (narrowRect.x < targetDisplayedRect.x) { 
+                if (narrowRect.x >= (int)(baseDisplayedRect.x + baseDisplayedRect.w + f * dp)) {
+                    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+                }
+                SDL_RenderFillRect(renderer, &narrowRect);
+                narrowRect.x += narrowRect.w * 2;
+            }
+
+            // Tracer la fusee
+            destRectShip.x = baseDisplayedRect.x + baseDisplayedRect.w + f * dp - baseDisplayedRect.w * 0.3;
+            SDL_RenderCopyEx(renderer, imageTextures[7][ships[getWindowId()].idModel], &shipSrcRect, &destRectShip, 90, NULL, SDL_FLIP_NONE);
+
+        } else if (ships[getWindowId()].state == MOVING_TO_BASE || ships[getWindowId()].state == WAITING_ON_TARGET) { 
+            // Fraction du chemin parcourue
+            f = distanceShipPlanet(&ships[getWindowId()], &planets[ships[getWindowId()].base.id_planet])
+                / (distancePlanetPlanet(&planets[ships[getWindowId()].target.id_planet], &planets[ships[getWindowId()].base.id_planet]) - planets[ships[getWindowId()].base.id_planet].radius - planets[ships[getWindowId()].target.id_planet].radius);
+            f = (f > 1) ? 1 : f;
+
+            // Tracer la fleche
+            narrowRect.x = baseDisplayedRect.x + baseDisplayedRect.w;
+            SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+            while (narrowRect.x < targetDisplayedRect.x) {
+                if (narrowRect.x >= (int)(baseDisplayedRect.x + baseDisplayedRect.w + f * dp)) {
+                    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+                }
+                SDL_RenderFillRect(renderer, &narrowRect);
+                narrowRect.x += narrowRect.w * 2;
+            }
+
+            // Tracer la fusee
+            destRectShip.x = baseDisplayedRect.x + baseDisplayedRect.w + f * dp - baseDisplayedRect.w * 0.53;
+            SDL_RenderCopyEx(renderer, imageTextures[7][ships[getWindowId()].idModel], &shipSrcRect, &destRectShip, 270, NULL, SDL_FLIP_NONE);
+        } else {
+            // Fraction du chemin parcourue
+            f = distanceShipPlanet(&ships[getWindowId()], &planets[ships[getWindowId()].base.id_planet])
+                / (distancePlanetPlanet(&planets[ships[getWindowId()].target.id_planet], &planets[ships[getWindowId()].base.id_planet]) - planets[ships[getWindowId()].base.id_planet].radius - planets[ships[getWindowId()].target.id_planet].radius);
+            f = (f > 1) ? 1 : f;
+
+            // Tracer la fleche
+            narrowRect.x = baseDisplayedRect.x + baseDisplayedRect.w;
+            SDL_SetRenderDrawColor(renderer, 50, 50, 50, 255);
+            while (narrowRect.x < targetDisplayedRect.x) {
+                SDL_RenderFillRect(renderer, &narrowRect);
+                narrowRect.x += narrowRect.w * 2;
+            }
+
+            // Tracer la fusee
+            destRectShip.x = baseDisplayedRect.x + baseDisplayedRect.w + f * dp - baseDisplayedRect.w * 0.53;
+            if (ships[getWindowId()].state == STOPPED_WAITING_ON_BASE) {
+                SDL_RenderCopyEx(renderer, imageTextures[7][ships[getWindowId()].idModel], &shipSrcRect, &destRectShip, 90, NULL, SDL_FLIP_NONE);
+            } else if (ships[getWindowId()].state == STOPPED_WAITING_ON_TARGET) {
+                SDL_RenderCopyEx(renderer, imageTextures[7][ships[getWindowId()].idModel], &shipSrcRect, &destRectShip, 270, NULL, SDL_FLIP_NONE);
+            } else {
+                SDL_RenderCopy(renderer, imageTextures[7][ships[getWindowId()].idModel], &shipSrcRect, &destRectShip);
+            }
+        }
+    }
+}
+
+void basicShipWindowTankCompo(SDL_Texture ***imageTextures, SDL_Texture ** textTextures, Ship *ships) {
+    // Affiche le titre 'Tank composition'
+    SDL_RenderCopy(renderer, textTextures[14], NULL, &tankCompoTitleRect);
+
     // Affiche la fusee en arriere plan (reservoir par dessus)
-    SDL_RenderCopy(renderer, imageTextures[5][7], &shipConditionSrcRect, &shipBgRect);
-
-    // Affiche le contour du schema du 'main info'
-    SDL_RenderDrawRect(renderer, &mainInfoTanksEdgeRect);
-
-    // Affiche le 'main info'
-    SDL_RenderCopy(renderer, textTextures[47], NULL, &mainInfoTanksInfoRect);
+    SDL_RenderCopy(renderer, imageTextures[5][7], &shipSrcRect, &shipBgRect);
 
     // Affichage des reservoirs, l'un apres l'autre
     float GapBetweenTanks = 1.05;
@@ -291,13 +429,6 @@ void basicShipWindowInfos(SDL_Texture ***imageTextures, SDL_Texture ** textTextu
         currentTankRect.y -= GapBetweenTanks * shipFirstCompartmentRect.h;
         currentLogoRect.y -= GapBetweenTanks * shipFirstCompartmentRect.h;
         currentNumberRect.y -= GapBetweenTanks * shipFirstCompartmentRect.h;
-    }
-
-    // Affiche 'select a new base/target' quand necessaire
-    if (buttonSelected == BASE_BUTTON) {
-        SDL_RenderCopy(renderer, textTextures[45], NULL, &selectNewBaseRect);
-    } else if (buttonSelected == TARGET_BUTTON) {
-        SDL_RenderCopy(renderer, textTextures[46], NULL, &selectNewTargetRect);
     }
 }
 

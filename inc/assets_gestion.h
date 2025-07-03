@@ -18,7 +18,9 @@ void freeSongs(Mix_Chunk **sounds);
 #define BLACK (SDL_Color){0, 0, 0, 255}
 #define WHITE (SDL_Color){255, 255, 255, 255}
 #define RED (SDL_Color){255, 0, 0, 255}
+#define RED2 (SDL_Color){218, 0, 0, 255}
 #define GREEN (SDL_Color){0, 255, 0, 255}
+#define GREEN2 (SDL_Color){59, 198, 0, 255}
 #define BLUE (SDL_Color){0, 0, 255, 255}
 #define ORANGE (SDL_Color){255, 95, 31, 255}
 #define DARK_RED (SDL_Color){59, 0, 0, 255}

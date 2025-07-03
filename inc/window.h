@@ -13,6 +13,7 @@ typedef enum {NO_WINDOW, SHIP_WINDOW, PLANET_WINDOW, DEFENDER_WINDOW, ENNEMY_WIN
 typedef struct {
     WindowType type;  // Type de fenetre affiche (d'une fusee, planete, attaquant, etc)
     uint32_t id;      // Stocke l'id de l'objet (fusee, planete, etc) affiche sur la fenetre
+    uint32_t lastRefresh;
 } Window;
 
 void displayWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships, Planet *planets);
@@ -27,16 +28,19 @@ int clickOnPlanet(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets,
 
 int clickOnWindow(SDL_Point mouse);
 
-WindowType getWindowType(void);
+void setWindowId(int newId);
 int getWindowId(void);
 
+WindowType getWindowType(void);
 void setWindowType(WindowType newType);
-void setWindowId(int newId);
+
+uint32_t getWindowLastRefresh(void);
+void setWindowLastRefresh(uint32_t newRefresh);
 
 void displaySelectionCircle(void);
 void objetInSelectionCircle(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, Ship *ships, int shipCount, Planet *planets, int planetCount);
 
-void updateGame(Ship **ships, int *shipCount, Planet *planets, int planetCount);
-
+void updateGame(SDL_Texture **textTextures, TTF_Font **fonts, Ship **ships, int *shipCount, Planet *planets, int planetCount);
+void updateWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships);
 
 #endif

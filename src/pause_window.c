@@ -25,13 +25,18 @@ static SDL_Rect windowRect,
                 reportBugsButtonRect,
                 reportBugsButtonBgRect,
                 statisticsButtonRect,
-                statisticsButtonBgRect;
+                statisticsButtonBgRect,
+                meteor1Rect,
+                meteor2Rect,
+                meteor3Rect;
 
 
+/*
 void initPauseWindow(SDL_Texture **textTextures, TTF_Font **fonts) {
     int textureWidth, textureHeight;
 
 }
+*/
 
 void initPauseWindowRects(SDL_Texture **textTextures) {
     int textureWidth, textureHeight;  // Permet de garder les proportions des textes
@@ -62,15 +67,18 @@ void initPauseWindowRects(SDL_Texture **textTextures) {
     statisticsButtonBgRect = (SDL_Rect){SCREEN_WIDTH * 0.500, SCREEN_HEIGHT * 0.4100, SCREEN_WIDTH * 0.200, SCREEN_WIDTH * 0.0500};
     reportBugsButtonBgRect = (SDL_Rect){SCREEN_WIDTH * 0.500, SCREEN_HEIGHT * 0.5300, SCREEN_WIDTH * 0.200, SCREEN_WIDTH * 0.0500};
     saveAndQuitButtonBgRect = (SDL_Rect){SCREEN_WIDTH * 0.3900, SCREEN_HEIGHT * 0.67, SCREEN_WIDTH * 0.2220, SCREEN_WIDTH * 0.0500};
-
+    meteor1Rect = (SDL_Rect){SCREEN_WIDTH * 0.3000, SCREEN_HEIGHT * 0.6200, SCREEN_WIDTH * 0.0700, SCREEN_WIDTH * 0.0700};
+    meteor2Rect = (SDL_Rect){SCREEN_WIDTH * 0.3600, SCREEN_HEIGHT * 0.3300, SCREEN_WIDTH * 0.0500, SCREEN_WIDTH * 0.0500};
+    meteor3Rect = (SDL_Rect){SCREEN_WIDTH * 0.6700, SCREEN_HEIGHT * 0.5500, SCREEN_WIDTH * 0.0500, SCREEN_WIDTH * 0.0500};
 }
 
 void displayPauseWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
-    pauseWindowFondations(imageTextures, textTextures);
-    pauseWindowButtons(imageTextures, textTextures);
+    pauseWindowFondations();
+    pauseWindowAesthetic(imageTextures);
+    pauseWindowButtons(textTextures);
 }
 
-void pauseWindowFondations(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
+void pauseWindowFondations(void) {
     // Affichage du fond de la page
     SDL_SetRenderDrawColor(renderer, 18, 52, 73, 255);
     SDL_RenderFillRect(renderer, &windowRect);
@@ -80,7 +88,13 @@ void pauseWindowFondations(SDL_Texture ***imageTextures, SDL_Texture **textTextu
     SDL_DrawEdgeOfRect(windowRect, 3, DARK_RED);
 }
 
-void pauseWindowButtons(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
+void pauseWindowAesthetic(SDL_Texture ***imageTextures) {
+    SDL_RenderCopy(renderer, imageTextures[0][0], NULL, &meteor1Rect);
+    SDL_RenderCopy(renderer, imageTextures[0][1], NULL, &meteor2Rect);
+    SDL_RenderCopy(renderer, imageTextures[0][1], NULL, &meteor3Rect);
+}
+
+void pauseWindowButtons(SDL_Texture **textTextures) {
     // Affichage du bg des boutons
     SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
     SDL_RenderFillRect(renderer, &backToGameButtonBgRect);
@@ -107,14 +121,16 @@ void pauseWindowButtons(SDL_Texture ***imageTextures, SDL_Texture **textTextures
     SDL_RenderCopy(renderer, textTextures[84], NULL, &statisticsButtonRect);
 }
 
-void pauseWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, GameState *gameState, SDL_Point mouse, Ship *ships, int shipCount, Planet *planets, int planetCount) {
+void pauseWindowGestion(Mix_Chunk **sounds, GameState *gameState, SDL_Point mouse, Ship *ships, int shipCount, Planet *planets, int planetCount) {
     // Gestion du bouton clique
     if (SDL_PointInRect(&mouse, &backToGameButtonBgRect)) {
         setWindowType(NO_WINDOW);
+        Mix_PlayChannel(1, sounds[7], 0);
     } else if (SDL_PointInRect(&mouse, &saveAndQuitButtonBgRect)) {
         setWindowType(NO_WINDOW);
         saveGame(ships, shipCount, planets, planetCount);
         *gameState = QUIT;
+        Mix_PlayChannel(1, sounds[7], 0);
     }
 }
 

@@ -347,7 +347,7 @@ void displayPlanetWindow(SDL_Texture ***imageTextures, SDL_Texture **textTexture
     planetWindowMineralAbundance(imageTextures, textTextures, planets);
     planetWindowManageBuilds(imageTextures, textTextures, &planets[getWindowId()]);
     planetWindowOverviewBuild(imageTextures, textTextures, &planets[getWindowId()]);
-    planetWindowNearestShips(imageTextures, textTextures);
+    planetWindowNearestShips(textTextures);
 }
 
 void planetWindowFoundations(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
@@ -582,7 +582,7 @@ void planetWindowOverviewBuild(SDL_Texture ***imageTextures, SDL_Texture **textT
     SDL_RenderCopy(renderer, imageTextures[2][7], NULL, &logoUpdateButtonBuildRect);
 }
 
-void planetWindowNearestShips(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
+void planetWindowNearestShips(SDL_Texture **textTextures) {
     // Affichage du titre "Nearest ships"
     SDL_RenderCopy(renderer, textTextures[56], NULL, &category5TitleRect);
 }

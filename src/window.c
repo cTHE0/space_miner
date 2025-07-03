@@ -26,7 +26,7 @@
 static int selectionMode = 0;
 static SDL_Point centerSelectionCircle;
 
-static Window windowInfo = {NO_WINDOW, 0};
+static Window windowInfo = {NO_WINDOW, 0, 0};
 
 static const SDL_Rect windowRect = {(1 - 0.8) * SCREEN_WIDTH / 2., 
                                     (1 - 0.8) * SCREEN_HEIGHT / 2., 
@@ -44,6 +44,14 @@ WindowType getWindowType(void) {
 
 int getWindowId(void) {
     return windowInfo.id;
+}
+
+uint32_t getWindowLastRefresh(void) {
+    return windowInfo.lastRefresh;
+}
+
+void setWindowLastRefresh(uint32_t newRefresh) {
+    windowInfo.lastRefresh = newRefresh;
 }
 
 void setWindowType(WindowType newType) {
@@ -94,7 +102,7 @@ void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
             break;
 
         case PAUSE_WINDOW:
-            pauseWindowGestion(textTextures, fonts, sounds, gameState, mouse, ships, shipCount, planets, planetCount);
+            pauseWindowGestion(sounds, gameState, mouse, ships, shipCount, planets, planetCount);
             break;
 
         default:
@@ -164,7 +172,7 @@ void displayWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Shi
             break;
             
         case BASIC_SHIP_WINDOW:
-            displayBasicShipWindow(imageTextures, textTextures, ships);
+            displayBasicShipWindow(imageTextures, textTextures, ships, planets);
             break;
             
         case SHIP_WINDOW:
@@ -234,7 +242,7 @@ void objetInSelectionCircle(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Ch
     }
 }
 
-void updateGame(Ship **ships, int *shipCount, Planet *planets, int planetCount) {
+void updateGame(SDL_Texture **textTextures, TTF_Font **fonts, Ship **ships, int *shipCount, Planet *planets, int planetCount) {
     updateShips(*ships, planets, *shipCount);
     updatePlanets(planets, *ships, *shipCount, planetCount);
     updateBuilds(planets, planetCount);
@@ -242,5 +250,34 @@ void updateGame(Ship **ships, int *shipCount, Planet *planets, int planetCount) 
     updateAsteroids(planets,planetCount);
     updateTotalOre(planets, planetCount);
     updateTiles(*ships, *shipCount);
-    updateEnemies(ships, shipCount);    
+    updateEnemies(ships, shipCount);
+    updateWindow(textTextures, fonts, *ships);
+}
+
+void updateWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships) {
+    if (SDL_GetTicks() < getWindowLastRefresh() + REFRESH_TIME_WINDOW) {
+        return;
+    }
+
+    setWindowLastRefresh(SDL_GetTicks());
+    switch (getWindowType()) {
+        case PLANET_WINDOW:
+            break;
+            
+        case BASIC_SHIP_WINDOW:
+            break;
+            
+        case SHIP_WINDOW:
+            initShipWindow(textTextures, fonts, &ships[getWindowId()]);
+            break;
+
+        case SIDE_BAR_WINDOW:
+            break;
+
+        case PAUSE_WINDOW:
+            break;
+            
+        default:
+            break;
+    }
 }
