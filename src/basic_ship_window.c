@@ -103,7 +103,7 @@ void initBasicShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *shi
             strcpy(shipState, "unknown");
             break;
     }
-    sprintf(descriptionText, "Type of ship       %s\nState                  %s\nFuel range           %d km\nMove speed        %d km/s",
+    sprintf(descriptionText, "Type of ship       %s\nState                  %s\nFuel range          %d km\nMove speed        %d km/s",
             shiptype,
             shipState,
             fuelInShip(&ships[getWindowId()]) / ships[getWindowId()].fuelConsumption,
@@ -111,7 +111,6 @@ void initBasicShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *shi
     textTextures[34] = createTextTextureWithNewline(fonts[0], descriptionText, BLACK);
     SDL_QueryTexture(textTextures[34], NULL, NULL, &textureWidth, &textureHeight);
     generalInfoRect = (SDL_Rect){SCREEN_WIDTH * 0.14, SCREEN_HEIGHT * 0.8, textureWidth * SCREEN_WIDTH * 0.00025, textureHeight * SCREEN_WIDTH * 0.00025};
-
 }
 
 void updateNarrowBasicShipWindow(Ship *ships, Planet *planets, Ship *currentShip) {  // Calcul des coordonnees de la base et de la cible dans le referentiel de la map
@@ -453,8 +452,10 @@ void basicShipWindowTankCompo(SDL_Texture ***imageTextures, SDL_Texture ** textT
             case ORE3:
                 SDL_RenderCopy(renderer, imageTextures[4][3], NULL, &currentLogoRect);
                 break;
-            default:
+            case ORE4:
                 SDL_RenderCopy(renderer, imageTextures[4][4], NULL, &currentLogoRect);
+                break;
+            default:
                 break;
         }
 

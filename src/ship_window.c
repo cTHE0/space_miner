@@ -749,8 +749,10 @@ void ShipWindowTankCompo(SDL_Texture ***imageTextures, SDL_Texture **textTexture
             case ORE3:
                 SDL_RenderCopy(renderer, imageTextures[4][3], NULL, &currentLogoRect);
                 break;
-            default:
+            case ORE4:
                 SDL_RenderCopy(renderer, imageTextures[4][4], NULL, &currentLogoRect);
+                break;
+            default:
                 break;
         }
 
