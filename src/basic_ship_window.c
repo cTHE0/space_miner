@@ -97,7 +97,7 @@ void initBasicShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *shi
         case OUT_OF_FUEL:
             strcpy(shipState, "out of fuel");
             break;
-        case BROKEN:
+        case BROKE:
             strcpy(shipState, "broken");
             break;
         default:
