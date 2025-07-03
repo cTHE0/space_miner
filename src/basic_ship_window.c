@@ -14,6 +14,7 @@
 #include "assets_gestion.h"
 #include "text.h"
 #include "place.h"
+#include "planet_window.h"
 
 
 static BasicShipWindowButton buttonSelected = NO_BUTTON; // Lequel des 3 boutons est selectionne ? Au debut, aucun des boutons n'est selectionne
@@ -144,7 +145,6 @@ void updateNarrowBasicShipWindow(Ship *ships, Planet *planets, Ship *currentShip
             centerTargetCoord = (SDL_Point){0, 0};
             break;
     }
-
 }
 
 void initBasicShipWindowRects(SDL_Texture **textTextures) {
@@ -314,7 +314,7 @@ void basicShipWindowGeneralInfo(SDL_Texture ***imageTextures, SDL_Texture ** tex
     SDL_RenderCopy(renderer, textTextures[33], NULL, &shipTypeTitleRect);
 
     // Affiche le fond de la fusee selectionnee
-    SDL_SetRenderDrawColor(renderer, 150, 150, 150, 255);
+    SDL_SetRenderDrawColor(renderer, 190, 190, 190, 255);
     SDL_RenderFillRect(renderer, &shipTypeEdgeImgRect);
 
     // Affiche le bord de la fusee selectionnee
@@ -506,6 +506,26 @@ void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Ch
         setCenterCamera((SDL_Point){ships[getWindowId()].x + ships[getWindowId()].w / 2, ships[getWindowId()].y + ships[getWindowId()].h / 2});
         setCameraLastObjectSelected(getWindowId());
         updateCameraFollow(ships, NULL);
+    }
+
+    // Ouverture de la fenetre de la planete (depuis la fenetre d'info. de la fusee)
+    else if (SDL_PointInRect(&mouse, &baseDisplayedRect)) {
+        if (ships[getWindowId()].base.type == SPOT_PLANET) {
+            setWindowType(PLANET_WINDOW);
+            setWindowId(ships[getWindowId()].base.id_planet);
+            initPlanetWindow(textTextures, fonts, planets);
+            setCameraLastObjectSelected(ships[getWindowId()].base.id_planet);
+            setCameraMode(FOLLOW_PLANET);
+        }
+    }
+    else if (SDL_PointInRect(&mouse, &targetDisplayedRect)) {
+        if (ships[getWindowId()].target.type == SPOT_PLANET) {
+            setWindowType(PLANET_WINDOW);
+            setWindowId(ships[getWindowId()].target.id_planet);
+            initPlanetWindow(textTextures, fonts, planets);
+            setCameraLastObjectSelected(ships[getWindowId()].target.id_planet);
+            setCameraMode(FOLLOW_PLANET);
+        }
     }
 
     // Aucun des boutons de la fenetre n'a ete clique :
