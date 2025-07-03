@@ -6,7 +6,7 @@
 #include "ship.h"
 #include "ore.h"
 
-typedef enum { MOVING_TO_TARGET, MOVING_TO_BASE, WAITING_ON_TARGET, WAITING_ON_BASE, OUT_OF_FUEL, BROKE, STOPPED_MOVING_TO_TARGET, STOPPED_MOVING_TO_BASE, STOPPED_WAITING_ON_TARGET, STOPPED_WAITING_ON_BASE } ShipState;
+typedef enum { MOVING_TO_TARGET, MOVING_TO_BASE, WAITING_ON_TARGET, WAITING_ON_BASE, OUT_OF_FUEL, BROKEN, STOPPED_MOVING_TO_TARGET, STOPPED_MOVING_TO_BASE, STOPPED_WAITING_ON_TARGET, STOPPED_WAITING_ON_BASE } ShipState;
 
 typedef enum { TRANSPORTER, EXPLORER, DEFENDER, ENEMY } ShipType;
 
@@ -62,6 +62,8 @@ int haveFuel(Ship *ship);
 void displayShips(SDL_Texture ***textureShip, Ship *ships, int shipCount, Planet *planets);
     void renderShipImage(SDL_Texture *spriteSheet, Ship *ships, Planet *planets, Ship currentShip, SDL_Point ShipOnScreen);
     void renderShipBars(Ship ship, SDL_Point ShipOnScreen);
+
+int fuelInShip(Ship *ship);
 
 int globalTankCapacity(Ship *ship);
 

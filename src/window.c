@@ -126,7 +126,7 @@ int clickOnShip(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, int s
     if (id != -1) {  // Si un ship a etait clique...
         setWindowId(id);
         setWindowType(BASIC_SHIP_WINDOW);
-        initBasicShipWindow(textTextures, fonts, &ships[id], ships, planets);
+        initBasicShipWindow(textTextures, fonts, ships, planets);
         setCameraLastObjectSelected(id);
         setCameraMode(FOLLOW_SHIP);
     }
@@ -219,7 +219,7 @@ void objetInSelectionCircle(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Ch
             Mix_PlayChannel(1, sounds[4], 0);
             setWindowType(BASIC_SHIP_WINDOW);
             setWindowId(i);
-            initBasicShipWindow(textTextures, fonts, &(ships[i]), ships, planets);        
+            initBasicShipWindow(textTextures, fonts, ships, planets);        
             setCameraLastObjectSelected(i);
             setCameraMode(FOLLOW_SHIP);
             updateCameraFollow(ships, NULL);
@@ -251,10 +251,10 @@ void updateGame(SDL_Texture **textTextures, TTF_Font **fonts, Ship **ships, int 
     updateTotalOre(planets, planetCount);
     updateTiles(*ships, *shipCount);
     updateEnemies(ships, shipCount);
-    updateWindow(textTextures, fonts, *ships);
+    updateWindow(textTextures, fonts, *ships, planets);
 }
 
-void updateWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships) {
+void updateWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, Planet *planets) {
     if (SDL_GetTicks() < getWindowLastRefresh() + REFRESH_TIME_WINDOW) {
         return;
     }
@@ -265,6 +265,7 @@ void updateWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships) {
             break;
             
         case BASIC_SHIP_WINDOW:
+            initBasicShipWindow(textTextures, fonts, ships, planets);
             break;
             
         case SHIP_WINDOW:

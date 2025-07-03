@@ -41,6 +41,6 @@ void displaySelectionCircle(void);
 void objetInSelectionCircle(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, Ship *ships, int shipCount, Planet *planets, int planetCount);
 
 void updateGame(SDL_Texture **textTextures, TTF_Font **fonts, Ship **ships, int *shipCount, Planet *planets, int planetCount);
-void updateWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships);
+void updateWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, Planet *planets);
 
 #endif
