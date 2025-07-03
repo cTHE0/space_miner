@@ -9,13 +9,14 @@
 #include "ship.h"
 
 
-void initPauseWindow(SDL_Texture **textTextures, TTF_Font **fonts);
+//void initPauseWindow(SDL_Texture **textTextures, TTF_Font **fonts);
 void initPauseWindowRects(SDL_Texture **textTextures);
 
 void displayPauseWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures);
-	void pauseWindowFondations(SDL_Texture ***imageTextures, SDL_Texture **textTextures);
-	void pauseWindowButtons(SDL_Texture ***imageTextures, SDL_Texture **textTextures);
-void pauseWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, GameState *gameState, SDL_Point mouse, Ship *ships, int shipCount, Planet *planets, int planetCount);
+	void pauseWindowFondations();
+	void pauseWindowAesthetic(SDL_Texture ***imageTextures);
+	void pauseWindowButtons(SDL_Texture **textTextures);
+void pauseWindowGestion(Mix_Chunk **sounds, GameState *gameState, SDL_Point mouse, Ship *ships, int shipCount, Planet *planets, int planetCount);
 
 void saveGame(Ship *ships, int shipCount, Planet *planets, int planetCount);
 

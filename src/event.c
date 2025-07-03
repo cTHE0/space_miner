@@ -74,6 +74,7 @@ void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **soun
             case SDL_KEYDOWN:
                 switch (event.key.keysym.sym) {
                     case SDLK_ESCAPE:
+                        Mix_PlayChannel(1, sounds[7], 0);
                         if (getWindowType() != NO_WINDOW) {
                             setWindowType(NO_WINDOW);
                         } else {

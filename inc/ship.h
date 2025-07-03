@@ -65,6 +65,6 @@ void displayShips(SDL_Texture ***textureShip, Ship *ships, int shipCount, Planet
 
 int globalTankCapacity(Ship *ship);
 
-void destroyShips(Ship *ships, int shipCount);
+void destroyShips(Ship *ships);
 
 #endif

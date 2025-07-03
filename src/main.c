@@ -72,7 +72,7 @@ int main(void) {
             case GAME:
                 initRects(textTextures);  // A SUPPRIMER, SEULEMENT POUR LE DEV
                 handleEvents(textTextures, fonts, sounds, &gameState, ships, shipCount, planets, planetCount);
-                updateGame(&ships, &shipCount, planets, planetCount, sounds);
+                updateGame(textTextures, fonts, &ships, &shipCount, planets, planetCount, sounds);
                 displayGame(imageTextures, textTextures, ships, shipCount, planets, planetCount);
                 break;
             
@@ -96,7 +96,7 @@ int main(void) {
     
     // Fermeture du programme
     if (gameBegun) {
-        destroyShips(ships, shipCount);
+        destroyShips(ships);
         destroyPlanets(planets);
         destroyAsteroids();
         destroyTiles();

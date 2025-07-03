@@ -449,7 +449,7 @@ void renderShipBars(Ship ship, SDL_Point ShipOnScreen) {
 
 }
 
-void destroyShips(Ship *ships, int shipCount) {
+void destroyShips(Ship *ships) {
     free(ships);
 }
 
