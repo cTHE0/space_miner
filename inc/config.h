@@ -23,7 +23,7 @@
 #define BUILD_TYPE_COUNT 12
 #define ASTEROID_COUNT 500 // nombre d'astéroids par système solaire
 #define MAX_COMPARTMENTS_PER_SHIP 4
-#define DAMAGE 20 // Dégâts subis à chaque fois que ship touché par laser
+#define DAMAGE 1 // Dégâts subis à chaque fois que ship touché par laser
 
 #define SPRITE_SHEETS_DELAY 100  // En nombre de tick
 #define WAIT_TIME_SHIP 1000  // En millisecondes

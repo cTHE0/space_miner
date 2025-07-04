@@ -26,10 +26,38 @@ void deleteShip(int index, Ship **ships, int *shipCount) {
         return;
     }
 
-    // Décale tous les éléments après l'indice vers la gauche
+    // Liste temporaire des indices à supprimer (pour éviter de supprimer pendant qu'on parcourt)
+    int toDelete[256]; // Limite max de ships à supprimer en cascade
+    int deleteCount = 0;
+
+    // Si on supprime un allié, les ennemis peuvent réagir
+    if ((*ships)[index].shiptype != ENEMY) {
+        for (int i = 0; i < *shipCount; i++) {
+            if ((*ships)[i].shiptype == ENEMY && (*ships)[i].target.id_ship == index) {
+                int nv_target = newTarget(ships, shipCount, i);
+                if (nv_target >= 0) {
+                    (*ships)[i].target.id_ship = nv_target;
+                } else {
+                    toDelete[deleteCount++] = i;
+                }
+            }
+        }
+    }
+
+    // Supprime d'abord les ennemis sans cible (à l'envers pour garder les indices valides)
+    for (int i = deleteCount - 1; i >= 0; i--) {
+        if (toDelete[i] == index) {
+            // Si on allait supprimer index de toute façon, on le fera une seule fois après
+            continue;
+        }
+        deleteShip(toDelete[i], ships, shipCount);
+        if (toDelete[i] < index) index--; // Réajuste l'index du ship principal à supprimer
+    }
+
+    // Suppression du ship demandé (index)
     for (int i = index; i < *shipCount - 1; i++) {
         (*ships)[i] = (*ships)[i + 1];
-        (*ships)[i].id = i;  // Met à jour les IDs internes si tu t'en sers ailleurs
+        (*ships)[i].id = i;
     }
 
     (*shipCount)--;
@@ -39,14 +67,34 @@ void deleteShip(int index, Ship **ships, int *shipCount) {
         if (temp != NULL) {
             *ships = temp;
         } else {
-            fprintf(stderr, "Erreur realloc après suppression (ancienne mémoire conservée)\n");
+            fprintf(stderr, "Erreur realloc après suppression\n");
         }
     } else {
-        // Plus de vaisseaux
         free(*ships);
         *ships = NULL;
+        return;
+    }
+
+    // Mise à jour des références vers les ships (target / base)
+    for (int i = 0; i < *shipCount; i++) {
+        if ((*ships)[i].target.type == SPOT_SHIP) {
+            if ((*ships)[i].target.id_ship == index) {
+                (*ships)[i].target.type = SPOT_NONE;
+            } else if ((*ships)[i].target.id_ship > index) {
+                (*ships)[i].target.id_ship--;
+            }
+        }
+
+        if ((*ships)[i].base.type == SPOT_SHIP) {
+            if ((*ships)[i].base.id_ship == index) {
+                (*ships)[i].base.type = SPOT_NONE;
+            } else if ((*ships)[i].base.id_ship > index) {
+                (*ships)[i].base.id_ship--;
+            }
+        }
     }
 }
+
 
 // On tue tous les ships qui n'ont plus de vie
 void laMort(Ship **ships, int *shipCount) {

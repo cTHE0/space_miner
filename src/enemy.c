@@ -56,6 +56,17 @@ void deleteLaser(int i) {
     }
 }
 
+int newTarget(Ship **ships, int *shipCount, int ennemy_index) {
+    for (int i=0; i<*shipCount; i++) {
+        if ((*ships)[i].shiptype != ENEMY && distanceShipShip(  &((*ships)[i]), &((*ships)[ennemy_index])  ) < (*ships)[ennemy_index].range  ) {
+            return i;
+        }
+    }
+
+    // Si aucun vaisseau allié ne se trouve dans la range de l'enemi, aucune cible à attaquer, on retourne -1
+    return -1;
+}
+
 void updateEnemies(Ship **ships, int *shipCount) {
     if (SDL_GetTicks() - lastEnemyGenerationTime < ENEMY_GENERATION_PERIOD) return;
 

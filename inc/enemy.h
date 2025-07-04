@@ -14,6 +14,7 @@ typedef struct {
 
 void addLaser(SDL_Rect rect, SDL_Point target_coords, int target_id, float angle, int speed);
 void deleteLaser(int i);
+int newTarget(Ship **ships, int *shipCount, int ennemy_index);
 void updateEnemies(Ship **ships, int *shipCount);
 void updateLasers(Ship **ships, int *shipCount, Mix_Chunk **sounds);
 void renderLasers(SDL_Texture ***imageTextures);
