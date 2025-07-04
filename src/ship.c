@@ -48,6 +48,16 @@ void deleteShip(int index, Ship **ships, int *shipCount) {
     }
 }
 
+// On tue tous les ships qui n'ont plus de vie
+void laMort(Ship **ships, int *shipCount) {
+    // On parcours à l'envers pour éviter décalages d'indices et fuites de mémoire
+    for (int i=*shipCount-1; i>=0; i--) {
+        if ((*ships)[i].currentLife < 0) {
+            deleteShip(i, ships, shipCount);
+        }
+    }
+}
+
 
 void initShips(Ship **ships, int shipCount, Planet *planets) {
     *ships = malloc(shipCount * sizeof(Ship));
@@ -124,9 +134,6 @@ void updateShips(Ship *ships, Planet *planets, int shipCount) {
         updateShipAnimation(&ships[i], currentTime);  // Permet de changer de frame du sprite sheet de la fusee i
         updateShipMove(ships, &ships[i], planets, currentTime);
         updateShipTanks(&ships[i], planets, currentTime);
-        if (ships[i].currentLife < 0) {
-            // SUPPRIMER SHIP SANS VIE ICI
-        }
     }
 }
 

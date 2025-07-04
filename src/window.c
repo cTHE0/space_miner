@@ -252,4 +252,5 @@ void updateGame(SDL_Texture **textTextures, TTF_Font **fonts, Ship **ships, int 
     updateTiles(*ships, *shipCount);
     updateEnemies(ships, shipCount);    
     updateLasers(ships, shipCount, sounds);
+    laMort(ships, shipCount);
 }
