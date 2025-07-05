@@ -19,14 +19,14 @@ void initCamera(Planet *planets);
 
 void updateCameraFollow(Ship *ships, Planet *planets);
 
-void setCameraLastObjectSelected(int lastObjectSelected);
 SDL_Rect getCameraRect(void);
+CameraMode getCameraMode(void);
+int getCameraLastObjectSelected(void);
 float getCameraScale(void);
 
 void setCenterCamera(SDL_Point newCenter);
-
-CameraMode getCameraMode(void);
 void setCameraMode(CameraMode newCameraMode);
+void setCameraLastObjectSelected(int lastObjectSelected);
 
 void zoomCamera(float zoomFactor);
 void translateCamera(float dx, float dy);

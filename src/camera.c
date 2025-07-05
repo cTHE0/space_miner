@@ -29,6 +29,10 @@ void setCameraLastObjectSelected(int lastObjectSelected) {
     camera.last_object_selected = lastObjectSelected;
 }
 
+int getCameraLastObjectSelected(void) {
+    return camera.last_object_selected;
+}
+
 void updateCameraFollow(Ship *ships, Planet *planets) {
     if (cameraMode == FOLLOW_SHIP) {
         setCenterCamera((SDL_Point){ships[camera.last_object_selected].x + ships[camera.last_object_selected].w / 2, 

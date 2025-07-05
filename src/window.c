@@ -123,7 +123,7 @@ int whichShipIsClicked(Ship *ships, int shipCount, SDL_Point mouse) {
 int clickOnShip(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, int shipCount, Planet *planets, SDL_Point mouse) {
     int id = whichShipIsClicked(ships, shipCount, mouse); // id du ship selectionne ou -1 sinon
 
-    if (id != -1) {  // Si un ship a etait clique...
+    if (id != -1 && ships[id].shiptype != ENEMY) {  // Si un ship a etait clique...
         setWindowId(id);
         setWindowType(BASIC_SHIP_WINDOW);
         initBasicShipWindow(textTextures, fonts, ships, planets);
@@ -250,7 +250,35 @@ void updateGame(SDL_Texture **textTextures, TTF_Font **fonts, Ship **ships, int 
     updateAsteroids(planets,planetCount);
     updateTotalOre(planets, planetCount);
     updateTiles(*ships, *shipCount);
-    updateEnemies(ships, shipCount);    
-    updateLasers(ships, shipCount, sounds);
-    laMort(ships, shipCount);
+    updateWarSystem(ships, shipCount, sounds);
+    updateWindow(textTextures, fonts, *ships, planets);
+}
+
+void updateWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, Planet *planets) {
+    if (SDL_GetTicks() < getWindowLastRefresh() + REFRESH_TIME_WINDOW) {
+        return;
+    }
+
+    setWindowLastRefresh(SDL_GetTicks());
+    switch (getWindowType()) {
+        case PLANET_WINDOW:
+            break;
+            
+        case BASIC_SHIP_WINDOW:
+            initBasicShipWindow(textTextures, fonts, ships, planets);
+            break;
+            
+        case SHIP_WINDOW:
+            initShipWindow(textTextures, fonts, &ships[getWindowId()]);
+            break;
+
+        case SIDE_BAR_WINDOW:
+            break;
+
+        case PAUSE_WINDOW:
+            break;
+            
+        default:
+            break;
+    }
 }

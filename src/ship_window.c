@@ -831,7 +831,7 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
             setWindowType(PLANET_WINDOW);
             setWindowId(ship->base.id_planet);
             initPlanetWindow(textTextures, fonts, planets);
-            setCameraLastObjectSelected(ship->target.id_planet);
+            setCameraLastObjectSelected(ship->base.id_planet);
             setCameraMode(FOLLOW_PLANET);
         }
     }

@@ -44,12 +44,12 @@ struct Ship {
     int frameIndex;
     Uint32 lastFrameTime;
     double angleWithPlanet; // Angle permettant de situer le ship sur la surface de la planète
-    int noise;              // bruit, ondes EM émisent et attirant ennemis entre 0 et 100
+    int noise;              // Nombre de vaisseaux enemie maximum genere a chaque fois
 };
 
 void addShip(Ship newShip, Ship **ships, int *shipCount);
 void deleteShip(int index, Ship **ships, int *shipCount);
-void laMort(Ship **ships, int *shipCount);
+void deleteKilledShips(Ship **ships, int *shipCount);
 void initShips(Ship **ships, int shipCount, Planet *planets);
 void updateShips(Ship *ships, Planet *planets, int shipCount);
     void updateShipAnimation(Ship *ship, Uint32 currentTime);

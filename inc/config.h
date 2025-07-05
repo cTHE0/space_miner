@@ -4,8 +4,8 @@
 #include <stdint.h>
 
 
-#define SCREEN_WIDTH 1280 // Dimensions 16/9 courantes : 1280x720, 1920x1080
-#define SCREEN_HEIGHT 720
+#define SCREEN_WIDTH 1920 // Dimensions 16/9 courantes : 1280x720, 1920x1080
+#define SCREEN_HEIGHT 1080
 #define MAP_SIZE AREA_SIZE * NUMBER_OF_AREA_PER_WIDTH
 #define AREA_SIZE 20000  // une parcelle = une image carree de background
 #define NUMBER_OF_AREA_PER_WIDTH 6  // Nombre de parcelle par cote
@@ -31,10 +31,11 @@
 #define REFRESH_TIME_BUILDS 1000  // En millisecondes
 #define TANKS_UPDATE_INTERVAL 200  // En millisecondes
 #define ASTEROID_TICK 300
-#define ENEMY_GENERATION_PERIOD 5000
-#define LASER_GENERATION_PERIOD 300
+#define ENEMY_GENERATION_PERIOD 10000
+#define LASER_GENERATION_PERIOD 800
 #define REFRESH_TIME_TILE 500
 #define REFRESH_TIME_WINDOW 500
+#define REFRESH_TIME_KILLED_SHIP 500
 
 #define STEP_TRANSLATION 40
 #define LIMIT_UNZOOM 0.05

@@ -141,7 +141,7 @@ void saveGame(Ship *ships, int shipCount, Planet *planets, int planetCount) {
         return;
     }
 
-    // Sauvegarder le nombre de fusees/planetes/tuiles au début du fichier
+    // Sauvegarder le nombre de fusees/planetes au début du fichier
     fwrite(&shipCount, sizeof(int), 1, backup);
     fwrite(&planetCount, sizeof(int), 1, backup);
 
