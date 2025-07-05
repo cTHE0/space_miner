@@ -7,6 +7,7 @@
 #include "ship.h"
 #include "renderer.h"
 #include "camera.h"
+#include "assets_gestion.h"
 
 
 void *supprElemList(void *list, int *nb_elem, int type_size, int i) {
@@ -482,17 +483,32 @@ float dist(int xa, int ya, int xb, int yb) {
 
 void Mix_SetPositionCameraCentered(int channel, SDL_Rect *songPosition) {
     // Initialisation de l'angle (son stereo)
-    int angle = computeAngleDeg(songPosition->x, songPosition->y, getCameraRect().x, getCameraRect().y);
+    int angle = computeAngleDeg(songPosition->x, songPosition->y, getCameraRect().x, getCameraRect().y) + 90;
 
-    // Initialisation de la distance (son plus ou moins fort)
-    int distance = dist(songPosition->x, songPosition->y, getCameraRect().x, getCameraRect().y);
-    if (distance > SOLAR_SYSTEM_SIZE) {
-        distance = 255;
-    } else {
-        distance = (distance * 255) / SOLAR_SYSTEM_SIZE;
+    // Calcul de la distance (son plus ou moins fort)
+    SDL_Rect screenCoordOnMap = {getCameraRect().x + (1 - 1 / getCameraScale()) * SCREEN_WIDTH / 2.f,
+                                 getCameraRect().y + (1 - 1 / getCameraScale()) * SCREEN_HEIGHT / 2.f,
+                                 getCameraRect().w,
+                                 getCameraRect().h
+                                };
+
+    int distance = 255;
+    if (SDL_HasIntersection(&screenCoordOnMap, songPosition)) {
+        // Adaptation du volume en fonction du zoom
+        if (getCameraScale() >= 1) {
+            distance = 200;
+        } else {
+            if (getCameraScale() > 0.3) {
+                distance = 210;
+            } else if (getCameraScale() > 0.1) {
+                distance = 225;
+            } else if (getCameraScale() > LIMIT_UNZOOM) {
+                distance = 240;
+            }
+        }
     }
 
     // Mise a jour des parametre audio du canal 'channel'
-    //printf("distance:%d, angle:%d\n", distance, angle);
+    printf("distance:%d, angle:%d\n", distance, angle);
     Mix_SetPosition(channel, (Sint16)angle, (Uint8)distance);
 }

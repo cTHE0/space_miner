@@ -62,7 +62,7 @@ void updateShips(Ship *ships, Planet *planets, int shipCount);
 int haveFuel(Ship *ship);
 
 void displayShips(SDL_Texture ***textureShip, Ship *ships, int shipCount, Planet *planets);
-    void renderShipImage(SDL_Texture *spriteSheet, Ship *ships, Planet *planets, Ship currentShip, SDL_Point ShipOnScreen);
+    float angleShipImage(Ship *ships, Planet *planets, Ship *currentShip);
     void renderShipBars(Ship ship, SDL_Point ShipOnScreen);
 
 int fuelInShip(Ship *ship);

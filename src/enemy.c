@@ -16,6 +16,9 @@ static Uint32 lastLaserGenerationTime = 0;
 static Laser *lasers = NULL;
 static int lasersCount = 0;
 
+static int lastLaserSon = 2;  // canaux 2,3,4 pour les sons de lasers
+static int lastExplosionSon = 5;   /// canaux 5,6,7 pour les cons d'explosions
+
 
 void generateEnemy(Ship targetShip, Ship **ships, int *shipCount) {
     Ship enemyShip;
@@ -74,14 +77,13 @@ void updateEnemies(Ship **ships, int *shipCount) {
 
 void updateLasers(Ship *ships, Mix_Chunk **sounds) {
     float distance;
-    SDL_Rect rectShip;
+    SDL_Rect targetLaserRect;
 
     for (int i = 0; i < lasersCount; i++) {
-        //printf("i:%d,target_id:%d,laserCount:%d,shipcount:?\n",i,lasers[i].target_id,lasersCount);
         if (lasers[i].target_id == -1) {
-            rectShip = (SDL_Rect){0, 0, -1, -1};  // Valeurs bizarres exprès
+            targetLaserRect = (SDL_Rect){0, 0, -1, -1};  // Valeurs bizarres exprès
         } else {
-            rectShip = (SDL_Rect){ships[lasers[i].target_id].x, ships[lasers[i].target_id].y, ships[lasers[i].target_id].w, ships[lasers[i].target_id].h};
+            targetLaserRect = (SDL_Rect){ships[lasers[i].target_id].x, ships[lasers[i].target_id].y, ships[lasers[i].target_id].w, ships[lasers[i].target_id].h};
         }
 
         distance = dist(lasers[i].target_coords.x, 
@@ -89,12 +91,14 @@ void updateLasers(Ship *ships, Mix_Chunk **sounds) {
                         lasers[i].rect.x,
                         lasers[i].rect.y); 
 
-        if (rectShip.w != -1 && SDL_HasIntersection(&lasers[i].rect, &rectShip)) {
+        if (targetLaserRect.w != -1 && SDL_HasIntersection(&lasers[i].rect, &targetLaserRect)) {
             // Appliquer des dégâts
             if (lasers[i].target_id != -1) {  // Vaut -1 lorsque la cible du laser a deja ete detruite
                 ships[lasers[i].target_id].currentLife -= DAMAGE;
-                Mix_SetPositionCameraCentered(3, &lasers[i].rect);
-                Mix_PlayChannel(3, sounds[12], 0); // Explosion
+                Mix_PlayChannel(lastExplosionSon, sounds[12], 0);  // Explosion
+                Mix_SetPositionCameraCentered(lastExplosionSon, &lasers[i].rect);  // Ne fonctionne que si le canal est actif
+                lastExplosionSon ++;
+                if (lastExplosionSon == 8) lastExplosionSon = 5;
             }
 
             // Supprimer le laser
@@ -132,8 +136,10 @@ void newLasersFired(Ship *ships, int shipCount, Mix_Chunk **sounds) {
                  computeAngleDeg(ships[ships[i].target.id_ship].x, ships[ships[i].target.id_ship].y, newLaser.x, newLaser.y),
                  10);
 
-        Mix_SetPositionCameraCentered(2, &lasers[lasersCount - 1].rect);
-        Mix_PlayChannel(2, sounds[11], 0);
+        Mix_PlayChannel(lastLaserSon, sounds[11], 0);
+        Mix_SetPositionCameraCentered(lastLaserSon, &lasers[lasersCount - 1].rect);  // Ne fonctionne que si le canal est actif
+        lastLaserSon ++;
+        if (lastLaserSon == 5) lastLaserSon = 2;
     }
 }
 

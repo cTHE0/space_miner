@@ -370,40 +370,47 @@ void isShipOnPlanet(Ship *ship, Planet *planets) {
 
 void displayShips(SDL_Texture ***imageTextures, Ship *ships, int shipCount, Planet *planets) {
     for (int i = 0; i < shipCount; i++) {
-        // Calcul des coordonnees a l'ecran, du point en haut a gauche de la fusee
-        SDL_Point ShipOnScreen = (SDL_Point){(ships[i].x - getCameraRect().x - SCREEN_WIDTH / 2.f) * getCameraScale() + SCREEN_WIDTH / 2.f,
-                                             (ships[i].y - getCameraRect().y - SCREEN_HEIGHT / 2.f) * getCameraScale() + SCREEN_HEIGHT / 2.f};
+        // Actualisation des coordonnees a l'ecran de la fusee
+        ships[i].destRect = (SDL_Rect){(ships[i].x - getCameraRect().x - SCREEN_WIDTH / 2.f) * getCameraScale() + SCREEN_WIDTH / 2.f,
+                                       (ships[i].y - getCameraRect().y - SCREEN_HEIGHT / 2.f) * getCameraScale() + SCREEN_HEIGHT / 2.f,
+                                       ships[i].w * getCameraScale(),
+                                       ships[i].h * getCameraScale()};
 
-        if (ShipOnScreen.x >= -ships[i].w * getCameraScale() && ShipOnScreen.x <= SCREEN_WIDTH && 
-            ShipOnScreen.y >= -ships[i].h * getCameraScale() && ShipOnScreen.y <= SCREEN_HEIGHT + ships[i].h * getCameraScale()) {  // Si la fusee est dans l'ecran 
-            renderShipImage(imageTextures[7][ships[i].idModel], ships, planets, ships[i], ShipOnScreen);
-            // renderShipBars(ships[i], ShipOnScreen);
-            ships[i].destRect.x = ShipOnScreen.x;
-            ships[i].destRect.y = ShipOnScreen.y;
-            ships[i].destRect.w = ships[i].w * getCameraScale();
-            ships[i].destRect.h = ships[i].h * getCameraScale();
+        if (ships[i].destRect.x >= -ships[i].destRect.w && ships[i].destRect.x <= SCREEN_WIDTH && 
+            ships[i].destRect.y >= -ships[i].destRect.h && ships[i].destRect.y <= SCREEN_HEIGHT + ships[i].destRect.h) {  // Si la fusee est dans l'ecran 
+            // Creation des variables pour afficher
+            SDL_Rect srcRect = {ships[i].frameIndex * 64, 0, 64, 64};  // Frame actuelle sur le sprite sheet
+            SDL_Point center = {ships[i].destRect.w / 2, ships[i].destRect.h / 2};  // Definition du point de rotation (au centre du sprite)
+
+            // Affichage de la fusee
+            SDL_RenderCopyEx(renderer, 
+                            imageTextures[7][ships[i].idModel], 
+                            &srcRect, 
+                            &ships[i].destRect, 
+                            angleShipImage(ships, planets, &ships[i]), 
+                            &center, 
+                            SDL_FLIP_NONE);
         }
     }
 }
 
-void renderShipImage(SDL_Texture *textureShip, Ship *ships, Planet *planets, Ship currentShip, SDL_Point ShipOnScreen) {
-    // Calcul de l'angle en degres de l'image de la fusee
+float angleShipImage(Ship *ships, Planet *planets, Ship *currentShip) {  // Calcul de l'angle en degres de l'image de la fusee
     float angle;
-    Spot spotDest = (currentShip.state == WAITING_ON_BASE || currentShip.state == MOVING_TO_BASE) ? currentShip.base : currentShip.target;
+    Spot spotDest = (currentShip->state == WAITING_ON_BASE || currentShip->state == MOVING_TO_BASE) ? currentShip->base : currentShip->target;
 
     switch (spotDest.type) {
         case SPOT_PLANET:
-            angle = atan2(planets[spotDest.id_planet].y - (currentShip.y + currentShip.h / 2.f), planets[spotDest.id_planet].x - (currentShip.x + currentShip.w / 2.f)) * 180.0f / M_PI;
+            angle = atan2(planets[spotDest.id_planet].y - (currentShip->y + currentShip->h / 2.f), planets[spotDest.id_planet].x - (currentShip->x + currentShip->w / 2.f)) * 180.0f / M_PI;
             break;
         case SPOT_SHIP:
-            angle = atan2((ships[spotDest.id_ship].y + ships[spotDest.id_ship].h / 2.f) - (currentShip.y + currentShip.h / 2.f), (ships[spotDest.id_ship].x + ships[spotDest.id_ship].w) - (currentShip.x + currentShip.w / 2.f)) * 180.0f / M_PI;
-            if (currentShip.state == ATTACKING_SHIP) {
+            angle = atan2((ships[spotDest.id_ship].y + ships[spotDest.id_ship].h / 2.f) - (currentShip->y + currentShip->h / 2.f), (ships[spotDest.id_ship].x + ships[spotDest.id_ship].w) - (currentShip->x + currentShip->w / 2.f)) * 180.0f / M_PI;
+            if (currentShip->state == ATTACKING_SHIP) {
                 //Eviter que les ships n'attaquent en arrière
                 angle += 180;
             }
             break;
         case SPOT_POINT:
-            angle = atan2(spotDest.point.y - (currentShip.y + currentShip.h / 2.f), spotDest.point.x - (currentShip.x + currentShip.w / 2.f)) * 180.0f / M_PI;
+            angle = atan2(spotDest.point.y - (currentShip->y + currentShip->h / 2.f), spotDest.point.x - (currentShip->x + currentShip->w / 2.f)) * 180.0f / M_PI;
             break;
         default:
             angle = 0;
@@ -411,15 +418,9 @@ void renderShipImage(SDL_Texture *textureShip, Ship *ships, Planet *planets, Shi
     }
 
     // Ajuste l'angle en fonction du sens de deplacement
-    angle +=(currentShip.state == MOVING_TO_BASE || currentShip.state == MOVING_TO_TARGET) ? 90 : -90;
+    angle +=(currentShip->state == MOVING_TO_BASE || currentShip->state == MOVING_TO_TARGET) ? 90 : -90;
 
-    // Creation des variables necessaires a l'affichage
-    SDL_Rect srcRect = {currentShip.frameIndex * 64, 0, 64, 64};  // Frame actuelle sur le sprite sheet
-    SDL_Rect destRect = {ShipOnScreen.x, ShipOnScreen.y, currentShip.w * getCameraScale(), currentShip.h * getCameraScale()};  // Position et taille affichee
-    SDL_Point center = {destRect.w / 2, destRect.h / 2};  // Definition du point de rotation (au centre du sprite)
-
-    // Dessin des fusees avec rotation
-    SDL_RenderCopyEx(renderer, textureShip, &srcRect, &destRect, angle, &center, SDL_FLIP_NONE);
+    return angle;
 }
 
 

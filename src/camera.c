@@ -12,9 +12,9 @@ static CameraMode cameraMode = NORMAL;
 void initCamera(Planet *planets) {
     camera.rect.x = planets[1].x - SCREEN_WIDTH / 2;
     camera.rect.y = planets[1].y - SCREEN_HEIGHT / 2;
-    camera.rect.h = SCREEN_HEIGHT;
-    camera.rect.w = SCREEN_WIDTH;
     camera.scale = 0.5;
+    camera.rect.w = SCREEN_WIDTH / camera.scale;
+    camera.rect.h = SCREEN_HEIGHT / camera.scale;
 }
 
 CameraMode getCameraMode(void) {
@@ -110,7 +110,9 @@ void zoomCamera(float zoomFactor) {
     } else if (camera.scale < 2) {  // zoomFactor >= 1 implicite 
         camera.scale *= zoomFactor;
     }
-    
+
+    camera.rect.w = SCREEN_WIDTH / camera.scale;
+    camera.rect.h = SCREEN_HEIGHT / camera.scale;
 }
 
 void translateCamera(float dx, float dy) {
