@@ -131,7 +131,7 @@ int clickOnShip(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, int s
         setCameraMode(FOLLOW_SHIP);
     }
 
-    return id != -1;
+    return id != -1 && ships[id].shiptype != ENEMY;
 }
 
 int whichPlanetIsClicked(Planet *planets, int planetCount, SDL_Point mouse) {

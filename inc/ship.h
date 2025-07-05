@@ -37,7 +37,6 @@ struct Ship {
     ShipState state;
     int maxLife, currentLife;
     Cargo cargo;
-    Uint32 lastRefreshFilling;
     int fuelConsumption;
     int range;
     Uint32 waitStartTime;
@@ -45,6 +44,11 @@ struct Ship {
     Uint32 lastFrameTime;
     double angleWithPlanet; // Angle permettant de situer le ship sur la surface de la planète
     int noise;              // Nombre de vaisseaux enemie maximum genere a chaque fois
+
+    union {
+        Uint32 lastRefreshFilling;  // Pour les transporteurs
+        Uint32 lastRefreshFiring;   // Pour les enemies (et defenseurs ?)
+    };
 };
 
 void addShip(Ship newShip, Ship **ships, int *shipCount);

@@ -509,6 +509,5 @@ void Mix_SetPositionCameraCentered(int channel, SDL_Rect *songPosition) {
     }
 
     // Mise a jour des parametre audio du canal 'channel'
-    printf("distance:%d, angle:%d\n", distance, angle);
     Mix_SetPosition(channel, (Sint16)angle, (Uint8)distance);
 }

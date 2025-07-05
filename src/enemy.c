@@ -11,8 +11,6 @@
 
 static Uint32 lastEnemyGenerationTime = 0;
 
-static Uint32 lastLaserGenerationTime = 0;
-
 static Laser *lasers = NULL;
 static int lasersCount = 0;
 
@@ -114,16 +112,15 @@ void updateLasers(Ship *ships, Mix_Chunk **sounds) {
 }
 
 void newLasersFired(Ship *ships, int shipCount, Mix_Chunk **sounds) {
-    if (SDL_GetTicks() - lastLaserGenerationTime < LASER_GENERATION_PERIOD) return;
-        
-
-    lastLaserGenerationTime = SDL_GetTicks();
-
+    Uint32 currentTime = SDL_GetTicks();
     SDL_Rect newLaser = {0, 0, 200, 200};
     for (int i = 0; i < shipCount; i++) {
         if (ships[i].shiptype != ENEMY) continue;  // Seuls les ennemies peuvent tirer des missiles actuellement
-
         if (ships[i].target.id_ship == -1) continue;
+        if (currentTime < ships[i].lastRefreshFiring + LASER_GENERATION_PERIOD) continue;
+
+        // Met a jour la date du dernier tir
+        ships[i].lastRefreshFiring = currentTime;
 
         // Initialise les coordonnees du nouveau laser
         newLaser.x = ships[i].x;
