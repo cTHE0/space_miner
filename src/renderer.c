@@ -48,8 +48,6 @@ void initSDL(SDL_Window **window) {
     }
     Mix_Volume(0, MIX_MAX_VOLUME * 0.7);
     Mix_Volume(1, MIX_MAX_VOLUME);
-    Mix_Volume(2, MIX_MAX_VOLUME * 0.7);
-    Mix_Volume(3, MIX_MAX_VOLUME * 0.5);
 
     // Créer la fenêtre
     *window = SDL_CreateWindow("VOID REIGN: THE MINERALS WAR", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);

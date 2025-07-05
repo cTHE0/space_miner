@@ -214,8 +214,7 @@ void objetInSelectionCircle(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Ch
         object = (SDL_Point){(ships[i].x + ships[i].w / 2 - getCameraRect().x - SCREEN_WIDTH / 2.0f) * getCameraScale() + SCREEN_WIDTH / 2.0f,
                              (ships[i].y + ships[i].h / 2 - getCameraRect().y - SCREEN_HEIGHT / 2.0f) * getCameraScale() + SCREEN_HEIGHT / 2.0f
                             };
-        if (distancePointPoint(&object, &centerSelectionCircle) -  ships[i].w / 2
-            < distancePointPoint(&currentMouse, &centerSelectionCircle)) {
+        if (ships[i].shiptype != ENEMY && distancePointPoint(&object, &centerSelectionCircle) -  ships[i].w / 2 < distancePointPoint(&currentMouse, &centerSelectionCircle)) {
             Mix_PlayChannel(1, sounds[4], 0);
             setWindowType(BASIC_SHIP_WINDOW);
             setWindowId(i);

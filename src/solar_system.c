@@ -22,6 +22,7 @@ int generateSolarSystem(Planet *planets, int planetCount, int nbEntityGenerated)
 
     // Generation des entites du systeme solaire
     for (int j = nbEntityGenerated; j < nbEntityGenerated + nbEntityNewSS; j++) {
+        memset(&planets[j], 0, sizeof(Planet));
         planets[j].id = j;
 
         // Gestion abondance

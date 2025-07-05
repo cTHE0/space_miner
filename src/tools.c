@@ -6,6 +6,7 @@
 #include "planet.h"
 #include "ship.h"
 #include "renderer.h"
+#include "camera.h"
 
 
 void *supprElemList(void *list, int *nb_elem, int type_size, int i) {
@@ -477,4 +478,21 @@ void drawHexagon(SDL_Point center, int sizeSide) {
 
 float dist(int xa, int ya, int xb, int yb) {
     return sqrt((xa-xb)*(xa-xb) + (ya-yb)*(ya-yb));
+}
+
+void Mix_SetPositionCameraCentered(int channel, SDL_Rect *songPosition) {
+    // Initialisation de l'angle (son stereo)
+    int angle = computeAngleDeg(songPosition->x, songPosition->y, getCameraRect().x, getCameraRect().y);
+
+    // Initialisation de la distance (son plus ou moins fort)
+    int distance = dist(songPosition->x, songPosition->y, getCameraRect().x, getCameraRect().y);
+    if (distance > SOLAR_SYSTEM_SIZE) {
+        distance = 255;
+    } else {
+        distance = (distance * 255) / SOLAR_SYSTEM_SIZE;
+    }
+
+    // Mise a jour des parametre audio du canal 'channel'
+    //printf("distance:%d, angle:%d\n", distance, angle);
+    Mix_SetPosition(channel, (Sint16)angle, (Uint8)distance);
 }

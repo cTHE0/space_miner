@@ -140,7 +140,9 @@ void saveGame(Ship *ships, int shipCount, Planet *planets, int planetCount) {
         printf("Erreur lors de l'ouverture du fichier pour la sauvegarde.\n");
         return;
     }
-
+    
+    setvbuf(backup, NULL, _IONBF, 0);
+    
     // Sauvegarder le nombre de fusees/planetes au début du fichier
     fwrite(&shipCount, sizeof(int), 1, backup);
     fwrite(&planetCount, sizeof(int), 1, backup);

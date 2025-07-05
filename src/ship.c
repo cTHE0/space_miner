@@ -24,6 +24,7 @@ void initShips(Ship **ships, int shipCount, Planet *planets) {
     }
 
     for (int i = 0; i < shipCount; i++) {
+        memset(&(*ships)[i], 0, sizeof(Ship));
         (*ships)[i].shiptype = TRANSPORTER;
         (*ships)[i].id = i;
         (*ships)[i].idModel = rand() % 7;
@@ -541,7 +542,11 @@ void deleteShip(int index, Ship **ships, int *shipCount) {
 
     // Suppression des elements de 'toDelete' et decalage des indices, avec actualisation des references entre fusees
     for (int i = 0; i < deleteCount; i++) {
-        (*ships)[toDelete[i]] = (*ships)[*shipCount - 1];
+        // Remplissage du trou (ce qui supprime bien lelement d'indice toDelete[i])
+        if (toDelete[i] != *shipCount - 1) {
+            (*ships)[toDelete[i]] = (*ships)[*shipCount - 1];
+        }
+
         // Recherche des fusees qui avaient un lien avec la ship 'shipCount - 1' et actualisation
         for (int j = 0; j < *shipCount; j++) {
             if ((*ships)[j].base.type == SPOT_SHIP && (*ships)[j].base.id_ship == *shipCount - 1) {
@@ -551,11 +556,21 @@ void deleteShip(int index, Ship **ships, int *shipCount) {
                 (*ships)[j].target.id_ship = toDelete[i];
             }
         }
+
+        // Recherche du cas ou (*ships)[*shipCount - 1] est un element de toDelete
+        for (int j = i + 1; j < deleteCount; j++) {
+            if (toDelete[j] == *shipCount - 1) {
+                toDelete[j] = toDelete[i];
+            }
+        }
+
         (*shipCount) --;
     }
 
     // Reallocation de la liste de fusees
-    *ships = realloc(*ships, (*shipCount) * sizeof(Ship));
+    if (*shipCount != 0) {
+        *ships = realloc(*ships, (*shipCount) * sizeof(Ship));
+    }
 }
 
 void deleteKilledShips(Ship **ships, int *shipCount) {  // On tue tous les ships qui n'ont plus de vie

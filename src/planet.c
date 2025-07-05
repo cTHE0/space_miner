@@ -19,13 +19,6 @@
 static Uint32 lastPlanetUpdateTime = 0;
 static int nbSolarSystems = 0;
 
-int getNbSolarSystems(void) {
-    return nbSolarSystems;
-}
-
-void setNbSolarSystems(int nbSS) {
-    nbSolarSystems = nbSS;
-}
 
 void initPlanets(Planet **planets, int planetCount) {
     // Allocation du tableau de planètes
@@ -137,6 +130,14 @@ void displayPlanets(SDL_Texture ***imageTextures, Planet *planets, int planetCou
         
         displayBuildsAroundPlanet(&planets[i], 3, imageTextures[9], (SDL_Point){60, 60});
     }
+}
+
+int getNbSolarSystems(void) {
+    return nbSolarSystems;
+}
+
+void setNbSolarSystems(int nbSS) {
+    nbSolarSystems = nbSS;
 }
 
 void destroyPlanets(Planet *planets) {

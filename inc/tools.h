@@ -42,4 +42,6 @@ void drawHexagon(SDL_Point center, int sizeSide);
 
 float dist(int xa, int ya, int xb, int yb);
 
+void Mix_SetPositionCameraCentered(int channel, SDL_Rect *songPosition);
+
 #endif

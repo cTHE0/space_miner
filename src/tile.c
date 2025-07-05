@@ -19,6 +19,7 @@ void initTiles(void) {
     tilesMatrix = malloc(byteCount * sizeof(uint8_t));
 
     // Remplissage du tableau de tuiles
+    memset(tilesMatrix, 0, byteCount * sizeof(uint8_t));  // Initialise tout le tableau a 0
     for (int i = 0; i < NUMBER_OF_HEXAGON_PER_HEIGHT; i++) {
         for (int j = 0; j < NUMBER_OF_HEXAGON_PER_WIDTH; j++) {
             setBit(i, j, 1);

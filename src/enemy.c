@@ -20,6 +20,8 @@ static int lasersCount = 0;
 void generateEnemy(Ship targetShip, Ship **ships, int *shipCount) {
     Ship enemyShip;
 
+    memset(&enemyShip, 0, sizeof(Ship));
+
     enemyShip.shiptype = ENEMY;
     enemyShip.id = *shipCount;
     enemyShip.idModel = 6;
@@ -52,7 +54,7 @@ void generateEnemy(Ship targetShip, Ship **ships, int *shipCount) {
 void updateWarSystem(Ship **ships, int *shipCount, Mix_Chunk **sounds) {
     updateEnemies(ships, shipCount);
     updateLasers(*ships, sounds);
-    newLasersFired(*ships, shipCount, sounds);
+    newLasersFired(*ships, *shipCount, sounds);
     deleteKilledShips(ships, shipCount);
 }
 
@@ -75,22 +77,29 @@ void updateLasers(Ship *ships, Mix_Chunk **sounds) {
     SDL_Rect rectShip;
 
     for (int i = 0; i < lasersCount; i++) {
-        rectShip = (SDL_Rect){ships[lasers[i].target_id].x, ships[lasers[i].target_id].y, ships[lasers[i].target_id].w, ships[lasers[i].target_id].h};
+        //printf("i:%d,target_id:%d,laserCount:%d,shipcount:?\n",i,lasers[i].target_id,lasersCount);
+        if (lasers[i].target_id == -1) {
+            rectShip = (SDL_Rect){0, 0, -1, -1};  // Valeurs bizarres exprès
+        } else {
+            rectShip = (SDL_Rect){ships[lasers[i].target_id].x, ships[lasers[i].target_id].y, ships[lasers[i].target_id].w, ships[lasers[i].target_id].h};
+        }
+
         distance = dist(lasers[i].target_coords.x, 
                         lasers[i].target_coords.y,
                         lasers[i].rect.x,
-                        lasers[i].rect.y);
+                        lasers[i].rect.y); 
 
-        if (SDL_HasIntersection(&lasers[i].rect, &rectShip)) {
+        if (rectShip.w != -1 && SDL_HasIntersection(&lasers[i].rect, &rectShip)) {
             // Appliquer des dégâts
             if (lasers[i].target_id != -1) {  // Vaut -1 lorsque la cible du laser a deja ete detruite
                 ships[lasers[i].target_id].currentLife -= DAMAGE;
+                Mix_SetPositionCameraCentered(3, &lasers[i].rect);
                 Mix_PlayChannel(3, sounds[12], 0); // Explosion
             }
 
             // Supprimer le laser
             deleteLaser(i);
-        } else if (distance > 10.f) {
+        } else if (distance >= lasers[i].speed) {
             // Avancer le laser vers sa cible initiale
             lasers[i].rect.x += (lasers[i].target_coords.x - lasers[i].rect.x) * lasers[i].speed / distance;
             lasers[i].rect.y += (lasers[i].target_coords.y - lasers[i].rect.y) * lasers[i].speed / distance;
@@ -100,14 +109,14 @@ void updateLasers(Ship *ships, Mix_Chunk **sounds) {
     }
 }
 
-void newLasersFired(Ship *ships, int *shipCount, Mix_Chunk **sounds) {
+void newLasersFired(Ship *ships, int shipCount, Mix_Chunk **sounds) {
     if (SDL_GetTicks() - lastLaserGenerationTime < LASER_GENERATION_PERIOD) return;
         
 
     lastLaserGenerationTime = SDL_GetTicks();
 
     SDL_Rect newLaser = {0, 0, 200, 200};
-    for (int i = 0; i < *shipCount; i++) {
+    for (int i = 0; i < shipCount; i++) {
         if (ships[i].shiptype != ENEMY) continue;  // Seuls les ennemies peuvent tirer des missiles actuellement
 
         if (ships[i].target.id_ship == -1) continue;
@@ -123,6 +132,7 @@ void newLasersFired(Ship *ships, int *shipCount, Mix_Chunk **sounds) {
                  computeAngleDeg(ships[ships[i].target.id_ship].x, ships[ships[i].target.id_ship].y, newLaser.x, newLaser.y),
                  10);
 
+        Mix_SetPositionCameraCentered(2, &lasers[lasersCount - 1].rect);
         Mix_PlayChannel(2, sounds[11], 0);
     }
 }
@@ -144,7 +154,9 @@ void deleteLaser(int id) {
 
     // Suppression de l'emplacement en trop, d'indice 'laserCount - 1'
     lasersCount --;
-    lasers = realloc(lasers, lasersCount * sizeof(Laser));
+    if (lasersCount != 0) {
+        lasers = realloc(lasers, lasersCount * sizeof(Laser));
+    }
 }
 
 int newTarget(Ship *ships, int shipCount, int idEnemy, int idException) {
@@ -159,7 +171,7 @@ int newTarget(Ship *ships, int shipCount, int idEnemy, int idException) {
 
 void displayLasers(SDL_Texture ***imageTextures) {
     SDL_Rect dstRect;
-    for (int i = 0; i<lasersCount; i++) {
+    for (int i = 0; i < lasersCount; i++) {
         dstRect.x = (lasers[i].rect.x - getCameraRect().x - SCREEN_WIDTH / 2.f) * getCameraScale() + SCREEN_WIDTH / 2.f;
         dstRect.y = (lasers[i].rect.y - getCameraRect().y - SCREEN_HEIGHT / 2.f) * getCameraScale() + SCREEN_HEIGHT / 2.f;
         dstRect.w = lasers[i].rect.w * getCameraScale();
