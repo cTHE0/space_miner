@@ -46,7 +46,8 @@ static SDL_Rect bgRect,
                 narrowRect,
                 destRectShip,
                 travelInfoTitleRect,
-                tankCompoTitleRect;
+                tankCompoTitleRect,
+                swapDirectionButtonRect;
 
 
 void initBasicShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, Planet *planets) {
@@ -229,6 +230,9 @@ void initBasicShipWindowRects(SDL_Texture **textTextures) {
     narrowRect = (SDL_Rect){baseDisplayedRect.x + baseDisplayedRect.w, baseDisplayedRect.y + baseDisplayedRect.h * 0.5, 4, 15};
 
     destRectShip = (SDL_Rect){baseDisplayedRect.x + baseDisplayedRect.w, baseDisplayedRect.y + baseDisplayedRect.h * 0.13, SCREEN_WIDTH * 0.05, SCREEN_WIDTH * 0.05};
+
+    swapDirectionButtonRect = (SDL_Rect){SCREEN_WIDTH * 0.1700, SCREEN_HEIGHT * 0.9300, SCREEN_WIDTH * 0.0500, SCREEN_WIDTH * 0.0300};
+
 }
 
 void displayBasicShipWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships, Planet *planets) {
@@ -323,6 +327,9 @@ void basicShipWindowGeneralInfo(SDL_Texture ***imageTextures, SDL_Texture ** tex
 
     // Affiche l'image du model de fusee selectionne
     SDL_RenderCopy(renderer, imageTextures[7][ships[getWindowId()].idModel], &shipSrcRect, &shipTypeImgRect);
+
+    // Affiche le bouton pour changer de sens la fusee (alterner entre base et target)
+    SDL_DrawEdgeOfRect(swapDirectionButtonRect, 3, BLACK);
 }
 
 void basicShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture ** textTextures, Ship *ships, Planet *planets) {
@@ -482,7 +489,7 @@ void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Ch
         initShipWindow(textTextures, fonts, &ships[getWindowId()]);
     } else if (SDL_PointInRect(&mouse, &button2Rect)) {
         Mix_PlayChannel(1, sounds[7], 0);
-        buttonSelected = BASE_BUTTON;
+        buttonSelected = (buttonSelected = BASE_BUTTON) ? NO_BUTTON : BASE_BUTTON;
     }
 
     // Changement de la fusee observee
@@ -528,6 +535,15 @@ void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Ch
         }
     }
 
+    // Echange de la destination si la fusee est en vol
+    if (SDL_PointInRect(&mouse, &swapDirectionButtonRect)) {
+        if (ships[getWindowId()].state == MOVING_TO_BASE) {
+            ships[getWindowId()].state = MOVING_TO_TARGET;
+        } else if (ships[getWindowId()].state == MOVING_TO_TARGET) {
+            ships[getWindowId()].state = MOVING_TO_BASE;
+        }
+    }
+    
     // Aucun des boutons de la fenetre n'a ete clique :
     else {
         // Gestion des actions en fonction du bouton appuye
