@@ -123,7 +123,7 @@ void pauseWindowButtons(SDL_Texture **textTextures) {
 
 void pauseWindowGestion(Mix_Chunk **sounds, GameState *gameState, SDL_Point mouse, Ship *ships, int shipCount, Planet *planets, int planetCount) {
     // Gestion du bouton clique
-    if (SDL_PointInRect(&mouse, &backToGameButtonBgRect)) {
+    if (SDL_PointInRect(&mouse, &backToGameButtonBgRect) || !SDL_PointInRect(&mouse, &windowRect)) {
         setWindowType(NO_WINDOW);
         Mix_PlayChannel(1, sounds[7], 0);
     } else if (SDL_PointInRect(&mouse, &saveAndQuitButtonBgRect)) {

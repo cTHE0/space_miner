@@ -71,10 +71,12 @@ static SDL_Rect srcRectShip = {0, 0, 64, 64},
                 orePossibility5,
                 maxLifeShipRect,
                 currentLifeShipRect,
-                stopBoutonRect,
+                stopButtonRect,
+                stopButtonRect2,
                 notEnoughFuelRect,
                 infoPerTankRect,
                 edgeStopButtonRect,
+                edgeSwapButtonRect,
                 edgeTankChoosenButtonRect,
                 edgeTankChoosenButtonRect2,
                 mainInfoTanksEdgeRect,
@@ -92,7 +94,10 @@ static SDL_Rect srcRectShip = {0, 0, 64, 64},
                 logoUpgradeButtonShipInfoRect,
                 logoUpgradeButtonTankInfoRect,
                 logoRepairButtonShipInfoRect,
-                currentVisualNarrowRect;
+                currentVisualNarrowRect,
+                stopButtonLogoRect,
+                swapButtonLogoRect,
+                swapButtonRect;
 
 
 void initShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship) {
@@ -147,18 +152,6 @@ void initShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship) {
     windowTitleRect.y = windowRect.y + windowRect.h * 0.007;
     windowTitleRect.w = textureWidth * windowRect.w * 0.0005;
     windowTitleRect.h = textureHeight * windowRect.w * 0.0005;
-
-    // Initialise le texte du bouton "STOP"        
-    if (ship->state == STOPPED_MOVING_TO_BASE || ship->state == STOPPED_MOVING_TO_TARGET ||
-        ship->state == STOPPED_WAITING_ON_BASE || ship->state == STOPPED_WAITING_ON_TARGET) {
-        SDL_QueryTexture(textTextures[64], NULL, NULL, &textureWidth, &textureHeight);
-        stopBoutonRect = (SDL_Rect){SCREEN_WIDTH * 0.287, SCREEN_HEIGHT * 0.36, SCREEN_WIDTH * textureWidth * 0.0005, SCREEN_WIDTH * textureHeight * 0.0005};
-    } else {
-        SDL_QueryTexture(textTextures[43], NULL, NULL, &textureWidth, &textureHeight);
-        stopBoutonRect = (SDL_Rect){SCREEN_WIDTH * 0.305, SCREEN_HEIGHT * 0.36, SCREEN_WIDTH * textureWidth * 0.0005, SCREEN_WIDTH * textureHeight * 0.0005};
-
-    }
-
 
     // Genere la texture qui donne le descriptif de la planete
     char descriptionText[512];
@@ -280,7 +273,23 @@ void initShipWindowRects(SDL_Texture **textTextures) {  // Les rects sont initia
     notEnoughFuelRect.w = textureWidth * windowRect.w * 0.0005;
     notEnoughFuelRect.h = textureHeight * windowRect.w * 0.0005;
 
-    edgeStopButtonRect = (SDL_Rect){SCREEN_WIDTH * 0.2700, SCREEN_HEIGHT * 0.358, SCREEN_WIDTH * 0.1120, SCREEN_WIDTH * 0.0310};
+    edgeStopButtonRect = (SDL_Rect){SCREEN_WIDTH * 0.2640, SCREEN_HEIGHT * 0.3500, SCREEN_WIDTH * 0.1300, SCREEN_WIDTH * 0.0220};
+
+    edgeSwapButtonRect = (SDL_Rect){SCREEN_WIDTH * 0.2640, SCREEN_HEIGHT * 0.400, SCREEN_WIDTH * 0.1300, SCREEN_WIDTH * 0.0220};
+
+    SDL_QueryTexture(textTextures[43], NULL, NULL, &textureWidth, &textureHeight);
+    stopButtonRect = (SDL_Rect){SCREEN_WIDTH * 0.2940, SCREEN_HEIGHT * 0.3530, SCREEN_WIDTH * textureWidth * 0.0003, SCREEN_WIDTH * textureHeight * 0.0003};
+    
+    SDL_QueryTexture(textTextures[64], NULL, NULL, &textureWidth, &textureHeight);
+    stopButtonRect2 = (SDL_Rect){SCREEN_WIDTH * 0.2940, SCREEN_HEIGHT * 0.3530, SCREEN_WIDTH * textureWidth * 0.0003, SCREEN_WIDTH * textureHeight * 0.0003};
+
+    stopButtonLogoRect = (SDL_Rect){SCREEN_WIDTH * 0.2720, SCREEN_HEIGHT * 0.3550, SCREEN_WIDTH * 0.0160, SCREEN_WIDTH * 0.0160};
+
+    swapButtonLogoRect = (SDL_Rect){SCREEN_WIDTH * 0.2720, SCREEN_HEIGHT * 0.405, SCREEN_WIDTH * 0.0160, SCREEN_WIDTH * 0.0160};
+
+    SDL_QueryTexture(textTextures[85], NULL, NULL, &textureWidth, &textureHeight);
+    swapButtonRect = (SDL_Rect){SCREEN_WIDTH * 0.2940, SCREEN_HEIGHT * 0.4030, SCREEN_WIDTH * textureWidth * 0.0003, SCREEN_WIDTH * textureHeight * 0.0003};
+
 
     // ShipWindowTankManager(imageTextures, textTextures, ships);
 
@@ -512,13 +521,26 @@ void ShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextur
     SDL_RenderCopy(renderer, textTextures[34], NULL, &nameTargetDisplayedRect);
 
     // Affichage bouton stop 
-    if (ships[getWindowId()].state == STOPPED_MOVING_TO_BASE || ships[getWindowId()].state == STOPPED_MOVING_TO_TARGET ||
-        ships[getWindowId()].state == STOPPED_WAITING_ON_BASE || ships[getWindowId()].state == STOPPED_WAITING_ON_TARGET) {
-        SDL_RenderCopy(renderer, textTextures[64], NULL, &stopBoutonRect);
-    } else {
-        SDL_RenderCopy(renderer, textTextures[43], NULL, &stopBoutonRect);
+    if (ships[getWindowId()].state == STOPPED_ON_BASE || ships[getWindowId()].state == STOPPED_ON_TARGET) {  // Bouton redemarrage
+        SDL_SetRenderDrawColor(renderer, 0, 150, 0, 255);
+        SDL_RenderFillRect(renderer, &edgeStopButtonRect);
+        SDL_RenderCopy(renderer, textTextures[64], NULL, &stopButtonRect2);
+    } else { 
+        if (ships[getWindowId()].state == MOVING_TO_BASE_SOON_STOPPED || ships[getWindowId()].state == MOVING_TO_TARGET_SOON_STOPPED ||
+            ships[getWindowId()].state == WAITING_ON_BASE_SOON_STOPPED || ships[getWindowId()].state == WAITING_ON_BASE_SOON_STOPPED) {  // Trace du fond vert lorsque l'arret est prevu
+            SDL_SetRenderDrawColor(renderer, 150, 0, 0, 255);
+            SDL_RenderFillRect(renderer, &edgeStopButtonRect);
+        }
+        SDL_RenderCopy(renderer, textTextures[43], NULL, &stopButtonRect);
     }
-        SDL_DrawEdgeOfRect(edgeStopButtonRect, 5, BLACK);
+    SDL_DrawEdgeOfRect(edgeStopButtonRect, 3, BLACK);
+    SDL_RenderCopy(renderer, imageTextures[2][8], NULL, &stopButtonLogoRect);  // Logo
+
+    // Affichage du bouton pour echanger la destination (passer de target a base)
+    SDL_DrawEdgeOfRect(edgeSwapButtonRect, 3, BLACK);
+    SDL_RenderCopy(renderer, textTextures[85], NULL, &swapButtonRect);
+    SDL_RenderCopy(renderer, imageTextures[5][11], NULL, &swapButtonLogoRect);  // Logo
+
 
     // Affichage "OUT OF FUEL!"
     if (ships[getWindowId()].state == OUT_OF_FUEL) {
@@ -530,7 +552,8 @@ void ShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextur
     float f;
     
     if (ships[getWindowId()].base.type == SPOT_PLANET && ships[getWindowId()].target.type == SPOT_PLANET) {
-        if (ships[getWindowId()].state == MOVING_TO_TARGET || ships[getWindowId()].state == WAITING_ON_BASE) {  
+        if (ships[getWindowId()].state == MOVING_TO_TARGET || ships[getWindowId()].state == MOVING_TO_TARGET_SOON_STOPPED || 
+            ships[getWindowId()].state == WAITING_ON_BASE || ships[getWindowId()].state == WAITING_ON_BASE_SOON_STOPPED) {  
             // Fraction du chemin parcourue
             f = distanceShipPlanet(&ships[getWindowId()], &planets[ships[getWindowId()].base.id_planet])
                 / (distancePlanetPlanet(&planets[ships[getWindowId()].target.id_planet], &planets[ships[getWindowId()].base.id_planet]) - planets[ships[getWindowId()].base.id_planet].radius - planets[ships[getWindowId()].target.id_planet].radius);
@@ -551,7 +574,8 @@ void ShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextur
             destRectShip.x = baseDisplayedRect.x + baseDisplayedRect.w + f * dp - baseDisplayedRect.w * 0.3;
             SDL_RenderCopyEx(renderer, imageTextures[7][ships[getWindowId()].idModel], &srcRectShip, &destRectShip, 90, NULL, SDL_FLIP_NONE);
 
-        } else if (ships[getWindowId()].state == MOVING_TO_BASE || ships[getWindowId()].state == WAITING_ON_TARGET) { 
+        } else if (ships[getWindowId()].state == MOVING_TO_BASE || ships[getWindowId()].state == MOVING_TO_BASE_SOON_STOPPED || 
+                   ships[getWindowId()].state == WAITING_ON_TARGET || ships[getWindowId()].state == WAITING_ON_TARGET_SOON_STOPPED) { 
             // Fraction du chemin parcourue
             f = distanceShipPlanet(&ships[getWindowId()], &planets[ships[getWindowId()].base.id_planet])
                 / (distancePlanetPlanet(&planets[ships[getWindowId()].target.id_planet], &planets[ships[getWindowId()].base.id_planet]) - planets[ships[getWindowId()].base.id_planet].radius - planets[ships[getWindowId()].target.id_planet].radius);
@@ -587,9 +611,9 @@ void ShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextur
 
             // Tracer la fusee
             destRectShip.x = baseDisplayedRect.x + baseDisplayedRect.w + f * dp - baseDisplayedRect.w * 0.53;
-            if (ships[getWindowId()].state == STOPPED_WAITING_ON_BASE) {
+            if (ships[getWindowId()].state == STOPPED_ON_BASE) {
                 SDL_RenderCopyEx(renderer, imageTextures[7][ships[getWindowId()].idModel], &srcRectShip, &destRectShip, 90, NULL, SDL_FLIP_NONE);
-            } else if (ships[getWindowId()].state == STOPPED_WAITING_ON_TARGET) {
+            } else if (ships[getWindowId()].state == STOPPED_ON_TARGET) {
                 SDL_RenderCopyEx(renderer, imageTextures[7][ships[getWindowId()].idModel], &srcRectShip, &destRectShip, 270, NULL, SDL_FLIP_NONE);
             } else {
                 SDL_RenderCopy(renderer, imageTextures[7][ships[getWindowId()].idModel], &srcRectShip, &destRectShip);
@@ -872,55 +896,42 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
 
     // Systeme d'arret d'urgence de la fusee
     else if (SDL_PointInRect(&mouse, &edgeStopButtonRect)) {
-        // Arret d'urgence de la fusee
-        if (ship->state != STOPPED_MOVING_TO_BASE && ship->state != STOPPED_MOVING_TO_TARGET && 
-            ship->state != STOPPED_WAITING_ON_BASE && ship->state != STOPPED_WAITING_ON_TARGET) {
+        // La fusee s'arretera au prochain arret (apres avoir transferre ses minerais)
+        if (ship->state == MOVING_TO_BASE) {
             Mix_PlayChannel(1, sounds[8], 0);
-            switch (ship->state) {
-                case WAITING_ON_BASE:
-                    ship->state = STOPPED_WAITING_ON_BASE;
-                    initShipWindow(textTextures, fonts, ship);
-                    break;
-                case WAITING_ON_TARGET:
-                    ship->state = STOPPED_WAITING_ON_TARGET;
-                    initShipWindow(textTextures, fonts, ship);
-                    break;
-                case MOVING_TO_BASE:
-                    ship->state = STOPPED_MOVING_TO_BASE;
-                    initShipWindow(textTextures, fonts, ship);
-                    break;
-                case MOVING_TO_TARGET:
-                    ship->state = STOPPED_MOVING_TO_TARGET;
-                    initShipWindow(textTextures, fonts, ship);
-                    break;
-                default:
-                    break;
-            }
-        } 
+            ship->state = MOVING_TO_BASE_SOON_STOPPED;
+            initShipWindow(textTextures, fonts, ship);
+        } else if(ship->state == MOVING_TO_TARGET) {
+            Mix_PlayChannel(1, sounds[8], 0);
+            ship->state = MOVING_TO_TARGET_SOON_STOPPED;
+            initShipWindow(textTextures, fonts, ship);
+        } else if (ship->state == MOVING_TO_BASE_SOON_STOPPED) {
+            Mix_PlayChannel(1, sounds[8], 0);
+            ship->state = MOVING_TO_BASE;
+            initShipWindow(textTextures, fonts, ship);
+        } else if(ship->state == MOVING_TO_TARGET_SOON_STOPPED) {
+            Mix_PlayChannel(1, sounds[8], 0);
+            ship->state = MOVING_TO_TARGET;
+            initShipWindow(textTextures, fonts, ship);
+        }
 
-        // Redemarrage des moteur apres arret d'urgence
-        else {
-            Mix_PlayChannel(1, sounds[9], 0);
-            switch (ship->state) {
-                case STOPPED_WAITING_ON_BASE:
-                    ship->state = WAITING_ON_BASE;
-                    initShipWindow(textTextures, fonts, ship);
-                    break;
-                case STOPPED_WAITING_ON_TARGET:
-                    ship->state = WAITING_ON_TARGET;
-                    initShipWindow(textTextures, fonts, ship);
-                    break;
-                case STOPPED_MOVING_TO_BASE:
-                    ship->state = MOVING_TO_BASE;
-                    initShipWindow(textTextures, fonts, ship);
-                    break;
-                case STOPPED_MOVING_TO_TARGET:
-                    ship->state = MOVING_TO_TARGET;
-                    initShipWindow(textTextures, fonts, ship);
-                    break;
-                default:
-                    break;
+        // Redemarrage des moteur (apres avoir transfere ses minerais)
+        else if (ship->state == STOPPED_ON_BASE) {
+            Mix_PlayChannel(1, sounds[8], 0);
+            if (ship->base.type == SPOT_PLANET) {
+                ship->state = WAITING_ON_BASE;  // Pour recuperer les ressources avant de partir de la planete
+            } else {
+                ship->state = MOVING_TO_TARGET;
             }
+            initShipWindow(textTextures, fonts, ship);
+        } else if (ship->state == STOPPED_ON_TARGET) {
+            Mix_PlayChannel(1, sounds[8], 0);
+            if (ship->base.type == SPOT_PLANET) {
+                ship->state = WAITING_ON_TARGET;  // Pour recuperer les ressources avant de partir de la planete
+            } else {
+                ship->state = MOVING_TO_BASE;
+            }
+            initShipWindow(textTextures, fonts, ship);
         }
     }
 
@@ -937,6 +948,19 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
     else if (SDL_PointInRect(&mouse, &oreToTransfert4Rect)) {
         currentOreParameterIndex = 3;
     } 
+
+    // Echange de la destination si la fusee est en vol
+    else if (SDL_PointInRect(&mouse, &swapButtonRect)) {
+        if (ship->state == MOVING_TO_BASE) {
+            ship->state = MOVING_TO_TARGET;
+        } else if (ship->state == MOVING_TO_TARGET) {
+            ship->state = MOVING_TO_BASE;
+        } else if (ship->state == MOVING_TO_BASE_SOON_STOPPED) {
+            ship->state = MOVING_TO_TARGET_SOON_STOPPED;
+        } else if (ship->state == MOVING_TO_TARGET_SOON_STOPPED) {
+            ship->state = MOVING_TO_BASE_SOON_STOPPED;
+        }
+    }
 
     // Choix du nouveau minerai transfere pour le rectangle prealablement choisi
     else if (currentOreParameterIndex != -1 && SDL_PointInRect(&mouse, &orePossibility0)) {

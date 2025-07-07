@@ -44,7 +44,6 @@ void generateEnemy(Ship targetShip, Ship **ships, int *shipCount) {
     enemyShip.fuelConsumption = 1;  // Consommation d'essence par intervalle de temps TANKS_UPDATE_INTERVAL
     enemyShip.range = 1000;
 
-    enemyShip.waitStartTime = 0;
     enemyShip.frameIndex = rand() % 4;  // Desynchronisation des fusees
     enemyShip.lastFrameTime = 0;
     enemyShip.lastRefreshFilling = SDL_GetTicks();

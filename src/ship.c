@@ -45,7 +45,6 @@ void initShips(Ship **ships, int shipCount, Planet *planets) {
         (*ships)[i].range = 300;
         (*ships)[i].noise = 1 + rand() % 3;
 
-        (*ships)[i].waitStartTime = 0;
         (*ships)[i].frameIndex = rand() % 4;  // Desynchronisation des fusees
         (*ships)[i].lastFrameTime = 0;
         (*ships)[i].lastRefreshFilling = SDL_GetTicks();
@@ -89,7 +88,7 @@ void updateShips(Ship *ships, Planet *planets, int shipCount) {
 
     for (int i = 0; i < shipCount; i++) {
         updateShipAnimation(&ships[i], currentTime);  // Permet de changer de frame du sprite sheet de la fusee i
-        updateShipMove(ships, &ships[i], planets, currentTime);
+        updateShipMove(ships, &ships[i], planets);
         updateShipTanks(&ships[i], planets, currentTime);
     }
 }
@@ -101,16 +100,24 @@ void updateShipAnimation(Ship *ship, Uint32 currentTime) {  // Pour animation de
     }
 }
 
-void updateShipMove(Ship *ships, Ship *currentShip, Planet *planets, Uint32 currentTime) {
-    if (currentShip->state != MOVING_TO_BASE && currentShip->state != MOVING_TO_TARGET && currentShip->state !=ATTACKING_SHIP) { // La fusee bouge-t-elle ?
+void updateShipMove(Ship *ships, Ship *currentShip, Planet *planets) {
+    if (currentShip->state != MOVING_TO_BASE && currentShip->state != MOVING_TO_TARGET && 
+        currentShip->state != MOVING_TO_BASE_SOON_STOPPED && currentShip->state != MOVING_TO_TARGET_SOON_STOPPED && 
+        currentShip->state !=ATTACKING_SHIP) { // La fusee bouge-t-elle ?
         return;
     }
 
     float dx;
     float dy;
     float distance;
-    // Si currentShip->state == MOVING_TO_TARGET OU ATTACKING_SHIP alors la dest est stockée dans currentShip->target
-    Spot spotDest = (currentShip->state == MOVING_TO_BASE) ? currentShip->base : currentShip->target;
+
+    Spot spotDest;
+    if (currentShip->state == MOVING_TO_BASE || currentShip->state == MOVING_TO_BASE_SOON_STOPPED) {
+        spotDest = currentShip->base;
+    } else {  // voir la condition implicite de debut de fonction 'updateShipMove'
+        spotDest = currentShip->target;
+    }
+
     switch (spotDest.type) {
         case SPOT_PLANET:
             dx = planets[spotDest.id_planet].x - (currentShip->x + currentShip->w / 2.);
@@ -121,20 +128,28 @@ void updateShipMove(Ship *ships, Ship *currentShip, Planet *planets, Uint32 curr
                 currentShip->x += dx * currentShip->speed / distance;
                 currentShip->y += dy * currentShip->speed / distance;
             } else {
-                currentShip->waitStartTime = currentTime;
-                currentShip->state = (currentShip->state == MOVING_TO_BASE) ? WAITING_ON_BASE : WAITING_ON_TARGET;
+                // Mise a jour de l'etat de la fusee
+                if (currentShip->state == MOVING_TO_BASE) {
+                    currentShip->state = WAITING_ON_BASE;
+                } else if (currentShip->state == MOVING_TO_TARGET) {
+                    currentShip->state = WAITING_ON_TARGET;
+                } else if (currentShip->state == MOVING_TO_BASE_SOON_STOPPED) {
+                    currentShip->state = WAITING_ON_BASE_SOON_STOPPED;
+                } else if (currentShip->state == MOVING_TO_TARGET_SOON_STOPPED) {
+                    currentShip->state = WAITING_ON_TARGET_SOON_STOPPED;
+                }
 
                 // Atterissage des fusees, actualisation de leur angle avec la planete
-                if (currentShip->state == WAITING_ON_BASE) {
+                if (currentShip->state == WAITING_ON_BASE || currentShip->state == WAITING_ON_BASE_SOON_STOPPED) {
                     currentShip->angleWithPlanet = computeAngleDeg(currentShip->x + currentShip->w / 2, currentShip->y + currentShip->h / 2, planets[currentShip->base.id_planet].x, planets[currentShip->base.id_planet].y) * M_PI / 180.0;
-                } else if (currentShip->state == WAITING_ON_TARGET) {
+                } else if (currentShip->state == WAITING_ON_TARGET || currentShip->state == WAITING_ON_TARGET_SOON_STOPPED) {
                     currentShip->angleWithPlanet = computeAngleDeg(currentShip->x + currentShip->w / 2, currentShip->y + currentShip->h / 2, planets[currentShip->target.id_planet].x, planets[currentShip->target.id_planet].y) * M_PI / 180.0;
                 } else {
                     currentShip->angleWithPlanet = 0;
                 }
             }
             break;
-        case SPOT_SHIP:
+        case SPOT_SHIP:  // Reserve pour les fusees offensives, plus du tout pour les transporteurs (inutile !)
             dx = ships[spotDest.id_ship].x + ships[spotDest.id_ship].w / 2. - (currentShip->x + currentShip->w / 2.);
             dy = ships[spotDest.id_ship].y + ships[spotDest.id_ship].h / 2. - (currentShip->y + currentShip->h / 2.);
             distance = sqrt(dx * dx + dy * dy);
@@ -147,15 +162,6 @@ void updateShipMove(Ship *ships, Ship *currentShip, Planet *planets, Uint32 curr
                     currentShip->y += dy * currentShip->speed / distance;
                 }
             }
-            else {
-                if (distance - currentShip->speed >= (ships[spotDest.id_ship].h + currentShip->h) / 2) {
-                    currentShip->x += dx * currentShip->speed / distance;
-                    currentShip->y += dy * currentShip->speed / distance;
-                } else {
-                    currentShip->waitStartTime = currentTime;
-                    currentShip->state = (currentShip->state == MOVING_TO_BASE) ? WAITING_ON_BASE : WAITING_ON_TARGET;
-                }
-            }
             break;
         case SPOT_POINT:
             dx = spotDest.point.x - (currentShip->x + currentShip->w / 2.);
@@ -166,8 +172,16 @@ void updateShipMove(Ship *ships, Ship *currentShip, Planet *planets, Uint32 curr
                 currentShip->x += dx * currentShip->speed / distance;
                 currentShip->y += dy * currentShip->speed / distance;
             } else {
-                currentShip->waitStartTime = currentTime;
-                currentShip->state = (currentShip->state == MOVING_TO_BASE) ? MOVING_TO_TARGET : MOVING_TO_BASE;
+                // Mise a jour de l'etat de la fusee
+                if (currentShip->state == MOVING_TO_BASE) {
+                    currentShip->state = MOVING_TO_TARGET;
+                } else if (currentShip->state == MOVING_TO_TARGET) {
+                    currentShip->state = MOVING_TO_BASE;
+                } else if (currentShip->state == MOVING_TO_BASE_SOON_STOPPED) {
+                    currentShip->state = STOPPED_ON_BASE;
+                } else if (currentShip->state == MOVING_TO_TARGET_SOON_STOPPED) {
+                    currentShip->state = STOPPED_ON_TARGET;
+                }
             }
             break;
         default:
@@ -185,9 +199,11 @@ void updateShipTanks(Ship *ship, Planet *planets, Uint32 currentTime) {  // Gere
     }
 
     ship->lastRefreshFilling = currentTime;
-    if ((ship->state == MOVING_TO_TARGET || ship->state == MOVING_TO_BASE)) {  // Cas ou la fusee est en mouvement
+    if (ship->state == MOVING_TO_TARGET || ship->state == MOVING_TO_BASE || 
+        ship->state == MOVING_TO_TARGET_SOON_STOPPED || ship->state == MOVING_TO_BASE_SOON_STOPPED) {  // Cas ou la fusee est en mouvement
         fuelConsumption(ship);
-    } else if (ship->state == WAITING_ON_BASE || ship->state == WAITING_ON_TARGET) {
+    } else if (ship->state == WAITING_ON_BASE || ship->state == WAITING_ON_TARGET ||
+               ship->state == WAITING_ON_BASE_SOON_STOPPED || ship->state == WAITING_ON_TARGET_SOON_STOPPED) {
         OreFillingOrEmptying(ship, planets);
     } else if (ship->state == OUT_OF_FUEL) {
         isShipOnPlanet(ship, planets);
@@ -216,20 +232,22 @@ void fuelConsumption(Ship *ship) {
 
 void OreFillingOrEmptying(Ship *ship, Planet *planets) {
     if ((ship->state == WAITING_ON_BASE && ship->base.type != SPOT_PLANET) ||
-        (ship->state == WAITING_ON_TARGET && ship->target.type != SPOT_PLANET)) {  // Pas de transfert de ressource ailleurs que sur une planet (actuellement !)
+        (ship->state == WAITING_ON_TARGET && ship->target.type != SPOT_PLANET) ||
+        (ship->state == WAITING_ON_BASE_SOON_STOPPED && ship->base.type != SPOT_PLANET) ||
+        (ship->state == WAITING_ON_TARGET_SOON_STOPPED && ship->target.type != SPOT_PLANET)) {  // Pas de transfert de ressource ailleurs que sur une planet (actuellement !)
         return;
     }
 
     int modified = 0;  // Verifie s'il s'est passe qch (1:oui, 0:non)
     Cargo *cargo = &ship->cargo;
-    Planet *landingPlanet = (ship->state == WAITING_ON_BASE) ? &planets[ship->base.id_planet] : &planets[ship->target.id_planet];
+    Planet *landingPlanet = (ship->state == WAITING_ON_BASE || ship->state == WAITING_ON_BASE_SOON_STOPPED) ? &planets[ship->base.id_planet] : &planets[ship->target.id_planet];
 
     for (int i = 0; i < cargo->compartmentsNumber; i++) {
         if (ship->cargo.compartmentsList[i].flowBase_in == ship->cargo.compartmentsList[i].flowBase_out ||
             ship->cargo.compartmentsList[i].flowTarget_in == ship->cargo.compartmentsList[i].flowTarget_out) {  // Si le joueur fait le coquin
             continue;
         }
-        if (ship->state == WAITING_ON_BASE) {
+        if (ship->state == WAITING_ON_BASE || ship->state == WAITING_ON_BASE_SOON_STOPPED) {
             // Remplissage de la fusee
             if (cargo->compartmentsList[i].flowBase_in != EMPTY &&  // Eviter ce cas illogique
                 landingPlanet->builds[cargo->compartmentsList[i].flowBase_in].tank.currentCapacity > 0.f &&  // La planete a des stocks
@@ -283,7 +301,7 @@ void OreFillingOrEmptying(Ship *ship, Planet *planets) {
                 break;
             }
 
-        } else if (ship->state == WAITING_ON_TARGET) {
+        } else if (ship->state == WAITING_ON_TARGET || ship->state == WAITING_ON_TARGET_SOON_STOPPED) {
             // Remplissage de la fusee
             if (cargo->compartmentsList[i].flowTarget_in != EMPTY &&  // Eviter ce cas illogique
                 cargo->compartmentsList[i].currentCapacity < cargo->compartmentsList[i].maxCapacity &&  // Les reservoirs d'essence de la fusee sont remplis avant
@@ -342,7 +360,15 @@ void OreFillingOrEmptying(Ship *ship, Planet *planets) {
 
     // Si les transferts de matieres sont finis, changer l'etat de la fusee
     if (!modified && haveFuel(ship)) {
-        ship->state = (ship->state == WAITING_ON_BASE) ? MOVING_TO_TARGET : MOVING_TO_BASE;
+        if (ship->state == WAITING_ON_BASE) {
+            ship->state = MOVING_TO_TARGET;
+        } else if (ship->state == WAITING_ON_TARGET) {
+            ship->state = MOVING_TO_BASE;
+        } else if (ship->state == WAITING_ON_BASE_SOON_STOPPED) {
+            ship->state = STOPPED_ON_BASE;
+        } else if (ship->state == WAITING_ON_TARGET_SOON_STOPPED) {
+            ship->state = STOPPED_ON_TARGET;
+        }
     }       
 }
 
@@ -396,7 +422,7 @@ void displayShips(SDL_Texture ***imageTextures, Ship *ships, int shipCount, Plan
 
 float angleShipImage(Ship *ships, Planet *planets, Ship *currentShip) {  // Calcul de l'angle en degres de l'image de la fusee
     float angle;
-    Spot spotDest = (currentShip->state == WAITING_ON_BASE || currentShip->state == MOVING_TO_BASE) ? currentShip->base : currentShip->target;
+    Spot spotDest = (currentShip->state == WAITING_ON_BASE || currentShip->state == MOVING_TO_BASE || currentShip->state == WAITING_ON_BASE_SOON_STOPPED || currentShip->state == MOVING_TO_BASE_SOON_STOPPED || currentShip->state == STOPPED_ON_BASE) ? currentShip->base : currentShip->target;
 
     switch (spotDest.type) {
         case SPOT_PLANET:
@@ -418,7 +444,7 @@ float angleShipImage(Ship *ships, Planet *planets, Ship *currentShip) {  // Calc
     }
 
     // Ajuste l'angle en fonction du sens de deplacement
-    angle +=(currentShip->state == MOVING_TO_BASE || currentShip->state == MOVING_TO_TARGET) ? 90 : -90;
+    angle +=(currentShip->state == MOVING_TO_BASE || currentShip->state == MOVING_TO_TARGET || currentShip->state == MOVING_TO_BASE_SOON_STOPPED || currentShip->state == MOVING_TO_TARGET_SOON_STOPPED) ? 90 : -90;
 
     return angle;
 }

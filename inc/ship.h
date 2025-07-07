@@ -6,7 +6,7 @@
 #include "ship.h"
 #include "ore.h"
 
-typedef enum { MOVING_TO_TARGET, MOVING_TO_BASE, WAITING_ON_TARGET, WAITING_ON_BASE, OUT_OF_FUEL, BROKE, STOPPED_MOVING_TO_TARGET, STOPPED_MOVING_TO_BASE, STOPPED_WAITING_ON_TARGET, STOPPED_WAITING_ON_BASE, ATTACKING_SHIP } ShipState;
+typedef enum { MOVING_TO_TARGET, MOVING_TO_BASE, WAITING_ON_TARGET, WAITING_ON_BASE, OUT_OF_FUEL, BROKE, ATTACKING_SHIP, MOVING_TO_TARGET_SOON_STOPPED, MOVING_TO_BASE_SOON_STOPPED, WAITING_ON_TARGET_SOON_STOPPED, WAITING_ON_BASE_SOON_STOPPED, STOPPED_ON_BASE, STOPPED_ON_TARGET } ShipState;
 
 typedef enum { TRANSPORTER, EXPLORER, DEFENDER, ENEMY } ShipType;
 
@@ -39,7 +39,6 @@ struct Ship {
     Cargo cargo;
     int fuelConsumption;
     int range;
-    Uint32 waitStartTime;
     int frameIndex;
     Uint32 lastFrameTime;
     double angleWithPlanet; // Angle permettant de situer le ship sur la surface de la planète
@@ -57,7 +56,7 @@ void deleteKilledShips(Ship **ships, int *shipCount);
 void initShips(Ship **ships, int shipCount, Planet *planets);
 void updateShips(Ship *ships, Planet *planets, int shipCount);
     void updateShipAnimation(Ship *ship, Uint32 currentTime);
-    void updateShipMove(Ship *ships, Ship *currentShip, Planet *planets, Uint32 currentTime);
+    void updateShipMove(Ship *ships, Ship *currentShip, Planet *planets);
     void updateShipTanks(Ship *ship, Planet *planets, Uint32 currentTime);
         void fuelConsumption(Ship *ship);
         void OreFillingOrEmptying(Ship *ships, Planet *planets);
