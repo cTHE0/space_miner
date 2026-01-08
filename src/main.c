@@ -71,7 +71,7 @@ int main(void) {
             
             case GAME:
                 initRects(textTextures);  // A SUPPRIMER, SEULEMENT POUR LE DEV
-                handleEvents(textTextures, fonts, sounds, &gameState, ships, shipCount, planets, planetCount);
+                handleEvents(textTextures, fonts, sounds, &gameState, &ships, &shipCount, planets, planetCount);
                 updateGame(textTextures, fonts, &ships, &shipCount, planets, planetCount, sounds);
                 displayGame(imageTextures, textTextures, ships, shipCount, planets, planetCount);
                 break;

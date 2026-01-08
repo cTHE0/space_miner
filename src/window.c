@@ -46,6 +46,10 @@ int getWindowId(void) {
     return windowInfo.id;
 }
 
+void setSelectionMode(int newSelectionMode) {
+    selectionMode = newSelectionMode;
+}
+
 uint32_t getWindowLastRefresh(void) {
     return windowInfo.lastRefresh;
 }
@@ -62,7 +66,7 @@ void setWindowId(int newId) {
     windowInfo.id = newId;
 }
 
-void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, GameState *gameState, SDL_Point mouse, Ship *ships, int shipCount, Planet *planets, int planetCount) {
+void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, GameState *gameState, SDL_Point mouse, Ship **ships, int *shipCount, Planet *planets, int planetCount) {
     switch (getWindowType()) {
 
         case SIDE_BAR_WINDOW:
@@ -70,7 +74,7 @@ void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
             if (clickSideBar(mouse)) {
                 Mix_PlayChannel(1, sounds[7], 0);
                 selectionMode = 0;
-            } else if (clickOnShip(textTextures, fonts, ships, shipCount, planets, mouse)) {
+            } else if (clickOnShip(textTextures, fonts, *ships, *shipCount, planets, mouse)) {
                 selectionMode = 0;
                 Mix_PlayChannel(1, sounds[4], 0);
             } else if (clickOnPlanet(textTextures, fonts, planets, planetCount, mouse)) {
@@ -84,25 +88,25 @@ void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
                 centerSelectionCircle = (SDL_Point){mouse.x, mouse.y};
             } else if (selectionMode == 1) {
                 selectionMode = 0;
-                objetInSelectionCircle(textTextures, fonts, sounds, ships, shipCount, planets, planetCount);
+                objetInSelectionCircle(textTextures, fonts, sounds, *ships, *shipCount, planets, planetCount);
             }
 
             break;
 
         case BASIC_SHIP_WINDOW:
-            basicShipWindowGestion(textTextures, fonts, sounds, ships, shipCount, planets, planetCount, mouse);
+            basicShipWindowGestion(textTextures, fonts, sounds, *ships, *shipCount, planets, planetCount, mouse);
             break;
 
         case SHIP_WINDOW:
-            shipWindowGestion(textTextures, fonts, sounds, &ships[getWindowId()], planets, mouse);
+            shipWindowGestion(textTextures, fonts, sounds, *ships, planets, mouse);
             break;
 
         case PLANET_WINDOW:
-            planetWindowGestion(textTextures, fonts, sounds, planets, mouse);
+            planetWindowGestion(textTextures, fonts, sounds, ships, shipCount, planets, mouse);
             break;
 
         case PAUSE_WINDOW:
-            pauseWindowGestion(sounds, gameState, mouse, ships, shipCount, planets, planetCount);
+            pauseWindowGestion(sounds, gameState, mouse, *ships, *shipCount, planets, planetCount);
             break;
 
         default:

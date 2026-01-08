@@ -6,6 +6,8 @@
 
 
 /*
+Si l'on utilise place.c, decommenter la ligne 73 du main.
+
 (SDL_Rect){SCREEN_WIDTH * getEmp().x, SCREEN_HEIGHT * getEmp().y, SCREEN_WIDTH * getEmp().w, SCREEN_WIDTH * getEmp().h};
 
 (SDL_Rect){SCREEN_WIDTH * getEmp().x / getScaleDev(), SCREEN_HEIGHT * getEmp().y / getScaleDev(), SCREEN_WIDTH * textureWidth * getEmp().w / getScaleDev(), SCREEN_WIDTH * textureHeight * getEmp().h / getScaleDev()};

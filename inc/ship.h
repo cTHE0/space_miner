@@ -50,7 +50,7 @@ struct Ship {
     };
 };
 
-void addShip(Ship newShip, Ship **ships, int *shipCount);
+void addShip(Ship **ships, int *shipCount, Planet *planet);
 void deleteShip(int index, Ship **ships, int *shipCount);
 void deleteKilledShips(Ship **ships, int *shipCount);
 void initShips(Ship **ships, int shipCount, Planet *planets);

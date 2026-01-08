@@ -2,6 +2,7 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
+#include <time.h>
 #include "planet.h"
 #include "ship.h"
 #include "config.h"
@@ -21,6 +22,7 @@ static char baseName[64] = {0};
 static char targetName[64] = {0};
 static int currentTankIndex = 0;
 static int currentOreParameterIndex = -1;
+static time_t warningMessageTime = 0;
 
 static SDL_Rect srcRectShip = {0, 0, 64, 64},
                 windowRect,
@@ -97,7 +99,8 @@ static SDL_Rect srcRectShip = {0, 0, 64, 64},
                 currentVisualNarrowRect,
                 stopButtonLogoRect,
                 swapButtonLogoRect,
-                swapButtonRect;
+                swapButtonRect,
+                warningMessageRect;
 
 
 void initShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship) {
@@ -155,7 +158,7 @@ void initShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship) {
 
     // Genere la texture qui donne le descriptif de la planete
     char descriptionText[512];
-    sprintf(descriptionText, "Countenance     fuel\nFill rate              %d %%\nCapacity            %d m3\nDrain speed       %d\nUpgrade level    %d", 
+    sprintf(descriptionText, "Countenance     fuel\nFill rate              %d %%\nCapacity            %d L\nDrain speed       %d L\nUpgrade level    %d", 
             (ship->cargo.compartmentsList[currentTankIndex].currentCapacity * 100) / ship->cargo.compartmentsList[currentTankIndex].maxCapacity,
             ship->cargo.compartmentsList[currentTankIndex].maxCapacity,
             ship->cargo.compartmentsList[currentTankIndex].flowSpeed,
@@ -184,7 +187,7 @@ void initShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship) {
     
     // Mise a jour des donnees de la fusee (description de droite)
     strcpy(descriptionText, "");
-    sprintf(descriptionText, "Fuel consumption       %d L/s  \nTank capacity            %.2f m3\nDurability                    2h \nMineral transferred  199,552 m3",
+    sprintf(descriptionText, "Fuel consumption       %d L/s  \nTank capacity            %.2f L\nDurability                    2h \nMineral transferred  199,552 m3",
         ship->fuelConsumption,
         globalTankCapacity(ship) / 100.f
         );
@@ -470,6 +473,9 @@ void initShipWindowRects(SDL_Texture **textTextures) {  // Les rects sont initia
     changeTankManagerRight2 = (SDL_Rect){SCREEN_WIDTH * 0.705, SCREEN_HEIGHT * 0.6430, SCREEN_WIDTH * 0.0150, SCREEN_WIDTH * 0.0160};
 
     currentVisualNarrowRect = (SDL_Rect){SCREEN_WIDTH * 0.8400, SCREEN_HEIGHT * 0.7950, SCREEN_WIDTH * 0.0190, SCREEN_WIDTH * 0.0200};
+
+    SDL_QueryTexture(textTextures[87], NULL, NULL, &textureWidth, &textureHeight);
+    warningMessageRect = (SDL_Rect){SCREEN_WIDTH * 0.35, SCREEN_HEIGHT * 0.9, SCREEN_WIDTH * textureWidth * 0.0003, SCREEN_WIDTH * textureHeight * 0.0003};
 }
 
 void displayShipWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships, Planet *planets) {
@@ -509,16 +515,25 @@ void ShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextur
     if (ships[getWindowId()].base.type == SPOT_PLANET) {
         idPicture = (planets[ships[getWindowId()].base.id_planet].planetType == SUN) ? 9 : generateRandNb8(currentSeed, ships[getWindowId()].base.id_planet) % 7 + 1;
         SDL_RenderCopy(renderer, imageTextures[6][idPicture], NULL, &baseDisplayedRect);
+    } else if (ships[getWindowId()].base.type == SPOT_POINT) {
+        SDL_RenderCopy(renderer, imageTextures[5][13], NULL, &baseDisplayedRect);
     }
 
     if (ships[getWindowId()].target.type == SPOT_PLANET) {
         idPicture = (planets[ships[getWindowId()].target.id_planet].planetType == SUN) ? 9 : generateRandNb8(currentSeed, ships[getWindowId()].target.id_planet) % 7 + 1;
         SDL_RenderCopy(renderer, imageTextures[6][idPicture], NULL, &targetDisplayedRect);
+    } else if (ships[getWindowId()].target.type == SPOT_POINT) {
+        SDL_RenderCopy(renderer, imageTextures[5][13], NULL, &targetDisplayedRect);
     }
 
     // Affichage du nom des deux planetes
-    SDL_RenderCopy(renderer, textTextures[33], NULL, &nameBaseDisplayedRect);
-    SDL_RenderCopy(renderer, textTextures[34], NULL, &nameTargetDisplayedRect);
+    if (ships[getWindowId()].base.type == SPOT_PLANET) {
+        SDL_RenderCopy(renderer, textTextures[33], NULL, &nameBaseDisplayedRect);
+    }
+    
+    if (ships[getWindowId()].target.type == SPOT_PLANET) {
+        SDL_RenderCopy(renderer, textTextures[34], NULL, &nameTargetDisplayedRect);
+    }
 
     // Affichage bouton stop 
     if (ships[getWindowId()].state == STOPPED_ON_BASE || ships[getWindowId()].state == STOPPED_ON_TARGET) {  // Bouton redemarrage
@@ -549,15 +564,40 @@ void ShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextur
 
     // Affichage du systeme de progression de la fusee dans l'espace
     int dp = targetDisplayedRect.x - baseDisplayedRect.x - baseDisplayedRect.w;  // Distance en pixel entre 2 planetes sur fenetre
-    float f;
     
-    if (ships[getWindowId()].base.type == SPOT_PLANET && ships[getWindowId()].target.type == SPOT_PLANET) {
-        if (ships[getWindowId()].state == MOVING_TO_TARGET || ships[getWindowId()].state == MOVING_TO_TARGET_SOON_STOPPED || 
-            ships[getWindowId()].state == WAITING_ON_BASE || ships[getWindowId()].state == WAITING_ON_BASE_SOON_STOPPED) {  
-            // Fraction du chemin parcourue
-            f = distanceShipPlanet(&ships[getWindowId()], &planets[ships[getWindowId()].base.id_planet])
-                / (distancePlanetPlanet(&planets[ships[getWindowId()].target.id_planet], &planets[ships[getWindowId()].base.id_planet]) - planets[ships[getWindowId()].base.id_planet].radius - planets[ships[getWindowId()].target.id_planet].radius);
-            f = (f > 1) ? 1 : f;
+    if (ships[getWindowId()].shiptype == TRANSPORTER) {   
+        // Fraction du chemin parcourue
+        float f;
+
+        SDL_Point pointBase;  // Variable temporaire
+        float shiftBase = 0;
+        if (ships[getWindowId()].base.type == SPOT_PLANET) {
+            pointBase = (SDL_Point){planets[ships[getWindowId()].base.id_planet].x, planets[ships[getWindowId()].base.id_planet].y};
+            shiftBase = planets[ships[getWindowId()].base.id_planet].radius;
+        } else if (ships[getWindowId()].base.type == SPOT_POINT) {
+            pointBase = ships[getWindowId()].base.point;
+        } else {
+            pointBase = (SDL_Point){0, 0};
+        }
+
+        SDL_Point pointTarget;  // Variable temporaire
+        float shiftTarget = 0;
+        if (ships[getWindowId()].target.type == SPOT_PLANET) {
+            pointTarget = (SDL_Point){planets[ships[getWindowId()].target.id_planet].x, planets[ships[getWindowId()].target.id_planet].y};
+            shiftTarget = planets[ships[getWindowId()].target.id_planet].radius;
+        } else if (ships[getWindowId()].target.type == SPOT_POINT) {
+            pointTarget = ships[getWindowId()].target.point;
+        } else {
+            pointTarget = (SDL_Point){0, 0};
+        }
+
+        f = (dist(pointBase.x, pointBase.y, ships[getWindowId()].x + ships[getWindowId()].w / 2, ships[getWindowId()].y + ships[getWindowId()].h / 2) - shiftBase)
+            / (distancePointPoint(&pointBase, &pointTarget) - shiftTarget - shiftBase);
+        if (f > 1) f = 1;
+        else if (f < 0) f = 0;
+
+        if (ships[getWindowId()].state == MOVING_TO_TARGET || ships[getWindowId()].state == WAITING_ON_BASE ||
+            ships[getWindowId()].state == MOVING_TO_TARGET_SOON_STOPPED || ships[getWindowId()].state == WAITING_ON_BASE_SOON_STOPPED) { 
 
             // Tracer la fleche
             narrowRect.x = baseDisplayedRect.x + baseDisplayedRect.w;
@@ -574,13 +614,8 @@ void ShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextur
             destRectShip.x = baseDisplayedRect.x + baseDisplayedRect.w + f * dp - baseDisplayedRect.w * 0.3;
             SDL_RenderCopyEx(renderer, imageTextures[7][ships[getWindowId()].idModel], &srcRectShip, &destRectShip, 90, NULL, SDL_FLIP_NONE);
 
-        } else if (ships[getWindowId()].state == MOVING_TO_BASE || ships[getWindowId()].state == MOVING_TO_BASE_SOON_STOPPED || 
-                   ships[getWindowId()].state == WAITING_ON_TARGET || ships[getWindowId()].state == WAITING_ON_TARGET_SOON_STOPPED) { 
-            // Fraction du chemin parcourue
-            f = distanceShipPlanet(&ships[getWindowId()], &planets[ships[getWindowId()].base.id_planet])
-                / (distancePlanetPlanet(&planets[ships[getWindowId()].target.id_planet], &planets[ships[getWindowId()].base.id_planet]) - planets[ships[getWindowId()].base.id_planet].radius - planets[ships[getWindowId()].target.id_planet].radius);
-            f = (f > 1) ? 1 : f;
-
+        } else if (ships[getWindowId()].state == MOVING_TO_BASE || ships[getWindowId()].state == WAITING_ON_TARGET ||
+                   ships[getWindowId()].state == MOVING_TO_BASE_SOON_STOPPED || ships[getWindowId()].state == WAITING_ON_TARGET_SOON_STOPPED) {
             // Tracer la fleche
             narrowRect.x = baseDisplayedRect.x + baseDisplayedRect.w;
             SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
@@ -596,11 +631,6 @@ void ShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextur
             destRectShip.x = baseDisplayedRect.x + baseDisplayedRect.w + f * dp - baseDisplayedRect.w * 0.53;
             SDL_RenderCopyEx(renderer, imageTextures[7][ships[getWindowId()].idModel], &srcRectShip, &destRectShip, 270, NULL, SDL_FLIP_NONE);
         } else {
-            // Fraction du chemin parcourue
-            f = distanceShipPlanet(&ships[getWindowId()], &planets[ships[getWindowId()].base.id_planet])
-                / (distancePlanetPlanet(&planets[ships[getWindowId()].target.id_planet], &planets[ships[getWindowId()].base.id_planet]) - planets[ships[getWindowId()].base.id_planet].radius - planets[ships[getWindowId()].target.id_planet].radius);
-            f = (f > 1) ? 1 : f;
-
             // Tracer la fleche
             narrowRect.x = baseDisplayedRect.x + baseDisplayedRect.w;
             SDL_SetRenderDrawColor(renderer, 50, 50, 50, 255);
@@ -628,15 +658,18 @@ void ShipWindowTankManager(SDL_Texture ***imageTextures, SDL_Texture **textTextu
 
     // Affichage des deux planetes
     int idPicture;
-
     if (ships[getWindowId()].base.type == SPOT_PLANET) {
         idPicture = (planets[ships[getWindowId()].base.id_planet].planetType == SUN) ? 9 : generateRandNb8(currentSeed, ships[getWindowId()].base.id_planet) % 7 + 1;
         SDL_RenderCopy(renderer, imageTextures[6][idPicture], NULL, &baseDisplayedRect2);
+    } else if (ships[getWindowId()].base.type == SPOT_POINT) {
+        SDL_RenderCopy(renderer, imageTextures[5][13], NULL, &baseDisplayedRect2);
     }
 
     if (ships[getWindowId()].target.type == SPOT_PLANET) {
         idPicture = (planets[ships[getWindowId()].target.id_planet].planetType == SUN) ? 9 : generateRandNb8(currentSeed, ships[getWindowId()].target.id_planet) % 7 + 1;
         SDL_RenderCopy(renderer, imageTextures[6][idPicture], NULL, &targetDisplayedRect2);
+    } else if (ships[getWindowId()].target.type == SPOT_POINT) {
+        SDL_RenderCopy(renderer, imageTextures[5][13], NULL, &targetDisplayedRect2);
     }
 
     // Affichage du tank en cours de modification ("Tank 1")
@@ -709,6 +742,11 @@ void ShipWindowShipCond(SDL_Texture ***imageTextures, SDL_Texture **textTextures
     // Afficher le logo du bouton de reparation
     SDL_RenderCopy(renderer, imageTextures[2][7], NULL, &logoRepairButtonShipInfoRect);
 
+    // Affichage message erreur
+    if (warningMessageTime > time(NULL)) {
+        SDL_RenderFillRect(renderer, &warningMessageRect);
+        SDL_RenderCopy(renderer, textTextures[87], NULL, &warningMessageRect);
+    }
 }
 
 void ShipWindowShipModel(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
@@ -824,114 +862,142 @@ void ShipWindowTankCompo(SDL_Texture ***imageTextures, SDL_Texture **textTexture
     SDL_RenderCopy(renderer, imageTextures[2][7], NULL, &logoUpgradeButtonTankInfoRect);
 }
 
-void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, Ship *ship, Planet *planets, SDL_Point mouse) {
+void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, Ship *ships, Planet *planets, SDL_Point mouse) {
+    // Fermeture de la fenetre
     if (SDL_PointInRect(&mouse, &WindowCrossRect) || !clickOnWindow(mouse)) {
         Mix_PlayChannel(1, sounds[10], 0);
-        setWindowType(NO_WINDOW);
+        setWindowType(BASIC_SHIP_WINDOW);
+        initBasicShipWindow(textTextures, fonts, ships, planets);
     }
 
     // Choix du tank
     else if ((SDL_PointInRect(&mouse, &changeTankManagerLeft) || SDL_PointInRect(&mouse, &changeTankManagerLeft2))) {
         currentTankIndex --;
         if (currentTankIndex < 0) {
-            currentTankIndex += ship->cargo.compartmentsNumber;
+            currentTankIndex += ships[getWindowId()].cargo.compartmentsNumber;
         }
-        initShipWindow(textTextures, fonts, ship);
+        initShipWindow(textTextures, fonts, &ships[getWindowId()]);
         Mix_PlayChannel(1, sounds[7], 0);
 
     } 
     else if ((SDL_PointInRect(&mouse, &changeTankManagerRight) || SDL_PointInRect(&mouse, &changeTankManagerRight2))) {
         currentTankIndex ++;
-        if (currentTankIndex > ship->cargo.compartmentsNumber - 1) {
-            currentTankIndex -= ship->cargo.compartmentsNumber;
+        if (currentTankIndex > ships[getWindowId()].cargo.compartmentsNumber - 1) {
+            currentTankIndex -= ships[getWindowId()].cargo.compartmentsNumber;
         }
-        initShipWindow(textTextures, fonts, ship);
+        initShipWindow(textTextures, fonts, &ships[getWindowId()]);
         Mix_PlayChannel(1, sounds[7], 0);
     }
 
     // Ouverture de la fenetre de la planete (depuis la fenetre d'info. de la fusee)
     else if (SDL_PointInRect(&mouse, &baseDisplayedRect) || SDL_PointInRect(&mouse, &baseDisplayedRect2)) {
-        if (ship->base.type == SPOT_PLANET) {
-            setWindowType(PLANET_WINDOW);
-            setWindowId(ship->base.id_planet);
+        if (ships[getWindowId()].base.type == SPOT_PLANET) {
             initPlanetWindow(textTextures, fonts, planets);
-            setCameraLastObjectSelected(ship->base.id_planet);
+            setCameraLastObjectSelected(ships[getWindowId()].base.id_planet);
             setCameraMode(FOLLOW_PLANET);
+            setWindowType(PLANET_WINDOW);
+            setWindowId(ships[getWindowId()].base.id_planet);
         }
     }
     else if (SDL_PointInRect(&mouse, &targetDisplayedRect) || SDL_PointInRect(&mouse, &targetDisplayedRect2)) {
-        if (ship->target.type == SPOT_PLANET) {
-            setWindowType(PLANET_WINDOW);
-            setWindowId(ship->target.id_planet);
+        if (ships[getWindowId()].target.type == SPOT_PLANET) {
             initPlanetWindow(textTextures, fonts, planets);
-            setCameraLastObjectSelected(ship->target.id_planet);
+            setCameraLastObjectSelected(ships[getWindowId()].target.id_planet);
             setCameraMode(FOLLOW_PLANET);
+            setWindowType(PLANET_WINDOW);
+            setWindowId(ships[getWindowId()].target.id_planet);
         }
     }
 
     // Reparation de la fusee
     else if (SDL_PointInRect(&mouse, &repareShipButtonRect)) {
-        ship->currentLife += 0.1 * ship->maxLife;
-
-        if (ship->currentLife > ship->maxLife) {
-            ship->currentLife = ship->maxLife;
+        if (ships[getWindowId()].state != STOPPED_ON_BASE && 
+            ships[getWindowId()].state != STOPPED_ON_TARGET &&
+            ships[getWindowId()].state != WAITING_ON_BASE &&
+            ships[getWindowId()].state != WAITING_ON_TARGET) {  // Une fusée doit avoir atteri pour être améliorée ou réparée
+            warningMessageTime = time(NULL) + 4;
+            return;
         }
-        initShipWindow(textTextures, fonts, ship);
+        
+        ships[getWindowId()].currentLife += 0.1 * ships[getWindowId()].maxLife;
+
+        if (ships[getWindowId()].currentLife > ships[getWindowId()].maxLife) {
+            ships[getWindowId()].currentLife = ships[getWindowId()].maxLife;
+        }
+        initShipWindow(textTextures, fonts, &ships[getWindowId()]);
         Mix_PlayChannel(1, sounds[6], 0);
     }
 
     // Amelioration de la fusee
     else if (SDL_PointInRect(&mouse, &upgradeShipButtonRect)) {
-        ship->level += 1;
-        initShipWindow(textTextures, fonts, ship);
+        if (ships[getWindowId()].state != STOPPED_ON_BASE && 
+            ships[getWindowId()].state != STOPPED_ON_TARGET &&
+            ships[getWindowId()].state != WAITING_ON_BASE &&
+            ships[getWindowId()].state != WAITING_ON_TARGET) {  // Une fusée doit avoir atteri pour être améliorée ou réparée
+            warningMessageTime = time(NULL) + 4;
+            return;
+        }
+
+        ships[getWindowId()].level += 1;
+        initShipWindow(textTextures, fonts, &ships[getWindowId()]);
         Mix_PlayChannel(1, sounds[5], 0);
     }
 
     // Amelioration d'un tank de la fusee
     else if (SDL_PointInRect(&mouse, &upgradeButtonTankRect)) {
-        ship->cargo.compartmentsList[currentTankIndex].level += 1;
-        initShipWindow(textTextures, fonts, ship);
+        if (ships[getWindowId()].state != STOPPED_ON_BASE && 
+            ships[getWindowId()].state != STOPPED_ON_TARGET &&
+            ships[getWindowId()].state != WAITING_ON_BASE &&
+            ships[getWindowId()].state != WAITING_ON_TARGET) {  // Une fusée doit avoir atteri pour être améliorée ou réparée
+            warningMessageTime = time(NULL) + 4;
+            return;
+        }
+
+        ships[getWindowId()].cargo.compartmentsList[currentTankIndex].level += 1;
+        ships[getWindowId()].cargo.compartmentsList[currentTankIndex].flowSpeed *= 1.05;
+        ships[getWindowId()].cargo.compartmentsList[currentTankIndex].maxCapacity *= 1.05;
+        initShipWindow(textTextures, fonts, &ships[getWindowId()]);
         Mix_PlayChannel(1, sounds[5], 0);
     }
 
     // Systeme d'arret d'urgence de la fusee
     else if (SDL_PointInRect(&mouse, &edgeStopButtonRect)) {
         // La fusee s'arretera au prochain arret (apres avoir transferre ses minerais)
-        if (ship->state == MOVING_TO_BASE) {
+        if (ships[getWindowId()].state == MOVING_TO_BASE) {
             Mix_PlayChannel(1, sounds[8], 0);
-            ship->state = MOVING_TO_BASE_SOON_STOPPED;
-            initShipWindow(textTextures, fonts, ship);
-        } else if(ship->state == MOVING_TO_TARGET) {
+            ships[getWindowId()].state = MOVING_TO_BASE_SOON_STOPPED;
+            initShipWindow(textTextures, fonts, &ships[getWindowId()]);
+        } else if(ships[getWindowId()].state == MOVING_TO_TARGET) {
             Mix_PlayChannel(1, sounds[8], 0);
-            ship->state = MOVING_TO_TARGET_SOON_STOPPED;
-            initShipWindow(textTextures, fonts, ship);
-        } else if (ship->state == MOVING_TO_BASE_SOON_STOPPED) {
+            ships[getWindowId()].state = MOVING_TO_TARGET_SOON_STOPPED;
+            initShipWindow(textTextures, fonts, &ships[getWindowId()]);
+        } else if (ships[getWindowId()].state == MOVING_TO_BASE_SOON_STOPPED) {
             Mix_PlayChannel(1, sounds[8], 0);
-            ship->state = MOVING_TO_BASE;
-            initShipWindow(textTextures, fonts, ship);
-        } else if(ship->state == MOVING_TO_TARGET_SOON_STOPPED) {
+            ships[getWindowId()].state = MOVING_TO_BASE;
+            initShipWindow(textTextures, fonts, &ships[getWindowId()]);
+        } else if(ships[getWindowId()].state == MOVING_TO_TARGET_SOON_STOPPED) {
             Mix_PlayChannel(1, sounds[8], 0);
-            ship->state = MOVING_TO_TARGET;
-            initShipWindow(textTextures, fonts, ship);
+            ships[getWindowId()].state = MOVING_TO_TARGET;
+            initShipWindow(textTextures, fonts, &ships[getWindowId()]);
         }
 
         // Redemarrage des moteur (apres avoir transfere ses minerais)
-        else if (ship->state == STOPPED_ON_BASE) {
+        else if (ships[getWindowId()].state == STOPPED_ON_BASE) {
             Mix_PlayChannel(1, sounds[8], 0);
-            if (ship->base.type == SPOT_PLANET) {
-                ship->state = WAITING_ON_BASE;  // Pour recuperer les ressources avant de partir de la planete
+            if (ships[getWindowId()].base.type == SPOT_PLANET) {
+                ships[getWindowId()].state = WAITING_ON_BASE;  // Pour recuperer les ressources avant de partir de la planete
             } else {
-                ship->state = MOVING_TO_TARGET;
+                ships[getWindowId()].state = MOVING_TO_TARGET;
             }
-            initShipWindow(textTextures, fonts, ship);
-        } else if (ship->state == STOPPED_ON_TARGET) {
+            initShipWindow(textTextures, fonts, &ships[getWindowId()]);
+        } else if (ships[getWindowId()].state == STOPPED_ON_TARGET) {
             Mix_PlayChannel(1, sounds[8], 0);
-            if (ship->base.type == SPOT_PLANET) {
-                ship->state = WAITING_ON_TARGET;  // Pour recuperer les ressources avant de partir de la planete
+            if (ships[getWindowId()].base.type == SPOT_PLANET) {
+                ships[getWindowId()].state = WAITING_ON_TARGET;  // Pour recuperer les ressources avant de partir de la planete
             } else {
-                ship->state = MOVING_TO_BASE;
+                ships[getWindowId()].state = MOVING_TO_BASE;
             }
-            initShipWindow(textTextures, fonts, ship);
+            initShipWindow(textTextures, fonts, &ships[getWindowId()]);
         }
     }
 
@@ -951,14 +1017,14 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
 
     // Echange de la destination si la fusee est en vol
     else if (SDL_PointInRect(&mouse, &swapButtonRect)) {
-        if (ship->state == MOVING_TO_BASE) {
-            ship->state = MOVING_TO_TARGET;
-        } else if (ship->state == MOVING_TO_TARGET) {
-            ship->state = MOVING_TO_BASE;
-        } else if (ship->state == MOVING_TO_BASE_SOON_STOPPED) {
-            ship->state = MOVING_TO_TARGET_SOON_STOPPED;
-        } else if (ship->state == MOVING_TO_TARGET_SOON_STOPPED) {
-            ship->state = MOVING_TO_BASE_SOON_STOPPED;
+        if (ships[getWindowId()].state == MOVING_TO_BASE) {
+            ships[getWindowId()].state = MOVING_TO_TARGET;
+        } else if (ships[getWindowId()].state == MOVING_TO_TARGET) {
+            ships[getWindowId()].state = MOVING_TO_BASE;
+        } else if (ships[getWindowId()].state == MOVING_TO_BASE_SOON_STOPPED) {
+            ships[getWindowId()].state = MOVING_TO_TARGET_SOON_STOPPED;
+        } else if (ships[getWindowId()].state == MOVING_TO_TARGET_SOON_STOPPED) {
+            ships[getWindowId()].state = MOVING_TO_BASE_SOON_STOPPED;
         }
     }
 
@@ -966,16 +1032,16 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
     else if (currentOreParameterIndex != -1 && SDL_PointInRect(&mouse, &orePossibility0)) {
         switch (currentOreParameterIndex) {
             case 0:
-                ship->cargo.compartmentsList[currentTankIndex].flowBase_in = 0;
+                ships[getWindowId()].cargo.compartmentsList[currentTankIndex].flowBase_in = 0;
                 break;
             case 1:
-                ship->cargo.compartmentsList[currentTankIndex].flowBase_out = 0;
+                ships[getWindowId()].cargo.compartmentsList[currentTankIndex].flowBase_out = 0;
                 break;
             case 2:
-                ship->cargo.compartmentsList[currentTankIndex].flowTarget_in = 0;
+                ships[getWindowId()].cargo.compartmentsList[currentTankIndex].flowTarget_in = 0;
                 break;
             case 3:
-                ship->cargo.compartmentsList[currentTankIndex].flowTarget_out = 0;
+                ships[getWindowId()].cargo.compartmentsList[currentTankIndex].flowTarget_out = 0;
                 break;
             default:
                 break;
@@ -985,16 +1051,16 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
     else if (currentOreParameterIndex != -1 && SDL_PointInRect(&mouse, &orePossibility1)) {
         switch (currentOreParameterIndex) {
             case 0:
-                ship->cargo.compartmentsList[currentTankIndex].flowBase_in = 1;
+                ships[getWindowId()].cargo.compartmentsList[currentTankIndex].flowBase_in = 1;
                 break;
             case 1:
-                ship->cargo.compartmentsList[currentTankIndex].flowBase_out = 1;
+                ships[getWindowId()].cargo.compartmentsList[currentTankIndex].flowBase_out = 1;
                 break;
             case 2:
-                ship->cargo.compartmentsList[currentTankIndex].flowTarget_in = 1;
+                ships[getWindowId()].cargo.compartmentsList[currentTankIndex].flowTarget_in = 1;
                 break;
             case 3:
-                ship->cargo.compartmentsList[currentTankIndex].flowTarget_out = 1;
+                ships[getWindowId()].cargo.compartmentsList[currentTankIndex].flowTarget_out = 1;
                 break;
             default:
                 break;
@@ -1004,16 +1070,16 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
     else if (currentOreParameterIndex != -1 && SDL_PointInRect(&mouse, &orePossibility2)) {
         switch (currentOreParameterIndex) {
             case 0:
-                ship->cargo.compartmentsList[currentTankIndex].flowBase_in = 2;
+                ships[getWindowId()].cargo.compartmentsList[currentTankIndex].flowBase_in = 2;
                 break;
             case 1:
-                ship->cargo.compartmentsList[currentTankIndex].flowBase_out = 2;
+                ships[getWindowId()].cargo.compartmentsList[currentTankIndex].flowBase_out = 2;
                 break;
             case 2:
-                ship->cargo.compartmentsList[currentTankIndex].flowTarget_in = 2;
+                ships[getWindowId()].cargo.compartmentsList[currentTankIndex].flowTarget_in = 2;
                 break;
             case 3:
-                ship->cargo.compartmentsList[currentTankIndex].flowTarget_out = 2;
+                ships[getWindowId()].cargo.compartmentsList[currentTankIndex].flowTarget_out = 2;
                 break;
             default:
                 break;
@@ -1023,16 +1089,16 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
     else if (currentOreParameterIndex != -1 && SDL_PointInRect(&mouse, &orePossibility3)) {
         switch (currentOreParameterIndex) {
             case 0:
-                ship->cargo.compartmentsList[currentTankIndex].flowBase_in = 3;
+                ships[getWindowId()].cargo.compartmentsList[currentTankIndex].flowBase_in = 3;
                 break;
             case 1:
-                ship->cargo.compartmentsList[currentTankIndex].flowBase_out = 3;
+                ships[getWindowId()].cargo.compartmentsList[currentTankIndex].flowBase_out = 3;
                 break;
             case 2:
-                ship->cargo.compartmentsList[currentTankIndex].flowTarget_in = 3;
+                ships[getWindowId()].cargo.compartmentsList[currentTankIndex].flowTarget_in = 3;
                 break;
             case 3:
-                ship->cargo.compartmentsList[currentTankIndex].flowTarget_out = 3;
+                ships[getWindowId()].cargo.compartmentsList[currentTankIndex].flowTarget_out = 3;
                 break;
             default:
                 break;
@@ -1042,16 +1108,16 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
     else if (currentOreParameterIndex != -1 && SDL_PointInRect(&mouse, &orePossibility4)) {
         switch (currentOreParameterIndex) {
             case 0:
-                ship->cargo.compartmentsList[currentTankIndex].flowBase_in = 4;
+                ships[getWindowId()].cargo.compartmentsList[currentTankIndex].flowBase_in = 4;
                 break;
             case 1:
-                ship->cargo.compartmentsList[currentTankIndex].flowBase_out = 4;
+                ships[getWindowId()].cargo.compartmentsList[currentTankIndex].flowBase_out = 4;
                 break;
             case 2:
-                ship->cargo.compartmentsList[currentTankIndex].flowTarget_in = 4;
+                ships[getWindowId()].cargo.compartmentsList[currentTankIndex].flowTarget_in = 4;
                 break;
             case 3:
-                ship->cargo.compartmentsList[currentTankIndex].flowTarget_out = 4;
+                ships[getWindowId()].cargo.compartmentsList[currentTankIndex].flowTarget_out = 4;
                 break;
             default:
                 break;
@@ -1061,23 +1127,22 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
     else if (currentOreParameterIndex != -1 && SDL_PointInRect(&mouse, &orePossibility5)) {
         switch (currentOreParameterIndex) {
             case 0:
-                ship->cargo.compartmentsList[currentTankIndex].flowBase_in = 5;
+                ships[getWindowId()].cargo.compartmentsList[currentTankIndex].flowBase_in = 5;
                 break;
             case 1:
-                ship->cargo.compartmentsList[currentTankIndex].flowBase_out = 5;
+                ships[getWindowId()].cargo.compartmentsList[currentTankIndex].flowBase_out = 5;
                 break;
             case 2:
-                ship->cargo.compartmentsList[currentTankIndex].flowTarget_in = 5;
+                ships[getWindowId()].cargo.compartmentsList[currentTankIndex].flowTarget_in = 5;
                 break;
             case 3:
-                ship->cargo.compartmentsList[currentTankIndex].flowTarget_out = 5;
+                ships[getWindowId()].cargo.compartmentsList[currentTankIndex].flowTarget_out = 5;
                 break;
             default:
                 break;
 
         }
     }     
-
 
     else {
         currentOreParameterIndex = -1;

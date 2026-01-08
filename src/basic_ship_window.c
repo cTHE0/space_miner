@@ -51,9 +51,12 @@ static SDL_Rect bgRect,
                 edgeSwapButtonRect,
                 stopButtonRect,
                 stopButtonRect2,
+                stopButtonRect3,
                 stopButtonLogoRect,
                 swapButtonLogoRect,
-                swapButtonRect;
+                swapButtonRect,
+                lifeBarFullRect,
+                lifeBarCurrRect;
 
 
 void initBasicShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, Planet *planets) {
@@ -113,7 +116,7 @@ void initBasicShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *shi
             strcpy(shipState, "unknown");
             break;
     }
-    sprintf(descriptionText, "Type of ship     %s\nState                %s\nFuel range        %d km\nMove speed      %d km/s",
+    sprintf(descriptionText, "Type of ship     %s\nState                %s\nFuel range        %d km\nMove speed      %d km/s\n \n    Health",
             shiptype,
             shipState,
             fuelInShip(&ships[getWindowId()]) / ships[getWindowId()].fuelConsumption,
@@ -121,6 +124,9 @@ void initBasicShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *shi
     textTextures[34] = createTextTextureWithNewline(fonts[0], descriptionText, BLACK);
     SDL_QueryTexture(textTextures[34], NULL, NULL, &textureWidth, &textureHeight);
     generalInfoRect = (SDL_Rect){SCREEN_WIDTH * 0.14, SCREEN_HEIGHT * 0.8, textureWidth * SCREEN_WIDTH * 0.00025, textureHeight * SCREEN_WIDTH * 0.00025};
+
+    // Actualisation de la vie de la fusee dans la page d'information basique
+    lifeBarCurrRect.w = (lifeBarFullRect.w * ships[getWindowId()].currentLife) / ships[getWindowId()].maxLife;
 }
 
 void updateNarrowBasicShipWindow(Ship *ships, Planet *planets, Ship *currentShip) {  // Calcul des coordonnees de la base et de la cible dans le referentiel de la map
@@ -249,13 +255,19 @@ void initBasicShipWindowRects(SDL_Texture **textTextures) {
     SDL_QueryTexture(textTextures[64], NULL, NULL, &textureWidth, &textureHeight);
     stopButtonRect2 = (SDL_Rect){SCREEN_WIDTH * 0.5490, SCREEN_HEIGHT * 0.9060, SCREEN_WIDTH * textureWidth * 0.00028, SCREEN_WIDTH * textureHeight * 0.00028};
     
+    SDL_QueryTexture(textTextures[86], NULL, NULL, &textureWidth, &textureHeight);
+    stopButtonRect3 = (SDL_Rect){SCREEN_WIDTH * 0.5490, SCREEN_HEIGHT * 0.9070, SCREEN_WIDTH * textureWidth * 0.00026, SCREEN_WIDTH * textureHeight * 0.00026};
+    
     stopButtonLogoRect = (SDL_Rect){SCREEN_WIDTH * 0.5280, SCREEN_HEIGHT * 0.9090, SCREEN_WIDTH * 0.0140, SCREEN_WIDTH * 0.0140};
 
     swapButtonLogoRect = (SDL_Rect){SCREEN_WIDTH * 0.5280, SCREEN_HEIGHT * 0.950, SCREEN_WIDTH * 0.0140, SCREEN_WIDTH * 0.0140};
 
     SDL_QueryTexture(textTextures[85], NULL, NULL, &textureWidth, &textureHeight);
     swapButtonRect = (SDL_Rect){SCREEN_WIDTH * 0.5490, SCREEN_HEIGHT * 0.9460, SCREEN_WIDTH * textureWidth * 0.00028, SCREEN_WIDTH * textureHeight * 0.00028};
-    }
+
+    lifeBarFullRect = (SDL_Rect){SCREEN_WIDTH * 0.1370, SCREEN_HEIGHT * 0.9640, SCREEN_WIDTH * 0.1290, SCREEN_WIDTH * 0.0100};
+    lifeBarCurrRect = lifeBarFullRect;
+}
 
 void displayBasicShipWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships, Planet *planets) {
     basicShipWindowNarrowBaseTarget(imageTextures, textTextures);
@@ -336,6 +348,17 @@ void basicShipWindowGeneralInfo(SDL_Texture ***imageTextures, SDL_Texture ** tex
     // Affiche la description des informations generales
     SDL_RenderCopy(renderer, textTextures[34], NULL, &generalInfoRect);
 
+    // Affiche la vie de la fusee (fond)
+    SDL_SetRenderDrawColor(renderer, 180, 180, 180, 255);
+    SDL_RenderFillRect(renderer, &lifeBarFullRect);
+
+    // Affiche la vie de la fusee (barre verte)
+    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+    SDL_RenderFillRect(renderer, &lifeBarCurrRect);
+
+    // Affiche la vie de la fusee (bords)
+    SDL_DrawEdgeOfRect(lifeBarFullRect, 2, BLACK);
+
     // Afficher le nom de la fusee
     SDL_RenderCopy(renderer, textTextures[33], NULL, &shipTypeTitleRect);
 
@@ -360,11 +383,15 @@ void basicShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture ** text
     if (ships[getWindowId()].base.type == SPOT_PLANET) {
         idPicture = (planets[ships[getWindowId()].base.id_planet].planetType == SUN) ? 9 : generateRandNb8(currentSeed, ships[getWindowId()].base.id_planet) % 7 + 1;
         SDL_RenderCopy(renderer, imageTextures[6][idPicture], NULL, &baseDisplayedRect);
+    } else if (ships[getWindowId()].base.type == SPOT_POINT) {
+        SDL_RenderCopy(renderer, imageTextures[5][13], NULL, &baseDisplayedRect);
     }
 
     if (ships[getWindowId()].target.type == SPOT_PLANET) {
         idPicture = (planets[ships[getWindowId()].target.id_planet].planetType == SUN) ? 9 : generateRandNb8(currentSeed, ships[getWindowId()].target.id_planet) % 7 + 1;
         SDL_RenderCopy(renderer, imageTextures[6][idPicture], NULL, &targetDisplayedRect);
+    } else if (ships[getWindowId()].target.type == SPOT_POINT) {
+        SDL_RenderCopy(renderer, imageTextures[5][13], NULL, &targetDisplayedRect);
     }
 
     // Affichage bouton stop 
@@ -372,7 +399,9 @@ void basicShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture ** text
         SDL_SetRenderDrawColor(renderer, 0, 150, 0, 255);
         SDL_RenderFillRect(renderer, &edgeStopButtonRect);
         SDL_RenderCopy(renderer, textTextures[64], NULL, &stopButtonRect2);
-    } else { 
+    } else if (ships[getWindowId()].state == WAITING_ON_BASE || ships[getWindowId()].state == WAITING_ON_TARGET) { 
+        SDL_RenderCopy(renderer, textTextures[86], NULL, &stopButtonRect3);
+    } else {
         if (ships[getWindowId()].state == MOVING_TO_BASE_SOON_STOPPED || ships[getWindowId()].state == MOVING_TO_TARGET_SOON_STOPPED ||
             ships[getWindowId()].state == WAITING_ON_BASE_SOON_STOPPED || ships[getWindowId()].state == WAITING_ON_BASE_SOON_STOPPED) {  // Trace du fond vert lorsque l'arret est prevu
             SDL_SetRenderDrawColor(renderer, 150, 0, 0, 255);
@@ -390,15 +419,40 @@ void basicShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture ** text
 
     // Affichage du systeme de progression de la fusee dans l'espace
     int dp = targetDisplayedRect.x - baseDisplayedRect.x - baseDisplayedRect.w;  // Distance en pixel entre 2 planetes sur fenetre
-    float f;
     
-    if (ships[getWindowId()].shiptype == TRANSPORTER && ships[getWindowId()].base.type == SPOT_PLANET && ships[getWindowId()].target.type == SPOT_PLANET) {
+    if (ships[getWindowId()].shiptype == TRANSPORTER) {   
+        // Fraction du chemin parcourue
+        float f;
+
+        SDL_Point pointBase;  // Variable temporaire
+        float shiftBase = 0;
+        if (ships[getWindowId()].base.type == SPOT_PLANET) {
+            pointBase = (SDL_Point){planets[ships[getWindowId()].base.id_planet].x, planets[ships[getWindowId()].base.id_planet].y};
+            shiftBase = planets[ships[getWindowId()].base.id_planet].radius;
+        } else if (ships[getWindowId()].base.type == SPOT_POINT) {
+            pointBase = ships[getWindowId()].base.point;
+        } else {
+            pointBase = (SDL_Point){0, 0};
+        }
+
+        SDL_Point pointTarget;  // Variable temporaire
+        float shiftTarget = 0;
+        if (ships[getWindowId()].target.type == SPOT_PLANET) {
+            pointTarget = (SDL_Point){planets[ships[getWindowId()].target.id_planet].x, planets[ships[getWindowId()].target.id_planet].y};
+            shiftTarget = planets[ships[getWindowId()].target.id_planet].radius;
+        } else if (ships[getWindowId()].target.type == SPOT_POINT) {
+            pointTarget = ships[getWindowId()].target.point;
+        } else {
+            pointTarget = (SDL_Point){0, 0};
+        }
+
+        f = (dist(pointBase.x, pointBase.y, ships[getWindowId()].x + ships[getWindowId()].w / 2, ships[getWindowId()].y + ships[getWindowId()].h / 2) - shiftBase)
+            / (distancePointPoint(&pointBase, &pointTarget) - shiftTarget - shiftBase);
+        if (f > 1) f = 1;
+        else if (f < 0) f = 0;
+
         if (ships[getWindowId()].state == MOVING_TO_TARGET || ships[getWindowId()].state == WAITING_ON_BASE ||
-            ships[getWindowId()].state == MOVING_TO_TARGET_SOON_STOPPED || ships[getWindowId()].state == WAITING_ON_BASE_SOON_STOPPED) {  
-            // Fraction du chemin parcourue
-            f = distanceShipPlanet(&ships[getWindowId()], &planets[ships[getWindowId()].base.id_planet])
-                / (distancePlanetPlanet(&planets[ships[getWindowId()].target.id_planet], &planets[ships[getWindowId()].base.id_planet]) - planets[ships[getWindowId()].base.id_planet].radius - planets[ships[getWindowId()].target.id_planet].radius);
-            f = (f > 1) ? 1 : f;
+            ships[getWindowId()].state == MOVING_TO_TARGET_SOON_STOPPED || ships[getWindowId()].state == WAITING_ON_BASE_SOON_STOPPED) { 
 
             // Tracer la fleche
             narrowRect.x = baseDisplayedRect.x + baseDisplayedRect.w;
@@ -416,12 +470,7 @@ void basicShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture ** text
             SDL_RenderCopyEx(renderer, imageTextures[7][ships[getWindowId()].idModel], &shipSrcRect, &destRectShip, 90, NULL, SDL_FLIP_NONE);
 
         } else if (ships[getWindowId()].state == MOVING_TO_BASE || ships[getWindowId()].state == WAITING_ON_TARGET ||
-                   ships[getWindowId()].state == MOVING_TO_BASE_SOON_STOPPED || ships[getWindowId()].state == WAITING_ON_TARGET_SOON_STOPPED) { 
-            // Fraction du chemin parcourue
-            f = distanceShipPlanet(&ships[getWindowId()], &planets[ships[getWindowId()].base.id_planet])
-                / (distancePlanetPlanet(&planets[ships[getWindowId()].target.id_planet], &planets[ships[getWindowId()].base.id_planet]) - planets[ships[getWindowId()].base.id_planet].radius - planets[ships[getWindowId()].target.id_planet].radius);
-            f = (f > 1) ? 1 : f;
-
+                   ships[getWindowId()].state == MOVING_TO_BASE_SOON_STOPPED || ships[getWindowId()].state == WAITING_ON_TARGET_SOON_STOPPED) {
             // Tracer la fleche
             narrowRect.x = baseDisplayedRect.x + baseDisplayedRect.w;
             SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
@@ -437,11 +486,6 @@ void basicShipWindowTravelInfo(SDL_Texture ***imageTextures, SDL_Texture ** text
             destRectShip.x = baseDisplayedRect.x + baseDisplayedRect.w + f * dp - baseDisplayedRect.w * 0.53;
             SDL_RenderCopyEx(renderer, imageTextures[7][ships[getWindowId()].idModel], &shipSrcRect, &destRectShip, 270, NULL, SDL_FLIP_NONE);
         } else {
-            // Fraction du chemin parcourue
-            f = distanceShipPlanet(&ships[getWindowId()], &planets[ships[getWindowId()].base.id_planet])
-                / (distancePlanetPlanet(&planets[ships[getWindowId()].target.id_planet], &planets[ships[getWindowId()].base.id_planet]) - planets[ships[getWindowId()].base.id_planet].radius - planets[ships[getWindowId()].target.id_planet].radius);
-            f = (f > 1) ? 1 : f;
-
             // Tracer la fleche
             narrowRect.x = baseDisplayedRect.x + baseDisplayedRect.w;
             SDL_SetRenderDrawColor(renderer, 50, 50, 50, 255);
@@ -531,7 +575,9 @@ void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Ch
         initShipWindow(textTextures, fonts, &ships[getWindowId()]);
     } else if (SDL_PointInRect(&mouse, &button2Rect)) {
         Mix_PlayChannel(1, sounds[7], 0);
-        if (buttonSelected == BASE_BUTTON || buttonSelected == TARGET_BUTTON) {
+        if (buttonSelected == BASE_BUTTON) {
+            buttonSelected = TARGET_BUTTON;
+        } else if (buttonSelected == TARGET_BUTTON) {
             buttonSelected = NO_BUTTON;
         } else {
             buttonSelected = BASE_BUTTON;
@@ -552,7 +598,7 @@ void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Ch
         Mix_PlayChannel(1, sounds[4], 0);
     }
     else if (SDL_PointInRect(&mouse, &leftArrowRect)) {
-        // Chagement de l'id de la page
+        // Changement de l'id de la page
         if (getWindowId() == 0) {
             setWindowId(shipCount - 1);
         } else {
@@ -576,24 +622,24 @@ void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Ch
     // Ouverture de la fenetre de la planete (depuis la fenetre d'info. de la fusee)
     else if (SDL_PointInRect(&mouse, &baseDisplayedRect)) {
         if (ships[getWindowId()].base.type == SPOT_PLANET) {
-            setWindowType(PLANET_WINDOW);
-            setWindowId(ships[getWindowId()].base.id_planet);
             initPlanetWindow(textTextures, fonts, planets);
             setCameraLastObjectSelected(ships[getWindowId()].base.id_planet);
             setCameraMode(FOLLOW_PLANET);
+            setWindowType(PLANET_WINDOW);
+            setWindowId(ships[getWindowId()].base.id_planet);
         }
     }
     else if (SDL_PointInRect(&mouse, &targetDisplayedRect)) {
         if (ships[getWindowId()].target.type == SPOT_PLANET) {
-            setWindowType(PLANET_WINDOW);
-            setWindowId(ships[getWindowId()].target.id_planet);
             initPlanetWindow(textTextures, fonts, planets);
             setCameraLastObjectSelected(ships[getWindowId()].target.id_planet);
             setCameraMode(FOLLOW_PLANET);
+            setWindowType(PLANET_WINDOW);
+            setWindowId(ships[getWindowId()].target.id_planet);
         }
     }
 
-    // Systeme d'arret d'urgence de la fusee
+    // Systeme d'arret des moteurs/du remplissage de la fusee 
     else if (SDL_PointInRect(&mouse, &edgeStopButtonRect)) {
         // La fusee s'arretera au prochain arret (apres avoir transfere ses minerais)
         if (ships[getWindowId()].state == MOVING_TO_BASE) {
@@ -632,6 +678,11 @@ void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Ch
             }
             initBasicShipWindow(textTextures, fonts, ships, planets);
         }
+
+        // Arret du remplissage des reservoirs
+        else if (ships[getWindowId()].state == WAITING_ON_BASE || ships[getWindowId()].state == WAITING_ON_TARGET) {
+            
+        }
     }
 
     // Echange de la destination si la fusee est en vol
@@ -667,6 +718,7 @@ void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Ch
                     }
                 } else {  // Initialisation de buttonSelected si l'on clic sur une fusee/planet
                     buttonSelected = NO_BUTTON;
+                    Mix_PlayChannel(1, sounds[4], 0);
                 }
                 break;
 

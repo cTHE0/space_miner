@@ -11,18 +11,33 @@ static uint8_t *tilesMatrix;  // Chaque bit représente un booléen
 static Uint32 lastTileUpdateTime = 0;
 static int byteCount;  // Nombre d'octets necessaires pour allouer le tableau tilesMatrix
 
-void initTiles(void) {
+void initTiles(Planet *planets) {
     // Initialise la variable static 'byteCount'
     setByteCount();
 
     // Allocation du tableau de tuiles
     tilesMatrix = malloc(byteCount * sizeof(uint8_t));
 
-    // Remplissage du tableau de tuiles
+    // Remplissage de la carte de tuiles
     memset(tilesMatrix, 0, byteCount * sizeof(uint8_t));  // Initialise tout le tableau a 0
+
     for (int i = 0; i < NUMBER_OF_HEXAGON_PER_HEIGHT; i++) {
         for (int j = 0; j < NUMBER_OF_HEXAGON_PER_WIDTH; j++) {
             setBit(i, j, 1);
+        }
+    }
+
+    // Suppression des tuiles pour le début de partie
+    int i1 = (int)(planets[1].y / (SIZE_HEXAGON * SQRT3)),
+        j1 = (int)(planets[1].x / (SIZE_HEXAGON * 1.5));  // Première base découverte
+    int i2 = (int)(planets[2].y / (SIZE_HEXAGON * SQRT3)),
+        j2 = (int)(planets[2].x / (SIZE_HEXAGON * 1.5));  // Deuxième base découverte
+    
+    i1 = (i1 < i2) ? i1 : i2;
+    j1 = (j1 < j2) ? j1 : j2;
+    for (int i = i1; i <= i2 + 1; i++) {
+        for (int j = j1; j <= j2 + 2; j++) {
+            setBit(i, j, 0);
         }
     }
 }
@@ -77,13 +92,28 @@ void updateTiles(Ship *ships, int shipCount) {
     for (int k = 0; k < shipCount; k++) {
         j = (ships[k].x + ships[k].w / 2 + SIZE_HEXAGON * 0.75) / (SIZE_HEXAGON * 1.5);
         i = (ships[k].y + ships[k].h / 2 + SIZE_HEXAGON * SQRT3 / 2.f * ((j % 2 == 0) ? 1 : 0)) / (SIZE_HEXAGON * SQRT3);
-        if (getBit(i, j) == 1) {
-            setBit(i, j, 0);
+        if (getBit(i, j) == 1) setBit(i, j, 0);
+        if (getBit(i + 1, j) == 1) setBit(i + 1, j, 0);
+        if (getBit(i - 1, j) == 1) setBit(i - 1, j, 0);
+        if (getBit(i, j + 1) == 1) setBit(i, j + 1, 0);
+        if (getBit(i, j - 1) == 1) setBit(i, j - 1, 0);
+        if (j % 2 == 0) {
+            if (getBit(i - 1, j + 1) == 1) setBit(i - 1, j + 1, 0);
+            if (getBit(i - 1, j - 1) == 1) setBit(i - 1, j - 1, 0);
+        } else {
+            if (getBit(i + 1, j + 1) == 1) setBit(i + 1, j + 1, 0);
+            if (getBit(i + 1, j - 1) == 1) setBit(i + 1, j - 1, 0);
+
         }
     }
 }
 
 void setBit(int i, int j, int value) {  // Raisonnemer matriciellement pour i et j
+    if (i < 0 || j < 0 || i >= NUMBER_OF_HEXAGON_PER_HEIGHT || j >= NUMBER_OF_HEXAGON_PER_WIDTH) {
+        printf("tile.c, setBit(%d, %d, %d) : bad input\n", i, j, value);
+        return;
+    }
+
     int index = j * NUMBER_OF_HEXAGON_PER_HEIGHT + i;
     size_t byteIndex = index / 8;
     size_t bitIndex = index % 8;

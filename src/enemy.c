@@ -19,36 +19,6 @@ static int lastExplosionSon = 5;   /// canaux 5,6,7 pour les cons d'explosions
 
 
 void generateEnemy(Ship targetShip, Ship **ships, int *shipCount) {
-    Ship enemyShip;
-
-    memset(&enemyShip, 0, sizeof(Ship));
-
-    enemyShip.shiptype = ENEMY;
-    enemyShip.id = *shipCount;
-    enemyShip.idModel = 6;
-    enemyShip.state = ATTACKING_SHIP;
-    
-    enemyShip.base.type = SPOT_NONE;
-    enemyShip.target.type = SPOT_SHIP;
-    enemyShip.target.id_ship = targetShip.id;
-
-    enemyShip.x = targetShip.x + rand() % 5000 - 2500;
-    enemyShip.y = targetShip.y + rand() % 5000 - 2500;
-    enemyShip.w = 200;
-    enemyShip.h = 200;
-    enemyShip.speed = (rand() / (float)RAND_MAX * 0.6 + 0.4) * SHIP_SPEED;
-    enemyShip.level = 1;
-    
-    enemyShip.maxLife = 100;
-    enemyShip.currentLife = 100;
-    enemyShip.fuelConsumption = 1;  // Consommation d'essence par intervalle de temps TANKS_UPDATE_INTERVAL
-    enemyShip.range = 1000;
-
-    enemyShip.frameIndex = rand() % 4;  // Desynchronisation des fusees
-    enemyShip.lastFrameTime = 0;
-    enemyShip.lastRefreshFilling = SDL_GetTicks();
-
-    addShip(enemyShip, ships, shipCount);
 }
 
 void updateWarSystem(Ship **ships, int *shipCount, Mix_Chunk **sounds) {

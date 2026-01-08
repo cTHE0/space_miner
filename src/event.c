@@ -20,7 +20,7 @@ SDL_Point getMouseCoordinates(void) {
     return mouse;
 }
 
-void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, GameState *gameState, Ship *ships, int shipCount, Planet *planets, int planetCount) {
+void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, GameState *gameState, Ship **ships, int *shipCount, Planet *planets, int planetCount) {
     static SDL_Point lastMouse;
     static int dragging_camera = 0;
     static int click = 0;
@@ -57,6 +57,7 @@ void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **soun
             case SDL_MOUSEMOTION:
                 mouse = (SDL_Point){event.button.x, event.button.y};
                 if (dragging_camera) {
+                    setSelectionMode(0);
                     int dx = (event.motion.x - lastMouse.x);
                     int dy = (event.motion.y - lastMouse.y);
                     translateCamera(-dx / getCameraScale(), -dy / getCameraScale());
@@ -74,10 +75,16 @@ void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **soun
             case SDL_KEYDOWN:
                 switch (event.key.keysym.sym) {
                     case SDLK_ESCAPE:
-                        Mix_PlayChannel(1, sounds[7], 0);
-                        if (getWindowType() != NO_WINDOW) {
+                        if (getWindowType() == SHIP_WINDOW) {
+                            setWindowType(BASIC_SHIP_WINDOW);
+                            initBasicShipWindow(textTextures, fonts, *ships, planets);
+                            Mix_PlayChannel(1, sounds[10], 0);
+                        } else if (getWindowType() != NO_WINDOW) {
                             setWindowType(NO_WINDOW);
+                            Mix_PlayChannel(1, sounds[10], 0);
                         } else {
+                            setSelectionMode(0);
+                            Mix_PlayChannel(1, sounds[7], 0);
                             setWindowType(PAUSE_WINDOW);
                         }
                         click = 0;

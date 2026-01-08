@@ -522,19 +522,19 @@ void planetWindowManageBuilds(SDL_Texture ***imageTextures, SDL_Texture **textTe
             SDL_RenderCopy(renderer, imageTextures[9][i + j * 4], NULL, &imageRect);
             SDL_DrawEdgeOfRect(imageRect, 2, BLACK);
 
-            // Affiche le logo 'NEW'
+            // Affiche le texte dans la barre d'amelioration (+ logo NEW si nécessaire)
             if (planet->builds[4 * j + i].level == 0) {
+                // Affiche le logo 'NEW'
                 newTextRect.x = firstNewTextBuildRect.x + firstBuildImageRect.w * i * GapBetweenBuildX;
                 newTextRect.y = firstNewTextBuildRect.y + firstBuildImageRect.h * j * GapBetweenBuildY;
                 SDL_RenderCopy(renderer, textTextures[61], NULL, &newTextRect);
-            }
 
-            // Affiche le logo 'NEW' et le texte dans la barre d'amelioration
-            if (planet->builds[4 * j + i].level == 0) {
+                // Affiche 'Build' dans la barre d'amélioration (batiment non construit)
                 upgradeRect2.x = firstUpgradeBuildRect2.x + firstBuildImageRect.w * i * GapBetweenBuildX;
                 upgradeRect2.y = firstUpgradeBuildRect2.y + firstBuildImageRect.h * j * GapBetweenBuildY;
                 SDL_RenderCopy(renderer, textTextures[78], NULL, &upgradeRect2);
             } else if (planet->builds[4 * j + i].level > 0) {
+                // Affiche 'Upgrade' dans la barre d'amélioration (batiment déjà construit)
                 upgradeRect.x = firstUpgradeBuildRect.x + firstBuildImageRect.w * i * GapBetweenBuildX;
                 upgradeRect.y = firstUpgradeBuildRect.y + firstBuildImageRect.h * j * GapBetweenBuildY;
                 SDL_RenderCopy(renderer, textTextures[63], NULL, &upgradeRect);
@@ -587,7 +587,7 @@ void planetWindowNearestShips(SDL_Texture **textTextures) {
     SDL_RenderCopy(renderer, textTextures[56], NULL, &category5TitleRect);
 }
 
-void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, Planet *planets, SDL_Point mouse) {
+void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, Ship **ships, int *shipCount, Planet *planets, SDL_Point mouse) {
     if (SDL_PointInRect(&mouse, &WindowCrossRect) || !clickOnWindow(mouse)) {
         setWindowType(NO_WINDOW);
         Mix_PlayChannel(1, sounds[10], 0);
@@ -630,7 +630,13 @@ void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk
                 }
                 break;
 
-            case 10:
+            case 10:  // Acheter le batiment pour fabriquer des fusees
+                if (planets[getWindowId()].builds[1].tank.currentCapacity > 100) {
+                    planets[getWindowId()].builds[1].tank.currentCapacity -= 100;  // Prix a payer
+                    planets[getWindowId()].builds[currentBuildIndex].level = 1;
+                    Mix_PlayChannel(1, sounds[5], 0);
+                }
+                break;
             case 11:
             default:
                 break;
@@ -667,7 +673,13 @@ void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk
                 }
                 break;
 
-            case 10:
+            case 10:  // Fabriquer une nouvelle fusée
+                if (planets[getWindowId()].builds[1].tank.currentCapacity > 100) {
+                    planets[getWindowId()].builds[1].tank.currentCapacity -= 100;  // Prix a payer
+                    addShip(ships, shipCount, &planets[getWindowId()]);
+                    Mix_PlayChannel(1, sounds[5], 0);
+                }
+                break;
             case 11:
             default:
                 break;

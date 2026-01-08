@@ -107,6 +107,14 @@ void updateShipMove(Ship *ships, Ship *currentShip, Planet *planets) {
         return;
     }
 
+    if (currentShip->base.type == SPOT_PLANET && currentShip->target.type == SPOT_PLANET && 
+        currentShip->base.id_planet == currentShip->target.id_planet) {
+        if (currentShip->state == MOVING_TO_BASE)
+            currentShip->state = MOVING_TO_BASE_SOON_STOPPED;
+        else if (currentShip->state == MOVING_TO_TARGET)
+            currentShip->state = MOVING_TO_TARGET_SOON_STOPPED;
+    }
+
     float dx;
     float dy;
     float distance;
@@ -155,8 +163,8 @@ void updateShipMove(Ship *ships, Ship *currentShip, Planet *planets) {
             distance = sqrt(dx * dx + dy * dy);
 
             if (currentShip->state == ATTACKING_SHIP) {
-                //Gestion différente si notre ship est en combat (que ce soit un allié ou enemy peu importe)
-                //On s'arrête dès que la cible est à portée
+                // Gestion différente si notre ship est en combat (que ce soit un allié ou enemy peu importe)
+                // On s'arrête dès que la cible est à portée
                 if (distance >= currentShip->range) {
                     currentShip->x += dx * currentShip->speed / distance;
                     currentShip->y += dy * currentShip->speed / distance;
@@ -243,8 +251,8 @@ void OreFillingOrEmptying(Ship *ship, Planet *planets) {
     Planet *landingPlanet = (ship->state == WAITING_ON_BASE || ship->state == WAITING_ON_BASE_SOON_STOPPED) ? &planets[ship->base.id_planet] : &planets[ship->target.id_planet];
 
     for (int i = 0; i < cargo->compartmentsNumber; i++) {
-        if (ship->cargo.compartmentsList[i].flowBase_in == ship->cargo.compartmentsList[i].flowBase_out ||
-            ship->cargo.compartmentsList[i].flowTarget_in == ship->cargo.compartmentsList[i].flowTarget_out) {  // Si le joueur fait le coquin
+        if ((ship->cargo.compartmentsList[i].flowBase_in != EMPTY && ship->cargo.compartmentsList[i].flowBase_in == ship->cargo.compartmentsList[i].flowBase_out) ||
+            (ship->cargo.compartmentsList[i].flowTarget_in != EMPTY && ship->cargo.compartmentsList[i].flowTarget_in == ship->cargo.compartmentsList[i].flowTarget_out)) {  // Si le joueur fait le coquin
             continue;
         }
         if (ship->state == WAITING_ON_BASE || ship->state == WAITING_ON_BASE_SOON_STOPPED) {
@@ -492,13 +500,62 @@ int fuelInShip(Ship *ship) {
     return totalFuel;
 }
 
-void addShip(Ship newShip, Ship **ships, int *shipCount) {
+void addShip(Ship **ships, int *shipCount, Planet *planet) {
     *ships = realloc(*ships, (*shipCount + 1) * sizeof(Ship));
     if (*ships == NULL) {
         exit(1);
     }
 
-    (*ships)[*shipCount] = newShip;
+    (*ships)[*shipCount].shiptype = TRANSPORTER;
+    (*ships)[*shipCount].id = *shipCount;
+    (*ships)[*shipCount].idModel = 6;
+    (*ships)[*shipCount].state = WAITING_ON_BASE;
+    
+    (*ships)[*shipCount].base.type = SPOT_PLANET;
+    (*ships)[*shipCount].base.id_planet = planet->id;
+    (*ships)[*shipCount].target.type = SPOT_PLANET;
+    (*ships)[*shipCount].target.id_planet = (planet->id + 1) % *shipCount;
+
+    (*ships)[*shipCount].x = planet->x;
+    (*ships)[*shipCount].y = planet->y;
+    (*ships)[*shipCount].w = 200;
+    (*ships)[*shipCount].h = 200;
+    (*ships)[*shipCount].speed = (rand() / (float)RAND_MAX * 0.6 + 0.4) * SHIP_SPEED;
+    (*ships)[*shipCount].level = 1;
+    
+    (*ships)[*shipCount].maxLife = 100;
+    (*ships)[*shipCount].currentLife = 100;
+    (*ships)[*shipCount].fuelConsumption = 1;  // Consommation d'essence par intervalle de temps TANKS_UPDATE_INTERVAL
+    (*ships)[*shipCount].range = 1000;
+
+    (*ships)[*shipCount].frameIndex = rand() % 4;  // Desynchronisation des fusees
+    (*ships)[*shipCount].lastFrameTime = 0;
+    (*ships)[*shipCount].lastRefreshFilling = SDL_GetTicks();
+
+    // Allocation des compartiments
+    Cargo *cargo = &(*ships)[*shipCount].cargo;
+
+    cargo->compartmentsNumber = 2;  // Un premier compartiment rempli d'essence, le second vide
+    cargo->compartmentsList[0].ore = 0;
+    cargo->compartmentsList[0].maxCapacity = 1000;
+    cargo->compartmentsList[0].currentCapacity = 1000;
+    cargo->compartmentsList[0].flowSpeed = 20;
+    cargo->compartmentsList[0].level = 1;
+    cargo->compartmentsList[0].flowBase_in = FUEL;
+    cargo->compartmentsList[0].flowBase_out = EMPTY;
+    cargo->compartmentsList[0].flowTarget_in = FUEL;
+    cargo->compartmentsList[0].flowTarget_out = EMPTY;
+
+    cargo->compartmentsList[1].ore = EMPTY;
+    cargo->compartmentsList[1].maxCapacity = 1000;
+    cargo->compartmentsList[1].currentCapacity = 0;
+    cargo->compartmentsList[1].flowSpeed = 20;
+    cargo->compartmentsList[1].level = 0;
+    cargo->compartmentsList[1].flowBase_in = EMPTY;
+    cargo->compartmentsList[1].flowBase_out = EMPTY;
+    cargo->compartmentsList[1].flowTarget_in = EMPTY;
+    cargo->compartmentsList[1].flowTarget_out = EMPTY;
+
     (*shipCount) ++;
 }
 

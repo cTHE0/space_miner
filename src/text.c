@@ -119,7 +119,7 @@ SDL_Texture **loadTextTextures(TTF_Font **fonts) {  // ATTENTION: ne pas oublier
                                             {"Engine reboot", BLACK, fonts[0]},
                                             {"Repair", BLACK, fonts[0]},
                                             {"Fuel Storage", BLACK, fonts[0]},  // Les noms des 12 objets achetables
-                                            {"Iron Storage", BLACK, fonts[0]},
+                                            {"Iron Storage", BLACK, fonts[0]},  // ...
                                             {"Gold Storage", BLACK, fonts[0]},
                                             {"Joanium Storage", BLACK, fonts[0]},
                                             {"Voidor Storage", BLACK, fonts[0]},
@@ -128,8 +128,8 @@ SDL_Texture **loadTextTextures(TTF_Font **fonts) {  // ATTENTION: ne pas oublier
                                             {"Gold mine", BLACK, fonts[0]},
                                             {"Joanium mine", BLACK, fonts[0]},
                                             {"Voidor mine", BLACK, fonts[0]},
-                                            {"Factory", BLACK, fonts[0]},
-                                            {"Tower defence", BLACK, fonts[0]},
+                                            {"Ship factory", BLACK, fonts[0]},
+                                            {"Tower defence", BLACK, fonts[0]},  // Les noms des 12 objets achetables
                                             {"Build", BLACK, fonts[0]},
                                             {"Back to game", BLACK, fonts[0]},
                                             {"Advancements", BLACK, fonts[0]},
@@ -137,7 +137,9 @@ SDL_Texture **loadTextTextures(TTF_Font **fonts) {  // ATTENTION: ne pas oublier
                                             {"Save and quit", BLACK, fonts[0]},
                                             {"Report bugs", BLACK, fonts[0]},
                                             {"Statistics", BLACK, fonts[0]},
-                                            {"Swap direction", BLACK, fonts[0]}
+                                            {"Swap direction", BLACK, fonts[0]},
+                                            {"Stop filling tanks", BLACK, fonts[0]},
+                                            {"You must dock your ship to upgrade or repair it.", RED, fonts[0]}
                                            };
 
     for (int i = 0; i < CST_TEXT_NUMBER; i++) {

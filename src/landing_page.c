@@ -84,7 +84,7 @@ void handleMenuEvents(Mix_Chunk **sounds, GameState *gameState, short *gameBegun
                             initShips(ships, *shipCount, *planets);
                             initCamera(*planets);
                             initAsteroids(*planets, *planetCount);
-                            initTiles();
+                            initTiles(*planets);
                             *gameState = GAME;
                             break;
                         default:

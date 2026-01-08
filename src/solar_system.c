@@ -92,4 +92,3 @@ void freeAreaForPlanet(Planet *planets, int currentIndexPlanet, int nbEntityGene
         }
     }
 }
-

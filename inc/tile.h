@@ -5,7 +5,7 @@
 #include "tools.h"
 
 
-void initTiles(void);
+void initTiles(Planet *planets);
 void displayTiles(SDL_Texture ***imageTextures);
 
 void updateTiles(Ship *ships, int shipCount);

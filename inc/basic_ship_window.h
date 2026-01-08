@@ -26,5 +26,4 @@ int clickOnBasicShipWindow(SDL_Point mouse);
 void setButtonSelected(BasicShipWindowButton newButton);
 BasicShipWindowButton getButtonSelected(void);
 
-
 #endif
