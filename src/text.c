@@ -139,7 +139,8 @@ SDL_Texture **loadTextTextures(TTF_Font **fonts) {  // ATTENTION: ne pas oublier
                                             {"Statistics", BLACK, fonts[0]},
                                             {"Swap direction", BLACK, fonts[0]},
                                             {"Stop filling tanks", BLACK, fonts[0]},
-                                            {"You must dock your ship to upgrade or repair it.", RED, fonts[0]}
+                                            {"You must dock your ship to upgrade or repair it.", RED, fonts[0]},
+                                            {"???", BLACK, fonts[0]}
                                            };
 
     for (int i = 0; i < CST_TEXT_NUMBER; i++) {

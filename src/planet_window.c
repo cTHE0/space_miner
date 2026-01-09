@@ -16,6 +16,7 @@
 static int currentBuildIndex = 0;  
 static float GapBetweenBuildX = 2.26;   
 static float GapBetweenBuildY = 1.5;
+static int lastBuildDisplayed;  //  Position du dernier batiment NEW affiché dans le shop.
 
 
 // Declaration des rectangles et variables propres a la fenetre d'informations des fusees
@@ -189,12 +190,19 @@ void initPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts, Planet *plan
         sprintf(descriptionText, "Description:\nIt's equipped with powerful\nweapons, defending all\nyour vital resources.");
     }
 
-
-
-
     textTextures[34] = createTextTextureWithNewline(fonts[0], descriptionText, BLACK);
     SDL_QueryTexture(textTextures[34], NULL, NULL, &textureWidth, &textureHeight);
     infoBuildRect = (SDL_Rect){SCREEN_WIDTH * 0.516, SCREEN_HEIGHT * 0.575, (textureWidth * SCREEN_WIDTH) * 0.000232, (textureHeight * SCREEN_WIDTH) * 0.000232};
+
+    // Détermine la position du dernier batiment NEW affiché dans le shop
+    lastBuildDisplayed = -1;
+    for (int j = 0; j < 3; j++) {
+        for (int i = 0; i < 4; i++) {
+            if (lastBuildDisplayed == -1 && j * 4 + i != 0 && j * 4 + i != 1 && planets[getWindowId()].builds[4 * j + i].level == 0) {
+                lastBuildDisplayed = 4 * j + i;
+            }
+        }
+    }
 }
 
 void initPlanetWindowRects(SDL_Texture **textTextures) {
@@ -510,12 +518,14 @@ void planetWindowManageBuilds(SDL_Texture ***imageTextures, SDL_Texture **textTe
     SDL_Rect newTextRect = firstNewTextBuildRect;
     SDL_Rect upgradeRect = firstUpgradeBuildRect;
     SDL_Rect upgradeRect2 = firstUpgradeBuildRect2;
-    int onlyOneNEWDisplayed = 0;  // 1 => un batiment nouveau dans le shop.
     for (int j = 0; j < 3; j++) {
         for (int i = 0; i < 4; i++) {
-            if (planet->builds[4 * j + i].level == 0 && onlyOneNEWDisplayed) continue;  // Pour n'afficher qu'un seul batiment nouveau (hors deux premiers batiments)
             // Affiche du fond de la barre d'amelioration/creation
-            SDL_SetRenderDrawColor(renderer, 125, 197, 46, 255);
+            if (planet->builds[4 * j + i].level > 0 || 4 * j + i <= lastBuildDisplayed) {
+                SDL_SetRenderDrawColor(renderer, 125, 197, 46, 255);
+            } else {
+                SDL_SetRenderDrawColor(renderer, 150, 150, 150, 255);
+            }
             barRect.x = firstBarBuildRect.x + firstBuildImageRect.w * i * GapBetweenBuildX;
             barRect.y = firstBarBuildRect.y + firstBuildImageRect.h * j * GapBetweenBuildY;
             SDL_RenderFillRect(renderer, &barRect);
@@ -524,21 +534,30 @@ void planetWindowManageBuilds(SDL_Texture ***imageTextures, SDL_Texture **textTe
             // Affiche l'image de l'objet
             imageRect.x = firstBuildImageRect.x + firstBuildImageRect.w * i * GapBetweenBuildX;
             imageRect.y = firstBuildImageRect.y + firstBuildImageRect.h * j * GapBetweenBuildY;
-            SDL_RenderCopy(renderer, imageTextures[9][i + j * 4], NULL, &imageRect);
-            SDL_DrawEdgeOfRect(imageRect, 2, BLACK);
+            if (planet->builds[4 * j + i].level > 0 || 4 * j + i <= lastBuildDisplayed) {
+                SDL_DrawEdgeOfRect(imageRect, 2, BLACK);
+                SDL_RenderCopy(renderer, imageTextures[9][i + j * 4], NULL, &imageRect);
+            } else {
+                SDL_RenderCopy(renderer, textTextures[88], NULL, &imageRect);
+            }
 
             // Affiche le texte dans la barre d'amelioration (+ logo NEW si nécessaire)
             if (planet->builds[4 * j + i].level == 0) {
                 // Affiche le logo 'NEW'
-                newTextRect.x = firstNewTextBuildRect.x + firstBuildImageRect.w * i * GapBetweenBuildX;
-                newTextRect.y = firstNewTextBuildRect.y + firstBuildImageRect.h * j * GapBetweenBuildY;
-                SDL_RenderCopy(renderer, textTextures[61], NULL, &newTextRect);
-                onlyOneNEWDisplayed = (4 * j + i != 0 && 4 * j + i != 1);
+                if (4 * j + i <= lastBuildDisplayed) {
+                    newTextRect.x = firstNewTextBuildRect.x + firstBuildImageRect.w * i * GapBetweenBuildX;
+                    newTextRect.y = firstNewTextBuildRect.y + firstBuildImageRect.h * j * GapBetweenBuildY;
+                    SDL_RenderCopy(renderer, textTextures[61], NULL, &newTextRect);
+                }
 
                 // Affiche 'Build' dans la barre d'amélioration (batiment non construit)
                 upgradeRect2.x = firstUpgradeBuildRect2.x + firstBuildImageRect.w * i * GapBetweenBuildX;
                 upgradeRect2.y = firstUpgradeBuildRect2.y + firstBuildImageRect.h * j * GapBetweenBuildY;
-                SDL_RenderCopy(renderer, textTextures[78], NULL, &upgradeRect2);
+                if (4 * j + i <= lastBuildDisplayed) {
+                    SDL_RenderCopy(renderer, textTextures[78], NULL, &upgradeRect2);
+                } else {
+                    SDL_RenderCopy(renderer, textTextures[88], NULL, &upgradeRect2);
+                }
             } else if (planet->builds[4 * j + i].level > 0) {
                 // Affiche 'Upgrade' dans la barre d'amélioration (batiment déjà construit)
                 upgradeRect.x = firstUpgradeBuildRect.x + firstBuildImageRect.w * i * GapBetweenBuildX;
@@ -602,8 +621,9 @@ void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk
     // Choix du batiment
     SDL_Rect edgeSelectedBuildRect = firstBuildRect;
     
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 3; j++) {
+    for (int j = 0; j < 3; j++) {
+        for (int i = 0; i < 4; i++) {
+            if (j * 4 + i > lastBuildDisplayed && planets[getWindowId()].builds[4 * j + i].level == 0) continue;
             edgeSelectedBuildRect.x = firstBuildRect.x + firstBuildImageRect.w * i * GapBetweenBuildX;
             edgeSelectedBuildRect.y = firstBuildRect.y + firstBuildImageRect.h * j * GapBetweenBuildY;
             if (SDL_PointInRect(&mouse, &edgeSelectedBuildRect)) {
