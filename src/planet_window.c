@@ -74,7 +74,7 @@ void initPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts, Planet *plan
     // Genere la texture qui donne le descriptif de la planete
     char descriptionText[512];
     sprintf(descriptionText, "Name                               %s\nType                                 %s\nDiameter                         %d km\nMass                                %d.%dx10^%d kg\nRotation period               %d h\nMain atmosphere\ncomposition                    nitrogen-oxygen\nAverage temperature    %d K\nAge                                  %.1f billion years", 
-            "terrestial",
+            "terrestrial",
             planetName,
             (int)planets[getWindowId()].radius,
             (int)planets[getWindowId()].radius % 10,
@@ -254,10 +254,9 @@ void initPlanetWindowRects(SDL_Texture **textTextures) {
     category6TitleRect.w = textureWidth * windowRect.w * 0.0005;
     category6TitleRect.h = textureHeight * windowRect.w * 0.0005;
 
-    planetFirstResourceRect = (SDL_Rect){SCREEN_WIDTH * 82/160, SCREEN_HEIGHT * 0.424, SCREEN_WIDTH * 24/160, SCREEN_WIDTH * 4/160};
-    quantityFirstOreRect = (SDL_Rect){SCREEN_WIDTH * 83/160, SCREEN_HEIGHT * 0.477, SCREEN_WIDTH * 1/160, SCREEN_WIDTH * 3/160};
-
-    planetFirstResourceLogoRect = (SDL_Rect){SCREEN_WIDTH * 107/160, SCREEN_HEIGHT * 0.424, SCREEN_WIDTH * 4/160, SCREEN_WIDTH * 4/160};
+    planetFirstResourceRect = (SDL_Rect){SCREEN_WIDTH * 82/160, SCREEN_HEIGHT * 0.23, SCREEN_WIDTH * 24/160, SCREEN_WIDTH * 4/160};
+    quantityFirstOreRect = (SDL_Rect){SCREEN_WIDTH * 83/160, SCREEN_HEIGHT * 0.19, SCREEN_WIDTH * 1/160, SCREEN_WIDTH * 3/160};
+    planetFirstResourceLogoRect = (SDL_Rect){SCREEN_WIDTH * 107/160, SCREEN_HEIGHT * 0.23, SCREEN_WIDTH * 4/160, SCREEN_WIDTH * 4/160};
 
 
     // planetWindowMineralAbundance
@@ -282,8 +281,8 @@ void initPlanetWindowRects(SDL_Texture **textTextures) {
 
     limitAxesXAbundanceRect = (SDL_Rect){SCREEN_WIDTH * 0.86, SCREEN_HEIGHT * 0.452, 5, SCREEN_WIDTH * 0.01};
 
-    planetFirstResourceRect2 = (SDL_Rect){SCREEN_WIDTH * 0.7302, SCREEN_HEIGHT * 0.418, SCREEN_WIDTH * 0.133, SCREEN_WIDTH * 0.018};
-    planetFirstResourceLogoRect2 = (SDL_Rect){SCREEN_WIDTH * 0.735, SCREEN_HEIGHT * 0.417, SCREEN_WIDTH * 0.018, SCREEN_WIDTH * 0.018};
+    planetFirstResourceRect2 = (SDL_Rect){SCREEN_WIDTH * 0.7302, SCREEN_HEIGHT * 0.245, SCREEN_WIDTH * 0.133, SCREEN_WIDTH * 0.018};
+    planetFirstResourceLogoRect2 = (SDL_Rect){SCREEN_WIDTH * 0.735, SCREEN_HEIGHT * 0.245, SCREEN_WIDTH * 0.018, SCREEN_WIDTH * 0.018};
 
 
     // planetWindowManageBuilds
@@ -392,7 +391,11 @@ void planetWindowContainerInfo(SDL_Texture ***imageTextures, SDL_Texture **textT
     SDL_Rect currentLogoRect = planetFirstResourceLogoRect;
     SDL_Rect currentQuantityOreRect = quantityFirstOreRect;
 
-    for (int i = 0; i < ORE_TYPE_COUNT; i++) {
+    for (int i = 2; i < 12; i += 2) {  // Parcourt les réservoirs (c.f. 'initBuildsPlanet' dans build.c)
+        // Le conteneur du minerai i est-il déjà construit ?
+        if (planets[getWindowId()].builds[i].level == 0) {
+            continue;
+        }
         // Barre de fond
         SDL_SetRenderDrawColor(renderer, 150, 150, 150, 255);
         currentOreRect.w = planetFirstResourceRect.w;
@@ -404,7 +407,7 @@ void planetWindowContainerInfo(SDL_Texture ***imageTextures, SDL_Texture **textT
         SDL_RenderFillRect(renderer, &currentOreRect);
 
         // Logo du type de minerai
-        switch (i) {
+        switch (i / 2 - 1) {
             case FUEL:
                 SDL_RenderCopy(renderer, imageTextures[4][0], NULL, &currentLogoRect);
                 break;
@@ -417,7 +420,7 @@ void planetWindowContainerInfo(SDL_Texture ***imageTextures, SDL_Texture **textT
             case ORE3:
                 SDL_RenderCopy(renderer, imageTextures[4][3], NULL, &currentLogoRect);
                 break;
-            default:
+            default:  // EMPTY logo (croix)
                 SDL_RenderCopy(renderer, imageTextures[4][4], NULL, &currentLogoRect);
                 break;
         }
@@ -427,9 +430,9 @@ void planetWindowContainerInfo(SDL_Texture ***imageTextures, SDL_Texture **textT
         SDL_DrawEdgeOfRect(currentOreRect, 3, BLACK);
 
         // Pour afficher le prochain reservoir
-        currentOreRect.y -= 1.05 * planetFirstResourceRect.h;
-        currentLogoRect.y -= 1.05 * planetFirstResourceRect.h;
-        currentQuantityOreRect.y -= 1.05 * planetFirstResourceRect.h;
+        currentOreRect.y += 1.05 * planetFirstResourceRect.h;
+        currentLogoRect.y += 1.05 * planetFirstResourceRect.h;
+        currentQuantityOreRect.y += 1.05 * planetFirstResourceRect.h;
 
         // Afficher nombre current ore
         renderNumber((int)planets[getWindowId()].builds[i].tank.currentCapacity, currentQuantityOreRect);
@@ -488,8 +491,8 @@ void planetWindowMineralAbundance(SDL_Texture ***imageTextures, SDL_Texture **te
         SDL_DrawEdgeOfRect(currentOreRect, 3, BLACK);
 
         // Pour afficher le prochain reservoir
-        currentOreRect.y -= 1.4 * planetFirstResourceRect2.h;
-        currentLogoRect.y -= 1.4 * planetFirstResourceRect2.h;
+        currentOreRect.y += 1.4 * planetFirstResourceRect2.h;
+        currentLogoRect.y += 1.4 * planetFirstResourceRect2.h;
     }
 
     // Affiche la limite de l'axe X
@@ -507,8 +510,10 @@ void planetWindowManageBuilds(SDL_Texture ***imageTextures, SDL_Texture **textTe
     SDL_Rect newTextRect = firstNewTextBuildRect;
     SDL_Rect upgradeRect = firstUpgradeBuildRect;
     SDL_Rect upgradeRect2 = firstUpgradeBuildRect2;
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 3; j++) {
+    int onlyOneNEWDisplayed = 0;  // 1 => un batiment nouveau dans le shop.
+    for (int j = 0; j < 3; j++) {
+        for (int i = 0; i < 4; i++) {
+            if (planet->builds[4 * j + i].level == 0 && onlyOneNEWDisplayed) continue;  // Pour n'afficher qu'un seul batiment nouveau (hors deux premiers batiments)
             // Affiche du fond de la barre d'amelioration/creation
             SDL_SetRenderDrawColor(renderer, 125, 197, 46, 255);
             barRect.x = firstBarBuildRect.x + firstBuildImageRect.w * i * GapBetweenBuildX;
@@ -528,6 +533,7 @@ void planetWindowManageBuilds(SDL_Texture ***imageTextures, SDL_Texture **textTe
                 newTextRect.x = firstNewTextBuildRect.x + firstBuildImageRect.w * i * GapBetweenBuildX;
                 newTextRect.y = firstNewTextBuildRect.y + firstBuildImageRect.h * j * GapBetweenBuildY;
                 SDL_RenderCopy(renderer, textTextures[61], NULL, &newTextRect);
+                onlyOneNEWDisplayed = (4 * j + i != 0 && 4 * j + i != 1);
 
                 // Affiche 'Build' dans la barre d'amélioration (batiment non construit)
                 upgradeRect2.x = firstUpgradeBuildRect2.x + firstBuildImageRect.w * i * GapBetweenBuildX;
@@ -609,35 +615,43 @@ void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk
     }
 
     // Achat d'un nouveau batiment
-    if (SDL_PointInRect(&mouse, &upgradeBarRect) && planets[getWindowId()].builds[currentBuildIndex].level == 0) {
+    if (planets[getWindowId()].builds[currentBuildIndex].level == 0 && SDL_PointInRect(&mouse, &upgradeBarRect)) {
         switch (currentBuildIndex) {
-            case 0:
-            case 1:
-            case 2:
-            case 3:
+            case 2:  // Acheter un réservoir
             case 4:
-                break;
-
-            case 5:
             case 6:
-            case 7:
             case 8:
-            case 9:  // Acheter une mine
-                if (planets[getWindowId()].builds[1].tank.currentCapacity > 100) {
-                    planets[getWindowId()].builds[1].tank.currentCapacity -= 100;  // Prix a payer
+            case 10:
+                if (planets[getWindowId()].builds[4].tank.currentCapacity > 100) {
+                    planets[getWindowId()].builds[4].tank.currentCapacity -= 100;  // Prix a payer
                     planets[getWindowId()].builds[currentBuildIndex].level = 1;
                     Mix_PlayChannel(1, sounds[5], 0);
                 }
                 break;
 
-            case 10:  // Acheter le batiment pour fabriquer des fusees
-                if (planets[getWindowId()].builds[1].tank.currentCapacity > 100) {
-                    planets[getWindowId()].builds[1].tank.currentCapacity -= 100;  // Prix a payer
+            case 3:
+            case 5:
+            case 7:
+            case 9:
+            case 11:  // Acheter une mine
+                if (planets[getWindowId()].builds[4].tank.currentCapacity > 100) {
+                    planets[getWindowId()].builds[4].tank.currentCapacity -= 100;  // Prix a payer
                     planets[getWindowId()].builds[currentBuildIndex].level = 1;
                     Mix_PlayChannel(1, sounds[5], 0);
                 }
                 break;
-            case 11:
+
+            case 0:  // Acheter le batiment pour fabriquer des fusees
+                if (planets[getWindowId()].builds[4].tank.currentCapacity > 100) {
+                    planets[getWindowId()].builds[4].tank.currentCapacity -= 100;  // Prix a payer
+                    planets[getWindowId()].builds[currentBuildIndex].level = 1;
+                    Mix_PlayChannel(1, sounds[5], 0);
+                }
+                break;
+
+            case 1:  // Tour de défence (prochainement)
+                break;
+
             default:
                 break;
         }
@@ -647,40 +661,43 @@ void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk
     // Amelioration d'un nouveau batiment
     else if (SDL_PointInRect(&mouse, &upgradeBarRect) && planets[getWindowId()].builds[currentBuildIndex].level > 0) {        
         switch (currentBuildIndex) {
-            case 0:
-            case 1:
             case 2:
-            case 3:
-            case 4:  // Ameliorer un reservoir
-                if (planets[getWindowId()].builds[1].tank.currentCapacity > 100) {
-                    planets[getWindowId()].builds[1].tank.currentCapacity -= 100;  // Prix a payer
+            case 4:
+            case 6:
+            case 8:
+            case 10:  // Ameliorer un reservoir
+                if (planets[getWindowId()].builds[4].tank.currentCapacity > 100) {
+                    planets[getWindowId()].builds[4].tank.currentCapacity -= 100;  // Prix a payer
                     planets[getWindowId()].builds[currentBuildIndex].level ++;
                     planets[getWindowId()].builds[currentBuildIndex].tank.maxCapacity *= 1.05;
                     Mix_PlayChannel(1, sounds[5], 0);
                 }
                 break;
 
+            case 3:
             case 5:
-            case 6:
             case 7:
-            case 8:
-            case 9:  // Ameliorer une mine
-                if (planets[getWindowId()].builds[1].tank.currentCapacity > 100) {
-                    planets[getWindowId()].builds[1].tank.currentCapacity -= 100;  // Prix a payer
+            case 9:
+            case 11:  // Ameliorer une mine
+                if (planets[getWindowId()].builds[4].tank.currentCapacity > 100) {
+                    planets[getWindowId()].builds[4].tank.currentCapacity -= 100;  // Prix a payer
                     planets[getWindowId()].builds[currentBuildIndex].level ++;
                     planets[getWindowId()].builds[currentBuildIndex].mine.productivity *= 1.05;
                     Mix_PlayChannel(1, sounds[5], 0);
                 }
                 break;
 
-            case 10:  // Fabriquer une nouvelle fusée
-                if (planets[getWindowId()].builds[1].tank.currentCapacity > 100) {
-                    planets[getWindowId()].builds[1].tank.currentCapacity -= 100;  // Prix a payer
+            case 0:  // Fabriquer une nouvelle fusée
+                if (planets[getWindowId()].builds[4].tank.currentCapacity > 100) {
+                    planets[getWindowId()].builds[4].tank.currentCapacity -= 100;  // Prix a payer
                     addShip(ships, shipCount, &planets[getWindowId()]);
                     Mix_PlayChannel(1, sounds[5], 0);
                 }
                 break;
-            case 11:
+
+            case 1:  // Tour de défence (prochainement)
+                break;
+
             default:
                 break;
         }

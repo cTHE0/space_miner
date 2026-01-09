@@ -12,22 +12,37 @@ static Uint32 lastBuildUpdateTime = 0;
 
 
 void initBuildsPlanet(Planet *planet) {
-	// Cree tous les reservoirs sur les planetes
+	// Crée tous les bâtiments sur la planète sélectionnée
     for (int i = 0; i < BUILD_TYPE_COUNT; i++) {
-        if (i < ORE_TYPE_COUNT) {
-            planet->builds[i].type = ORE_STORE;
-            planet->builds[i].level = 1;
-            planet->builds[i].tank = (Compartment){i, 0, 0, 0, 0, 1, 8000, 10000, 20};
-        } else if (i < 5 + ORE_TYPE_COUNT) {
-            planet->builds[i].type = ORE_MINE;
-            planet->builds[i].level = 0;
-            planet->builds[i].mine = (Mine){i - 5 , 1000};
-        } else if (i == 10) {
-            planet->builds[i].type = FACTORY;
-            planet->builds[i].level = 0;
-        } else if (i == 11) {
-            planet->builds[i].type = DEFENCE_TOWER;
-            planet->builds[i].level = 0;
+        switch (i) {
+            case 0:
+                planet->builds[i].type = FACTORY;
+                planet->builds[i].level = 0;
+                break;
+            case 1:
+                planet->builds[i].type = DEFENCE_TOWER;
+                planet->builds[i].level = 0;
+                break;
+            case 2:
+            case 4:
+            case 6:
+            case 8:
+            case 10:
+                planet->builds[i].type = ORE_STORE;
+                planet->builds[i].level = (i / 2 - 1 == FUEL || i / 2 - 1 == ORE1);
+                planet->builds[i].tank = (Compartment){i / 2 - 1, 0, 0, 0, 0, 1500, 10000, 0, 1};
+                break;
+            case 3:
+            case 5:
+            case 7:
+            case 9:
+            case 11:
+                planet->builds[i].type = ORE_MINE;
+                planet->builds[i].level = 0;
+                planet->builds[i].mine = (Mine){i / 2 - 1, 1000};
+                break;
+            default:
+                break;
         }
     }
 }
@@ -68,11 +83,11 @@ void updateBuilds(Planet *planets, int planetCount) {
 
 void updateBuildMine(Build *builds, Mine *mine, int abundance) {
     for (int i = 0; i < ORE_TYPE_COUNT; i++) {
-        if (builds[i].type == ORE_STORE && builds[i].tank.ore == mine->ore) {  // Si l'on a trouve le bon reservoir, acceuillant les bons minerais...
-            builds[i].tank.currentCapacity += mine->productivity * (abundance / 100.f);
+        if (builds[2 * i + 2].type == ORE_STORE && builds[2 * i + 2].tank.ore == mine->ore) {  // Si l'on a trouve le bon reservoir, acceuillant les bons minerais...
+            builds[2 * i + 2].tank.currentCapacity += mine->productivity * (abundance / 100.f);
 
-            if (builds[i].tank.currentCapacity > builds[i].tank.maxCapacity) {
-                builds[i].tank.currentCapacity = builds[i].tank.maxCapacity;
+            if (builds[2 * i + 2].tank.currentCapacity > builds[2 * i + 2].tank.maxCapacity) {
+                builds[2 * i + 2].tank.currentCapacity = builds[2 * i + 2].tank.maxCapacity;
             }
             return;
         }

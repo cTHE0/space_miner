@@ -26,7 +26,7 @@ typedef struct Planet {
     /*---Gestion rotation autour soleil---*/
     double orbitRadius;
     double orbitAngleDeg;
-    double orbitSpeedDeg;             // vitesse propre à chaque planète
+    double orbitSpeedDeg;               // vitesse propre à chaque planète
     int orbitCenterX;
     int orbitCenterY;
 } Planet;

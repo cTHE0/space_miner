@@ -745,6 +745,7 @@ void ShipWindowShipCond(SDL_Texture ***imageTextures, SDL_Texture **textTextures
     // Affichage message erreur
     if (warningMessageTime > time(NULL)) {
         SDL_RenderFillRect(renderer, &warningMessageRect);
+        SDL_DrawEdgeOfRect(warningMessageRect, 3, RED);
         SDL_RenderCopy(renderer, textTextures[87], NULL, &warningMessageRect);
     }
 }
@@ -918,7 +919,7 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
             warningMessageTime = time(NULL) + 4;
             return;
         }
-        
+
         ships[getWindowId()].currentLife += 0.1 * ships[getWindowId()].maxLife;
 
         if (ships[getWindowId()].currentLife > ships[getWindowId()].maxLife) {

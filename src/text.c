@@ -118,18 +118,18 @@ SDL_Texture **loadTextTextures(TTF_Font **fonts) {  // ATTENTION: ne pas oublier
                                             {"Upgrade", BLACK, fonts[0]},
                                             {"Engine reboot", BLACK, fonts[0]},
                                             {"Repair", BLACK, fonts[0]},
-                                            {"Fuel Storage", BLACK, fonts[0]},  // Les noms des 12 objets achetables
-                                            {"Iron Storage", BLACK, fonts[0]},  // ...
-                                            {"Gold Storage", BLACK, fonts[0]},
-                                            {"Joanium Storage", BLACK, fonts[0]},
-                                            {"Voidor Storage", BLACK, fonts[0]},
+                                            {"Ship factory", BLACK, fonts[0]},  // Les noms des 12 objets achetables
+                                            {"Tower defence", BLACK, fonts[0]},  // ...
+                                            {"Fuel Storage", BLACK, fonts[0]},
                                             {"Fuel mine", BLACK, fonts[0]},
+                                            {"Iron Storage", BLACK, fonts[0]},
                                             {"Iron mine", BLACK, fonts[0]},
+                                            {"Gold Storage", BLACK, fonts[0]},
                                             {"Gold mine", BLACK, fonts[0]},
+                                            {"Joanium Storage", BLACK, fonts[0]},
                                             {"Joanium mine", BLACK, fonts[0]},
-                                            {"Voidor mine", BLACK, fonts[0]},
-                                            {"Ship factory", BLACK, fonts[0]},
-                                            {"Tower defence", BLACK, fonts[0]},  // Les noms des 12 objets achetables
+                                            {"Voidor Storage", BLACK, fonts[0]},
+                                            {"Voidor mine", BLACK, fonts[0]},  // Les noms des 12 objets achetables
                                             {"Build", BLACK, fonts[0]},
                                             {"Back to game", BLACK, fonts[0]},
                                             {"Advancements", BLACK, fonts[0]},
