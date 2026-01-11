@@ -187,9 +187,10 @@ void initShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ship) {
     
     // Mise a jour des donnees de la fusee (description de droite)
     strcpy(descriptionText, "");
-    sprintf(descriptionText, "Fuel consumption       %d L/s  \nTank capacity            %.2f L\nDurability                    2h \nMineral transferred  199,552 m3",
+    sprintf(descriptionText, "Fuel consumption       %d L/s  \nTank capacity            %.2f L\nDurability                    2h \nMineral transferred  %d m3",
         ship->fuelConsumption,
-        globalTankCapacity(ship) / 100.f
+        globalTankCapacity(ship) / 100.f,
+        ship->transferredMinerals
         );
 
     textTextures[38] = createTextTextureWithNewline(fonts[0], descriptionText, BLACK);
@@ -863,7 +864,7 @@ void ShipWindowTankCompo(SDL_Texture ***imageTextures, SDL_Texture **textTexture
     SDL_RenderCopy(renderer, imageTextures[2][7], NULL, &logoUpgradeButtonTankInfoRect);
 }
 
-void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, Ship *ships, Planet *planets, SDL_Point mouse) {
+void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, Ship *ships, Planet *planets, int shipCount, SDL_Point mouse) {
     // Fermeture de la fenetre
     if (SDL_PointInRect(&mouse, &WindowCrossRect) || !clickOnWindow(mouse)) {
         Mix_PlayChannel(1, sounds[10], 0);
@@ -893,7 +894,7 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
     // Ouverture de la fenetre de la planete (depuis la fenetre d'info. de la fusee)
     else if (SDL_PointInRect(&mouse, &baseDisplayedRect) || SDL_PointInRect(&mouse, &baseDisplayedRect2)) {
         if (ships[getWindowId()].base.type == SPOT_PLANET) {
-            initPlanetWindow(textTextures, fonts, planets);
+            initPlanetWindow(textTextures, fonts, planets, ships, shipCount);
             setCameraLastObjectSelected(ships[getWindowId()].base.id_planet);
             setCameraMode(FOLLOW_PLANET);
             setWindowType(PLANET_WINDOW);
@@ -902,7 +903,7 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
     }
     else if (SDL_PointInRect(&mouse, &targetDisplayedRect) || SDL_PointInRect(&mouse, &targetDisplayedRect2)) {
         if (ships[getWindowId()].target.type == SPOT_PLANET) {
-            initPlanetWindow(textTextures, fonts, planets);
+            initPlanetWindow(textTextures, fonts, planets, ships, shipCount);
             setCameraLastObjectSelected(ships[getWindowId()].target.id_planet);
             setCameraMode(FOLLOW_PLANET);
             setWindowType(PLANET_WINDOW);
@@ -915,7 +916,9 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
         if (ships[getWindowId()].state != STOPPED_ON_BASE && 
             ships[getWindowId()].state != STOPPED_ON_TARGET &&
             ships[getWindowId()].state != WAITING_ON_BASE &&
-            ships[getWindowId()].state != WAITING_ON_TARGET) {  // Une fusée doit avoir atteri pour être améliorée ou réparée
+            ships[getWindowId()].state != WAITING_ON_TARGET &&
+            ships[getWindowId()].state != WAITING_ON_BASE_SOON_STOPPED &&
+            ships[getWindowId()].state != WAITING_ON_TARGET_SOON_STOPPED) {  // Une fusée doit avoir atteri pour être améliorée ou réparée
             warningMessageTime = time(NULL) + 4;
             return;
         }
@@ -934,12 +937,15 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
         if (ships[getWindowId()].state != STOPPED_ON_BASE && 
             ships[getWindowId()].state != STOPPED_ON_TARGET &&
             ships[getWindowId()].state != WAITING_ON_BASE &&
-            ships[getWindowId()].state != WAITING_ON_TARGET) {  // Une fusée doit avoir atteri pour être améliorée ou réparée
+            ships[getWindowId()].state != WAITING_ON_TARGET &&
+            ships[getWindowId()].state != WAITING_ON_BASE_SOON_STOPPED &&
+            ships[getWindowId()].state != WAITING_ON_TARGET_SOON_STOPPED) {  // Une fusée doit avoir atteri pour être améliorée ou réparée
             warningMessageTime = time(NULL) + 4;
             return;
         }
 
         ships[getWindowId()].level += 1;
+        ships[getWindowId()].speed *= 1.05;
         initShipWindow(textTextures, fonts, &ships[getWindowId()]);
         Mix_PlayChannel(1, sounds[5], 0);
     }
@@ -949,7 +955,9 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
         if (ships[getWindowId()].state != STOPPED_ON_BASE && 
             ships[getWindowId()].state != STOPPED_ON_TARGET &&
             ships[getWindowId()].state != WAITING_ON_BASE &&
-            ships[getWindowId()].state != WAITING_ON_TARGET) {  // Une fusée doit avoir atteri pour être améliorée ou réparée
+            ships[getWindowId()].state != WAITING_ON_TARGET &&
+            ships[getWindowId()].state != WAITING_ON_BASE_SOON_STOPPED &&
+            ships[getWindowId()].state != WAITING_ON_TARGET_SOON_STOPPED) {  // Une fusée doit avoir atteri pour être améliorée ou réparée
             warningMessageTime = time(NULL) + 4;
             return;
         }

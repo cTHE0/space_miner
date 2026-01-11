@@ -77,7 +77,7 @@ void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
             } else if (clickOnShip(textTextures, fonts, *ships, *shipCount, planets, mouse)) {
                 selectionMode = 0;
                 Mix_PlayChannel(1, sounds[4], 0);
-            } else if (clickOnPlanet(textTextures, fonts, planets, planetCount, mouse)) {
+            } else if (clickOnPlanet(textTextures, fonts, planets, *ships, planetCount, *shipCount, mouse)) {
                 selectionMode = 0;
                 Mix_PlayChannel(1, sounds[3], 0);
             }
@@ -98,7 +98,7 @@ void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
             break;
 
         case SHIP_WINDOW:
-            shipWindowGestion(textTextures, fonts, sounds, *ships, planets, mouse);
+            shipWindowGestion(textTextures, fonts, sounds, *ships, planets, *shipCount, mouse);
             break;
 
         case PLANET_WINDOW:
@@ -153,13 +153,14 @@ int whichPlanetIsClicked(Planet *planets, int planetCount, SDL_Point mouse) {
     return -1;
 }
 
-int clickOnPlanet(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets, int planetCount, SDL_Point mouse) {
+int clickOnPlanet(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets, Ship *ships, int planetCount, int shipCount, SDL_Point mouse) {
     int id = whichPlanetIsClicked(planets, planetCount, mouse);
 
     if (id != -1) {
         setWindowId(id);
         setWindowType(PLANET_WINDOW);
-        initPlanetWindow(textTextures, fonts, planets);
+        setCurrentBuildIndex(0);
+        initPlanetWindow(textTextures, fonts, planets, ships, shipCount);
         setCameraLastObjectSelected(id);
         setCameraMode(FOLLOW_PLANET);
     }
@@ -172,7 +173,7 @@ void displayWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Shi
     
     switch (getWindowType()) {
         case PLANET_WINDOW:
-            displayPlanetWindow(imageTextures, textTextures, planets);
+            displayPlanetWindow(imageTextures, textTextures, planets, ships);
             break;
             
         case BASIC_SHIP_WINDOW:
@@ -239,7 +240,7 @@ void objetInSelectionCircle(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Ch
             Mix_PlayChannel(1, sounds[3], 0);
             setWindowType(PLANET_WINDOW);
             setWindowId(i);
-            initPlanetWindow(textTextures, fonts, planets);
+            initPlanetWindow(textTextures, fonts, planets, ships, shipCount);
             return;
         }
     }
@@ -254,10 +255,10 @@ void updateGame(SDL_Texture **textTextures, TTF_Font **fonts, Ship **ships, int 
     updateTotalOre(planets, planetCount);
     updateTiles(*ships, *shipCount);
     updateWarSystem(ships, shipCount, sounds);
-    updateWindow(textTextures, fonts, *ships, planets);
+    updateWindow(textTextures, fonts, *ships, planets, *shipCount);
 }
 
-void updateWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, Planet *planets) {
+void updateWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, Planet *planets, int shipCount) {
     if (SDL_GetTicks() < getWindowLastRefresh() + REFRESH_TIME_WINDOW) {
         return;
     }
@@ -265,6 +266,7 @@ void updateWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, Pla
     setWindowLastRefresh(SDL_GetTicks());
     switch (getWindowType()) {
         case PLANET_WINDOW:
+            initPlanetWindow(textTextures, fonts, planets, ships, shipCount);
             break;
             
         case BASIC_SHIP_WINDOW:

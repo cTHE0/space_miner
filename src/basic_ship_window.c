@@ -116,7 +116,7 @@ void initBasicShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *shi
             strcpy(shipState, "unknown");
             break;
     }
-    sprintf(descriptionText, "Type of ship     %s\nState                %s\nFuel range        %d km\nMove speed      %d km/s\n \n    Health",
+    sprintf(descriptionText, "Type of ship     %s\nState                %s\nFuel range        %d km\nMax speed        %d km/s\n \n    Health",
             shiptype,
             shipState,
             fuelInShip(&ships[getWindowId()]) / ships[getWindowId()].fuelConsumption,
@@ -586,7 +586,7 @@ void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Ch
 
     // Changement de la fusee observee
     else if (SDL_PointInRect(&mouse, &rightArrowRect)) {
-        // Chagement de l'id de la page
+        // Changement de l'id de la page
         setWindowId((getWindowId() + 1) % shipCount);
         while (ships[getWindowId()].shiptype != TRANSPORTER) setWindowId((getWindowId() + 1) % shipCount);
 
@@ -622,7 +622,7 @@ void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Ch
     // Ouverture de la fenetre de la planete (depuis la fenetre d'info. de la fusee)
     else if (SDL_PointInRect(&mouse, &baseDisplayedRect)) {
         if (ships[getWindowId()].base.type == SPOT_PLANET) {
-            initPlanetWindow(textTextures, fonts, planets);
+            initPlanetWindow(textTextures, fonts, planets, ships, shipCount);
             setCameraLastObjectSelected(ships[getWindowId()].base.id_planet);
             setCameraMode(FOLLOW_PLANET);
             setWindowType(PLANET_WINDOW);
@@ -631,7 +631,7 @@ void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Ch
     }
     else if (SDL_PointInRect(&mouse, &targetDisplayedRect)) {
         if (ships[getWindowId()].target.type == SPOT_PLANET) {
-            initPlanetWindow(textTextures, fonts, planets);
+            initPlanetWindow(textTextures, fonts, planets, ships, shipCount);
             setCameraLastObjectSelected(ships[getWindowId()].target.id_planet);
             setCameraMode(FOLLOW_PLANET);
             setWindowType(PLANET_WINDOW);
@@ -711,7 +711,7 @@ void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Ch
 
             case NO_BUTTON:
                 if (!clickOnShip(textTextures, fonts, ships, shipCount, planets, mouse) && 
-                    !clickOnPlanet(textTextures, fonts, planets, planetCount, mouse)) {
+                    !clickOnPlanet(textTextures, fonts, planets, ships, planetCount, shipCount, mouse)) {
                     if (SDL_PointInRect(&mouse, &crossRect) || !clickOnBasicShipWindow(mouse)) {
                         setWindowType(NO_WINDOW);
                         Mix_PlayChannel(1, sounds[10], 0);

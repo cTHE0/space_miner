@@ -44,6 +44,7 @@ void initShips(Ship **ships, int shipCount, Planet *planets) {
         (*ships)[i].fuelConsumption = 1 + rand() % 3;  // Consommation d'essence par intervalle de temps TANKS_UPDATE_INTERVAL
         (*ships)[i].range = 300;
         (*ships)[i].noise = 1 + rand() % 3;
+        (*ships)[i].transferredMinerals = 0;
 
         (*ships)[i].frameIndex = rand() % 4;  // Desynchronisation des fusees
         (*ships)[i].lastFrameTime = 0;
@@ -269,6 +270,7 @@ void OreFillingOrEmptying(Ship *ship, Planet *planets) {
 
                 // Actualisation fusee
                 cargo->compartmentsList[i].currentCapacity += cargo->compartmentsList[i].flowSpeed;
+                ship->transferredMinerals += cargo->compartmentsList[i].flowSpeed;
                 if (cargo->compartmentsList[i].currentCapacity > cargo->compartmentsList[i].maxCapacity) {
                     cargo->compartmentsList[i].currentCapacity = cargo->compartmentsList[i].maxCapacity;
                 }
@@ -324,6 +326,7 @@ void OreFillingOrEmptying(Ship *ship, Planet *planets) {
                 
                 // Actualisation fusee
                 cargo->compartmentsList[i].currentCapacity += cargo->compartmentsList[i].flowSpeed;
+                ship->transferredMinerals += cargo->compartmentsList[i].flowSpeed;
                 if (cargo->compartmentsList[i].currentCapacity > cargo->compartmentsList[i].maxCapacity) {
                     cargo->compartmentsList[i].currentCapacity = cargo->compartmentsList[i].maxCapacity;
                 }

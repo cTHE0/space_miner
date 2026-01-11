@@ -43,6 +43,7 @@ struct Ship {
     Uint32 lastFrameTime;
     double angleWithPlanet; // Angle permettant de situer le ship sur la surface de la planète
     int noise;              // Nombre de vaisseaux enemie maximum genere a chaque fois
+    int transferredMinerals;
 
     union {
         Uint32 lastRefreshFilling;  // Pour les transporteurs

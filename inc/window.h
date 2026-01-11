@@ -24,7 +24,7 @@ int whichShipIsClicked(Ship *ships, int shipCount, SDL_Point mouse);
 int clickOnShip(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, int shipCount, Planet *planets, SDL_Point mouse);
 
 int whichPlanetIsClicked(Planet *planets, int planetCount, SDL_Point mouse);
-int clickOnPlanet(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets, int planetCount, SDL_Point mouse);
+int clickOnPlanet(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets, Ship *ships, int planetCount, int shipCount, SDL_Point mouse);
 
 int clickOnWindow(SDL_Point mouse);
 
@@ -43,6 +43,6 @@ void displaySelectionCircle(void);
 void objetInSelectionCircle(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, Ship *ships, int shipCount, Planet *planets, int planetCount);
 
 void updateGame(SDL_Texture **textTextures, TTF_Font **fonts, Ship **ships, int *shipCount, Planet *planets, int planetCount, Mix_Chunk **sounds);
-void updateWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, Planet *planets);
+void updateWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, Planet *planets, int shipCount);
 
 #endif

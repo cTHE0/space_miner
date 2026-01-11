@@ -10,13 +10,19 @@
 #include "text.h"
 #include "assets_gestion.h"
 #include "window.h"
+#include "basic_ship_window.h"
 #include "place.h"
+#include "camera.h"
 
 
+static float gapBetweenContainer = 1.05;
+static float gapBetweenOreAbundance = 1.4;
 static int currentBuildIndex = 0;  
-static float GapBetweenBuildX = 2.26;   
-static float GapBetweenBuildY = 1.5;
+static float gapBetweenBuildX = 2.26;   
+static float gapBetweenBuildY = 1.5;
 static int lastBuildDisplayed;  //  Position du dernier batiment NEW affiché dans le shop.
+static int nearestShips[6][2];  // {{id, distance}, {...}, ...}
+static float gapBetweenNearestShips = SCREEN_WIDTH * 0.0275;
 
 
 // Declaration des rectangles et variables propres a la fenetre d'informations des fusees
@@ -61,10 +67,19 @@ static SDL_Rect windowRect,
                 infoBuildRect,
                 updateButtonBuildRect,
                 updateButtonBuildRect2,
-                logoUpdateButtonBuildRect;
+                logoUpdateButtonBuildRect,
+                nearestShipTabLine1Rect,
+                nearestShipTabLine2Rect,
+                nearestShipTabLine3Rect,
+                nearestShipTabLine4Rect,
+                nearestShipTabLine5Rect,
+                typeShipNearestShipsdRect,
+                distanceNearestShipsdRect,
+                shipSrcRect,
+                shipTypeLogoRect;
 
 
-void initPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets) {
+void initPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets, Ship *ships, int shipCount) {
     int textureWidth, textureHeight;
     TextToLoad newText;
 
@@ -80,7 +95,7 @@ void initPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts, Planet *plan
             (int)planets[getWindowId()].radius,
             (int)planets[getWindowId()].radius % 10,
             ((int)planets[getWindowId()].radius * 69) % 10,
-            15 + (int)planets[getWindowId()].radius % 30,
+            (int)planets[getWindowId()].radius % 30 + 15,
             (int)(planets[getWindowId()].orbitSpeedDeg * 27),
             (int)(planets[getWindowId()].radius) % 1000,
             ((int)(planets[getWindowId()].radius) % 9000) / 10.f);
@@ -126,31 +141,31 @@ void initPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts, Planet *plan
     if (planets[getWindowId()].builds[currentBuildIndex].type == ORE_MINE && 
         planets[getWindowId()].builds[currentBuildIndex].mine.ore == FUEL) {
         sprintf(descriptionText, "Description:\nWork in extreme conditions\nto extract fuel, powering\n your ships for exploration.\n \nDetails: \nFunction        extraction coal\nDrain speed   %d m3/s\nLevel              %d",
-                planets[getWindowId()].builds[currentBuildIndex].mine.productivity,
+                (planets[getWindowId()].builds[currentBuildIndex].mine.productivity * planets[getWindowId()].abundance[FUEL]) / 100,
                 planets[getWindowId()].builds[currentBuildIndex].level);
     } 
     else if (planets[getWindowId()].builds[currentBuildIndex].type == ORE_MINE && 
              planets[getWindowId()].builds[currentBuildIndex].mine.ore == ORE1) {
         sprintf(descriptionText, "Description:\nIron extraction is tough\nwork, but crucial for\nbuilding what's require.\n \nDetails: \nFunction        extraction coal\nDrain speed   %d m3/s\nLevel              %d",
-                planets[getWindowId()].builds[currentBuildIndex].mine.productivity,
+                (planets[getWindowId()].builds[currentBuildIndex].mine.productivity * planets[getWindowId()].abundance[ORE1]) / 100,
                 planets[getWindowId()].builds[currentBuildIndex].level);
     } 
     else if (planets[getWindowId()].builds[currentBuildIndex].type == ORE_MINE && 
              planets[getWindowId()].builds[currentBuildIndex].mine.ore == ORE2) {
         sprintf(descriptionText, "Description:\nGold mining in remote space\nlocations is dangerous,\nbut essential for scientists.\n \nDetails: \nFunction        extraction coal\nDrain speed   %d m3/s\nLevel              %d",
-                planets[getWindowId()].builds[currentBuildIndex].mine.productivity,
+                (planets[getWindowId()].builds[currentBuildIndex].mine.productivity * planets[getWindowId()].abundance[ORE2]) / 100,
                 planets[getWindowId()].builds[currentBuildIndex].level);
     } 
     else if (planets[getWindowId()].builds[currentBuildIndex].type == ORE_MINE && 
              planets[getWindowId()].builds[currentBuildIndex].mine.ore == ORE3) {
         sprintf(descriptionText, "Description:\nJoanium is mined in high-\npressure, toxic areas,\nfor youe advanced ships.\n \nDetails: \nFunction        extraction coal\nDrain speed   %d m3/s\nLevel              %d",
-                planets[getWindowId()].builds[currentBuildIndex].mine.productivity,
+                (planets[getWindowId()].builds[currentBuildIndex].mine.productivity * planets[getWindowId()].abundance[ORE3]) / 100,
                 planets[getWindowId()].builds[currentBuildIndex].level);
     } 
     else if (planets[getWindowId()].builds[currentBuildIndex].type == ORE_MINE && 
              planets[getWindowId()].builds[currentBuildIndex].mine.ore == ORE4) {
         sprintf(descriptionText, "Description:\nMining voidor requires\nextreme effort, but it is\nneeded for high technology.\n \nDetails: \nFunction        extraction coal\nDrain speed   %d m3/s\nLevel              %d",
-                planets[getWindowId()].builds[currentBuildIndex].mine.productivity,
+                (planets[getWindowId()].builds[currentBuildIndex].mine.productivity * planets[getWindowId()].abundance[ORE4]) / 100,
                 planets[getWindowId()].builds[currentBuildIndex].level);
     } 
     else if (planets[getWindowId()].builds[currentBuildIndex].type == ORE_STORE &&
@@ -203,6 +218,36 @@ void initPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts, Planet *plan
             }
         }
     }
+    if (lastBuildDisplayed == -1) {
+        lastBuildDisplayed = 11;
+    }
+
+    // Calcul la distance des fusées les plus proches de cette planète (actualise le tableau 'nearestShips')
+    computeCloseShipsFromPlanet(&planets[getWindowId()], ships, shipCount);
+
+    // Génère la texture du type des 6 fusées les plus proches de la planète
+    strcpy(descriptionText, "");
+    for (int i = 0; i < 6; i++) {
+        if (nearestShips[i][0] == -1) break;
+        strcat(descriptionText, "Transporter\n \n ");
+    }
+
+    textTextures[35] = createTextTextureWithNewline(fonts[0], descriptionText, BLACK);
+    SDL_QueryTexture(textTextures[35], NULL, NULL, &textureWidth, &textureHeight);
+    typeShipNearestShipsdRect = (SDL_Rect){SCREEN_WIDTH * 0.765, SCREEN_HEIGHT * 0.585, (textureWidth * SCREEN_WIDTH) * 0.000232, (textureHeight * SCREEN_WIDTH) * 0.000232};
+
+    // Génère la texture de la distance des 6 fusées les plus proches de la planète
+    char tempo[128];
+    strcpy(descriptionText, "");
+    for (int i = 0; i < 6; i++) {
+        if (nearestShips[i][0] == -1) break;
+        sprintf(tempo, "%dkm\n \n ", nearestShips[i][1]);
+        strcat(descriptionText, tempo);
+    }
+
+    textTextures[36] = createTextTextureWithNewline(fonts[0], descriptionText, BLACK);
+    SDL_QueryTexture(textTextures[36], NULL, NULL, &textureWidth, &textureHeight);
+    distanceNearestShipsdRect = (SDL_Rect){SCREEN_WIDTH * 0.84, SCREEN_HEIGHT * 0.585, (textureWidth * SCREEN_WIDTH) * 0.000232, (textureHeight * SCREEN_WIDTH) * 0.000232};
 }
 
 void initPlanetWindowRects(SDL_Texture **textTextures) {
@@ -344,17 +389,26 @@ void initPlanetWindowRects(SDL_Texture **textTextures) {
     category5TitleRect.y = windowRect.y + windowRect.h * 0.53;
     category5TitleRect.w = textureWidth * windowRect.w * 0.0005;
     category5TitleRect.h = textureHeight * windowRect.w * 0.0005;
+
+    nearestShipTabLine1Rect = (SDL_Rect){SCREEN_WIDTH * 0.7400, SCREEN_HEIGHT * 0.5800, SCREEN_WIDTH * 0.1400, 2};  // Horizontale tout en haut
+    nearestShipTabLine2Rect = (SDL_Rect){SCREEN_WIDTH * 0.7400, SCREEN_HEIGHT * 0.5800, 2, SCREEN_WIDTH * 0.1650};  // Verticale tout à gauche
+    nearestShipTabLine3Rect = (SDL_Rect){SCREEN_WIDTH * 0.7600, SCREEN_HEIGHT * 0.5800, 2, SCREEN_WIDTH * 0.1650};  // Verticale à gauche de plus en plus à droite
+    nearestShipTabLine4Rect = (SDL_Rect){SCREEN_WIDTH * 0.8300, SCREEN_HEIGHT * 0.5800, 2, SCREEN_WIDTH * 0.1650};  // Verticale tout à gauche
+    nearestShipTabLine5Rect = (SDL_Rect){SCREEN_WIDTH * 0.8800, SCREEN_HEIGHT * 0.5800, 2, SCREEN_WIDTH * 0.1650};  // Verticale tout à gauche
+
+    shipSrcRect = (SDL_Rect){0, 0, 64, 64};
+    shipTypeLogoRect = (SDL_Rect){SCREEN_WIDTH * 0.7410, SCREEN_HEIGHT * 0.5820, SCREEN_WIDTH * 0.0220, SCREEN_WIDTH * 0.0210};
 }
 
 
-void displayPlanetWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planets) {
+void displayPlanetWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planets, Ship *ships) {
     planetWindowFoundations(imageTextures, textTextures);
     planetWindowGeneralInfo(imageTextures, textTextures, planets);
-    planetWindowContainerInfo(imageTextures, textTextures, planets);
+    planetWindowContainerInfo(imageTextures, textTextures, &planets[getWindowId()]);
     planetWindowMineralAbundance(imageTextures, textTextures, planets);
     planetWindowManageBuilds(imageTextures, textTextures, &planets[getWindowId()]);
     planetWindowOverviewBuild(imageTextures, textTextures, &planets[getWindowId()]);
-    planetWindowNearestShips(textTextures);
+    planetWindowNearestShips(imageTextures, textTextures, ships);
 }
 
 void planetWindowFoundations(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
@@ -390,7 +444,7 @@ void planetWindowGeneralInfo(SDL_Texture ***imageTextures, SDL_Texture **textTex
 }
 
 
-void planetWindowContainerInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planets) {
+void planetWindowContainerInfo(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planet) {
     // Affichage du titre "Container information"
     SDL_RenderCopy(renderer, textTextures[58], NULL, &category6TitleRect);
 
@@ -401,9 +455,7 @@ void planetWindowContainerInfo(SDL_Texture ***imageTextures, SDL_Texture **textT
 
     for (int i = 2; i < 12; i += 2) {  // Parcourt les réservoirs (c.f. 'initBuildsPlanet' dans build.c)
         // Le conteneur du minerai i est-il déjà construit ?
-        if (planets[getWindowId()].builds[i].level == 0) {
-            continue;
-        }
+        if (planet->builds[i].level == 0) break;
         // Barre de fond
         SDL_SetRenderDrawColor(renderer, 150, 150, 150, 255);
         currentOreRect.w = planetFirstResourceRect.w;
@@ -411,39 +463,26 @@ void planetWindowContainerInfo(SDL_Texture ***imageTextures, SDL_Texture **textT
 
         // Barre de niveau actuel
         SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-        currentOreRect.w = planetFirstResourceRect.w * planets[getWindowId()].builds[i].tank.currentCapacity / planets[getWindowId()].builds[i].tank.maxCapacity;
+        currentOreRect.w = planetFirstResourceRect.w * planet->builds[i].tank.currentCapacity / planet->builds[i].tank.maxCapacity;
         SDL_RenderFillRect(renderer, &currentOreRect);
 
         // Logo du type de minerai
-        switch (i / 2 - 1) {
-            case FUEL:
-                SDL_RenderCopy(renderer, imageTextures[4][0], NULL, &currentLogoRect);
-                break;
-            case ORE1:
-                SDL_RenderCopy(renderer, imageTextures[4][1], NULL, &currentLogoRect);
-                break;
-            case ORE2:
-                SDL_RenderCopy(renderer, imageTextures[4][2], NULL, &currentLogoRect);
-                break;
-            case ORE3:
-                SDL_RenderCopy(renderer, imageTextures[4][3], NULL, &currentLogoRect);
-                break;
-            default:  // EMPTY logo (croix)
-                SDL_RenderCopy(renderer, imageTextures[4][4], NULL, &currentLogoRect);
-                break;
+        if (i / 2 - 1 < 0 || i / 2 - 1 > 4) {
+            printf("Wrong ore in the container (build %d).", i);
         }
+        SDL_RenderCopy(renderer, imageTextures[4][i / 2 - 1], NULL, &currentLogoRect);
 
         // Afficher le bord du reservoir
         currentOreRect.w = planetFirstResourceRect.w;
         SDL_DrawEdgeOfRect(currentOreRect, 3, BLACK);
 
         // Pour afficher le prochain reservoir
-        currentOreRect.y += 1.05 * planetFirstResourceRect.h;
-        currentLogoRect.y += 1.05 * planetFirstResourceRect.h;
-        currentQuantityOreRect.y += 1.05 * planetFirstResourceRect.h;
+        currentOreRect.y += gapBetweenContainer * planetFirstResourceRect.h;
+        currentLogoRect.y += gapBetweenContainer * planetFirstResourceRect.h;
+        currentQuantityOreRect.y += gapBetweenContainer * planetFirstResourceRect.h;
 
-        // Afficher nombre current ore
-        renderNumber((int)planets[getWindowId()].builds[i].tank.currentCapacity, currentQuantityOreRect);
+        // Afficher nombre actuel de minerai dans ce réservoir
+        renderNumber((int)planet->builds[i].tank.currentCapacity, currentQuantityOreRect);
     }
 }
 
@@ -474,26 +513,7 @@ void planetWindowMineralAbundance(SDL_Texture ***imageTextures, SDL_Texture **te
         SDL_RenderFillRect(renderer, &currentOreRect);
 
         // Logo du type de minerai
-        switch (i) {
-            case FUEL:
-                SDL_RenderCopy(renderer, imageTextures[4][0], NULL, &currentLogoRect);
-                break;
-            case ORE1:
-                SDL_RenderCopy(renderer, imageTextures[4][1], NULL, &currentLogoRect);
-                break;
-            case ORE2:
-                SDL_RenderCopy(renderer, imageTextures[4][2], NULL, &currentLogoRect);
-                break;
-            case ORE3:
-                SDL_RenderCopy(renderer, imageTextures[4][3], NULL, &currentLogoRect);
-                break;
-            case ORE4:
-                SDL_RenderCopy(renderer, imageTextures[4][4], NULL, &currentLogoRect);
-                break;
-            default:
-                SDL_RenderCopy(renderer, imageTextures[4][0], NULL, &currentLogoRect);
-                break;
-        }
+        SDL_RenderCopy(renderer, imageTextures[4][i], NULL, &currentLogoRect);
 
         // Afficher le bord du reservoir
         SDL_DrawEdgeOfRect(currentOreRect, 3, BLACK);
@@ -526,14 +546,14 @@ void planetWindowManageBuilds(SDL_Texture ***imageTextures, SDL_Texture **textTe
             } else {
                 SDL_SetRenderDrawColor(renderer, 150, 150, 150, 255);
             }
-            barRect.x = firstBarBuildRect.x + firstBuildImageRect.w * i * GapBetweenBuildX;
-            barRect.y = firstBarBuildRect.y + firstBuildImageRect.h * j * GapBetweenBuildY;
+            barRect.x = firstBarBuildRect.x + firstBuildImageRect.w * i * gapBetweenBuildX;
+            barRect.y = firstBarBuildRect.y + firstBuildImageRect.h * j * gapBetweenBuildY;
             SDL_RenderFillRect(renderer, &barRect);
             SDL_DrawEdgeOfRect(barRect, 2, BLACK);
 
             // Affiche l'image de l'objet
-            imageRect.x = firstBuildImageRect.x + firstBuildImageRect.w * i * GapBetweenBuildX;
-            imageRect.y = firstBuildImageRect.y + firstBuildImageRect.h * j * GapBetweenBuildY;
+            imageRect.x = firstBuildImageRect.x + firstBuildImageRect.w * i * gapBetweenBuildX;
+            imageRect.y = firstBuildImageRect.y + firstBuildImageRect.h * j * gapBetweenBuildY;
             if (planet->builds[4 * j + i].level > 0 || 4 * j + i <= lastBuildDisplayed) {
                 SDL_DrawEdgeOfRect(imageRect, 2, BLACK);
                 SDL_RenderCopy(renderer, imageTextures[9][i + j * 4], NULL, &imageRect);
@@ -545,14 +565,14 @@ void planetWindowManageBuilds(SDL_Texture ***imageTextures, SDL_Texture **textTe
             if (planet->builds[4 * j + i].level == 0) {
                 // Affiche le logo 'NEW'
                 if (4 * j + i <= lastBuildDisplayed) {
-                    newTextRect.x = firstNewTextBuildRect.x + firstBuildImageRect.w * i * GapBetweenBuildX;
-                    newTextRect.y = firstNewTextBuildRect.y + firstBuildImageRect.h * j * GapBetweenBuildY;
+                    newTextRect.x = firstNewTextBuildRect.x + firstBuildImageRect.w * i * gapBetweenBuildX;
+                    newTextRect.y = firstNewTextBuildRect.y + firstBuildImageRect.h * j * gapBetweenBuildY;
                     SDL_RenderCopy(renderer, textTextures[61], NULL, &newTextRect);
                 }
 
                 // Affiche 'Build' dans la barre d'amélioration (batiment non construit)
-                upgradeRect2.x = firstUpgradeBuildRect2.x + firstBuildImageRect.w * i * GapBetweenBuildX;
-                upgradeRect2.y = firstUpgradeBuildRect2.y + firstBuildImageRect.h * j * GapBetweenBuildY;
+                upgradeRect2.x = firstUpgradeBuildRect2.x + firstBuildImageRect.w * i * gapBetweenBuildX;
+                upgradeRect2.y = firstUpgradeBuildRect2.y + firstBuildImageRect.h * j * gapBetweenBuildY;
                 if (4 * j + i <= lastBuildDisplayed) {
                     SDL_RenderCopy(renderer, textTextures[78], NULL, &upgradeRect2);
                 } else {
@@ -560,8 +580,8 @@ void planetWindowManageBuilds(SDL_Texture ***imageTextures, SDL_Texture **textTe
                 }
             } else if (planet->builds[4 * j + i].level > 0) {
                 // Affiche 'Upgrade' dans la barre d'amélioration (batiment déjà construit)
-                upgradeRect.x = firstUpgradeBuildRect.x + firstBuildImageRect.w * i * GapBetweenBuildX;
-                upgradeRect.y = firstUpgradeBuildRect.y + firstBuildImageRect.h * j * GapBetweenBuildY;
+                upgradeRect.x = firstUpgradeBuildRect.x + firstBuildImageRect.w * i * gapBetweenBuildX;
+                upgradeRect.y = firstUpgradeBuildRect.y + firstBuildImageRect.h * j * gapBetweenBuildY;
                 SDL_RenderCopy(renderer, textTextures[63], NULL, &upgradeRect);
             }
 
@@ -572,8 +592,8 @@ void planetWindowManageBuilds(SDL_Texture ***imageTextures, SDL_Texture **textTe
     // Affiche le contour du batiment choisi, dont l'apercu est affiche
     SDL_Rect edgeSelectedBuildRect = firstBuildRect;
 
-    edgeSelectedBuildRect.x = firstBuildRect.x + firstBuildImageRect.w * (currentBuildIndex % 4) * GapBetweenBuildX;
-    edgeSelectedBuildRect.y = firstBuildRect.y + firstBuildImageRect.h * (currentBuildIndex / 4) * GapBetweenBuildY;
+    edgeSelectedBuildRect.x = firstBuildRect.x + firstBuildImageRect.w * (currentBuildIndex % 4) * gapBetweenBuildX;
+    edgeSelectedBuildRect.y = firstBuildRect.y + firstBuildImageRect.h * (currentBuildIndex / 4) * gapBetweenBuildY;
     SDL_DrawEdgeOfRect(edgeSelectedBuildRect, 3, BLACK);
 }
 
@@ -607,9 +627,38 @@ void planetWindowOverviewBuild(SDL_Texture ***imageTextures, SDL_Texture **textT
     SDL_RenderCopy(renderer, imageTextures[2][7], NULL, &logoUpdateButtonBuildRect);
 }
 
-void planetWindowNearestShips(SDL_Texture **textTextures) {
+void planetWindowNearestShips(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
     // Affichage du titre "Nearest ships"
     SDL_RenderCopy(renderer, textTextures[56], NULL, &category5TitleRect);
+
+    // Afficher le tableau 
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderFillRect(renderer, &nearestShipTabLine1Rect);  // Horizontal en haut (les autres barres horizontale sont affichée récursivement)
+    SDL_RenderFillRect(renderer, &nearestShipTabLine2Rect);  // Verticale
+    SDL_RenderFillRect(renderer, &nearestShipTabLine3Rect);  // Verticale
+    SDL_RenderFillRect(renderer, &nearestShipTabLine4Rect);  // Verticale
+    SDL_RenderFillRect(renderer, &nearestShipTabLine5Rect);  // Verticale
+
+    // Affichage des noms de fusée
+    SDL_RenderCopy(renderer, textTextures[35], NULL, &typeShipNearestShipsdRect);
+
+    // Affiche les fusées les plus proches de la planète
+    SDL_Rect shipTypeLogoTempoRect = shipTypeLogoRect;
+    SDL_Rect nearestShipTabLine1TempoRect = nearestShipTabLine1Rect;
+    for (int i = 0; i < 6; i++) {
+        if (nearestShips[i][0] != -1) {
+            // Affiche le logo des fusées
+            shipTypeLogoTempoRect.y = shipTypeLogoRect.y + i * gapBetweenNearestShips;
+            SDL_RenderCopy(renderer, imageTextures[7][ships[i].idModel], &shipSrcRect, &shipTypeLogoTempoRect);
+        }
+
+        // Affiche la barre horizontale (en bas du logo, du nom de fusée et de la distance)
+        nearestShipTabLine1TempoRect.y = nearestShipTabLine1Rect.y + (i + 1) * gapBetweenNearestShips;
+        SDL_RenderFillRect(renderer, &nearestShipTabLine1TempoRect);
+    }
+
+    // Affichage des distances des fusées
+    SDL_RenderCopy(renderer, textTextures[36], NULL, &distanceNearestShipsdRect);
 }
 
 void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, Ship **ships, int *shipCount, Planet *planets, SDL_Point mouse) {
@@ -618,19 +667,56 @@ void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk
         Mix_PlayChannel(1, sounds[10], 0);
     }
 
-    // Choix du batiment
+    // Choix du batiment (manageBuilds)
     SDL_Rect edgeSelectedBuildRect = firstBuildRect;
     
     for (int j = 0; j < 3; j++) {
         for (int i = 0; i < 4; i++) {
             if (j * 4 + i > lastBuildDisplayed && planets[getWindowId()].builds[4 * j + i].level == 0) continue;
-            edgeSelectedBuildRect.x = firstBuildRect.x + firstBuildImageRect.w * i * GapBetweenBuildX;
-            edgeSelectedBuildRect.y = firstBuildRect.y + firstBuildImageRect.h * j * GapBetweenBuildY;
+            edgeSelectedBuildRect.x = firstBuildRect.x + firstBuildImageRect.w * i * gapBetweenBuildX;
+            edgeSelectedBuildRect.y = firstBuildRect.y + firstBuildImageRect.h * j * gapBetweenBuildY;
             if (SDL_PointInRect(&mouse, &edgeSelectedBuildRect)) {
                 currentBuildIndex = j * 4 + i;
-                initPlanetWindow(textTextures, fonts, planets);
+                initPlanetWindow(textTextures, fonts, planets, *ships, *shipCount);
                 Mix_PlayChannel(1, sounds[7], 0);
             }
+        }
+    }
+
+    // Selection d'un conteneur, depuis le recap des minerai sur la planète
+    for (int i = 2; i < 12; i += 2) {  // Parcourt les réservoirs
+        if (planets[getWindowId()].builds[i].level == 0) break;
+
+        SDL_Rect currentContainerRect = (SDL_Rect){planetFirstResourceRect.x, planetFirstResourceRect.y + (i / 2 - 1) * gapBetweenContainer * planetFirstResourceRect.h, planetFirstResourceRect.w, planetFirstResourceRect.h};
+        if (SDL_PointInRect(&mouse, &currentContainerRect)) {
+            currentBuildIndex = i;
+            break;
+        }
+    }
+
+    // Selection d'une mine, depuis le recap de l'abondance sur la planète
+    for (int i = 3; i < 13; i += 2) {  // Parcourt les mines
+        if (planets[getWindowId()].builds[i].level == 0) break;
+
+        SDL_Rect currentMineFromAbundanceRect = (SDL_Rect){planetFirstResourceRect2.x, planetFirstResourceRect2.y + (i / 2 - 1) * gapBetweenOreAbundance * planetFirstResourceRect2.h, planetFirstResourceRect2.w, planetFirstResourceRect2.h};
+        if (SDL_PointInRect(&mouse, &currentMineFromAbundanceRect)) {
+            currentBuildIndex = i;
+            break;
+        }
+    }    
+
+    // Ouverture de la fenetre d'une fusee, depuis l'onglet 'nearestShip'
+    SDL_Rect nearestShipTabRect = (SDL_Rect){nearestShipTabLine1Rect.x, 0, nearestShipTabLine1Rect.w, gapBetweenNearestShips};
+    for (int i = 0; i < 6; i++) {
+        if (nearestShips[i][0] == -1) break;
+
+        nearestShipTabRect.y = nearestShipTabLine1Rect.y + i * gapBetweenNearestShips;
+        if (SDL_PointInRect(&mouse, &nearestShipTabRect)) {
+            setWindowId(nearestShips[i][0]);
+            setWindowType(BASIC_SHIP_WINDOW);
+            initBasicShipWindow(textTextures, fonts, *ships, planets);
+            setCameraLastObjectSelected(nearestShips[i][0]);
+            setCameraMode(FOLLOW_SHIP);
         }
     }
 
@@ -675,7 +761,7 @@ void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk
             default:
                 break;
         }
-        initPlanetWindow(textTextures, fonts, planets);
+        initPlanetWindow(textTextures, fonts, planets, *ships, *shipCount);
     }
 
     // Amelioration d'un nouveau batiment
@@ -722,6 +808,40 @@ void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk
                 break;
         }
 
-        initPlanetWindow(textTextures, fonts, planets);
+        initPlanetWindow(textTextures, fonts, planets, *ships, *shipCount);
     }
+}
+
+void computeCloseShipsFromPlanet(Planet *planet, Ship *ships, int shipCount) {  // Calcul des distances entre la planète et les 6 fusées les plus proches de celle-ci
+    for (int i = 0; i < 6; i++) {
+        nearestShips[i][0] = -1;
+        nearestShips[i][1] = 0;
+    }
+
+    for (int i = 0; i < shipCount; i++) {
+        int distance = distanceShipPlanet(&ships[i], planet);
+        if (distance < 0) distance = 0;
+
+        for (int j = 0; j < 6; j++) {
+            if (nearestShips[j][0] == -1 || distance < nearestShips[j][1]) {  // La fusée i doit-elle être affichée ?
+                int swap1[2] = {i, distance};
+                int swap2[2];
+                for (int k = j; k < 6; k++) {
+                    swap2[0] = nearestShips[k][0];
+                    swap2[1] = nearestShips[k][1];
+
+                    nearestShips[k][0] = swap1[0];
+                    nearestShips[k][1] = swap1[1];
+
+                    swap1[0] = swap2[0];
+                    swap1[1] = swap2[1];
+                }
+                break;
+            }
+        }
+    }
+}
+
+void setCurrentBuildIndex(int index) {
+    currentBuildIndex = index;
 }
