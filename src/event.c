@@ -66,7 +66,7 @@ void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **soun
                     if (getWindowType() == BASIC_SHIP_WINDOW && getButtonSelected() == NO_BUTTON) {
                         setWindowType(NO_WINDOW);
                     }
-                    if (getCameraMode() != NORMAL) {
+                    if (getWindowType() != SHIP_WINDOW && getWindowType() != PLANET_WINDOW && getCameraMode() != NORMAL) {
                         setCameraMode(NORMAL);
                     }
                 }

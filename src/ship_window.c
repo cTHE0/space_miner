@@ -899,6 +899,7 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
             setCameraMode(FOLLOW_PLANET);
             setWindowType(PLANET_WINDOW);
             setWindowId(ships[getWindowId()].base.id_planet);
+            Mix_PlayChannel(0, sounds[3], 0);
         }
     }
     else if (SDL_PointInRect(&mouse, &targetDisplayedRect) || SDL_PointInRect(&mouse, &targetDisplayedRect2)) {
@@ -908,6 +909,7 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
             setCameraMode(FOLLOW_PLANET);
             setWindowType(PLANET_WINDOW);
             setWindowId(ships[getWindowId()].target.id_planet);
+            Mix_PlayChannel(0, sounds[3], 0);
         }
     }
 

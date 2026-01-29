@@ -313,8 +313,12 @@ void basicShipWindowNarrowBaseTarget(SDL_Texture ***imageTextures, SDL_Texture *
     plotPath(centerBaseCoordScreen, centerTargetCoordScreen, 10, 5, WHITE);
 
     // Affichage du logo home
-    logoBaseTargetRect.w = 0.300 * SCREEN_WIDTH * getCameraScale();
-    logoBaseTargetRect.h = 0.300 * SCREEN_WIDTH * getCameraScale();
+    float sizeLogo = getCameraScale();
+    if (sizeLogo > 0.5) sizeLogo = 0.5;
+    if (sizeLogo < 0.1) sizeLogo = 0.1;
+
+    logoBaseTargetRect.w = 0.300 * SCREEN_WIDTH * sizeLogo;
+    logoBaseTargetRect.h = 0.300 * SCREEN_WIDTH * sizeLogo;
     logoBaseTargetRect.x = centerBaseCoordScreen.x - logoBaseTargetRect.w / 2;
     logoBaseTargetRect.y = centerBaseCoordScreen.y - logoBaseTargetRect.w / 2;
     SDL_RenderCopy(renderer, imageTextures[5][9], NULL, &logoBaseTargetRect);
@@ -627,6 +631,7 @@ void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Ch
             setCameraMode(FOLLOW_PLANET);
             setWindowType(PLANET_WINDOW);
             setWindowId(ships[getWindowId()].base.id_planet);
+            Mix_PlayChannel(0, sounds[3], 0);
         }
     }
     else if (SDL_PointInRect(&mouse, &targetDisplayedRect)) {
@@ -636,6 +641,7 @@ void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Ch
             setCameraMode(FOLLOW_PLANET);
             setWindowType(PLANET_WINDOW);
             setWindowId(ships[getWindowId()].target.id_planet);
+            Mix_PlayChannel(0, sounds[3], 0);
         }
     }
 
@@ -657,6 +663,18 @@ void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Ch
         } else if(ships[getWindowId()].state == MOVING_TO_TARGET_SOON_STOPPED) {
             Mix_PlayChannel(1, sounds[8], 0);
             ships[getWindowId()].state = MOVING_TO_TARGET;
+            initBasicShipWindow(textTextures, fonts, ships, planets);
+        }
+
+        // Arrêt des échanges de ressources entre la fusée et la planète
+        else if (ships[getWindowId()].state == WAITING_ON_BASE) {
+            Mix_PlayChannel(1, sounds[8], 0);
+            ships[getWindowId()].state = STOPPED_ON_BASE;
+            initBasicShipWindow(textTextures, fonts, ships, planets);
+        } 
+        else if (ships[getWindowId()].state == WAITING_ON_TARGET) {
+            Mix_PlayChannel(1, sounds[8], 0);
+            ships[getWindowId()].state = STOPPED_ON_TARGET;
             initBasicShipWindow(textTextures, fonts, ships, planets);
         }
 
@@ -698,33 +716,19 @@ void basicShipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Ch
         }
     }
     
-    // Aucun des boutons de la fenetre n'a ete clique :
-    else {
-        // Gestion des actions en fonction du bouton appuye
-        switch (buttonSelected) {
-            case BASE_BUTTON:  // Equivaut a faire if (BASE_BUTTON || TARGET_BUTTON) {...}
-            case TARGET_BUTTON:
-                choosingNewBaseOrTarget(ships, shipCount, planets, planetCount, mouse);
-                initBasicShipWindow(textTextures, fonts, ships, planets);
-                Mix_PlayChannel(1, sounds[7], 0);
-                break;
+    // Fermeture de la fenêtre basique de la fusée
+    else if (SDL_PointInRect(&mouse, &crossRect) || 
+        (buttonSelected == NO_BUTTON && !clickOnShip(textTextures, fonts, ships, shipCount, planets, mouse) && !clickOnPlanet(textTextures, fonts, planets, ships, planetCount, shipCount, mouse) && !clickOnBasicShipWindow(mouse))) {
+        setWindowType(NO_WINDOW);
+        Mix_PlayChannel(1, sounds[10], 0);
+    }
 
-            case NO_BUTTON:
-                if (!clickOnShip(textTextures, fonts, ships, shipCount, planets, mouse) && 
-                    !clickOnPlanet(textTextures, fonts, planets, ships, planetCount, shipCount, mouse)) {
-                    if (SDL_PointInRect(&mouse, &crossRect) || !clickOnBasicShipWindow(mouse)) {
-                        setWindowType(NO_WINDOW);
-                        Mix_PlayChannel(1, sounds[10], 0);
-                    }
-                } else {  // Initialisation de buttonSelected si l'on clic sur une fusee/planet
-                    buttonSelected = NO_BUTTON;
-                    Mix_PlayChannel(1, sounds[4], 0);
-                }
-                break;
+    // Changement de la destination de la fusée.
+    else if (buttonSelected == BASE_BUTTON || buttonSelected == TARGET_BUTTON) {
+        choosingNewBaseOrTarget(ships, shipCount, planets, planetCount, mouse);
+        initBasicShipWindow(textTextures, fonts, ships, planets);
+        Mix_PlayChannel(1, sounds[7], 0);
 
-            default:
-                break;
-        }
     }
 }
 

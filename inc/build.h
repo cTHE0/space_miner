@@ -11,9 +11,15 @@ typedef enum { ORE_STORE, ORE_MINE, DEFENCE_TOWER, FACTORY, NOTHING } BuildType;
 typedef struct Planet Planet;
 typedef struct Ship Ship;
 
+typedef struct Price {
+    Ore ore;
+    int price;
+} Price;
+
 typedef struct Build {
     BuildType type;
     int level;
+    Price price;
     union {
         Compartment tank;    // Si c'est un réservoir
         int damages;         // Si tour de défense

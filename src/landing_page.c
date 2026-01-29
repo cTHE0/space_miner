@@ -74,12 +74,14 @@ void handleMenuEvents(Mix_Chunk **sounds, GameState *gameState, short *gameBegun
                 if (event.button.button == SDL_BUTTON_LEFT) {
                     switch (bg_button_a_afficher) {
                         case 1:
+                            Mix_PlayChannel(0, sounds[7], 0);
                             chargingGame(ships, shipCount, planets, planetCount);
                             initCamera(*planets);
                             initAsteroids(*planets, *planetCount);
                             *gameState = GAME;
                             break;
                         case 2:
+                            Mix_PlayChannel(0, sounds[7], 0);
                             initPlanets(planets, *planetCount);
                             initShips(ships, *shipCount, *planets);
                             initCamera(*planets);
@@ -101,7 +103,6 @@ void handleMenuEvents(Mix_Chunk **sounds, GameState *gameState, short *gameBegun
     // La partie s'est-elle lancee ?
     if (*gameState == GAME) {
         *gameBegun = 1;
-        Mix_PlayChannel(0, sounds[0], -1);
     }
 }
 

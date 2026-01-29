@@ -57,6 +57,7 @@ int main(void) {
 
     // Lancement de Void Reign
     GameState gameState = LANDING_PAGE;
+    Mix_PlayChannel(0, sounds[0], -1);
 
     while (gameState != QUIT) {
         frameCount++;
@@ -70,7 +71,7 @@ int main(void) {
                 break;
             
             case GAME:
-                // initRects(textTextures);  // A SUPPRIMER, SEULEMENT POUR LE DEV
+                initRects(textTextures);  // A SUPPRIMER, SEULEMENT POUR LE DEV
                 handleEvents(textTextures, fonts, sounds, &gameState, &ships, &shipCount, planets, planetCount);
                 updateGame(textTextures, fonts, &ships, &shipCount, planets, planetCount, sounds);
                 displayGame(imageTextures, textTextures, ships, shipCount, planets, planetCount);

@@ -76,7 +76,8 @@ static SDL_Rect windowRect,
                 typeShipNearestShipsdRect,
                 distanceNearestShipsdRect,
                 shipSrcRect,
-                shipTypeLogoRect;
+                shipTypeLogoRect,
+                firstLogoBuilRect;
 
 
 void initPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets, Ship *ships, int shipCount) {
@@ -360,6 +361,8 @@ void initPlanetWindowRects(SDL_Texture **textTextures) {
     
     firstBuildRect = (SDL_Rect){SCREEN_WIDTH * 0.13, SCREEN_HEIGHT * 0.565, SCREEN_WIDTH * 0.07, SCREEN_WIDTH * 0.057};
 
+    firstLogoBuilRect = (SDL_Rect){SCREEN_WIDTH * 0.1330, SCREEN_HEIGHT * 0.6390, SCREEN_WIDTH * 0.0130, SCREEN_WIDTH * 0.0130};
+
 
     // planetWindowOverviewBuild
        
@@ -538,6 +541,7 @@ void planetWindowManageBuilds(SDL_Texture ***imageTextures, SDL_Texture **textTe
     SDL_Rect newTextRect = firstNewTextBuildRect;
     SDL_Rect upgradeRect = firstUpgradeBuildRect;
     SDL_Rect upgradeRect2 = firstUpgradeBuildRect2;
+    SDL_Rect logoBuilRect2 = firstLogoBuilRect;
     for (int j = 0; j < 3; j++) {
         for (int i = 0; i < 4; i++) {
             // Affiche du fond de la barre d'amelioration/creation
@@ -570,11 +574,14 @@ void planetWindowManageBuilds(SDL_Texture ***imageTextures, SDL_Texture **textTe
                     SDL_RenderCopy(renderer, textTextures[61], NULL, &newTextRect);
                 }
 
-                // Affiche 'Build' dans la barre d'amélioration (batiment non construit)
+                // Affiche 'Build' dans la barre d'amélioration (batiment non construit) et du logo
                 upgradeRect2.x = firstUpgradeBuildRect2.x + firstBuildImageRect.w * i * gapBetweenBuildX;
                 upgradeRect2.y = firstUpgradeBuildRect2.y + firstBuildImageRect.h * j * gapBetweenBuildY;
+                logoBuilRect2.x = firstLogoBuilRect.x + firstBuildImageRect.w * i * gapBetweenBuildX;
+                logoBuilRect2.y = firstLogoBuilRect.y + firstBuildImageRect.h * j * gapBetweenBuildY;
                 if (4 * j + i <= lastBuildDisplayed) {
                     SDL_RenderCopy(renderer, textTextures[78], NULL, &upgradeRect2);
+                    SDL_RenderCopy(renderer, imageTextures[2][9], NULL, &logoBuilRect2);
                 } else {
                     SDL_RenderCopy(renderer, textTextures[88], NULL, &upgradeRect2);
                 }
@@ -583,6 +590,11 @@ void planetWindowManageBuilds(SDL_Texture ***imageTextures, SDL_Texture **textTe
                 upgradeRect.x = firstUpgradeBuildRect.x + firstBuildImageRect.w * i * gapBetweenBuildX;
                 upgradeRect.y = firstUpgradeBuildRect.y + firstBuildImageRect.h * j * gapBetweenBuildY;
                 SDL_RenderCopy(renderer, textTextures[63], NULL, &upgradeRect);
+                
+                // Affichage du logo
+                logoBuilRect2.x = firstLogoBuilRect.x + firstBuildImageRect.w * i * gapBetweenBuildX;
+                logoBuilRect2.y = firstLogoBuilRect.y + firstBuildImageRect.h * j * gapBetweenBuildY;
+                SDL_RenderCopy(renderer, imageTextures[2][10], NULL, &logoBuilRect2);
             }
 
             // Logo 'Upgrade' / 'New build'
@@ -610,11 +622,13 @@ void planetWindowOverviewBuild(SDL_Texture ***imageTextures, SDL_Texture **textT
     SDL_RenderFillRect(renderer, &upgradeBarRect);
     SDL_DrawEdgeOfRect(upgradeBarRect, 3, BLACK);
 
-    // Afficher le texte dans la barre d'amelioration
+    // Afficher le texte et le logo dans la barre d'amelioration
     if (planet->builds[currentBuildIndex].level == 0) {
         SDL_RenderCopy(renderer, textTextures[78], NULL, &updateButtonBuildRect2);
+                    SDL_RenderCopy(renderer, imageTextures[2][9], NULL, &logoUpdateButtonBuildRect);
     } else if (planet->builds[currentBuildIndex].level > 0) {
-        SDL_RenderCopy(renderer, textTextures[63], NULL, &updateButtonBuildRect);   
+        SDL_RenderCopy(renderer, textTextures[63], NULL, &updateButtonBuildRect);  
+                    SDL_RenderCopy(renderer, imageTextures[2][10], NULL, &logoUpdateButtonBuildRect); 
     }
 
     // Afficher le titre du batiment
@@ -622,9 +636,6 @@ void planetWindowOverviewBuild(SDL_Texture ***imageTextures, SDL_Texture **textT
 
     // Afficher la description du batiment
     SDL_RenderCopy(renderer, textTextures[34], NULL, &infoBuildRect);
-
-    // Afficher l'engrenage pour ameliorer un batiment
-    SDL_RenderCopy(renderer, imageTextures[2][7], NULL, &logoUpdateButtonBuildRect);
 }
 
 void planetWindowNearestShips(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
@@ -690,19 +701,21 @@ void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk
         SDL_Rect currentContainerRect = (SDL_Rect){planetFirstResourceRect.x, planetFirstResourceRect.y + (i / 2 - 1) * gapBetweenContainer * planetFirstResourceRect.h, planetFirstResourceRect.w, planetFirstResourceRect.h};
         if (SDL_PointInRect(&mouse, &currentContainerRect)) {
             currentBuildIndex = i;
+            Mix_PlayChannel(0, sounds[7], 0);
             break;
         }
     }
 
     // Selection d'une mine, depuis le recap de l'abondance sur la planète
     for (int i = 3; i < 13; i += 2) {  // Parcourt les mines
-        if (planets[getWindowId()].builds[i].level == 0) break;
-
+        if (planets[getWindowId()].builds[i - 1].level == 0) break;
         SDL_Rect currentMineFromAbundanceRect = (SDL_Rect){planetFirstResourceRect2.x, planetFirstResourceRect2.y + (i / 2 - 1) * gapBetweenOreAbundance * planetFirstResourceRect2.h, planetFirstResourceRect2.w, planetFirstResourceRect2.h};
         if (SDL_PointInRect(&mouse, &currentMineFromAbundanceRect)) {
             currentBuildIndex = i;
+            Mix_PlayChannel(0, sounds[7], 0);
             break;
         }
+        if (planets[getWindowId()].builds[i].level == 0) break;
     }    
 
     // Ouverture de la fenetre d'une fusee, depuis l'onglet 'nearestShip'
@@ -717,6 +730,7 @@ void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk
             initBasicShipWindow(textTextures, fonts, *ships, planets);
             setCameraLastObjectSelected(nearestShips[i][0]);
             setCameraMode(FOLLOW_SHIP);
+            Mix_PlayChannel(0, sounds[4], 0);
         }
     }
 

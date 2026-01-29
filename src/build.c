@@ -18,10 +18,12 @@ void initBuildsPlanet(Planet *planet) {
             case 0:
                 planet->builds[i].type = FACTORY;
                 planet->builds[i].level = 0;
+                planet->builds[i].price = (Price) {ORE1, 100};
                 break;
             case 1:
                 planet->builds[i].type = DEFENCE_TOWER;
                 planet->builds[i].level = 0;
+                planet->builds[i].price = (Price) {ORE1, 100};
                 break;
             case 2:
             case 4:
@@ -31,6 +33,7 @@ void initBuildsPlanet(Planet *planet) {
                 planet->builds[i].type = ORE_STORE;
                 planet->builds[i].level = (i / 2 - 1 == FUEL || i / 2 - 1 == ORE1);
                 planet->builds[i].tank = (Compartment){i / 2 - 1, 0, 0, 0, 0, 1500, 10000, 0, 1};
+                planet->builds[i].price = (Price) {ORE1, 100};
                 break;
             case 3:
             case 5:
@@ -40,6 +43,7 @@ void initBuildsPlanet(Planet *planet) {
                 planet->builds[i].type = ORE_MINE;
                 planet->builds[i].level = 0;
                 planet->builds[i].mine = (Mine){i / 2 - 1, 1000};
+                planet->builds[i].price = (Price) {ORE1, 100};
                 break;
             default:
                 break;
