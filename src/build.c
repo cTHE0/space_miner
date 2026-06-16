@@ -7,6 +7,7 @@
 #include "mine.h"
 #include "config.h"
 #include "meta.h"
+#include "events.h"
 
 
 static Uint32 lastBuildUpdateTime = 0;
@@ -138,7 +139,7 @@ void updateBuilds(Planet *planets, int planetCount) {
 void updateBuildMine(Build *builds, Mine *mine, int abundance) {
     for (int i = 0; i < ORE_TYPE_COUNT; i++) {
         if (builds[2 * i + 2].type == ORE_STORE && builds[2 * i + 2].tank.ore == mine->ore && builds[2 * i + 2].level > 0) {  // Si l'on a trouve le bon reservoir construit, acceuillant les bons minerais...
-            float produced = mine->productivity * (abundance / 100.f) * miningMultiplier();
+            float produced = mine->productivity * (abundance / 100.f) * miningMultiplier() * eventMiningMultiplier();
             int before = builds[2 * i + 2].tank.currentCapacity;
             builds[2 * i + 2].tank.currentCapacity += produced;
 

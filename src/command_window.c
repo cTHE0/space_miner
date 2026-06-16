@@ -11,6 +11,7 @@
 #include "window.h"
 #include "notify.h"
 #include "assets_gestion.h"
+#include "events.h"
 
 
 #define SELL_BATCH 200   // Quantite de minerai vendue par clic
@@ -150,7 +151,7 @@ void commandWindowGestion(Mix_Chunk **sounds, Planet *planets, int planetCount, 
         if (SDL_PointInRect(&mouse, &sellRowRect[i])) {
             int drained = drainTotalOre(planets, planetCount, (Ore)i, SELL_BATCH);
             if (drained > 0) {
-                int gain = drained * orePrice[i];
+                int gain = (int)(drained * orePrice[i] * eventMarketMultiplier());
                 addCredits(gain);
                 addScore(gain / 4);
                 Mix_PlayChannel(1, sounds[2], 0);  // Son "bonus gagne"

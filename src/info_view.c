@@ -9,6 +9,8 @@
 #include "ore.h"
 #include "window.h"
 #include "meta.h"
+#include "events.h"
+#include "tools.h"
 
 static SDL_Rect upBarRect, 
                 upBarValuesRect,
@@ -78,6 +80,27 @@ void displayInfoView(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
     SDL_RenderCopy(renderer, textTextures[96], NULL, &scoreLabelRect);
     SDL_Rect scoreValueRect = {SCREEN_WIDTH * 0.83, SCREEN_HEIGHT * -0.005, SCREEN_WIDTH * 0.009, SCREEN_WIDTH * 0.024};
     renderNumber((int)getMeta()->score, scoreValueRect);
+
+    // Banniere d'evenement galactique actif (centree sous la barre du haut)
+    if (currentEvent() != EVENT_NONE) {
+        SDL_Texture *nameTex = textTextures[105 + currentEvent()];
+        SDL_QueryTexture(nameTex, NULL, NULL, &tw, &th);
+        int bh = SCREEN_HEIGHT * 0.04;
+        int bw = (int)(tw * (bh / (float)th));
+        SDL_Rect band = {SCREEN_WIDTH / 2 - bw / 2 - 20, SCREEN_HEIGHT * 0.058, bw + 40, bh + SCREEN_HEIGHT * 0.018};
+
+        SDL_SetRenderDrawColor(renderer, 12, 18, 28, 220);
+        SDL_RenderFillRect(renderer, &band);
+        SDL_DrawEdgeOfRect(band, 2, WHITE);
+
+        SDL_Rect nameRect = {SCREEN_WIDTH / 2 - bw / 2, SCREEN_HEIGHT * 0.062, bw, bh};
+        SDL_RenderCopy(renderer, nameTex, NULL, &nameRect);
+
+        // Barre de temps restant
+        SDL_Rect timeBar = {band.x + 4, band.y + band.h - 6, (int)((band.w - 8) * (1.f - eventProgress())), 4};
+        SDL_SetRenderDrawColor(renderer, 255, 200, 0, 255);
+        SDL_RenderFillRect(renderer, &timeBar);
+    }
 
     // Afficher la barre a droite
     if (getWindowType() == NO_WINDOW || getWindowType() == BASIC_SHIP_WINDOW) {

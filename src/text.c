@@ -157,7 +157,11 @@ SDL_Texture **loadTextTextures(TTF_Font **fonts) {  // ATTENTION: ne pas oublier
                                             {"Mining yield", WHITE, fonts[0]},    // index 102
                                             {"Tower power", WHITE, fonts[0]},     // index 103
                                             {"Ship speed", WHITE, fonts[0]},      // index 104
-                                            {"Ship armor", WHITE, fonts[0]}       // index 105
+                                            {"Ship armor", WHITE, fonts[0]},      // index 105
+                                            {"MINING BOOM", GREEN2, fonts[0]},    // index 106
+                                            {"MARKET BOOM", GREEN2, fonts[0]},    // index 107
+                                            {"PIRATE SURGE", RED, fonts[0]},      // index 108
+                                            {"BOUNTY FRENZY", GOLD, fonts[0]}     // index 109
                                            };
 
     for (int i = 0; i < CST_TEXT_NUMBER; i++) {

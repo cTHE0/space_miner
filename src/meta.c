@@ -1,5 +1,7 @@
 #include "meta.h"
 
+#include "events.h"
+
 #define PIRATE_BOUNTY 30
 #define PIRATE_SCORE 100
 
@@ -42,7 +44,7 @@ void addScore(int64_t n) {
 
 void registerPirateKill(void) {
     meta.piratesKilled++;
-    addCredits(PIRATE_BOUNTY);
+    addCredits((int64_t)(PIRATE_BOUNTY * eventBountyMultiplier()));
     addScore(PIRATE_SCORE);
 }
 

@@ -8,6 +8,7 @@
 #include "asteroid.h"
 #include "tile.h"
 #include "meta.h"
+#include "events.h"
 
 
 static int bg_button_a_afficher = 0;
@@ -78,6 +79,7 @@ void handleMenuEvents(Mix_Chunk **sounds, GameState *gameState, short *gameBegun
                             // "Continue" : ne demarre la partie que si une sauvegarde a pu etre chargee
                             if (chargingGame(ships, shipCount, planets, planetCount)) {
                                 Mix_PlayChannel(0, sounds[7], 0);
+                                initEvents();
                                 initCamera(*planets);
                                 initAsteroids(*planets, *planetCount);
                                 *gameState = GAME;
@@ -88,6 +90,7 @@ void handleMenuEvents(Mix_Chunk **sounds, GameState *gameState, short *gameBegun
                         case 2:
                             Mix_PlayChannel(0, sounds[7], 0);
                             initMeta();  // Nouvelle partie : remise a zero de la meta-progression
+                            initEvents();
                             initPlanets(planets, *planetCount);
                             initShips(ships, *shipCount, *planets);
                             initCamera(*planets);

@@ -13,6 +13,7 @@
 #include "notify.h"
 #include "assets_gestion.h"
 #include "meta.h"
+#include "events.h"
 
 
 static Uint32 lastEnemyGenerationTime = 0;
@@ -86,7 +87,9 @@ void updateEnemies(Ship **ships, int *shipCount) {
         return;
     }
 
-    if (SDL_GetTicks() - lastEnemyGenerationTime < ENEMY_GENERATION_PERIOD) return;
+    // La deferlante de pirates double la cadence d'apparition
+    Uint32 period = eventPirateSurge() ? ENEMY_GENERATION_PERIOD / 2 : ENEMY_GENERATION_PERIOD;
+    if (SDL_GetTicks() - lastEnemyGenerationTime < period) return;
     lastEnemyGenerationTime = SDL_GetTicks();
 
     // Comptage des ennemis et des transporteurs
@@ -98,6 +101,7 @@ void updateEnemies(Ship **ships, int *shipCount) {
 
     // Le nombre de pirates simultanes augmente avec la taille de la flotte du joueur
     int cap = 2 + 2 * transporters;
+    if (eventPirateSurge()) cap += 4;  // Plus de pirates pendant une deferlante
     if (cap > MAX_ENEMIES) cap = MAX_ENEMIES;
 
     if (transporters == 0 || enemies >= cap) return;

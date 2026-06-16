@@ -21,6 +21,7 @@
 #include "settings.h"
 #include "notify.h"
 #include "meta.h"
+#include "events.h"
 
 
 const uint32_t currentSeed = 1;  // Peut prendre des valeurs entre 1 et 2**32-1
@@ -38,6 +39,7 @@ int main(void) {
     initSounds(&sounds);
     initSettings();
     initMeta();
+    initEvents();
 
     Ship *ships = NULL;
     int shipCount = INIT_SHIP_COUNT;
