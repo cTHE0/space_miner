@@ -20,6 +20,14 @@
 // Prix de vente par unite (fuel, fer, or, joanium, voidor)
 static const int orePrice[ORE_TYPE_COUNT] = {1, 3, 9, 18, 35};
 
+// Les ameliorations militaires consomment aussi du voidor (minerai le plus rare)
+static int premiumVoidorCost(int upgradeIndex) {
+    if (upgradeIndex == UPG_TOWER || upgradeIndex == UPG_SHIP_ARMOR) {
+        return 20 * (upgradeLevel((UpgradeType)upgradeIndex) + 1);
+    }
+    return 0;
+}
+
 static SDL_Rect panelRect, crossRect;
 static SDL_Rect sellRowRect[ORE_TYPE_COUNT];   // zone cliquable "Sell" de chaque minerai
 static SDL_Rect upgRowRect[UPG_COUNT];         // zone cliquable "Buy" de chaque amelioration
@@ -142,7 +150,18 @@ void displayCommandWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextur
         if (lvl < UPG_MAX_LEVEL) {
             SDL_Rect cost = {panelRect.x + panelRect.w * 0.74, y, panelRect.w * 0.010, panelRect.h * 0.045};
             renderNumber(upgradeCost((UpgradeType)i), cost);
-            drawButton(upgRowRect[i], textTextures[101], m->credits >= upgradeCost((UpgradeType)i));
+
+            // Cout additionnel en voidor pour les ameliorations militaires
+            int vcost = premiumVoidorCost(i);
+            int affordable = m->credits >= upgradeCost((UpgradeType)i);
+            if (vcost > 0) {
+                SDL_Rect vIcon = {panelRect.x + panelRect.w * 0.785, y - panelRect.h * 0.004, panelRect.h * 0.045, panelRect.h * 0.045};
+                SDL_RenderCopy(renderer, imageTextures[4][ORE4], NULL, &vIcon);
+                SDL_Rect vNum = {panelRect.x + panelRect.w * 0.81, y, panelRect.w * 0.009, panelRect.h * 0.04};
+                renderNumber(vcost, vNum);
+                if (getTotalOreWithInt(ORE4) < vcost) affordable = 0;
+            }
+            drawButton(upgRowRect[i], textTextures[101], affordable);
         } else {
             drawButton(upgRowRect[i], textTextures[101], 0);  // Niveau max atteint
         }
@@ -213,13 +232,30 @@ void commandWindowGestion(Mix_Chunk **sounds, Ship **ships, int *shipCount, Plan
     // Achat d'ameliorations
     for (int i = 0; i < UPG_COUNT; i++) {
         if (SDL_PointInRect(&mouse, &upgRowRect[i])) {
-            if (buyUpgrade((UpgradeType)i)) {
-                Mix_PlayChannel(1, sounds[5], 0);
-                pushNotification("Upgrade purchased!", GREEN);
-            } else {
+            int vcost = premiumVoidorCost(i);
+
+            if (upgradeLevel((UpgradeType)i) >= UPG_MAX_LEVEL) {
                 Mix_PlayChannel(1, sounds[8], 0);
-                pushNotification("Cannot afford upgrade!", RED);
+                pushNotification("Upgrade already maxed out!", RED);
+                return;
             }
+            if (vcost > 0 && getTotalOreWithInt(ORE4) < vcost) {
+                Mix_PlayChannel(1, sounds[8], 0);
+                pushNotification("Military upgrade requires voidor!", RED);
+                return;
+            }
+            if (getMeta()->credits < upgradeCost((UpgradeType)i)) {
+                Mix_PlayChannel(1, sounds[8], 0);
+                pushNotification("Not enough credits!", RED);
+                return;
+            }
+
+            if (vcost > 0) {
+                drainTotalOre(planets, planetCount, ORE4, vcost);  // Consomme le voidor
+            }
+            buyUpgrade((UpgradeType)i);  // Depense les credits et monte le niveau
+            Mix_PlayChannel(1, sounds[5], 0);
+            pushNotification("Upgrade purchased!", GREEN);
             return;
         }
     }

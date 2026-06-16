@@ -15,6 +15,8 @@
 #include "basic_ship_window.h"
 #include "place.h"
 #include "camera.h"
+#include "notify.h"
+#include "build.h"
 
 
 // Declaration des rectangles et variables propres a la fenetre d'informations des fusees
@@ -484,7 +486,7 @@ void displayShipWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures,
     ShipWindowTravelInfo(imageTextures, textTextures, ships, planets);
     ShipWindowTankManager(imageTextures, textTextures, ships, planets);
     ShipWindowShipCond(imageTextures, textTextures, ships);
-    ShipWindowShipModel(imageTextures, textTextures);
+    ShipWindowShipModel(imageTextures, textTextures, ships);
     ShipWindowTankCompo(imageTextures, textTextures, ships);
 }
 
@@ -737,6 +739,12 @@ void ShipWindowShipCond(SDL_Texture ***imageTextures, SDL_Texture **textTextures
     SDL_DrawEdgeOfRect(repareShipButtonRect, 3, BLACK);
     SDL_RenderCopy(renderer, textTextures[65], NULL, &repareShipButtonRect2);
 
+    // Cout de la reparation (fer)
+    SDL_Rect repCostIcon = {SCREEN_WIDTH * 0.820, repareShipButtonRect.y, SCREEN_WIDTH * 0.016, SCREEN_WIDTH * 0.016};
+    SDL_RenderCopy(renderer, imageTextures[4][ORE1], NULL, &repCostIcon);
+    SDL_Rect repCostNum = {SCREEN_WIDTH * 0.840, repareShipButtonRect.y, SCREEN_WIDTH * 0.007, SCREEN_WIDTH * 0.016};
+    renderNumber(60, repCostNum);
+
     // Affichage du pourcentage de sante de la fusee
     SDL_RenderCopy(renderer, textTextures[36], NULL, &percentShipHealthRect);
 
@@ -751,7 +759,7 @@ void ShipWindowShipCond(SDL_Texture ***imageTextures, SDL_Texture **textTextures
     }
 }
 
-void ShipWindowShipModel(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
+void ShipWindowShipModel(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
     // Affichage du titre "Ship model"
     SDL_RenderCopy(renderer, textTextures[13], NULL, &category4TitleRect);
 
@@ -764,6 +772,12 @@ void ShipWindowShipModel(SDL_Texture ***imageTextures, SDL_Texture **textTexture
     SDL_RenderFillRect(renderer, &upgradeShipButtonRect);
     SDL_DrawEdgeOfRect(upgradeShipButtonRect, 3, BLACK);
     SDL_RenderCopy(renderer, textTextures[63], NULL, &upgradeShipButtonRect2);
+
+    // Cout de l'amelioration (or, croissant avec le niveau)
+    SDL_Rect upCostIcon = {SCREEN_WIDTH * 0.790, upgradeShipButtonRect.y, SCREEN_WIDTH * 0.016, SCREEN_WIDTH * 0.016};
+    SDL_RenderCopy(renderer, imageTextures[4][ORE2], NULL, &upCostIcon);
+    SDL_Rect upCostNum = {SCREEN_WIDTH * 0.810, upgradeShipButtonRect.y, SCREEN_WIDTH * 0.007, SCREEN_WIDTH * 0.016};
+    renderNumber(80 + 40 * ships[getWindowId()].level, upCostNum);
 
     // Afficher le logo du bouton d'amelioration
     SDL_RenderCopy(renderer, imageTextures[2][7], NULL, &logoUpgradeButtonShipInfoRect);
@@ -862,10 +876,26 @@ void ShipWindowTankCompo(SDL_Texture ***imageTextures, SDL_Texture **textTexture
 
     // Afficher le logo du bouton d'amelioration du tank
     SDL_RenderCopy(renderer, imageTextures[2][7], NULL, &logoUpgradeButtonTankInfoRect);
+
+    // Cout de l'amelioration de soute (joanium, croissant avec le niveau)
+    SDL_Rect tankCostIcon = {SCREEN_WIDTH * 0.700, upgradeButtonTankRect.y, SCREEN_WIDTH * 0.016, SCREEN_WIDTH * 0.016};
+    SDL_RenderCopy(renderer, imageTextures[4][ORE3], NULL, &tankCostIcon);
+    SDL_Rect tankCostNum = {SCREEN_WIDTH * 0.720, upgradeButtonTankRect.y, SCREEN_WIDTH * 0.007, SCREEN_WIDTH * 0.016};
+    renderNumber(60 + 30 * ships[getWindowId()].cargo.compartmentsList[currentTankIndex].level, tankCostNum);
+}
+
+// Renvoie l'indice de la planete ou la fusee est posee, ou -1 si elle n'est pas a quai sur une planete
+static int dockedPlanetIndex(Ship *ship) {
+    if (ship->state == WAITING_ON_BASE || ship->state == WAITING_ON_BASE_SOON_STOPPED || ship->state == STOPPED_ON_BASE) {
+        return (ship->base.type == SPOT_PLANET) ? ship->base.id_planet : -1;
+    }
+    if (ship->state == WAITING_ON_TARGET || ship->state == WAITING_ON_TARGET_SOON_STOPPED || ship->state == STOPPED_ON_TARGET) {
+        return (ship->target.type == SPOT_PLANET) ? ship->target.id_planet : -1;
+    }
+    return -1;
 }
 
 void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, Ship *ships, Planet *planets, int shipCount, SDL_Point mouse) {
-    // Fermeture de la fenetre
     if (SDL_PointInRect(&mouse, &WindowCrossRect) || !clickOnWindow(mouse)) {
         Mix_PlayChannel(1, sounds[10], 0);
         setWindowType(BASIC_SHIP_WINDOW);
@@ -925,6 +955,14 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
             return;
         }
 
+        // Cout : 60 fer, preleve sur la planete d'accueil
+        int pidx = dockedPlanetIndex(&ships[getWindowId()]);
+        if (pidx == -1 || !payOre(&planets[pidx], ORE1, 60)) {
+            Mix_PlayChannel(1, sounds[8], 0);
+            pushNotification("Not enough iron at this colony to repair", RED);
+            return;
+        }
+
         ships[getWindowId()].currentLife += 0.1 * ships[getWindowId()].maxLife;
 
         if (ships[getWindowId()].currentLife > ships[getWindowId()].maxLife) {
@@ -946,8 +984,19 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
             return;
         }
 
+        // Cout : or, croissant avec le niveau, preleve sur la planete d'accueil
+        int pidx = dockedPlanetIndex(&ships[getWindowId()]);
+        int cost = 80 + 40 * ships[getWindowId()].level;
+        if (pidx == -1 || !payOre(&planets[pidx], ORE2, cost)) {
+            Mix_PlayChannel(1, sounds[8], 0);
+            pushNotification("Not enough gold at this colony to upgrade the ship", RED);
+            return;
+        }
+
         ships[getWindowId()].level += 1;
         ships[getWindowId()].speed *= 1.05;
+        ships[getWindowId()].maxLife += 15;  // L'amelioration renforce aussi la coque
+        ships[getWindowId()].currentLife += 15;
         initShipWindow(textTextures, fonts, &ships[getWindowId()]);
         Mix_PlayChannel(1, sounds[5], 0);
     }
@@ -961,6 +1010,15 @@ void shipWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
             ships[getWindowId()].state != WAITING_ON_BASE_SOON_STOPPED &&
             ships[getWindowId()].state != WAITING_ON_TARGET_SOON_STOPPED) {  // Une fusée doit avoir atteri pour être améliorée ou réparée
             warningMessageTime = time(NULL) + 4;
+            return;
+        }
+
+        // Cout : joanium, croissant avec le niveau du reservoir, preleve sur la planete d'accueil
+        int pidx = dockedPlanetIndex(&ships[getWindowId()]);
+        int cost = 60 + 30 * ships[getWindowId()].cargo.compartmentsList[currentTankIndex].level;
+        if (pidx == -1 || !payOre(&planets[pidx], ORE3, cost)) {
+            Mix_PlayChannel(1, sounds[8], 0);
+            pushNotification("Not enough joanium at this colony to upgrade the tank", RED);
             return;
         }
 
