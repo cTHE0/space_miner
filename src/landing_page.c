@@ -266,6 +266,13 @@ int chargingGame(Ship **ships, int *shipCount, Planet **planets, int *planetCoun
     }
     setNbSolarSystems(nbSS);
 
+    // Chargement de la meta-progression (optionnel : anciennes sauvegardes sans ce bloc)
+    initMeta();
+    Meta loadedMeta;
+    if (fread(&loadedMeta, sizeof(Meta), 1, backup) == 1) {
+        *getMeta() = loadedMeta;
+    }
+
     // Fermeture du fichier de lecture de sauvegarde
     fclose(backup);
 

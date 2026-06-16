@@ -13,6 +13,7 @@
 #include "tile.h"
 #include "settings.h"
 #include "config.h"
+#include "meta.h"
 #include <sys/stat.h>
 
 
@@ -245,6 +246,9 @@ void saveGame(Ship *ships, int shipCount, Planet *planets, int planetCount) {
     fwrite(ships, sizeof(Ship), shipCount, backup);
     fwrite(planets, sizeof(Planet), planetCount, backup);
     fwrite(*getTilesMatrix(), sizeof(uint8_t), *getByteCount(), backup);
+
+    // Sauvegarde de la meta-progression (credits, score, ameliorations)
+    fwrite(getMeta(), sizeof(Meta), 1, backup);
 
     // Fermeture du fichier de sauvegarde
     fclose(backup);
