@@ -22,13 +22,14 @@ void deleteLaser(int i);
 int newTarget(Ship *ships, int shipCount, int ennemy_index, int idException);
 void displayLasers(SDL_Texture ***imageTextures);
 
-void generateEnemy(int targetIndex, Ship **ships, int *shipCount);
+void generateEnemy(int targetIndex, int raidPlanet, Ship **ships, int *shipCount, Planet *planets);
 
 void updateWarSystem(Ship **ships, int *shipCount, Planet *planets, int planetCount, Mix_Chunk **sounds);
-    void updateEnemies(Ship **ships, int *shipCount);
+    void updateEnemies(Ship **ships, int *shipCount, Planet *planets, int planetCount);
     void updateLasers(Ship *ships, Mix_Chunk **sounds);
     void newLasersFired(Ship *ships, int shipCount, Mix_Chunk **sounds);
     void updateDefenceTowers(Planet *planets, int planetCount, Ship *ships, int shipCount, Mix_Chunk **sounds);
+    void updateRaiders(Ship *ships, int shipCount, Planet *planets, int planetCount);
 
 int getLasersCount(void);
 Laser *getLasersList(void);

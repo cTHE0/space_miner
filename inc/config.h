@@ -33,10 +33,13 @@
 #define REFRESH_TIME_BUILDS 1000  // En millisecondes
 #define TANKS_UPDATE_INTERVAL 200  // En millisecondes
 #define ASTEROID_TICK 300
-#define ENEMY_GENERATION_PERIOD 11000 // Un nouveau pirate toutes les 11 secondes au maximum
+#define ENEMY_GENERATION_PERIOD 11000 // Un nouveau pirate toutes les 11 s au maximum (modulé par la menace)
 #define MAX_ENEMIES 26                // Plafond absolu de pirates simultanes
 #define ENEMY_LIFE 12                 // Points de vie d'un pirate
 #define TOWER_FIRE_PERIOD 550         // Cadence de tir des tours de defense (ms)
+#define RAID_RANGE 1400               // Distance a laquelle un pillard commence a piller
+#define RAID_PERIOD 2500              // Cadence de pillage (ms)
+#define RAID_STEAL 80                 // Minerai vole par tick de pillage et par reservoir
 #define LASER_GENERATION_PERIOD 800
 #define REFRESH_TIME_TILE 500
 #define REFRESH_TIME_WINDOW 500

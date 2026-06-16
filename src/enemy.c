@@ -27,10 +27,16 @@ static int lastLaserSon = 2;  // canaux 2,3,4 pour les sons de lasers
 static int lastExplosionSon = 5;   /// canaux 5,6,7 pour les cons d'explosions
 
 
-void generateEnemy(int targetIndex, Ship **ships, int *shipCount) {
-    // Position de la cible avant la reallocation (qui invalide les pointeurs)
-    float targetX = (*ships)[targetIndex].x;
-    float targetY = (*ships)[targetIndex].y;
+void generateEnemy(int targetIndex, int raidPlanet, Ship **ships, int *shipCount, Planet *planets) {
+    // Position d'apparition (autour de la cible) avant la reallocation
+    float anchorX, anchorY;
+    if (raidPlanet >= 0) {
+        anchorX = planets[raidPlanet].x;
+        anchorY = planets[raidPlanet].y;
+    } else {
+        anchorX = (*ships)[targetIndex].x;
+        anchorY = (*ships)[targetIndex].y;
+    }
 
     Ship *temp = realloc(*ships, (*shipCount + 1) * sizeof(Ship));
     if (temp == NULL) {
@@ -48,11 +54,11 @@ void generateEnemy(int targetIndex, Ship **ships, int *shipCount) {
 
     // Apparition autour de la cible, juste hors de portee
     float angle = (rand() % 360) * M_PI / 180.0f;
-    float spawnDist = 1500 + rand() % 1200;
+    float spawnDist = 1800 + rand() % 1500;
     enemy->w = 160;
     enemy->h = 160;
-    enemy->x = targetX + spawnDist * cosf(angle) - enemy->w / 2.f;
-    enemy->y = targetY + spawnDist * sinf(angle) - enemy->h / 2.f;
+    enemy->x = anchorX + spawnDist * cosf(angle) - enemy->w / 2.f;
+    enemy->y = anchorY + spawnDist * sinf(angle) - enemy->h / 2.f;
 
     enemy->speed = (0.5f + (rand() % 50) / 100.f) * SHIP_SPEED * (1.0f + 0.03f * threatLevel());
     enemy->maxLife = (int)(ENEMY_LIFE * threatFactor());  // Pirates plus resistants quand la menace monte
@@ -63,8 +69,16 @@ void generateEnemy(int targetIndex, Ship **ships, int *shipCount) {
 
     enemy->state = ATTACKING_SHIP;
     enemy->base.type = SPOT_NONE;
-    enemy->target.type = SPOT_SHIP;
-    enemy->target.id_ship = targetIndex;
+    if (raidPlanet >= 0) {
+        // Pillard : vise une planete colonisee pour voler ses minerais
+        enemy->maxLife = (int)(enemy->maxLife * 1.3f);  // Plus coriace
+        enemy->currentLife = enemy->maxLife;
+        enemy->target.type = SPOT_PLANET;
+        enemy->target.id_planet = raidPlanet;
+    } else {
+        enemy->target.type = SPOT_SHIP;
+        enemy->target.id_ship = targetIndex;
+    }
 
     enemy->frameIndex = rand() % 4;
     enemy->lastFrameTime = 0;
@@ -73,15 +87,24 @@ void generateEnemy(int targetIndex, Ship **ships, int *shipCount) {
     (*shipCount)++;
 }
 
+static int isColonized(Planet *p) {
+    if (p->planetType == SUN) return 0;
+    for (int b = 0; b < BUILD_TYPE_COUNT; b++) {
+        if (p->builds[b].level > 0) return 1;
+    }
+    return 0;
+}
+
 void updateWarSystem(Ship **ships, int *shipCount, Planet *planets, int planetCount, Mix_Chunk **sounds) {
-    updateEnemies(ships, shipCount);
+    updateEnemies(ships, shipCount, planets, planetCount);
     updateDefenceTowers(planets, planetCount, *ships, *shipCount, sounds);
+    updateRaiders(*ships, *shipCount, planets, planetCount);
     updateLasers(*ships, sounds);
     newLasersFired(*ships, *shipCount, sounds);
     deleteKilledShips(ships, shipCount);
 }
 
-void updateEnemies(Ship **ships, int *shipCount) {
+void updateEnemies(Ship **ships, int *shipCount, Planet *planets, int planetCount) {
     // Periode de grace au demarrage (laisse le temps au joueur de s'installer)
     if (lastEnemyGenerationTime == 0) {
         lastEnemyGenerationTime = SDL_GetTicks();
@@ -117,9 +140,74 @@ void updateEnemies(Ship **ships, int *shipCount) {
         }
     }
 
-    if (targetIndex != -1) {
-        generateEnemy(targetIndex, ships, shipCount);
+    if (targetIndex == -1) return;
+
+    // A partir du niveau de menace 2, certains pirates deviennent des pillards
+    // qui s'attaquent directement a vos colonies (probabilite croissante).
+    int raidPlanet = -1;
+    if (threatLevel() >= 2 && (rand() % 100) < (20 + 5 * threatLevel())) {
+        int colonizedList[256];
+        int n = 0;
+        for (int i = 0; i < planetCount && n < 256; i++) {
+            if (isColonized(&planets[i])) colonizedList[n++] = i;
+        }
+        if (n > 0) raidPlanet = colonizedList[rand() % n];
+    }
+
+    generateEnemy(targetIndex, raidPlanet, ships, shipCount, planets);
+    if (raidPlanet >= 0) {
+        pushNotification("Raiders are heading for one of your colonies!", RED);
+    } else {
         pushNotification("Pirate detected near your fleet!", RED);
+    }
+}
+
+void updateRaiders(Ship *ships, int shipCount, Planet *planets, int planetCount) {
+    static Uint32 lastRaidNotif = 0;
+    Uint32 now = SDL_GetTicks();
+
+    for (int i = 0; i < shipCount; i++) {
+        if (ships[i].shiptype != ENEMY) continue;
+        if (ships[i].target.type != SPOT_PLANET) continue;
+        int pid = ships[i].target.id_planet;
+        if (pid < 0 || pid >= planetCount) continue;
+
+        float d = distanceShipPlanet(&ships[i], &planets[pid]);
+        if (d > RAID_RANGE) continue;  // Pas encore arrive
+
+        if (now - ships[i].lastRefreshFiring < RAID_PERIOD) continue;
+        ships[i].lastRefreshFiring = now;
+
+        // Vol de minerais dans chaque reservoir construit de la planete
+        int stolen = 0;
+        for (int b = 2; b < BUILD_TYPE_COUNT; b += 2) {
+            Build *store = &planets[pid].builds[b];
+            if (store->type == ORE_STORE && store->level > 0 && store->tank.currentCapacity > 0) {
+                int take = RAID_STEAL;
+                if (take > store->tank.currentCapacity) take = store->tank.currentCapacity;
+                store->tank.currentCapacity -= take;
+                stolen += take;
+            }
+        }
+        ships[i].transferredMinerals += stolen;
+
+        // Occasionnellement, les pillards endommagent un batiment (perte de niveau)
+        if (rand() % 3 == 0) {
+            for (int tries = 0; tries < 6; tries++) {
+                int b = 2 + rand() % (BUILD_TYPE_COUNT - 2);
+                Build *bd = &planets[pid].builds[b];
+                if (bd->level > 0) {
+                    bd->level--;
+                    if (bd->type == ORE_MINE && bd->mine.productivity > 200) bd->mine.productivity *= 0.9;
+                    break;
+                }
+            }
+        }
+
+        if (now - lastRaidNotif > 4000) {
+            lastRaidNotif = now;
+            pushNotification("A colony is being raided! Defend it!", RED);
+        }
     }
 }
 
