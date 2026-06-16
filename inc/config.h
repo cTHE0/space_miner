@@ -17,7 +17,7 @@
 #define INIT_PLANET_COUNT 70
 #define INIT_SHIP_COUNT 1
 #define ORE_TYPE_COUNT 5
-#define CST_TEXT_NUMBER 118
+#define CST_TEXT_NUMBER 120
 #define VICTORY_SCORE 25000  // Score a atteindre pour la victoire
 #define DEFENDER_COST 350    // Cout en credits d'un vaisseau defenseur
 #define FONT_NUMBER 1

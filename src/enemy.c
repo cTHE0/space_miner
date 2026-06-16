@@ -184,7 +184,8 @@ void updateRaiders(Ship *ships, int shipCount, Planet *planets, int planetCount)
         for (int b = 2; b < BUILD_TYPE_COUNT; b += 2) {
             Build *store = &planets[pid].builds[b];
             if (store->type == ORE_STORE && store->level > 0 && store->tank.currentCapacity > 0) {
-                int take = RAID_STEAL;
+                int take = (int)(RAID_STEAL * raidStealMultiplier());  // Boucliers planetaires
+                if (take < 1) take = 1;
                 if (take > store->tank.currentCapacity) take = store->tank.currentCapacity;
                 store->tank.currentCapacity -= take;
                 stolen += take;
@@ -193,7 +194,8 @@ void updateRaiders(Ship *ships, int shipCount, Planet *planets, int planetCount)
         ships[i].transferredMinerals += stolen;
 
         // Occasionnellement, les pillards endommagent un batiment (perte de niveau)
-        if (rand() % 3 == 0) {
+        // Les boucliers planetaires reduisent cette probabilite
+        if (rand() % 100 < (int)(33 * raidStealMultiplier())) {
             for (int tries = 0; tries < 6; tries++) {
                 int b = 2 + rand() % (BUILD_TYPE_COUNT - 2);
                 Build *bd = &planets[pid].builds[b];

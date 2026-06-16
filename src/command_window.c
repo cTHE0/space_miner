@@ -24,6 +24,10 @@ static SDL_Rect panelRect, crossRect;
 static SDL_Rect sellRowRect[ORE_TYPE_COUNT];   // zone cliquable "Sell" de chaque minerai
 static SDL_Rect upgRowRect[UPG_COUNT];         // zone cliquable "Buy" de chaque amelioration
 static SDL_Rect hireDefenderRect;              // bouton de recrutement d'un defenseur
+static int upgFirstY, upgGap;                  // disposition de la colonne d'ameliorations
+
+// Indices des textes (text.c) pour les noms d'ameliorations
+static const int upgradeNameTex[UPG_COUNT] = {102, 103, 104, 105, 118, 119};
 
 
 void initCommandWindowRects(void) {
@@ -39,13 +43,16 @@ void initCommandWindowRects(void) {
         sellRowRect[i] = (SDL_Rect){panelRect.x + panelRect.w * 0.30, firstRowY + i * rowGap,
                                     panelRect.w * 0.13, rowGap * 0.62};
     }
+    // La colonne d'ameliorations (6 lignes) a son propre espacement, plus serre
+    upgFirstY = panelRect.y + panelRect.h * 0.27;
+    upgGap = panelRect.h * 0.093;
     for (int i = 0; i < UPG_COUNT; i++) {
-        upgRowRect[i] = (SDL_Rect){panelRect.x + panelRect.w * 0.82, firstRowY + i * rowGap,
-                                   panelRect.w * 0.13, rowGap * 0.62};
+        upgRowRect[i] = (SDL_Rect){panelRect.x + panelRect.w * 0.86, upgFirstY + i * upgGap,
+                                   panelRect.w * 0.11, upgGap * 0.62};
     }
 
-    hireDefenderRect = (SDL_Rect){panelRect.x + panelRect.w * 0.30, panelRect.y + panelRect.h * 0.88,
-                                  panelRect.w * 0.40, panelRect.h * 0.085};
+    hireDefenderRect = (SDL_Rect){panelRect.x + panelRect.w * 0.06, panelRect.y + panelRect.h * 0.90,
+                                  panelRect.w * 0.30, panelRect.h * 0.075};
 }
 
 static void drawText(SDL_Texture *tex, int x, int y, int h, int centered) {
@@ -115,16 +122,16 @@ void displayCommandWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextur
 
     // --- Colonne droite : ameliorations globales ---
     for (int i = 0; i < UPG_COUNT; i++) {
-        int y = firstRowY + i * rowGap;
+        int y = upgFirstY + i * upgGap;
 
         // Nom de l'amelioration
-        drawText(textTextures[102 + i], panelRect.x + panelRect.w * 0.55, y, panelRect.h * 0.04, 0);
+        drawText(textTextures[upgradeNameTex[i]], panelRect.x + panelRect.w * 0.55, y, panelRect.h * 0.035, 0);
 
         // Niveau (jauge de points)
         int lvl = upgradeLevel((UpgradeType)i);
         for (int d = 0; d < UPG_MAX_LEVEL; d++) {
-            SDL_Rect dot = {panelRect.x + panelRect.w * 0.55 + d * (panelRect.w * 0.018), y + panelRect.h * 0.05,
-                            panelRect.w * 0.012, panelRect.h * 0.025};
+            SDL_Rect dot = {panelRect.x + panelRect.w * 0.55 + d * (panelRect.w * 0.016), y + panelRect.h * 0.042,
+                            panelRect.w * 0.011, panelRect.h * 0.022};
             if (d < lvl) SDL_SetRenderDrawColor(renderer, 59, 198, 0, 255);
             else SDL_SetRenderDrawColor(renderer, 70, 80, 90, 255);
             SDL_RenderFillRect(renderer, &dot);
@@ -133,7 +140,7 @@ void displayCommandWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextur
 
         // Cout du prochain niveau
         if (lvl < UPG_MAX_LEVEL) {
-            SDL_Rect cost = {panelRect.x + panelRect.w * 0.70, y, panelRect.w * 0.011, panelRect.h * 0.05};
+            SDL_Rect cost = {panelRect.x + panelRect.w * 0.74, y, panelRect.w * 0.010, panelRect.h * 0.045};
             renderNumber(upgradeCost((UpgradeType)i), cost);
             drawButton(upgRowRect[i], textTextures[101], m->credits >= upgradeCost((UpgradeType)i));
         } else {

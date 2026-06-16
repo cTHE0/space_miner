@@ -49,7 +49,7 @@ void registerPirateKill(void) {
     meta.piratesKilled++;
     // Les pirates plus dangereux (menace elevee) rapportent davantage
     float threatBonus = 1.0f + 0.25f * threatLevel();
-    addCredits((int64_t)(PIRATE_BOUNTY * eventBountyMultiplier() * threatBonus));
+    addCredits((int64_t)(PIRATE_BOUNTY * eventBountyMultiplier() * threatBonus * salvageMultiplier()));
     addScore((int64_t)(PIRATE_SCORE * threatBonus));
 }
 
@@ -96,4 +96,13 @@ float shipSpeedMultiplier(void) {
 
 int shipArmorBonus(void) {
     return 40 * meta.upgrades[UPG_SHIP_ARMOR];
+}
+
+float raidStealMultiplier(void) {
+    float m = 1.0f - 0.12f * meta.upgrades[UPG_SHIELD];
+    return (m < 0.15f) ? 0.15f : m;
+}
+
+float salvageMultiplier(void) {
+    return 1.0f + 0.30f * meta.upgrades[UPG_SALVAGE];
 }

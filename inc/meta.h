@@ -13,6 +13,8 @@ typedef enum {
     UPG_TOWER,       // Puissance et portee des tours de defense
     UPG_SHIP_SPEED,  // Vitesse des nouvelles fusees
     UPG_SHIP_ARMOR,  // Blindage des nouvelles fusees
+    UPG_SHIELD,      // Boucliers planetaires (reduit les vols/degats des raids)
+    UPG_SALVAGE,     // Recuperation (primes accrues sur les pirates)
     UPG_COUNT
 } UpgradeType;
 
@@ -50,5 +52,7 @@ float towerRangeMultiplier(void);
 int   towerDamageBonus(void);
 float shipSpeedMultiplier(void);
 int   shipArmorBonus(void);
+float raidStealMultiplier(void);   // <1 : les boucliers reduisent les vols
+float salvageMultiplier(void);     // >1 : primes accrues
 
 #endif
