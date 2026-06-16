@@ -10,6 +10,7 @@
 #include "meta.h"
 #include "events.h"
 #include "pause_window.h"
+#include "threat.h"
 
 
 static int bg_button_a_afficher = 0;
@@ -96,6 +97,7 @@ void handleMenuEvents(Mix_Chunk **sounds, GameState *gameState, short *gameBegun
                             if (chargingGame(ships, shipCount, planets, planetCount)) {
                                 Mix_PlayChannel(0, sounds[7], 0);
                                 initEvents();
+                                initThreat();
                                 initCamera(*planets);
                                 initAsteroids(*planets, *planetCount);
                                 *gameState = GAME;
@@ -107,6 +109,7 @@ void handleMenuEvents(Mix_Chunk **sounds, GameState *gameState, short *gameBegun
                             Mix_PlayChannel(0, sounds[7], 0);
                             initMeta();  // Nouvelle partie : remise a zero de la meta-progression
                             initEvents();
+                            initThreat();
                             initPlanets(planets, *planetCount);
                             initShips(ships, *shipCount, *planets);
                             initCamera(*planets);

@@ -26,6 +26,7 @@
 #include "events.h"
 #include "meta.h"
 #include "objectives.h"
+#include "threat.h"
 
 
 static int selectionMode = 0;
@@ -292,6 +293,7 @@ void updateGame(SDL_Texture **textTextures, TTF_Font **fonts, Ship **ships, int 
     updateTiles(*ships, *shipCount);
     updateWarSystem(ships, shipCount, planets, planetCount, sounds);
     updateEvents();
+    updateThreat(getMeta()->score);
     updateObjectives(*ships, *shipCount, planets, planetCount);
     checkEndConditions(ships, shipCount);
     updateNotifications();

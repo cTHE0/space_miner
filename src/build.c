@@ -15,6 +15,10 @@ static Uint32 lastBuildUpdateTime = 0;
 
 void initBuildsPlanet(Planet *planet) {
 	// Crée tous les bâtiments sur la planète sélectionnée
+    // Seules les deux planetes de depart (id 1 et 2) sont colonisees : le reste
+    // de la galaxie est une frontiere a conquerir (rarete des ressources).
+    int colonized = (planet->id == 1 || planet->id == 2);
+
     for (int i = 0; i < BUILD_TYPE_COUNT; i++) {
         switch (i) {
             case 0:
@@ -34,7 +38,7 @@ void initBuildsPlanet(Planet *planet) {
             case 8:
             case 10: {
                 Ore ore = i / 2 - 1;
-                int built = (ore == FUEL || ore == ORE1);  // Seuls le fuel et le fer sont stockables au depart
+                int built = colonized && (ore == FUEL || ore == ORE1);  // fuel + fer sur les planetes de depart
                 planet->builds[i].type = ORE_STORE;
                 planet->builds[i].level = built;
                 planet->builds[i].tank = (Compartment){ore, 0, 0, 0, 0, built ? STARTING_ORE_STOCK : 0, 10000, 0, built};

@@ -14,6 +14,7 @@
 #include "assets_gestion.h"
 #include "meta.h"
 #include "events.h"
+#include "threat.h"
 
 
 static Uint32 lastEnemyGenerationTime = 0;
@@ -53,9 +54,9 @@ void generateEnemy(int targetIndex, Ship **ships, int *shipCount) {
     enemy->x = targetX + spawnDist * cosf(angle) - enemy->w / 2.f;
     enemy->y = targetY + spawnDist * sinf(angle) - enemy->h / 2.f;
 
-    enemy->speed = (0.5f + (rand() % 50) / 100.f) * SHIP_SPEED;
-    enemy->maxLife = ENEMY_LIFE;
-    enemy->currentLife = ENEMY_LIFE;
+    enemy->speed = (0.5f + (rand() % 50) / 100.f) * SHIP_SPEED * (1.0f + 0.03f * threatLevel());
+    enemy->maxLife = (int)(ENEMY_LIFE * threatFactor());  // Pirates plus resistants quand la menace monte
+    enemy->currentLife = enemy->maxLife;
     enemy->range = 1300;
     enemy->noise = 0;
     enemy->fuelConsumption = 1;  // Valeur non nulle par securite (evite des divisions par zero)
@@ -87,8 +88,9 @@ void updateEnemies(Ship **ships, int *shipCount) {
         return;
     }
 
-    // La deferlante de pirates double la cadence d'apparition
-    Uint32 period = eventPirateSurge() ? ENEMY_GENERATION_PERIOD / 2 : ENEMY_GENERATION_PERIOD;
+    // La cadence d'apparition accelere avec la menace (et double pendant une deferlante)
+    Uint32 period = (Uint32)(ENEMY_GENERATION_PERIOD / (threatFactor() * (eventPirateSurge() ? 2.0f : 1.0f)));
+    if (period < 1500) period = 1500;
     if (SDL_GetTicks() - lastEnemyGenerationTime < period) return;
     lastEnemyGenerationTime = SDL_GetTicks();
 
@@ -99,8 +101,8 @@ void updateEnemies(Ship **ships, int *shipCount) {
         else transporters++;
     }
 
-    // Le nombre de pirates simultanes augmente avec la taille de la flotte du joueur
-    int cap = 2 + 2 * transporters;
+    // Le nombre de pirates simultanes augmente avec la flotte et la menace
+    int cap = 2 + 2 * transporters + threatLevel();
     if (eventPirateSurge()) cap += 4;  // Plus de pirates pendant une deferlante
     if (cap > MAX_ENEMIES) cap = MAX_ENEMIES;
 
@@ -222,7 +224,7 @@ void newLasersFired(Ship *ships, int shipCount, Mix_Chunk **sounds) {
                  ships[i].target.id_ship,
                  computeAngleDeg(ships[ships[i].target.id_ship].x, ships[ships[i].target.id_ship].y, newLaser.x, newLaser.y),
                  10,
-                 DAMAGE);
+                 enemyDamage());
 
         Mix_PlayChannel(lastLaserSon, sounds[11], 0);
         Mix_SetPositionCameraCentered(lastLaserSon, &lasers[lasersCount - 1].rect);  // Ne fonctionne que si le canal est actif

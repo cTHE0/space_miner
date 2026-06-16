@@ -11,6 +11,7 @@
 #include "meta.h"
 #include "events.h"
 #include "tools.h"
+#include "threat.h"
 
 static SDL_Rect upBarRect, 
                 upBarValuesRect,
@@ -80,6 +81,13 @@ void displayInfoView(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
     SDL_RenderCopy(renderer, textTextures[96], NULL, &scoreLabelRect);
     SDL_Rect scoreValueRect = {SCREEN_WIDTH * 0.83, SCREEN_HEIGHT * -0.005, SCREEN_WIDTH * 0.009, SCREEN_WIDTH * 0.024};
     renderNumber((int)getMeta()->score, scoreValueRect);
+
+    // Niveau de menace
+    SDL_QueryTexture(textTextures[116], NULL, NULL, &tw, &th);
+    SDL_Rect threatLabelRect = {SCREEN_WIDTH * 0.872, SCREEN_HEIGHT * 0.004, tw * SCREEN_HEIGHT * 0.0006, th * SCREEN_HEIGHT * 0.0006};
+    SDL_RenderCopy(renderer, textTextures[116], NULL, &threatLabelRect);
+    SDL_Rect threatValueRect = {SCREEN_WIDTH * 0.912, SCREEN_HEIGHT * -0.003, SCREEN_WIDTH * 0.008, SCREEN_WIDTH * 0.021};
+    renderNumber(threatLevel(), threatValueRect);
 
     // Banniere d'evenement galactique actif (centree sous la barre du haut)
     if (currentEvent() != EVENT_NONE) {

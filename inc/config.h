@@ -17,7 +17,7 @@
 #define INIT_PLANET_COUNT 70
 #define INIT_SHIP_COUNT 1
 #define ORE_TYPE_COUNT 5
-#define CST_TEXT_NUMBER 116
+#define CST_TEXT_NUMBER 117
 #define VICTORY_SCORE 25000  // Score a atteindre pour la victoire
 #define FONT_NUMBER 1
 #define SONGS_NUMBER 13
@@ -25,7 +25,7 @@
 #define ASTEROID_COUNT 500 // nombre d'astéroids par système solaire
 #define MAX_COMPARTMENTS_PER_SHIP 4
 #define DAMAGE 1 // Dégâts subis à chaque fois que ship touché par laser
-#define STARTING_ORE_STOCK 800  // Stock initial de fuel et de fer sur chaque planète
+#define STARTING_ORE_STOCK 350  // Stock initial de fuel et de fer sur les planètes de départ
 
 #define SPRITE_SHEETS_DELAY 100  // En nombre de tick
 #define WAIT_TIME_SHIP 1000  // En millisecondes
@@ -34,7 +34,7 @@
 #define TANKS_UPDATE_INTERVAL 200  // En millisecondes
 #define ASTEROID_TICK 300
 #define ENEMY_GENERATION_PERIOD 11000 // Un nouveau pirate toutes les 11 secondes au maximum
-#define MAX_ENEMIES 16                // Plafond absolu de pirates simultanes
+#define MAX_ENEMIES 26                // Plafond absolu de pirates simultanes
 #define ENEMY_LIFE 12                 // Points de vie d'un pirate
 #define TOWER_FIRE_PERIOD 550         // Cadence de tir des tours de defense (ms)
 #define LASER_GENERATION_PERIOD 800

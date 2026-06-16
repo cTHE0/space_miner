@@ -23,6 +23,7 @@
 #include "meta.h"
 #include "events.h"
 #include "objectives.h"
+#include "threat.h"
 
 
 const uint32_t currentSeed = 1;  // Peut prendre des valeurs entre 1 et 2**32-1
@@ -41,6 +42,7 @@ int main(void) {
     initSettings();
     initMeta();
     initEvents();
+    initThreat();
 
     Ship *ships = NULL;
     int shipCount = INIT_SHIP_COUNT;
