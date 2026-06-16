@@ -10,6 +10,8 @@
 #include "tools.h"
 #include "enemy.h"
 #include "window.h"
+#include "notify.h"
+#include "assets_gestion.h"
 
 
 static uint32_t lastRefreshShipKilled = 0;
@@ -592,6 +594,8 @@ void addShip(Ship **ships, int *shipCount, Planet *planet, int planetCount) {
     cargo->compartmentsList[1].flowTarget_out = EMPTY;
 
     (*shipCount) ++;
+
+    pushNotification("New transporter ready!", GREEN);
 }
 
 void deleteShip(int index, Ship **ships, int *shipCount) {
@@ -698,6 +702,11 @@ void deleteKilledShips(Ship **ships, int *shipCount) {  // On tue tous les ships
     lastRefreshShipKilled = SDL_GetTicks();
     for (int i = 0; i < *shipCount; i++) {
         if ((*ships)[i].currentLife <= 0) {
+            if ((*ships)[i].shiptype == ENEMY) {
+                pushNotification("Pirate destroyed!", GREEN);
+            } else {
+                pushNotification("A transporter was lost!", RED);
+            }
             deleteShip(i, ships, shipCount);
         }
     }

@@ -11,6 +11,7 @@
 #include "asteroid.h"
 #include "tile.h"
 #include "enemy.h"
+#include "notify.h"
 
 
 SDL_Renderer *renderer = NULL;
@@ -92,6 +93,7 @@ void displayGame(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship 
     displayTiles(imageTextures);
     displayWindow(imageTextures, textTextures, ships, planets);
     displaySelectionCircle();
+    displayNotifications();
     SDL_RenderPresent(renderer);
 }
 

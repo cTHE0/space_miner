@@ -19,6 +19,7 @@
 #include "tile.h"
 #include "window.h"
 #include "settings.h"
+#include "notify.h"
 
 
 const uint32_t currentSeed = 1;  // Peut prendre des valeurs entre 1 et 2**32-1
@@ -49,6 +50,7 @@ int main(void) {
     SDL_Texture **textTextures = loadTextTextures(fonts);
 
     loadNumbers(fonts[0]);
+    initNotify(fonts[0]);
 
     initRects(textTextures);
 
@@ -106,6 +108,7 @@ int main(void) {
         destroyTiles();
     }
 
+    destroyNotify();
     destroyImageTextures(imageTextures);
     destroyTextTextures(textTextures);
     destroyFonts(fonts);

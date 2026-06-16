@@ -13,6 +13,7 @@
 #include "basic_ship_window.h"
 #include "place.h"
 #include "camera.h"
+#include "notify.h"
 
 
 static float gapBetweenContainer = 1.05;
@@ -783,8 +784,10 @@ void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk
                     ensureStoreBuilt(planet, build->mine.ore);  // La mine a besoin d'un reservoir
                 }
                 Mix_PlayChannel(1, sounds[5], 0);
+                pushNotification("Construction complete!", GREEN);
             } else {
                 Mix_PlayChannel(1, sounds[8], 0);  // Pas assez de ressources
+                pushNotification("Not enough resources!", RED);
             }
         } else if (build->type == FACTORY) {
             // ----- Fabriquer une fusee (l'usine est deja construite) -----

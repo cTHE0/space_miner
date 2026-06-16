@@ -10,6 +10,8 @@
 #include "tools.h"
 #include "camera.h"
 #include "renderer.h"
+#include "notify.h"
+#include "assets_gestion.h"
 
 
 static Uint32 lastEnemyGenerationTime = 0;
@@ -110,6 +112,7 @@ void updateEnemies(Ship **ships, int *shipCount) {
 
     if (targetIndex != -1) {
         generateEnemy(targetIndex, ships, shipCount);
+        pushNotification("Pirate detected near your fleet!", RED);
     }
 }
 

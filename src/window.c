@@ -21,6 +21,7 @@
 #include "tile.h"
 #include "enemy.h"
 #include "landing_page.h"
+#include "notify.h"
 
 
 static int selectionMode = 0;
@@ -270,6 +271,7 @@ void updateGame(SDL_Texture **textTextures, TTF_Font **fonts, Ship **ships, int 
     updateTotalOre(planets, planetCount);
     updateTiles(*ships, *shipCount);
     updateWarSystem(ships, shipCount, planets, planetCount, sounds);
+    updateNotifications();
     updateWindow(textTextures, fonts, *ships, planets, *shipCount);
 }
 
