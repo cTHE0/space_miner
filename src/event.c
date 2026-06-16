@@ -119,6 +119,16 @@ void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **soun
                         toggleMute(sounds);
                         break;
 
+                    case SDLK_c:  // Ouvrir / fermer le Centre de commandement
+                        if (getWindowType() == COMMAND_WINDOW) {
+                            setWindowType(NO_WINDOW);
+                        } else if (getWindowType() == NO_WINDOW || getWindowType() == SIDE_BAR_WINDOW || getWindowType() == BASIC_SHIP_WINDOW) {
+                            setSelectionMode(0);
+                            setWindowType(COMMAND_WINDOW);
+                            Mix_PlayChannel(1, sounds[7], 0);
+                        }
+                        break;
+
                     default:
                         break;
                 }

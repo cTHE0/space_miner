@@ -22,6 +22,7 @@
 #include "enemy.h"
 #include "landing_page.h"
 #include "notify.h"
+#include "command_window.h"
 
 
 static int selectionMode = 0;
@@ -121,6 +122,10 @@ void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
             settingsWindowGestion(sounds, mouse);
             break;
 
+        case COMMAND_WINDOW:
+            commandWindowGestion(sounds, planets, planetCount, mouse);
+            break;
+
         default:
             break;
     }
@@ -181,7 +186,7 @@ int clickOnPlanet(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets,
 }
 
 void displayWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships, Planet *planets) {
-    displayInfoView(imageTextures);
+    displayInfoView(imageTextures, textTextures);
     
     switch (getWindowType()) {
         case PLANET_WINDOW:
@@ -206,6 +211,10 @@ void displayWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Shi
 
         case SETTINGS_WINDOW:
             displaySettingsWindow(imageTextures, textTextures);
+            break;
+
+        case COMMAND_WINDOW:
+            displayCommandWindow(imageTextures, textTextures);
             break;
 
         default:

@@ -14,9 +14,10 @@ typedef struct {
     double angle;
     int speed;
     int target_id; //indice du ship qui est visé
+    int damage;    //dégâts infligés à l'impact
 } Laser;
 
-void addLaser(SDL_Rect rect, SDL_Point target_coords, int target_id, float angle, int speed);
+void addLaser(SDL_Rect rect, SDL_Point target_coords, int target_id, float angle, int speed, int damage);
 void deleteLaser(int i);
 int newTarget(Ship *ships, int shipCount, int ennemy_index, int idException);
 void displayLasers(SDL_Texture ***imageTextures);

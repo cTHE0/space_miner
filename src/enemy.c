@@ -12,6 +12,7 @@
 #include "renderer.h"
 #include "notify.h"
 #include "assets_gestion.h"
+#include "meta.h"
 
 
 static Uint32 lastEnemyGenerationTime = 0;
@@ -124,7 +125,7 @@ void updateDefenceTowers(Planet *planets, int planetCount, Ship *ships, int ship
         Build *tower = &planets[p].builds[1];
         if (tower->type != DEFENCE_TOWER || tower->level == 0) continue;
 
-        float range = 4000 + tower->level * 1500.f;  // Portee augmentee par les ameliorations
+        float range = (4000 + tower->level * 1500.f) * towerRangeMultiplier();  // Portee (niveau tour + ameliorations globales)
 
         // Recherche de l'ennemi le plus proche dans la portee
         int best = -1;
@@ -146,7 +147,8 @@ void updateDefenceTowers(Planet *planets, int planetCount, Ship *ships, int ship
                      (SDL_Point){(int)ships[best].x, (int)ships[best].y},
                      best,
                      computeAngleDeg((int)ships[best].x, (int)ships[best].y, laser.x, laser.y),
-                     16);
+                     16,
+                     DAMAGE + towerDamageBonus());  // Les tours frappent plus fort avec les ameliorations
 
             Mix_PlayChannel(lastLaserSon, sounds[11], 0);
             Mix_SetPositionCameraCentered(lastLaserSon, &lasers[lasersCount - 1].rect);
@@ -175,7 +177,7 @@ void updateLasers(Ship *ships, Mix_Chunk **sounds) {
         if (targetLaserRect.w != -1 && SDL_HasIntersection(&lasers[i].rect, &targetLaserRect)) {
             // Appliquer des dégâts
             if (lasers[i].target_id != -1) {  // Vaut -1 lorsque la cible du laser a deja ete detruite
-                ships[lasers[i].target_id].currentLife -= DAMAGE;
+                ships[lasers[i].target_id].currentLife -= lasers[i].damage;
                 Mix_PlayChannel(lastExplosionSon, sounds[12], 0);  // Explosion
                 Mix_SetPositionCameraCentered(lastExplosionSon, &lasers[i].rect);  // Ne fonctionne que si le canal est actif
                 lastExplosionSon ++;
@@ -213,9 +215,10 @@ void newLasersFired(Ship *ships, int shipCount, Mix_Chunk **sounds) {
         // Ajout du nouveau laser + bruitage
         addLaser(newLaser,
                  (SDL_Point){ships[ships[i].target.id_ship].x, ships[ships[i].target.id_ship].y},
-                 ships[i].target.id_ship, 
+                 ships[i].target.id_ship,
                  computeAngleDeg(ships[ships[i].target.id_ship].x, ships[ships[i].target.id_ship].y, newLaser.x, newLaser.y),
-                 10);
+                 10,
+                 DAMAGE);
 
         Mix_PlayChannel(lastLaserSon, sounds[11], 0);
         Mix_SetPositionCameraCentered(lastLaserSon, &lasers[lasersCount - 1].rect);  // Ne fonctionne que si le canal est actif
@@ -224,11 +227,11 @@ void newLasersFired(Ship *ships, int shipCount, Mix_Chunk **sounds) {
     }
 }
 
-void addLaser(SDL_Rect rect, SDL_Point target_coords, int target_id, float angle, int speed) {
+void addLaser(SDL_Rect rect, SDL_Point target_coords, int target_id, float angle, int speed, int damage) {
     Laser *temp = realloc(lasers, (lasersCount + 1) * sizeof(Laser));
     if (temp != NULL) {
         lasers = temp;
-        lasers[lasersCount] = (Laser){rect, target_coords, angle, speed, target_id};
+        lasers[lasersCount] = (Laser){rect, target_coords, angle, speed, target_id, damage};
         lasersCount++;
     } else {
         printf("ERREUR reallocation mémoire laser\n");

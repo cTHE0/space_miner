@@ -12,6 +12,7 @@
 #include "window.h"
 #include "notify.h"
 #include "assets_gestion.h"
+#include "meta.h"
 
 
 static uint32_t lastRefreshShipKilled = 0;
@@ -41,8 +42,8 @@ void initShips(Ship **ships, int shipCount, Planet *planets) {
         (*ships)[i].speed = (rand() / (float)RAND_MAX * 0.6 + 0.4) * SHIP_SPEED;
         (*ships)[i].level = 1;
         (*ships)[i].state = MOVING_TO_TARGET;
-        (*ships)[i].maxLife = 100;
-        (*ships)[i].currentLife = rand() % (int)(*ships)[i].maxLife;
+        (*ships)[i].maxLife = 100 + shipArmorBonus();
+        (*ships)[i].currentLife = (*ships)[i].maxLife;  // Les fusees demarrent en pleine sante
         (*ships)[i].fuelConsumption = 1 + rand() % 3;  // Consommation d'essence par intervalle de temps TANKS_UPDATE_INTERVAL
         (*ships)[i].range = 300;
         (*ships)[i].noise = 1 + rand() % 3;
@@ -557,11 +558,11 @@ void addShip(Ship **ships, int *shipCount, Planet *planet, int planetCount) {
     (*ships)[*shipCount].y = planet->y;
     (*ships)[*shipCount].w = 200;
     (*ships)[*shipCount].h = 200;
-    (*ships)[*shipCount].speed = (rand() / (float)RAND_MAX * 0.6 + 0.4) * SHIP_SPEED;
+    (*ships)[*shipCount].speed = (rand() / (float)RAND_MAX * 0.6 + 0.4) * SHIP_SPEED * shipSpeedMultiplier();
     (*ships)[*shipCount].level = 1;
-    
-    (*ships)[*shipCount].maxLife = 100;
-    (*ships)[*shipCount].currentLife = 100;
+
+    (*ships)[*shipCount].maxLife = 100 + shipArmorBonus();
+    (*ships)[*shipCount].currentLife = (*ships)[*shipCount].maxLife;
     (*ships)[*shipCount].fuelConsumption = 1;  // Consommation d'essence par intervalle de temps TANKS_UPDATE_INTERVAL
     (*ships)[*shipCount].range = 1000;
 
@@ -595,6 +596,7 @@ void addShip(Ship **ships, int *shipCount, Planet *planet, int planetCount) {
 
     (*shipCount) ++;
 
+    getMeta()->shipsBuilt++;
     pushNotification("New transporter ready!", GREEN);
 }
 
@@ -703,7 +705,8 @@ void deleteKilledShips(Ship **ships, int *shipCount) {  // On tue tous les ships
     for (int i = 0; i < *shipCount; i++) {
         if ((*ships)[i].currentLife <= 0) {
             if ((*ships)[i].shiptype == ENEMY) {
-                pushNotification("Pirate destroyed!", GREEN);
+                registerPirateKill();  // Prime + score
+                pushNotification("Pirate destroyed!  +30 credits", GREEN);
             } else {
                 pushNotification("A transporter was lost!", RED);
             }

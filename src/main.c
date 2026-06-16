@@ -20,6 +20,7 @@
 #include "window.h"
 #include "settings.h"
 #include "notify.h"
+#include "meta.h"
 
 
 const uint32_t currentSeed = 1;  // Peut prendre des valeurs entre 1 et 2**32-1
@@ -36,6 +37,7 @@ int main(void) {
     Mix_Chunk **sounds;
     initSounds(&sounds);
     initSettings();
+    initMeta();
 
     Ship *ships = NULL;
     int shipCount = INIT_SHIP_COUNT;

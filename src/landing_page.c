@@ -7,6 +7,7 @@
 #include "camera.h"
 #include "asteroid.h"
 #include "tile.h"
+#include "meta.h"
 
 
 static int bg_button_a_afficher = 0;
@@ -86,6 +87,7 @@ void handleMenuEvents(Mix_Chunk **sounds, GameState *gameState, short *gameBegun
                             break;
                         case 2:
                             Mix_PlayChannel(0, sounds[7], 0);
+                            initMeta();  // Nouvelle partie : remise a zero de la meta-progression
                             initPlanets(planets, *planetCount);
                             initShips(ships, *shipCount, *planets);
                             initCamera(*planets);

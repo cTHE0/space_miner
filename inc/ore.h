@@ -29,5 +29,6 @@ typedef struct {  // Cargaison constituee de plusieurs compartiments
 int getTotalOreWithInt(int i);
 int getTotalOre(Planet *planets, int planetCount, Ore oreType);
 void updateTotalOre(Planet *planets, int planetCount);
+int drainTotalOre(Planet *planets, int planetCount, Ore oreType, int amount);
 
 #endif

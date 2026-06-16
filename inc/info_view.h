@@ -6,7 +6,7 @@
 SDL_Rect getSideBarButtonRect();
 SDL_Rect getSettingsIconRect(void);
 void initInfoViewRects(SDL_Texture **textTextures);
-void displayInfoView(SDL_Texture ***imageTextures);
+void displayInfoView(SDL_Texture ***imageTextures, SDL_Texture **textTextures);
 
 
 #endif

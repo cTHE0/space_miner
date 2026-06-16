@@ -11,6 +11,7 @@
 #include "basic_ship_window.h"
 #include "info_view.h"
 #include "pause_window.h"
+#include "command_window.h"
 
 
 static int nbCategories;   // Initialisation
@@ -195,6 +196,7 @@ void initRects(SDL_Texture **textTextures) {
     initInfoViewRects(textTextures);
     initPauseWindowRects(textTextures);
     initSettingsWindowRects();
+    initCommandWindowRects();
 }
 
 void initSounds(Mix_Chunk ***sounds) {

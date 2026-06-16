@@ -6,6 +6,7 @@
 #include "camera.h"
 #include "mine.h"
 #include "config.h"
+#include "meta.h"
 
 
 static Uint32 lastBuildUpdateTime = 0;
@@ -137,11 +138,14 @@ void updateBuilds(Planet *planets, int planetCount) {
 void updateBuildMine(Build *builds, Mine *mine, int abundance) {
     for (int i = 0; i < ORE_TYPE_COUNT; i++) {
         if (builds[2 * i + 2].type == ORE_STORE && builds[2 * i + 2].tank.ore == mine->ore && builds[2 * i + 2].level > 0) {  // Si l'on a trouve le bon reservoir construit, acceuillant les bons minerais...
-            builds[2 * i + 2].tank.currentCapacity += mine->productivity * (abundance / 100.f);
+            float produced = mine->productivity * (abundance / 100.f) * miningMultiplier();
+            int before = builds[2 * i + 2].tank.currentCapacity;
+            builds[2 * i + 2].tank.currentCapacity += produced;
 
             if (builds[2 * i + 2].tank.currentCapacity > builds[2 * i + 2].tank.maxCapacity) {
                 builds[2 * i + 2].tank.currentCapacity = builds[2 * i + 2].tank.maxCapacity;
             }
+            registerMined(builds[2 * i + 2].tank.currentCapacity - before);  // Comptabilise l'extraction reelle
             return;
         }
     }

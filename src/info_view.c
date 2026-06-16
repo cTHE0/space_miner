@@ -8,6 +8,7 @@
 #include "text.h"
 #include "ore.h"
 #include "window.h"
+#include "meta.h"
 
 static SDL_Rect upBarRect, 
                 upBarValuesRect,
@@ -44,7 +45,7 @@ void initInfoViewRects(SDL_Texture **textTextures) {
     firstValueUpBarRect = (SDL_Rect){SCREEN_WIDTH * 0.03, SCREEN_HEIGHT * -0.005, textureWidth * SCREEN_WIDTH * 0.0005, textureHeight * SCREEN_WIDTH * 0.0005};
 }
 
-void displayInfoView(SDL_Texture ***imageTextures) {
+void displayInfoView(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
     static int coefGapBetweenOres = 6;
 
     // Affichage du fond de la barre en haut de l'ecran
@@ -63,6 +64,20 @@ void displayInfoView(SDL_Texture ***imageTextures) {
         currentvalueRect.x = firstValueUpBarRect.x + coefGapBetweenOres * firstIconUpBarRect.w * i;
         renderNumber(getTotalOreWithInt(i), currentvalueRect);
     }
+
+    // Affichage des credits et du score (cote droit de la barre du haut)
+    int tw, th;
+    SDL_QueryTexture(textTextures[95], NULL, NULL, &tw, &th);
+    SDL_Rect creditsLabelRect = {SCREEN_WIDTH * 0.62, SCREEN_HEIGHT * 0.004, tw * SCREEN_HEIGHT * 0.0007, th * SCREEN_HEIGHT * 0.0007};
+    SDL_RenderCopy(renderer, textTextures[95], NULL, &creditsLabelRect);
+    SDL_Rect creditsValueRect = {SCREEN_WIDTH * 0.685, SCREEN_HEIGHT * -0.005, SCREEN_WIDTH * 0.009, SCREEN_WIDTH * 0.024};
+    renderNumber((int)getMeta()->credits, creditsValueRect);
+
+    SDL_QueryTexture(textTextures[96], NULL, NULL, &tw, &th);
+    SDL_Rect scoreLabelRect = {SCREEN_WIDTH * 0.78, SCREEN_HEIGHT * 0.004, tw * SCREEN_HEIGHT * 0.0007, th * SCREEN_HEIGHT * 0.0007};
+    SDL_RenderCopy(renderer, textTextures[96], NULL, &scoreLabelRect);
+    SDL_Rect scoreValueRect = {SCREEN_WIDTH * 0.83, SCREEN_HEIGHT * -0.005, SCREEN_WIDTH * 0.009, SCREEN_WIDTH * 0.024};
+    renderNumber((int)getMeta()->score, scoreValueRect);
 
     // Afficher la barre a droite
     if (getWindowType() == NO_WINDOW || getWindowType() == BASIC_SHIP_WINDOW) {

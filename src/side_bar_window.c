@@ -11,7 +11,7 @@ int clickSideBar(SDL_Point mouse) {
     SDL_Rect sideBarButtonRect = getSideBarButtonRect();
 
     if (SDL_PointInRect(&mouse, &sideBarButtonRect)) {
-        setWindowType(SIDE_BAR_WINDOW);
+        setWindowType(COMMAND_WINDOW);  // L'onglet lateral ouvre le Centre de commandement
         return 1;
     }
 

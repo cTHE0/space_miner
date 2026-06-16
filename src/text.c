@@ -146,7 +146,18 @@ SDL_Texture **loadTextTextures(TTF_Font **fonts) {  // ATTENTION: ne pas oublier
                                             {"Sound effects", WHITE, fonts[0]},   // index 91
                                             {"Mute all", WHITE, fonts[0]},        // index 92
                                             {"ON", GREEN2, fonts[0]},             // index 93
-                                            {"OFF", RED2, fonts[0]}               // index 94
+                                            {"OFF", RED2, fonts[0]},              // index 94
+                                            {"Credits", BLACK, fonts[0]},         // index 95
+                                            {"Score", BLACK, fonts[0]},           // index 96
+                                            {"Command Center", WHITE, fonts[0]},  // index 97
+                                            {"Sell minerals", WHITE, fonts[0]},   // index 98
+                                            {"Global upgrades", WHITE, fonts[0]}, // index 99
+                                            {"Sell", BLACK, fonts[0]},            // index 100
+                                            {"Buy", BLACK, fonts[0]},             // index 101
+                                            {"Mining yield", WHITE, fonts[0]},    // index 102
+                                            {"Tower power", WHITE, fonts[0]},     // index 103
+                                            {"Ship speed", WHITE, fonts[0]},      // index 104
+                                            {"Ship armor", WHITE, fonts[0]}       // index 105
                                            };
 
     for (int i = 0; i < CST_TEXT_NUMBER; i++) {
