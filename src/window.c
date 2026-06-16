@@ -24,6 +24,7 @@
 #include "notify.h"
 #include "command_window.h"
 #include "events.h"
+#include "meta.h"
 
 
 static int selectionMode = 0;
@@ -127,6 +128,10 @@ void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
             commandWindowGestion(sounds, planets, planetCount, mouse);
             break;
 
+        case GAME_OVER_WINDOW:
+            gameOverWindowGestion(gameState, sounds, mouse);
+            break;
+
         default:
             break;
     }
@@ -218,6 +223,10 @@ void displayWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Shi
             displayCommandWindow(imageTextures, textTextures);
             break;
 
+        case GAME_OVER_WINDOW:
+            displayGameOverWindow(imageTextures, textTextures);
+            break;
+
         default:
             break;
     }
@@ -282,8 +291,36 @@ void updateGame(SDL_Texture **textTextures, TTF_Font **fonts, Ship **ships, int 
     updateTiles(*ships, *shipCount);
     updateWarSystem(ships, shipCount, planets, planetCount, sounds);
     updateEvents();
+    checkEndConditions(ships, shipCount);
     updateNotifications();
     updateWindow(textTextures, fonts, *ships, planets, *shipCount);
+}
+
+void checkEndConditions(Ship **ships, int *shipCount) {
+    static Uint32 noFleetSince = 0;
+
+    // Palier de victoire (une seule fois, la partie continue ensuite)
+    if (!getMeta()->victoryReached && getMeta()->score >= VICTORY_SCORE) {
+        getMeta()->victoryReached = 1;
+        pushNotification("VICTORY! You dominate the sector!", GOLD);
+    }
+
+    // Defaite : plus aucun transporteur pendant 25 secondes
+    int transporters = 0;
+    for (int i = 0; i < *shipCount; i++) {
+        if ((*ships)[i].shiptype != ENEMY) transporters++;
+    }
+
+    if (transporters > 0) {
+        noFleetSince = 0;
+    } else if (getWindowType() != GAME_OVER_WINDOW) {
+        if (noFleetSince == 0) {
+            noFleetSince = SDL_GetTicks();
+            pushNotification("Fleet lost! Build a new ship within 25s!", RED);
+        } else if (SDL_GetTicks() - noFleetSince > 25000) {
+            setWindowType(GAME_OVER_WINDOW);
+        }
+    }
 }
 
 void updateWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, Planet *planets, int shipCount) {

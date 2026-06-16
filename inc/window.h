@@ -8,7 +8,7 @@
 #include "ship.h"
 #include "landing_page.h"
 
-typedef enum {NO_WINDOW, SHIP_WINDOW, PLANET_WINDOW, DEFENDER_WINDOW, ENNEMY_WINDOW, BASIC_SHIP_WINDOW, SIDE_BAR_WINDOW, PAUSE_WINDOW, SETTINGS_WINDOW, COMMAND_WINDOW} WindowType;
+typedef enum {NO_WINDOW, SHIP_WINDOW, PLANET_WINDOW, DEFENDER_WINDOW, ENNEMY_WINDOW, BASIC_SHIP_WINDOW, SIDE_BAR_WINDOW, PAUSE_WINDOW, SETTINGS_WINDOW, COMMAND_WINDOW, GAME_OVER_WINDOW} WindowType;
 
 typedef struct {
     WindowType type;  // Type de fenetre affiche (d'une fusee, planete, attaquant, etc)
@@ -44,5 +44,6 @@ void objetInSelectionCircle(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Ch
 
 void updateGame(SDL_Texture **textTextures, TTF_Font **fonts, Ship **ships, int *shipCount, Planet *planets, int planetCount, Mix_Chunk **sounds);
 void updateWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *ships, Planet *planets, int shipCount);
+void checkEndConditions(Ship **ships, int *shipCount);
 
 #endif

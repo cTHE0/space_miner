@@ -22,6 +22,9 @@ void initSettingsWindowRects(void);
 void displaySettingsWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures);
 void settingsWindowGestion(Mix_Chunk **sounds, SDL_Point mouse);
 
+void displayGameOverWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures);
+void gameOverWindowGestion(GameState *gameState, Mix_Chunk **sounds, SDL_Point mouse);
+
 void saveGame(Ship *ships, int shipCount, Planet *planets, int planetCount);
 
 #endif

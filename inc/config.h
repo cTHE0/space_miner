@@ -17,7 +17,8 @@
 #define INIT_PLANET_COUNT 70
 #define INIT_SHIP_COUNT 1
 #define ORE_TYPE_COUNT 5
-#define CST_TEXT_NUMBER 110
+#define CST_TEXT_NUMBER 116
+#define VICTORY_SCORE 25000  // Score a atteindre pour la victoire
 #define FONT_NUMBER 1
 #define SONGS_NUMBER 13
 #define BUILD_TYPE_COUNT 12

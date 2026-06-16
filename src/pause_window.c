@@ -14,6 +14,7 @@
 #include "settings.h"
 #include "config.h"
 #include "meta.h"
+#include "text.h"
 #include <sys/stat.h>
 
 
@@ -224,6 +225,67 @@ void settingsWindowGestion(Mix_Chunk **sounds, SDL_Point mouse) {
     } else if (!SDL_PointInRect(&mouse, &settingsPanelRect)) {
         setWindowType(NO_WINDOW);  // Clic en dehors : fermeture
         Mix_PlayChannel(1, sounds[7], 0);
+    }
+}
+
+/* ----------------------- Ecran de fin de partie ----------------------- */
+
+static SDL_Rect gameOverReturnRect;
+
+static void drawCenteredText(SDL_Texture *tex, int cx, int y, int h) {
+    if (!tex) return;
+    int tw, th;
+    SDL_QueryTexture(tex, NULL, NULL, &tw, &th);
+    int w = (int)(tw * (h / (float)th));
+    SDL_Rect r = {cx - w / 2, y, w, h};
+    SDL_RenderCopy(renderer, tex, NULL, &r);
+}
+
+void displayGameOverWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
+    (void)imageTextures;
+    Meta *m = getMeta();
+
+    // Voile sombre sur tout l'ecran
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 210);
+    SDL_RenderFillRect(renderer, NULL);
+
+    SDL_Rect panel = {SCREEN_WIDTH * 0.30, SCREEN_HEIGHT * 0.20, SCREEN_WIDTH * 0.40, SCREEN_HEIGHT * 0.60};
+    SDL_SetRenderDrawColor(renderer, 18, 52, 73, 255);
+    SDL_RenderFillRect(renderer, &panel);
+    SDL_DrawEdgeOfRect(panel, 4, RED);
+
+    int cx = panel.x + panel.w / 2;
+
+    // Titre
+    drawCenteredText(textTextures[110], cx, panel.y + panel.h * 0.06, panel.h * 0.13);
+
+    // Score final
+    drawCenteredText(textTextures[111], cx, panel.y + panel.h * 0.30, panel.h * 0.06);
+    SDL_Rect scoreRect = {cx - panel.w * 0.05, panel.y + panel.h * 0.38, panel.w * 0.018, panel.h * 0.08};
+    renderNumber((int)m->score, scoreRect);
+
+    // Statistiques
+    drawCenteredText(textTextures[112], cx - panel.w * 0.10, panel.y + panel.h * 0.55, panel.h * 0.045);
+    SDL_Rect pkRect = {cx + panel.w * 0.22, panel.y + panel.h * 0.55, panel.w * 0.013, panel.h * 0.05};
+    renderNumber(m->piratesKilled, pkRect);
+
+    drawCenteredText(textTextures[113], cx - panel.w * 0.10, panel.y + panel.h * 0.64, panel.h * 0.045);
+    SDL_Rect mmRect = {cx + panel.w * 0.22, panel.y + panel.h * 0.64, panel.w * 0.013, panel.h * 0.05};
+    renderNumber((int)m->mineralsMined, mmRect);
+
+    // Bouton retour
+    gameOverReturnRect = (SDL_Rect){panel.x + panel.w * 0.25, panel.y + panel.h * 0.80, panel.w * 0.50, panel.h * 0.12};
+    SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
+    SDL_RenderFillRect(renderer, &gameOverReturnRect);
+    SDL_DrawEdgeOfRect(gameOverReturnRect, 3, BLACK);
+    drawCenteredText(textTextures[114], cx, gameOverReturnRect.y + gameOverReturnRect.h * 0.22, gameOverReturnRect.h * 0.55);
+}
+
+void gameOverWindowGestion(GameState *gameState, Mix_Chunk **sounds, SDL_Point mouse) {
+    if (SDL_PointInRect(&mouse, &gameOverReturnRect)) {
+        Mix_PlayChannel(1, sounds[7], 0);
+        setWindowType(NO_WINDOW);
+        *gameState = LANDING_PAGE;  // Retour au menu principal
     }
 }
 

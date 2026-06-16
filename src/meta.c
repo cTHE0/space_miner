@@ -16,6 +16,7 @@ void initMeta(void) {
     meta.mineralsMined = 0;
     meta.shipsBuilt = 0;
     meta.wave = 0;
+    meta.victoryReached = 0;
     for (int i = 0; i < UPG_COUNT; i++) {
         meta.upgrades[i] = 0;
     }
