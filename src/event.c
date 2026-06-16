@@ -12,6 +12,7 @@
 #include "basic_ship_window.h"
 #include "place.h"
 #include "settings.h"
+#include "minimap.h"
 
 
 static SDL_Point mouse;
@@ -48,7 +49,9 @@ void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **soun
             case SDL_MOUSEBUTTONUP:
                 if (event.button.button == SDL_BUTTON_LEFT) {
                     if (click) { // Ou a-t-on lache le clic gauche ?
-                        openWindowGestion(textTextures, fonts, sounds, gameState, lastMouse, ships, shipCount, planets, planetCount);
+                        if (!minimapClick(lastMouse)) {  // Clic sur la minimap : recentrage prioritaire
+                            openWindowGestion(textTextures, fonts, sounds, gameState, lastMouse, ships, shipCount, planets, planetCount);
+                        }
                     }
                     dragging_camera = 0;
                     click = 0;

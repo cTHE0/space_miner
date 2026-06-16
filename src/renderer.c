@@ -12,6 +12,7 @@
 #include "tile.h"
 #include "enemy.h"
 #include "notify.h"
+#include "minimap.h"
 
 
 SDL_Renderer *renderer = NULL;
@@ -91,6 +92,7 @@ void displayGame(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship 
     displayLasers(imageTextures);
     displayAsteroid(imageTextures);
     displayTiles(imageTextures);
+    displayMinimap(ships, shipCount, planets, planetCount);
     displayWindow(imageTextures, textTextures, ships, planets);
     displaySelectionCircle();
     displayNotifications();
