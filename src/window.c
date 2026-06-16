@@ -134,6 +134,10 @@ void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
             gameOverWindowGestion(gameState, sounds, mouse);
             break;
 
+        case VICTORY_WINDOW:
+            victoryWindowGestion(gameState, sounds, mouse);
+            break;
+
         default:
             break;
     }
@@ -229,6 +233,10 @@ void displayWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Shi
             displayGameOverWindow(imageTextures, textTextures);
             break;
 
+        case VICTORY_WINDOW:
+            displayVictoryWindow(imageTextures, textTextures);
+            break;
+
         default:
             break;
     }
@@ -303,10 +311,11 @@ void updateGame(SDL_Texture **textTextures, TTF_Font **fonts, Ship **ships, int 
 void checkEndConditions(Ship **ships, int *shipCount) {
     static Uint32 noFleetSince = 0;
 
-    // Palier de victoire (une seule fois, la partie continue ensuite)
+    // Palier de victoire (une seule fois : ecran de victoire, puis on peut continuer)
     if (!getMeta()->victoryReached && getMeta()->score >= VICTORY_SCORE) {
         getMeta()->victoryReached = 1;
         pushNotification("VICTORY! You dominate the sector!", GOLD);
+        setWindowType(VICTORY_WINDOW);
     }
 
     // Defaite : plus aucun transporteur pendant 25 secondes (les defenseurs ne comptent pas)

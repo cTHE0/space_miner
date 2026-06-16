@@ -291,6 +291,60 @@ void gameOverWindowGestion(GameState *gameState, Mix_Chunk **sounds, SDL_Point m
     }
 }
 
+/* ----------------------- Ecran de victoire ----------------------- */
+
+static SDL_Rect victoryKeepRect, victoryReturnRect;
+
+void displayVictoryWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
+    (void)imageTextures;
+    Meta *m = getMeta();
+
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 200);
+    SDL_RenderFillRect(renderer, NULL);
+
+    SDL_Rect panel = {SCREEN_WIDTH * 0.28, SCREEN_HEIGHT * 0.18, SCREEN_WIDTH * 0.44, SCREEN_HEIGHT * 0.64};
+    SDL_SetRenderDrawColor(renderer, 30, 40, 18, 255);
+    SDL_RenderFillRect(renderer, &panel);
+    SDL_DrawEdgeOfRect(panel, 4, GOLD);
+
+    int cx = panel.x + panel.w / 2;
+
+    drawCenteredText(textTextures[115], cx, panel.y + panel.h * 0.06, panel.h * 0.13);  // VICTORY!
+
+    drawCenteredText(textTextures[111], cx, panel.y + panel.h * 0.28, panel.h * 0.055);  // Final score
+    SDL_Rect scoreRect = {cx - panel.w * 0.05, panel.y + panel.h * 0.36, panel.w * 0.018, panel.h * 0.075};
+    renderNumber((int)m->score, scoreRect);
+
+    drawCenteredText(textTextures[112], cx - panel.w * 0.12, panel.y + panel.h * 0.52, panel.h * 0.04);  // Pirates destroyed
+    SDL_Rect pkRect = {cx + panel.w * 0.20, panel.y + panel.h * 0.52, panel.w * 0.013, panel.h * 0.048};
+    renderNumber(m->piratesKilled, pkRect);
+
+    // Boutons
+    victoryKeepRect = (SDL_Rect){panel.x + panel.w * 0.10, panel.y + panel.h * 0.80, panel.w * 0.38, panel.h * 0.12};
+    victoryReturnRect = (SDL_Rect){panel.x + panel.w * 0.52, panel.y + panel.h * 0.80, panel.w * 0.38, panel.h * 0.12};
+
+    SDL_SetRenderDrawColor(renderer, 59, 198, 0, 255);
+    SDL_RenderFillRect(renderer, &victoryKeepRect);
+    SDL_DrawEdgeOfRect(victoryKeepRect, 3, BLACK);
+    drawCenteredText(textTextures[120], victoryKeepRect.x + victoryKeepRect.w / 2, victoryKeepRect.y + victoryKeepRect.h * 0.25, victoryKeepRect.h * 0.5);
+
+    SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
+    SDL_RenderFillRect(renderer, &victoryReturnRect);
+    SDL_DrawEdgeOfRect(victoryReturnRect, 3, BLACK);
+    drawCenteredText(textTextures[114], victoryReturnRect.x + victoryReturnRect.w / 2, victoryReturnRect.y + victoryReturnRect.h * 0.25, victoryReturnRect.h * 0.5);
+}
+
+void victoryWindowGestion(GameState *gameState, Mix_Chunk **sounds, SDL_Point mouse) {
+    if (SDL_PointInRect(&mouse, &victoryKeepRect)) {
+        Mix_PlayChannel(1, sounds[7], 0);
+        setWindowType(NO_WINDOW);  // On continue pour le score
+    } else if (SDL_PointInRect(&mouse, &victoryReturnRect)) {
+        Mix_PlayChannel(1, sounds[7], 0);
+        setWindowType(NO_WINDOW);
+        *gameState = LANDING_PAGE;
+    }
+}
+
 void saveGame(Ship *ships, int shipCount, Planet *planets, int planetCount) {
     mkdir("backups", 0755);  // Cree le dossier de sauvegarde s'il n'existe pas
 

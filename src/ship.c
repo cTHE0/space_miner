@@ -742,8 +742,12 @@ void deleteKilledShips(Ship **ships, int *shipCount) {  // On tue tous les ships
     for (int i = 0; i < *shipCount; i++) {
         if ((*ships)[i].currentLife <= 0) {
             if ((*ships)[i].shiptype == ENEMY) {
-                registerPirateKill();  // Prime + score
-                pushNotification("Pirate destroyed!  +30 credits", GREEN);
+                registerPirateKill((*ships)[i].maxLife);  // Prime + score (selon robustesse)
+                if ((*ships)[i].maxLife >= ENEMY_LIFE * 5) {
+                    pushNotification("Pirate dreadnought destroyed!", GOLD);
+                } else {
+                    pushNotification("Pirate destroyed!", GREEN);
+                }
             } else {
                 pushNotification("A transporter was lost!", RED);
             }

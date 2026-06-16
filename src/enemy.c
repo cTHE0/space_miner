@@ -27,7 +27,7 @@ static int lastLaserSon = 2;  // canaux 2,3,4 pour les sons de lasers
 static int lastExplosionSon = 5;   /// canaux 5,6,7 pour les cons d'explosions
 
 
-void generateEnemy(int targetIndex, int raidPlanet, Ship **ships, int *shipCount, Planet *planets) {
+void generateEnemy(int targetIndex, int raidPlanet, int boss, Ship **ships, int *shipCount, Planet *planets) {
     // Position d'apparition (autour de la cible) avant la reallocation
     float anchorX, anchorY;
     if (raidPlanet >= 0) {
@@ -78,6 +78,16 @@ void generateEnemy(int targetIndex, int raidPlanet, Ship **ships, int *shipCount
     } else {
         enemy->target.type = SPOT_SHIP;
         enemy->target.id_ship = targetIndex;
+    }
+
+    if (boss) {
+        // Cuirasse pirate : enorme, lent, tres resistant, prime massive
+        enemy->maxLife *= 8;
+        enemy->currentLife = enemy->maxLife;
+        enemy->w = 340;
+        enemy->h = 340;
+        enemy->speed *= 0.55f;
+        enemy->range += 600;
     }
 
     enemy->frameIndex = rand() % 4;
@@ -155,8 +165,13 @@ void updateEnemies(Ship **ships, int *shipCount, Planet *planets, int planetCoun
         if (n > 0) raidPlanet = colonizedList[rand() % n];
     }
 
-    generateEnemy(targetIndex, raidPlanet, ships, shipCount, planets);
-    if (raidPlanet >= 0) {
+    // Cuirasses pirates (boss) a partir du niveau de menace 4
+    int boss = (threatLevel() >= 4 && (rand() % 100) < (2 + threatLevel()));
+
+    generateEnemy(targetIndex, raidPlanet, boss, ships, shipCount, planets);
+    if (boss) {
+        pushNotification("WARNING: a pirate dreadnought has arrived!", (SDL_Color){255, 140, 0, 255});
+    } else if (raidPlanet >= 0) {
         pushNotification("Raiders are heading for one of your colonies!", RED);
     } else {
         pushNotification("Pirate detected near your fleet!", RED);

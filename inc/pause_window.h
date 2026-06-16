@@ -25,6 +25,9 @@ int settingsWindowGestion(Mix_Chunk **sounds, SDL_Point mouse);  // renvoie 1 si
 void displayGameOverWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures);
 void gameOverWindowGestion(GameState *gameState, Mix_Chunk **sounds, SDL_Point mouse);
 
+void displayVictoryWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures);
+void victoryWindowGestion(GameState *gameState, Mix_Chunk **sounds, SDL_Point mouse);
+
 void saveGame(Ship *ships, int shipCount, Planet *planets, int planetCount);
 
 #endif

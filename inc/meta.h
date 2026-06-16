@@ -39,7 +39,7 @@ void addCredits(int64_t n);
 int  spendCredits(int64_t n);   // 1 si paye, 0 sinon
 void addScore(int64_t n);
 
-void registerPirateKill(void);
+void registerPirateKill(int enemyMaxLife);
 void registerMined(int64_t amount);
 
 int  upgradeLevel(UpgradeType t);

@@ -2,6 +2,7 @@
 
 #include "events.h"
 #include "threat.h"
+#include "config.h"
 
 #define PIRATE_BOUNTY 30
 #define PIRATE_SCORE 100
@@ -45,12 +46,13 @@ void addScore(int64_t n) {
     meta.score += n;
 }
 
-void registerPirateKill(void) {
+void registerPirateKill(int enemyMaxLife) {
     meta.piratesKilled++;
-    // Les pirates plus dangereux (menace elevee) rapportent davantage
-    float threatBonus = 1.0f + 0.25f * threatLevel();
-    addCredits((int64_t)(PIRATE_BOUNTY * eventBountyMultiplier() * threatBonus * salvageMultiplier()));
-    addScore((int64_t)(PIRATE_SCORE * threatBonus));
+    // Prime proportionnelle a la robustesse du pirate (boss et menace = plus de gains)
+    float toughness = enemyMaxLife / (float)ENEMY_LIFE;
+    if (toughness < 1.0f) toughness = 1.0f;
+    addCredits((int64_t)(PIRATE_BOUNTY * toughness * eventBountyMultiplier() * salvageMultiplier()));
+    addScore((int64_t)(PIRATE_SCORE * toughness));
 }
 
 void registerMined(int64_t amount) {

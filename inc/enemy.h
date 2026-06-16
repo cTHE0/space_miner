@@ -22,7 +22,7 @@ void deleteLaser(int i);
 int newTarget(Ship *ships, int shipCount, int ennemy_index, int idException);
 void displayLasers(SDL_Texture ***imageTextures);
 
-void generateEnemy(int targetIndex, int raidPlanet, Ship **ships, int *shipCount, Planet *planets);
+void generateEnemy(int targetIndex, int raidPlanet, int boss, Ship **ships, int *shipCount, Planet *planets);
 
 void updateWarSystem(Ship **ships, int *shipCount, Planet *planets, int planetCount, Mix_Chunk **sounds);
     void updateEnemies(Ship **ships, int *shipCount, Planet *planets, int planetCount);
