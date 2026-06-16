@@ -13,7 +13,7 @@ int getTotalOre(Planet *planets, int planetCount, Ore oreType) {
     int res = 0;
     for (int i = 0; i < planetCount; i++) {
         for (int buildType = 0; buildType < BUILD_TYPE_COUNT; buildType++) {
-            if (planets[i].builds[buildType].type == ORE_STORE && planets[i].builds[buildType].tank.ore == oreType) {
+            if (planets[i].builds[buildType].type == ORE_STORE && planets[i].builds[buildType].tank.ore == oreType && planets[i].builds[buildType].level > 0) {
                 res += planets[i].builds[buildType].tank.currentCapacity;
             }
         }

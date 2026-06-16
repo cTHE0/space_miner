@@ -194,6 +194,7 @@ void initRects(SDL_Texture **textTextures) {
     initBasicShipWindowRects(textTextures);
     initInfoViewRects(textTextures);
     initPauseWindowRects(textTextures);
+    initSettingsWindowRects();
 }
 
 void initSounds(Mix_Chunk ***sounds) {

@@ -18,35 +18,84 @@ void initBuildsPlanet(Planet *planet) {
             case 0:
                 planet->builds[i].type = FACTORY;
                 planet->builds[i].level = 0;
-                planet->builds[i].price = (Price) {ORE1, 100};
+                planet->builds[i].price = (Price) {ORE1, 300};
                 break;
             case 1:
                 planet->builds[i].type = DEFENCE_TOWER;
                 planet->builds[i].level = 0;
-                planet->builds[i].price = (Price) {ORE1, 100};
+                planet->builds[i].damages = 0;
+                planet->builds[i].price = (Price) {ORE1, 250};
                 break;
             case 2:
             case 4:
             case 6:
             case 8:
-            case 10:
+            case 10: {
+                Ore ore = i / 2 - 1;
+                int built = (ore == FUEL || ore == ORE1);  // Seuls le fuel et le fer sont stockables au depart
                 planet->builds[i].type = ORE_STORE;
-                planet->builds[i].level = (i / 2 - 1 == FUEL || i / 2 - 1 == ORE1);
-                planet->builds[i].tank = (Compartment){i / 2 - 1, 0, 0, 0, 0, 1500, 10000, 0, 1};
-                planet->builds[i].price = (Price) {ORE1, 100};
+                planet->builds[i].level = built;
+                planet->builds[i].tank = (Compartment){ore, 0, 0, 0, 0, built ? STARTING_ORE_STOCK : 0, 10000, 0, built};
+                // Le stockage du fuel/fer se paie en fer, l'or se paie en or, etc. (arbre technologique)
+                planet->builds[i].price = (Price) {(ore <= ORE2) ? ORE1 : (Ore)(ore - 1), 130};
                 break;
+            }
             case 3:
             case 5:
             case 7:
             case 9:
-            case 11:
+            case 11: {
+                Ore ore = i / 2 - 1;
                 planet->builds[i].type = ORE_MINE;
                 planet->builds[i].level = 0;
-                planet->builds[i].mine = (Mine){i / 2 - 1, 1000};
-                planet->builds[i].price = (Price) {ORE1, 100};
+                planet->builds[i].mine = (Mine){ore, 1000};
+                planet->builds[i].price = (Price) {(ore <= ORE2) ? ORE1 : (Ore)(ore - 1), 170};
                 break;
+            }
             default:
                 break;
+        }
+    }
+}
+
+int getBuildCost(Build *build) {
+    // Cout pour la prochaine action (construction si non construit, sinon amelioration)
+    int base = build->price.price;
+    if (build->level == 0) {
+        return base;
+    }
+    return base + base * build->level;  // Le cout des ameliorations augmente avec le niveau
+}
+
+int planetOreStock(Planet *planet, Ore ore) {
+    for (int i = 2; i < BUILD_TYPE_COUNT; i += 2) {
+        if (planet->builds[i].type == ORE_STORE && planet->builds[i].tank.ore == ore && planet->builds[i].level > 0) {
+            return (int)planet->builds[i].tank.currentCapacity;
+        }
+    }
+    return 0;
+}
+
+int payOre(Planet *planet, Ore ore, int amount) {
+    for (int i = 2; i < BUILD_TYPE_COUNT; i += 2) {
+        if (planet->builds[i].type == ORE_STORE && planet->builds[i].tank.ore == ore && planet->builds[i].level > 0) {
+            if (planet->builds[i].tank.currentCapacity >= amount) {
+                planet->builds[i].tank.currentCapacity -= amount;
+                return 1;
+            }
+            return 0;  // Stock insuffisant
+        }
+    }
+    return 0;  // Pas de reservoir construit pour ce minerai
+}
+
+void ensureStoreBuilt(Planet *planet, Ore ore) {
+    // Construit gratuitement le reservoir d'un minerai si la mine correspondante est posee
+    for (int i = 2; i < BUILD_TYPE_COUNT; i += 2) {
+        if (planet->builds[i].type == ORE_STORE && planet->builds[i].tank.ore == ore && planet->builds[i].level == 0) {
+            planet->builds[i].level = 1;
+            planet->builds[i].tank.level = 1;
+            return;
         }
     }
 }
@@ -87,7 +136,7 @@ void updateBuilds(Planet *planets, int planetCount) {
 
 void updateBuildMine(Build *builds, Mine *mine, int abundance) {
     for (int i = 0; i < ORE_TYPE_COUNT; i++) {
-        if (builds[2 * i + 2].type == ORE_STORE && builds[2 * i + 2].tank.ore == mine->ore) {  // Si l'on a trouve le bon reservoir, acceuillant les bons minerais...
+        if (builds[2 * i + 2].type == ORE_STORE && builds[2 * i + 2].tank.ore == mine->ore && builds[2 * i + 2].level > 0) {  // Si l'on a trouve le bon reservoir construit, acceuillant les bons minerais...
             builds[2 * i + 2].tank.currentCapacity += mine->productivity * (abundance / 100.f);
 
             if (builds[2 * i + 2].tank.currentCapacity > builds[2 * i + 2].tank.maxCapacity) {
@@ -97,7 +146,7 @@ void updateBuildMine(Build *builds, Mine *mine, int abundance) {
         }
     }
 
-    printf("Pas d'emplacement de stockage trouve pour vider la mine (build.c)\n");
+    // Aucun reservoir construit pour ce minerai : la production est perdue (le joueur doit construire le stockage)
     return;
 }
 

@@ -413,20 +413,46 @@ void displayShips(SDL_Texture ***imageTextures, Ship *ships, int shipCount, Plan
                                        ships[i].w * getCameraScale(),
                                        ships[i].h * getCameraScale()};
 
-        if (ships[i].destRect.x >= -ships[i].destRect.w && ships[i].destRect.x <= SCREEN_WIDTH && 
-            ships[i].destRect.y >= -ships[i].destRect.h && ships[i].destRect.y <= SCREEN_HEIGHT + ships[i].destRect.h) {  // Si la fusee est dans l'ecran 
-            // Creation des variables pour afficher
-            SDL_Rect srcRect = {ships[i].frameIndex * 64, 0, 64, 64};  // Frame actuelle sur le sprite sheet
+        if (ships[i].destRect.x >= -ships[i].destRect.w && ships[i].destRect.x <= SCREEN_WIDTH &&
+            ships[i].destRect.y >= -ships[i].destRect.h && ships[i].destRect.y <= SCREEN_HEIGHT + ships[i].destRect.h) {  // Si la fusee est dans l'ecran
             SDL_Point center = {ships[i].destRect.w / 2, ships[i].destRect.h / 2};  // Definition du point de rotation (au centre du sprite)
 
-            // Affichage de la fusee
-            SDL_RenderCopyEx(renderer, 
-                            imageTextures[7][ships[i].idModel], 
-                            &srcRect, 
-                            &ships[i].destRect, 
-                            angleShipImage(ships, planets, &ships[i]), 
-                            &center, 
-                            SDL_FLIP_NONE);
+            if (ships[i].shiptype == ENEMY) {
+                // Affichage d'un pirate (sprite d'attaquant)
+                SDL_RenderCopyEx(renderer,
+                                imageTextures[1][0],
+                                NULL,
+                                &ships[i].destRect,
+                                angleShipImage(ships, planets, &ships[i]) + 90,
+                                &center,
+                                SDL_FLIP_NONE);
+            } else {
+                // Affichage d'une fusee alliee
+                SDL_Rect srcRect = {ships[i].frameIndex * 64, 0, 64, 64};  // Frame actuelle sur le sprite sheet
+                SDL_RenderCopyEx(renderer,
+                                imageTextures[7][ships[i].idModel],
+                                &srcRect,
+                                &ships[i].destRect,
+                                angleShipImage(ships, planets, &ships[i]),
+                                &center,
+                                SDL_FLIP_NONE);
+            }
+
+            // Barre de vie affichee lorsque le vaisseau est endommage
+            if (ships[i].currentLife < ships[i].maxLife) {
+                SDL_Rect lifeBg = {ships[i].destRect.x, ships[i].destRect.y - 8, ships[i].destRect.w, 5};
+                SDL_SetRenderDrawColor(renderer, 40, 40, 40, 220);
+                SDL_RenderFillRect(renderer, &lifeBg);
+
+                SDL_Rect lifeFg = lifeBg;
+                lifeFg.w = lifeBg.w * ships[i].currentLife / (float)ships[i].maxLife;
+                if (ships[i].shiptype == ENEMY) {
+                    SDL_SetRenderDrawColor(renderer, 230, 60, 60, 255);  // Rouge pour les ennemis
+                } else {
+                    SDL_SetRenderDrawColor(renderer, 0, 220, 0, 255);   // Vert pour les allies
+                }
+                SDL_RenderFillRect(renderer, &lifeFg);
+            }
         }
     }
 }
@@ -503,21 +529,27 @@ int fuelInShip(Ship *ship) {
     return totalFuel;
 }
 
-void addShip(Ship **ships, int *shipCount, Planet *planet) {
+void addShip(Ship **ships, int *shipCount, Planet *planet, int planetCount) {
     *ships = realloc(*ships, (*shipCount + 1) * sizeof(Ship));
     if (*ships == NULL) {
         exit(1);
     }
 
+    memset(&(*ships)[*shipCount], 0, sizeof(Ship));
+
     (*ships)[*shipCount].shiptype = TRANSPORTER;
     (*ships)[*shipCount].id = *shipCount;
     (*ships)[*shipCount].idModel = 6;
     (*ships)[*shipCount].state = WAITING_ON_BASE;
-    
+
     (*ships)[*shipCount].base.type = SPOT_PLANET;
     (*ships)[*shipCount].base.id_planet = planet->id;
     (*ships)[*shipCount].target.type = SPOT_PLANET;
-    (*ships)[*shipCount].target.id_planet = (planet->id + 1) % *shipCount;
+    (*ships)[*shipCount].target.id_planet = (planetCount > 1) ? (planet->id + 1) % planetCount : planet->id;
+
+    (*ships)[*shipCount].noise = 1;  // Eviter une division par zero lors de la generation d'ennemis
+    (*ships)[*shipCount].transferredMinerals = 0;
+    (*ships)[*shipCount].angleWithPlanet = 0;
 
     (*ships)[*shipCount].x = planet->x;
     (*ships)[*shipCount].y = planet->y;

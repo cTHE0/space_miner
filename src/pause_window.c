@@ -11,6 +11,9 @@
 #include "planet.h"
 #include "ship.h"
 #include "tile.h"
+#include "settings.h"
+#include "config.h"
+#include <sys/stat.h>
 
 
 static SDL_Rect windowRect,
@@ -123,7 +126,10 @@ void pauseWindowButtons(SDL_Texture **textTextures) {
 
 void pauseWindowGestion(Mix_Chunk **sounds, GameState *gameState, SDL_Point mouse, Ship *ships, int shipCount, Planet *planets, int planetCount) {
     // Gestion du bouton clique
-    if (SDL_PointInRect(&mouse, &backToGameButtonBgRect) || !SDL_PointInRect(&mouse, &windowRect)) {
+    if (SDL_PointInRect(&mouse, &settingsButtonBgRect)) {
+        setWindowType(SETTINGS_WINDOW);
+        Mix_PlayChannel(1, sounds[7], 0);
+    } else if (SDL_PointInRect(&mouse, &backToGameButtonBgRect) || !SDL_PointInRect(&mouse, &windowRect)) {
         setWindowType(NO_WINDOW);
         Mix_PlayChannel(1, sounds[7], 0);
     } else if (SDL_PointInRect(&mouse, &saveAndQuitButtonBgRect)) {
@@ -134,7 +140,95 @@ void pauseWindowGestion(Mix_Chunk **sounds, GameState *gameState, SDL_Point mous
     }
 }
 
+/* ----------------------- Fenetre de reglages (audio) ----------------------- */
+
+static SDL_Rect settingsPanelRect,
+                settingsTitleRect,
+                musicToggleRect,
+                sfxToggleRect,
+                muteToggleRect;
+
+
+void initSettingsWindowRects(void) {
+    settingsPanelRect = (SDL_Rect){SCREEN_WIDTH * 0.30, SCREEN_HEIGHT * 0.25, SCREEN_WIDTH * 0.40, SCREEN_HEIGHT * 0.50};
+
+    // Boutons d'activation (a droite de chaque ligne)
+    int toggleW = settingsPanelRect.w * 0.28;
+    int toggleH = settingsPanelRect.h * 0.12;
+    int toggleX = settingsPanelRect.x + settingsPanelRect.w * 0.60;
+
+    musicToggleRect = (SDL_Rect){toggleX, settingsPanelRect.y + settingsPanelRect.h * 0.30, toggleW, toggleH};
+    sfxToggleRect   = (SDL_Rect){toggleX, settingsPanelRect.y + settingsPanelRect.h * 0.50, toggleW, toggleH};
+    muteToggleRect  = (SDL_Rect){toggleX, settingsPanelRect.y + settingsPanelRect.h * 0.70, toggleW, toggleH};
+
+    settingsTitleRect = (SDL_Rect){0, 0, 0, 0};  // calcule a l'affichage selon la texture
+}
+
+static void drawSettingsLabel(SDL_Texture *textTexture, int rowY) {
+    int tw, th;
+    SDL_QueryTexture(textTexture, NULL, NULL, &tw, &th);
+    SDL_Rect r = {settingsPanelRect.x + settingsPanelRect.w * 0.08, rowY, tw * SCREEN_HEIGHT * 0.0006, th * SCREEN_HEIGHT * 0.0006};
+    SDL_RenderCopy(renderer, textTexture, NULL, &r);
+}
+
+static void drawToggle(SDL_Texture **textTextures, SDL_Rect rect, int on) {
+    SDL_SetRenderDrawColor(renderer, on ? 59 : 90, on ? 120 : 40, on ? 40 : 40, 255);
+    SDL_RenderFillRect(renderer, &rect);
+    SDL_DrawEdgeOfRect(rect, 3, BLACK);
+
+    SDL_Texture *label = on ? textTextures[93] : textTextures[94];  // "ON" / "OFF"
+    int tw, th;
+    SDL_QueryTexture(label, NULL, NULL, &tw, &th);
+    SDL_Rect lr = {rect.x + rect.w / 2 - tw * SCREEN_HEIGHT * 0.0006 / 2,
+                   rect.y + rect.h / 2 - th * SCREEN_HEIGHT * 0.0006 / 2,
+                   tw * SCREEN_HEIGHT * 0.0006, th * SCREEN_HEIGHT * 0.0006};
+    SDL_RenderCopy(renderer, label, NULL, &lr);
+}
+
+void displaySettingsWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
+    (void)imageTextures;
+
+    // Fond de la fenetre
+    SDL_SetRenderDrawColor(renderer, 18, 52, 73, 255);
+    SDL_RenderFillRect(renderer, &settingsPanelRect);
+    SDL_DrawEdgeOfRect(settingsPanelRect, 3, WHITE);
+
+    // Titre "Audio settings"
+    int tw, th;
+    SDL_QueryTexture(textTextures[89], NULL, NULL, &tw, &th);
+    settingsTitleRect = (SDL_Rect){settingsPanelRect.x + settingsPanelRect.w / 2 - tw * SCREEN_HEIGHT * 0.0009 / 2,
+                                   settingsPanelRect.y + settingsPanelRect.h * 0.08,
+                                   tw * SCREEN_HEIGHT * 0.0009, th * SCREEN_HEIGHT * 0.0009};
+    SDL_RenderCopy(renderer, textTextures[89], NULL, &settingsTitleRect);
+
+    // Lignes : libelles + boutons
+    drawSettingsLabel(textTextures[90], musicToggleRect.y + musicToggleRect.h * 0.15);  // Music
+    drawSettingsLabel(textTextures[91], sfxToggleRect.y + sfxToggleRect.h * 0.15);       // Sound effects
+    drawSettingsLabel(textTextures[92], muteToggleRect.y + muteToggleRect.h * 0.15);     // Mute all
+
+    drawToggle(textTextures, musicToggleRect, isMusicOn() && !isMuted());
+    drawToggle(textTextures, sfxToggleRect, isSfxOn() && !isMuted());
+    drawToggle(textTextures, muteToggleRect, isMuted());
+}
+
+void settingsWindowGestion(Mix_Chunk **sounds, SDL_Point mouse) {
+    if (SDL_PointInRect(&mouse, &musicToggleRect)) {
+        toggleMusic(sounds);
+        Mix_PlayChannel(1, sounds[7], 0);
+    } else if (SDL_PointInRect(&mouse, &sfxToggleRect)) {
+        toggleSfx();
+        Mix_PlayChannel(1, sounds[7], 0);
+    } else if (SDL_PointInRect(&mouse, &muteToggleRect)) {
+        toggleMute(sounds);
+    } else if (!SDL_PointInRect(&mouse, &settingsPanelRect)) {
+        setWindowType(NO_WINDOW);  // Clic en dehors : fermeture
+        Mix_PlayChannel(1, sounds[7], 0);
+    }
+}
+
 void saveGame(Ship *ships, int shipCount, Planet *planets, int planetCount) {
+    mkdir("backups", 0755);  // Cree le dossier de sauvegarde s'il n'existe pas
+
     FILE *backup = fopen(NAME_BACKUP, "wb");  // Ouvre le fichier en mode binaire
     if (!backup) {
         printf("Erreur lors de l'ouverture du fichier pour la sauvegarde.\n");

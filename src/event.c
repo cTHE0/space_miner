@@ -11,6 +11,7 @@
 #include "landing_page.h"
 #include "basic_ship_window.h"
 #include "place.h"
+#include "settings.h"
 
 
 static SDL_Point mouse;
@@ -113,28 +114,11 @@ void handleEvents(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **soun
                         translateCamera(0, STEP_TRANSLATION);
                         click = 0;
                         break;
-                    
-                    /*---------Partie pr développement------------*/
-                    case SDLK_1:
-                        setSign();
+
+                    case SDLK_m:  // Couper / remettre le son
+                        toggleMute(sounds);
                         break;
-                    case SDLK_x:
-                        modifEmp(1, 0, 0, 0);
-                        break;
-                    case SDLK_y:
-                        modifEmp(0, 1, 0, 0);
-                        break;
-                    case SDLK_w:
-                        modifEmp(0, 0, 1, 0);
-                        break;
-                    case SDLK_h:
-                        modifEmp(0, 0, 0, 1);
-                        break;
-                    case SDLK_s:
-                        setScaleDev();
-                        break;
-                    /*---------Partie pr développement------------*/
-                    
+
                     default:
                         break;
                 }

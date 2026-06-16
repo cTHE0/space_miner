@@ -18,6 +18,10 @@ void displayPauseWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures
 	void pauseWindowButtons(SDL_Texture **textTextures);
 void pauseWindowGestion(Mix_Chunk **sounds, GameState *gameState, SDL_Point mouse, Ship *ships, int shipCount, Planet *planets, int planetCount);
 
+void initSettingsWindowRects(void);
+void displaySettingsWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures);
+void settingsWindowGestion(Mix_Chunk **sounds, SDL_Point mouse);
+
 void saveGame(Ship *ships, int shipCount, Planet *planets, int planetCount);
 
 #endif

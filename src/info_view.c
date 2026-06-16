@@ -21,6 +21,10 @@ SDL_Rect getSideBarButtonRect() {
     return rightBarRect;
 }
 
+SDL_Rect getSettingsIconRect(void) {
+    return settingsRect;
+}
+
 void initInfoViewRects(SDL_Texture **textTextures) {
     int textureWidth, textureHeight;
 

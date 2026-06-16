@@ -140,7 +140,13 @@ SDL_Texture **loadTextTextures(TTF_Font **fonts) {  // ATTENTION: ne pas oublier
                                             {"Swap direction", BLACK, fonts[0]},
                                             {"Stop filling tanks", BLACK, fonts[0]},
                                             {"You must dock your ship to upgrade or repair it.", RED, fonts[0]},
-                                            {"???", BLACK, fonts[0]}
+                                            {"???", BLACK, fonts[0]},
+                                            {"Audio settings", WHITE, fonts[0]},  // index 89
+                                            {"Music", WHITE, fonts[0]},           // index 90
+                                            {"Sound effects", WHITE, fonts[0]},   // index 91
+                                            {"Mute all", WHITE, fonts[0]},        // index 92
+                                            {"ON", GREEN2, fonts[0]},             // index 93
+                                            {"OFF", RED2, fonts[0]}               // index 94
                                            };
 
     for (int i = 0; i < CST_TEXT_NUMBER; i++) {

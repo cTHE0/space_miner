@@ -33,4 +33,9 @@ void displayBuildsAroundPlanet(Planet *planet, int nb_build, SDL_Texture **build
 void updateBuilds(Planet *planets, int planetCount);
 void updateBuildMine(Build *builds, Mine *mine, int abundance);
 
+int getBuildCost(Build *build);
+int planetOreStock(Planet *planet, Ore ore);
+int payOre(Planet *planet, Ore ore, int amount);
+void ensureStoreBuilt(Planet *planet, Ore ore);
+
 #endif

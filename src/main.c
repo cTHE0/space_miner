@@ -18,6 +18,7 @@
 #include "enemy.h"
 #include "tile.h"
 #include "window.h"
+#include "settings.h"
 
 
 const uint32_t currentSeed = 1;  // Peut prendre des valeurs entre 1 et 2**32-1
@@ -33,6 +34,7 @@ int main(void) {
 
     Mix_Chunk **sounds;
     initSounds(&sounds);
+    initSettings();
 
     Ship *ships = NULL;
     int shipCount = INIT_SHIP_COUNT;
@@ -71,7 +73,6 @@ int main(void) {
                 break;
             
             case GAME:
-                initRects(textTextures);  // A SUPPRIMER, SEULEMENT POUR LE DEV
                 handleEvents(textTextures, fonts, sounds, &gameState, &ships, &shipCount, planets, planetCount);
                 updateGame(textTextures, fonts, &ships, &shipCount, planets, planetCount, sounds);
                 displayGame(imageTextures, textTextures, ships, shipCount, planets, planetCount);
@@ -82,13 +83,15 @@ int main(void) {
                 break;
         }
 
-        // Affichage des FPS
+        // Mesure des FPS (affichage uniquement en mode debug)
         if (SDL_GetTicks() - toShowFPS >= 3000) {
+#ifdef DEBUG_FPS
             printf("FPS: %d\n", (frameCount * 1000) / (SDL_GetTicks() - toShowFPS));
+#endif
             frameCount = 0;
             toShowFPS = SDL_GetTicks();
         }
-            
+
         // Limite les FPS
         if ((SDL_GetTicks() - toLimitFPS) < 16) {
             SDL_Delay(1000 / FPS - (SDL_GetTicks() - toLimitFPS));
@@ -102,9 +105,6 @@ int main(void) {
         destroyAsteroids();
         destroyTiles();
     }
-
-    // POUR LE DEV 
-    printf("(SDL_Rect){SCREEN_WIDTH * %.4f, SCREEN_HEIGHT * %.4f, SCREEN_WIDTH * %.4f, SCREEN_WIDTH * %.4f};\n", getEmp().x, getEmp().y, getEmp().w, getEmp().h);
 
     destroyImageTextures(imageTextures);
     destroyTextTextures(textTextures);

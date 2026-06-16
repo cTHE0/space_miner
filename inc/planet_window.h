@@ -20,7 +20,7 @@ void planetWindowManageBuilds(SDL_Texture ***imageTextures, SDL_Texture **textTe
 void planetWindowOverviewBuild(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Planet *planet);
 void planetWindowNearestShips(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships);
 
-void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, Ship **ships, int *shipCount, Planet *planets, SDL_Point mouse);
+void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, Ship **ships, int *shipCount, Planet *planets, int planetCount, SDL_Point mouse);
 
 void computeCloseShipsFromPlanet(Planet *planet, Ship *ships, int shipCount);
 

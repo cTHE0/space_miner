@@ -3,7 +3,9 @@
 
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
 #include "ship.h"
+#include "planet.h"
 
 
 typedef struct {
@@ -19,12 +21,13 @@ void deleteLaser(int i);
 int newTarget(Ship *ships, int shipCount, int ennemy_index, int idException);
 void displayLasers(SDL_Texture ***imageTextures);
 
-void generateEnemy(Ship targetShip, Ship **ships, int *shipCount);
+void generateEnemy(int targetIndex, Ship **ships, int *shipCount);
 
-void updateWarSystem(Ship **ships, int *shipCount, Mix_Chunk **sounds);
+void updateWarSystem(Ship **ships, int *shipCount, Planet *planets, int planetCount, Mix_Chunk **sounds);
     void updateEnemies(Ship **ships, int *shipCount);
     void updateLasers(Ship *ships, Mix_Chunk **sounds);
     void newLasersFired(Ship *ships, int shipCount, Mix_Chunk **sounds);
+    void updateDefenceTowers(Planet *planets, int planetCount, Ship *ships, int shipCount, Mix_Chunk **sounds);
 
 int getLasersCount(void);
 Laser *getLasersList(void);

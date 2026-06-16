@@ -8,7 +8,7 @@
 #include "ship.h"
 #include "landing_page.h"
 
-typedef enum {NO_WINDOW, SHIP_WINDOW, PLANET_WINDOW, DEFENDER_WINDOW, ENNEMY_WINDOW, BASIC_SHIP_WINDOW, SIDE_BAR_WINDOW, PAUSE_WINDOW} WindowType;
+typedef enum {NO_WINDOW, SHIP_WINDOW, PLANET_WINDOW, DEFENDER_WINDOW, ENNEMY_WINDOW, BASIC_SHIP_WINDOW, SIDE_BAR_WINDOW, PAUSE_WINDOW, SETTINGS_WINDOW} WindowType;
 
 typedef struct {
     WindowType type;  // Type de fenetre affiche (d'une fusee, planete, attaquant, etc)

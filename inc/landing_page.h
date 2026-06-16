@@ -29,7 +29,7 @@ void updateFrameIndex(void);
 
 void handleMenuEvents(Mix_Chunk **sounds, GameState *gameState, short *gameBegun, Ship **ships, int *shipCount, Planet **planets, int *planetCount);
 
-void chargingGame(Ship **ships, int *shipCount, Planet **planets, int *planetCount);
+int chargingGame(Ship **ships, int *shipCount, Planet **planets, int *planetCount);
 
 
 #endif

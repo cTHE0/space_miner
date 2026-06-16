@@ -74,11 +74,15 @@ void handleMenuEvents(Mix_Chunk **sounds, GameState *gameState, short *gameBegun
                 if (event.button.button == SDL_BUTTON_LEFT) {
                     switch (bg_button_a_afficher) {
                         case 1:
-                            Mix_PlayChannel(0, sounds[7], 0);
-                            chargingGame(ships, shipCount, planets, planetCount);
-                            initCamera(*planets);
-                            initAsteroids(*planets, *planetCount);
-                            *gameState = GAME;
+                            // "Continue" : ne demarre la partie que si une sauvegarde a pu etre chargee
+                            if (chargingGame(ships, shipCount, planets, planetCount)) {
+                                Mix_PlayChannel(0, sounds[7], 0);
+                                initCamera(*planets);
+                                initAsteroids(*planets, *planetCount);
+                                *gameState = GAME;
+                            } else {
+                                Mix_PlayChannel(1, sounds[8], 0);  // Bip d'erreur : pas de sauvegarde
+                            }
                             break;
                         case 2:
                             Mix_PlayChannel(0, sounds[7], 0);
@@ -183,11 +187,11 @@ void displayMenu(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
     SDL_RenderPresent(renderer);
 }
 
-void chargingGame(Ship **ships, int *shipCount, Planet **planets, int *planetCount) {
+int chargingGame(Ship **ships, int *shipCount, Planet **planets, int *planetCount) {
     FILE *backup = fopen(NAME_BACKUP, "rb");  // Ouvre le fichier en mode binaire
     if (!backup) {
-        printf("Erreur lors de l'ouverture du fichier pour le chargement.\n");
-        return;
+        printf("Aucune sauvegarde a charger.\n");
+        return 0;
     }
 
     // Lire le nombre de fusees stockees dans le fichier
@@ -195,7 +199,7 @@ void chargingGame(Ship **ships, int *shipCount, Planet **planets, int *planetCou
     if (itemsRead != 1) {
         printf("Error reading the backup file (downloading shipCount).\n");
         fclose(backup);
-        return;
+        return 0;
     }
 
     // Lire le nombre de planetes stockees
@@ -203,7 +207,7 @@ void chargingGame(Ship **ships, int *shipCount, Planet **planets, int *planetCou
     if (itemsRead != 1) {
         printf("Error reading the backup file (downloading planetCount).\n");
         fclose(backup);
-        return;
+        return 0;
     }
 
     // Initialiser la variable static 'byteCount' de tile.c
@@ -215,7 +219,7 @@ void chargingGame(Ship **ships, int *shipCount, Planet **planets, int *planetCou
     if (!*ships || !*planets) {
         printf("Erreur d'allocation de mémoire pour les fusees/planetes.\n");
         fclose(backup);
-        return;
+        return 0;
     }
 
     // Allouer dynamiquement la mémoire pour la liste des tuiles
@@ -224,7 +228,7 @@ void chargingGame(Ship **ships, int *shipCount, Planet **planets, int *planetCou
     if (!*tilesMatrixMalloc) {
         printf("Erreur d'allocation de mémoire pour les tuiles.\n");
         fclose(backup);
-        return;
+        return 0;
     }
 
     // Charger le tableau de fusees
@@ -232,7 +236,7 @@ void chargingGame(Ship **ships, int *shipCount, Planet **planets, int *planetCou
     if (itemsRead != (size_t)(*shipCount)) {
         printf("Error reading the backup file (downloading ships).\n");
         fclose(backup);
-        return;
+        return 0;
     }
 
     // Charger le tableau de planetes
@@ -240,7 +244,7 @@ void chargingGame(Ship **ships, int *shipCount, Planet **planets, int *planetCou
     if (itemsRead != (size_t)(*planetCount)) {
         printf("Error reading the backup file (downloading planets).\n");
         fclose(backup);
-        return;
+        return 0;
     }
 
     // Charger le tableau de tuiles
@@ -248,7 +252,7 @@ void chargingGame(Ship **ships, int *shipCount, Planet **planets, int *planetCou
     if (itemsRead != (size_t)(*getByteCount())) {
         printf("Error reading the backup file (downloading tiles).\n");
         fclose(backup);
-        return;
+        return 0;
     }
 
     // Initialise le nombre de systeme solaire dans la vairbale static appropriee
@@ -262,4 +266,6 @@ void chargingGame(Ship **ships, int *shipCount, Planet **planets, int *planetCou
 
     // Fermeture du fichier de lecture de sauvegarde
     fclose(backup);
+
+    return 1;  // Chargement reussi
 }

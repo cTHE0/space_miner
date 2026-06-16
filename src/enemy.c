@@ -1,8 +1,11 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
 #include <stdlib.h>
+#include <math.h>
 #include "enemy.h"
 #include "ship.h"
+#include "planet.h"
+#include "build.h"
 #include "config.h"
 #include "tools.h"
 #include "camera.h"
@@ -10,6 +13,7 @@
 
 
 static Uint32 lastEnemyGenerationTime = 0;
+static Uint32 lastTowerFireTime = 0;
 
 static Laser *lasers = NULL;
 static int lasersCount = 0;
@@ -18,26 +22,133 @@ static int lastLaserSon = 2;  // canaux 2,3,4 pour les sons de lasers
 static int lastExplosionSon = 5;   /// canaux 5,6,7 pour les cons d'explosions
 
 
-void generateEnemy(Ship targetShip, Ship **ships, int *shipCount) {
+void generateEnemy(int targetIndex, Ship **ships, int *shipCount) {
+    // Position de la cible avant la reallocation (qui invalide les pointeurs)
+    float targetX = (*ships)[targetIndex].x;
+    float targetY = (*ships)[targetIndex].y;
+
+    Ship *temp = realloc(*ships, (*shipCount + 1) * sizeof(Ship));
+    if (temp == NULL) {
+        return;  // Echec d'allocation : on n'ajoute pas d'ennemi
+    }
+    *ships = temp;
+
+    Ship *enemy = &(*ships)[*shipCount];
+    memset(enemy, 0, sizeof(Ship));
+
+    enemy->shiptype = ENEMY;
+    enemy->id = *shipCount;
+    enemy->idModel = 0;
+    enemy->level = 1;
+
+    // Apparition autour de la cible, juste hors de portee
+    float angle = (rand() % 360) * M_PI / 180.0f;
+    float spawnDist = 1500 + rand() % 1200;
+    enemy->w = 160;
+    enemy->h = 160;
+    enemy->x = targetX + spawnDist * cosf(angle) - enemy->w / 2.f;
+    enemy->y = targetY + spawnDist * sinf(angle) - enemy->h / 2.f;
+
+    enemy->speed = (0.5f + (rand() % 50) / 100.f) * SHIP_SPEED;
+    enemy->maxLife = ENEMY_LIFE;
+    enemy->currentLife = ENEMY_LIFE;
+    enemy->range = 1300;
+    enemy->noise = 0;
+    enemy->fuelConsumption = 1;  // Valeur non nulle par securite (evite des divisions par zero)
+
+    enemy->state = ATTACKING_SHIP;
+    enemy->base.type = SPOT_NONE;
+    enemy->target.type = SPOT_SHIP;
+    enemy->target.id_ship = targetIndex;
+
+    enemy->frameIndex = rand() % 4;
+    enemy->lastFrameTime = 0;
+    enemy->lastRefreshFiring = SDL_GetTicks();
+
+    (*shipCount)++;
 }
 
-void updateWarSystem(Ship **ships, int *shipCount, Mix_Chunk **sounds) {
+void updateWarSystem(Ship **ships, int *shipCount, Planet *planets, int planetCount, Mix_Chunk **sounds) {
     updateEnemies(ships, shipCount);
+    updateDefenceTowers(planets, planetCount, *ships, *shipCount, sounds);
     updateLasers(*ships, sounds);
     newLasersFired(*ships, *shipCount, sounds);
     deleteKilledShips(ships, shipCount);
 }
 
 void updateEnemies(Ship **ships, int *shipCount) {
-    if (SDL_GetTicks() - lastEnemyGenerationTime < ENEMY_GENERATION_PERIOD) return;
+    // Periode de grace au demarrage (laisse le temps au joueur de s'installer)
+    if (lastEnemyGenerationTime == 0) {
+        lastEnemyGenerationTime = SDL_GetTicks();
+        return;
+    }
 
+    if (SDL_GetTicks() - lastEnemyGenerationTime < ENEMY_GENERATION_PERIOD) return;
     lastEnemyGenerationTime = SDL_GetTicks();
+
+    // Comptage des ennemis et des transporteurs
+    int enemies = 0, transporters = 0;
+    for (int i = 0; i < *shipCount; i++) {
+        if ((*ships)[i].shiptype == ENEMY) enemies++;
+        else transporters++;
+    }
+
+    // Le nombre de pirates simultanes augmente avec la taille de la flotte du joueur
+    int cap = 2 + 2 * transporters;
+    if (cap > MAX_ENEMIES) cap = MAX_ENEMIES;
+
+    if (transporters == 0 || enemies >= cap) return;
+
+    // Choix d'un transporteur cible au hasard (echantillonnage par reservoir)
+    int targetIndex = -1, count = 0;
     for (int i = 0; i < *shipCount; i++) {
         if ((*ships)[i].shiptype != ENEMY) {
-            int newEnemiesCount = rand() % (*ships)[i].noise;
-            for (int j = 0; j < newEnemiesCount; j++) {  // Le nombre de nouveaux ennemies depend de la variable 'noise'
-                generateEnemy((*ships)[i], ships, shipCount);
+            count++;
+            if (rand() % count == 0) targetIndex = i;
+        }
+    }
+
+    if (targetIndex != -1) {
+        generateEnemy(targetIndex, ships, shipCount);
+    }
+}
+
+void updateDefenceTowers(Planet *planets, int planetCount, Ship *ships, int shipCount, Mix_Chunk **sounds) {
+    if (SDL_GetTicks() < lastTowerFireTime + TOWER_FIRE_PERIOD) return;
+    lastTowerFireTime = SDL_GetTicks();
+
+    for (int p = 0; p < planetCount; p++) {
+        Build *tower = &planets[p].builds[1];
+        if (tower->type != DEFENCE_TOWER || tower->level == 0) continue;
+
+        float range = 4000 + tower->level * 1500.f;  // Portee augmentee par les ameliorations
+
+        // Recherche de l'ennemi le plus proche dans la portee
+        int best = -1;
+        float bestDist = range;
+        for (int s = 0; s < shipCount; s++) {
+            if (ships[s].shiptype != ENEMY) continue;
+            float dx = ships[s].x + ships[s].w / 2.f - planets[p].x;
+            float dy = ships[s].y + ships[s].h / 2.f - planets[p].y;
+            float d = sqrtf(dx * dx + dy * dy);
+            if (d < bestDist) {
+                bestDist = d;
+                best = s;
             }
+        }
+
+        if (best != -1) {
+            SDL_Rect laser = {(int)planets[p].x, (int)planets[p].y, 200, 200};
+            addLaser(laser,
+                     (SDL_Point){(int)ships[best].x, (int)ships[best].y},
+                     best,
+                     computeAngleDeg((int)ships[best].x, (int)ships[best].y, laser.x, laser.y),
+                     16);
+
+            Mix_PlayChannel(lastLaserSon, sounds[11], 0);
+            Mix_SetPositionCameraCentered(lastLaserSon, &lasers[lasersCount - 1].rect);
+            lastLaserSon++;
+            if (lastLaserSon == 5) lastLaserSon = 2;
         }
     }
 }
@@ -85,7 +196,8 @@ void newLasersFired(Ship *ships, int shipCount, Mix_Chunk **sounds) {
     SDL_Rect newLaser = {0, 0, 200, 200};
     for (int i = 0; i < shipCount; i++) {
         if (ships[i].shiptype != ENEMY) continue;  // Seuls les ennemies peuvent tirer des missiles actuellement
-        if (ships[i].target.id_ship == -1) continue;
+        if (ships[i].target.type != SPOT_SHIP) continue;
+        if (ships[i].target.id_ship < 0 || ships[i].target.id_ship >= shipCount) continue;
         if (currentTime < ships[i].lastRefreshFiring + LASER_GENERATION_PERIOD) continue;
 
         // Met a jour la date du dernier tir

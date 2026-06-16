@@ -77,7 +77,11 @@ static SDL_Rect windowRect,
                 distanceNearestShipsdRect,
                 shipSrcRect,
                 shipTypeLogoRect,
-                firstLogoBuilRect;
+                firstLogoBuilRect,
+                costNumberRect,
+                costLogoRect,
+                costNumberRect2,
+                costLogoRect2;
 
 
 void initPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts, Planet *planets, Ship *ships, int shipCount) {
@@ -230,7 +234,11 @@ void initPlanetWindow(SDL_Texture **textTextures, TTF_Font **fonts, Planet *plan
     strcpy(descriptionText, "");
     for (int i = 0; i < 6; i++) {
         if (nearestShips[i][0] == -1) break;
-        strcat(descriptionText, "Transporter\n \n ");
+        if (ships[nearestShips[i][0]].shiptype == ENEMY) {
+            strcat(descriptionText, "Pirate\n \n ");  // Menace a proximite
+        } else {
+            strcat(descriptionText, "Transporter\n \n ");
+        }
     }
 
     textTextures[35] = createTextTextureWithNewline(fonts[0], descriptionText, BLACK);
@@ -384,6 +392,12 @@ void initPlanetWindowRects(SDL_Texture **textTextures) {
 
     logoUpdateButtonBuildRect = (SDL_Rect){SCREEN_WIDTH * 0.5490, SCREEN_HEIGHT * 0.8270, SCREEN_WIDTH * 0.0200, SCREEN_WIDTH * 0.0200};
 
+    // Affichage du cout (nombre + logo du minerai) au-dessus du bouton de construction
+    costLogoRect = (SDL_Rect){SCREEN_WIDTH * 0.540, SCREEN_HEIGHT * 0.775, SCREEN_WIDTH * 0.018, SCREEN_WIDTH * 0.018};
+    costNumberRect = (SDL_Rect){SCREEN_WIDTH * 0.560, SCREEN_HEIGHT * 0.778, SCREEN_WIDTH * 0.011, SCREEN_WIDTH * 0.020};
+    costLogoRect2 = (SDL_Rect){SCREEN_WIDTH * 0.610, SCREEN_HEIGHT * 0.775, SCREEN_WIDTH * 0.018, SCREEN_WIDTH * 0.018};
+    costNumberRect2 = (SDL_Rect){SCREEN_WIDTH * 0.630, SCREEN_HEIGHT * 0.778, SCREEN_WIDTH * 0.011, SCREEN_WIDTH * 0.020};
+
 
     // planetWindowNearestShips
        
@@ -458,7 +472,7 @@ void planetWindowContainerInfo(SDL_Texture ***imageTextures, SDL_Texture **textT
 
     for (int i = 2; i < 12; i += 2) {  // Parcourt les réservoirs (c.f. 'initBuildsPlanet' dans build.c)
         // Le conteneur du minerai i est-il déjà construit ?
-        if (planet->builds[i].level == 0) break;
+        if (planet->builds[i].level == 0) continue;
         // Barre de fond
         SDL_SetRenderDrawColor(renderer, 150, 150, 150, 255);
         currentOreRect.w = planetFirstResourceRect.w;
@@ -636,6 +650,19 @@ void planetWindowOverviewBuild(SDL_Texture ***imageTextures, SDL_Texture **textT
 
     // Afficher la description du batiment
     SDL_RenderCopy(renderer, textTextures[34], NULL, &infoBuildRect);
+
+    // Afficher le cout de la prochaine action (construction / amelioration / fabrication)
+    if (planet->builds[currentBuildIndex].type == FACTORY && planet->builds[currentBuildIndex].level > 0) {
+        // Fabriquer une fusee : 250 fer + 100 or
+        SDL_RenderCopy(renderer, imageTextures[4][ORE1], NULL, &costLogoRect);
+        renderNumber(250, costNumberRect);
+        SDL_RenderCopy(renderer, imageTextures[4][ORE2], NULL, &costLogoRect2);
+        renderNumber(100, costNumberRect2);
+    } else {
+        int cost = getBuildCost(&planet->builds[currentBuildIndex]);
+        SDL_RenderCopy(renderer, imageTextures[4][planet->builds[currentBuildIndex].price.ore], NULL, &costLogoRect);
+        renderNumber(cost, costNumberRect);
+    }
 }
 
 void planetWindowNearestShips(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship *ships) {
@@ -658,9 +685,13 @@ void planetWindowNearestShips(SDL_Texture ***imageTextures, SDL_Texture **textTe
     SDL_Rect nearestShipTabLine1TempoRect = nearestShipTabLine1Rect;
     for (int i = 0; i < 6; i++) {
         if (nearestShips[i][0] != -1) {
-            // Affiche le logo des fusées
+            // Affiche le logo des fusées (sprite pirate pour les ennemis)
             shipTypeLogoTempoRect.y = shipTypeLogoRect.y + i * gapBetweenNearestShips;
-            SDL_RenderCopy(renderer, imageTextures[7][ships[i].idModel], &shipSrcRect, &shipTypeLogoTempoRect);
+            if (ships[nearestShips[i][0]].shiptype == ENEMY) {
+                SDL_RenderCopy(renderer, imageTextures[1][0], NULL, &shipTypeLogoTempoRect);
+            } else {
+                SDL_RenderCopy(renderer, imageTextures[7][ships[nearestShips[i][0]].idModel], &shipSrcRect, &shipTypeLogoTempoRect);
+            }
         }
 
         // Affiche la barre horizontale (en bas du logo, du nom de fusée et de la distance)
@@ -672,7 +703,7 @@ void planetWindowNearestShips(SDL_Texture ***imageTextures, SDL_Texture **textTe
     SDL_RenderCopy(renderer, textTextures[36], NULL, &distanceNearestShipsdRect);
 }
 
-void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, Ship **ships, int *shipCount, Planet *planets, SDL_Point mouse) {
+void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk **sounds, Ship **ships, int *shipCount, Planet *planets, int planetCount, SDL_Point mouse) {
     if (SDL_PointInRect(&mouse, &WindowCrossRect) || !clickOnWindow(mouse)) {
         setWindowType(NO_WINDOW);
         Mix_PlayChannel(1, sounds[10], 0);
@@ -722,6 +753,7 @@ void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk
     SDL_Rect nearestShipTabRect = (SDL_Rect){nearestShipTabLine1Rect.x, 0, nearestShipTabLine1Rect.w, gapBetweenNearestShips};
     for (int i = 0; i < 6; i++) {
         if (nearestShips[i][0] == -1) break;
+        if ((*ships)[nearestShips[i][0]].shiptype == ENEMY) continue;  // On n'ouvre pas la fiche d'un pirate
 
         nearestShipTabRect.y = nearestShipTabLine1Rect.y + i * gapBetweenNearestShips;
         if (SDL_PointInRect(&mouse, &nearestShipTabRect)) {
@@ -734,92 +766,59 @@ void planetWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk
         }
     }
 
-    // Achat d'un nouveau batiment
-    if (planets[getWindowId()].builds[currentBuildIndex].level == 0 && SDL_PointInRect(&mouse, &upgradeBarRect)) {
-        switch (currentBuildIndex) {
-            case 2:  // Acheter un réservoir
-            case 4:
-            case 6:
-            case 8:
-            case 10:
-                if (planets[getWindowId()].builds[4].tank.currentCapacity > 100) {
-                    planets[getWindowId()].builds[4].tank.currentCapacity -= 100;  // Prix a payer
-                    planets[getWindowId()].builds[currentBuildIndex].level = 1;
-                    Mix_PlayChannel(1, sounds[5], 0);
+    // Achat / amelioration d'un batiment (un seul bouton qui change de role selon le niveau)
+    if (SDL_PointInRect(&mouse, &upgradeBarRect)) {
+        Planet *planet = &planets[getWindowId()];
+        Build *build = &planet->builds[currentBuildIndex];
+
+        if (build->level == 0) {
+            // ----- Construction initiale -----
+            int cost = getBuildCost(build);
+            if (payOre(planet, build->price.ore, cost)) {
+                build->level = 1;
+                if (build->type == ORE_STORE) {
+                    build->tank.level = 1;
                 }
-                break;
-
-            case 3:
-            case 5:
-            case 7:
-            case 9:
-            case 11:  // Acheter une mine
-                if (planets[getWindowId()].builds[4].tank.currentCapacity > 100) {
-                    planets[getWindowId()].builds[4].tank.currentCapacity -= 100;  // Prix a payer
-                    planets[getWindowId()].builds[currentBuildIndex].level = 1;
-                    Mix_PlayChannel(1, sounds[5], 0);
+                if (build->type == ORE_MINE) {
+                    ensureStoreBuilt(planet, build->mine.ore);  // La mine a besoin d'un reservoir
                 }
-                break;
-
-            case 0:  // Acheter le batiment pour fabriquer des fusees
-                if (planets[getWindowId()].builds[4].tank.currentCapacity > 100) {
-                    planets[getWindowId()].builds[4].tank.currentCapacity -= 100;  // Prix a payer
-                    planets[getWindowId()].builds[currentBuildIndex].level = 1;
-                    Mix_PlayChannel(1, sounds[5], 0);
+                Mix_PlayChannel(1, sounds[5], 0);
+            } else {
+                Mix_PlayChannel(1, sounds[8], 0);  // Pas assez de ressources
+            }
+        } else if (build->type == FACTORY) {
+            // ----- Fabriquer une fusee (l'usine est deja construite) -----
+            int costIron = 250, costGold = 100;
+            if (planetOreStock(planet, ORE1) >= costIron && planetOreStock(planet, ORE2) >= costGold) {
+                payOre(planet, ORE1, costIron);
+                payOre(planet, ORE2, costGold);
+                addShip(ships, shipCount, planet, planetCount);
+                Mix_PlayChannel(1, sounds[5], 0);
+            } else {
+                Mix_PlayChannel(1, sounds[8], 0);
+            }
+        } else {
+            // ----- Amelioration -----
+            int cost = getBuildCost(build);
+            if (payOre(planet, build->price.ore, cost)) {
+                build->level++;
+                switch (build->type) {
+                    case ORE_STORE:
+                        build->tank.maxCapacity *= 1.15;
+                        break;
+                    case ORE_MINE:
+                        build->mine.productivity *= 1.15;
+                        break;
+                    case DEFENCE_TOWER:
+                        build->damages++;  // Une tour plus haut niveau tire plus loin / plus fort
+                        break;
+                    default:
+                        break;
                 }
-                break;
-
-            case 1:  // Tour de défence (prochainement)
-                break;
-
-            default:
-                break;
-        }
-        initPlanetWindow(textTextures, fonts, planets, *ships, *shipCount);
-    }
-
-    // Amelioration d'un nouveau batiment
-    else if (SDL_PointInRect(&mouse, &upgradeBarRect) && planets[getWindowId()].builds[currentBuildIndex].level > 0) {        
-        switch (currentBuildIndex) {
-            case 2:
-            case 4:
-            case 6:
-            case 8:
-            case 10:  // Ameliorer un reservoir
-                if (planets[getWindowId()].builds[4].tank.currentCapacity > 100) {
-                    planets[getWindowId()].builds[4].tank.currentCapacity -= 100;  // Prix a payer
-                    planets[getWindowId()].builds[currentBuildIndex].level ++;
-                    planets[getWindowId()].builds[currentBuildIndex].tank.maxCapacity *= 1.05;
-                    Mix_PlayChannel(1, sounds[5], 0);
-                }
-                break;
-
-            case 3:
-            case 5:
-            case 7:
-            case 9:
-            case 11:  // Ameliorer une mine
-                if (planets[getWindowId()].builds[4].tank.currentCapacity > 100) {
-                    planets[getWindowId()].builds[4].tank.currentCapacity -= 100;  // Prix a payer
-                    planets[getWindowId()].builds[currentBuildIndex].level ++;
-                    planets[getWindowId()].builds[currentBuildIndex].mine.productivity *= 1.05;
-                    Mix_PlayChannel(1, sounds[5], 0);
-                }
-                break;
-
-            case 0:  // Fabriquer une nouvelle fusée
-                if (planets[getWindowId()].builds[4].tank.currentCapacity > 100) {
-                    planets[getWindowId()].builds[4].tank.currentCapacity -= 100;  // Prix a payer
-                    addShip(ships, shipCount, &planets[getWindowId()]);
-                    Mix_PlayChannel(1, sounds[5], 0);
-                }
-                break;
-
-            case 1:  // Tour de défence (prochainement)
-                break;
-
-            default:
-                break;
+                Mix_PlayChannel(1, sounds[5], 0);
+            } else {
+                Mix_PlayChannel(1, sounds[8], 0);
+            }
         }
 
         initPlanetWindow(textTextures, fonts, planets, *ships, *shipCount);

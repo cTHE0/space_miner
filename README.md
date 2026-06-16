@@ -14,8 +14,28 @@ Un jeu en C avec SDL2 dans lequel vous pourrez creer, developper et defendre une
 3. Compilez et lancez :  
    ```sh  
    make  
-   ./sdl_zoom  
+   ./void_reign  
    ```  
+
+## Comment jouer  
+Vous dirigez une civilisation minière inter-galactique. Le but : extraire des minerais, développer vos planètes et survivre aux attaques de pirates.
+
+- **Extraire** : sur une planète, construisez des *mines* (elles remplissent les *réservoirs* du minerai correspondant).
+- **Transporter** : chaque fusée fait la navette entre une *base* et une *cible*. Ouvrez sa fiche pour choisir les minerais à charger/décharger.
+- **Économie** : chaque construction/amélioration coûte des ressources, prélevées sur le réservoir de la planète. L'or, le joanium et le voidor forment un véritable arbre technologique (il faut de l'or pour le joanium, etc.).
+- **L'usine** fabrique de nouvelles fusées (fer + or).
+- **La guerre** : des pirates apparaissent et attaquent vos transporteurs. Construisez des **tours de défense** sur vos planètes : elles tirent automatiquement sur les ennemis à portée.
+
+## Commandes  
+| Touche / Action | Effet |
+|---|---|
+| Clic gauche | Sélectionner une planète / une fusée, valider un bouton |
+| Glisser (clic maintenu) | Déplacer la caméra |
+| Molette / `O` / `P` | Zoomer / dézoomer |
+| Flèches | Déplacer la caméra |
+| `M` | Couper / remettre le son |
+| `Échap` | Fermer une fenêtre / menu pause |
+| Roue crantée (haut-droite) | Réglages audio |
 
 ## Contributions  
 Les contributions sont les bienvenues mais je vous previens : vous ne serez pas paye et Adam gardera tout l'argent ! Forkez le repo et faites une PR.  

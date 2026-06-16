@@ -70,7 +70,13 @@ void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
     switch (getWindowType()) {
 
         case SIDE_BAR_WINDOW:
-        case NO_WINDOW:
+        case NO_WINDOW: {
+            SDL_Rect gearRect = getSettingsIconRect();
+            if (SDL_PointInRect(&mouse, &gearRect)) {  // Roue crantee en haut a droite : reglages audio
+                setWindowType(SETTINGS_WINDOW);
+                Mix_PlayChannel(1, sounds[7], 0);
+                break;
+            }
             if (clickSideBar(mouse)) {
                 Mix_PlayChannel(1, sounds[7], 0);
                 selectionMode = 0;
@@ -92,6 +98,7 @@ void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
             }
 
             break;
+        }
 
         case BASIC_SHIP_WINDOW:
             basicShipWindowGestion(textTextures, fonts, sounds, *ships, *shipCount, planets, planetCount, mouse);
@@ -102,11 +109,15 @@ void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
             break;
 
         case PLANET_WINDOW:
-            planetWindowGestion(textTextures, fonts, sounds, ships, shipCount, planets, mouse);
+            planetWindowGestion(textTextures, fonts, sounds, ships, shipCount, planets, planetCount, mouse);
             break;
 
         case PAUSE_WINDOW:
             pauseWindowGestion(sounds, gameState, mouse, *ships, *shipCount, planets, planetCount);
+            break;
+
+        case SETTINGS_WINDOW:
+            settingsWindowGestion(sounds, mouse);
             break;
 
         default:
@@ -191,7 +202,11 @@ void displayWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Shi
         case PAUSE_WINDOW:
             displayPauseWindow(imageTextures, textTextures);
             break;
-            
+
+        case SETTINGS_WINDOW:
+            displaySettingsWindow(imageTextures, textTextures);
+            break;
+
         default:
             break;
     }
@@ -254,7 +269,7 @@ void updateGame(SDL_Texture **textTextures, TTF_Font **fonts, Ship **ships, int 
     updateAsteroids(planets,planetCount);
     updateTotalOre(planets, planetCount);
     updateTiles(*ships, *shipCount);
-    updateWarSystem(ships, shipCount, sounds);
+    updateWarSystem(ships, shipCount, planets, planetCount, sounds);
     updateWindow(textTextures, fonts, *ships, planets, *shipCount);
 }
 
