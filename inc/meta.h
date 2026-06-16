@@ -27,6 +27,7 @@ typedef struct {
     int wave;
     int upgrades[UPG_COUNT];
     int victoryReached;
+    int objectiveIndex;
 } Meta;
 
 void initMeta(void);

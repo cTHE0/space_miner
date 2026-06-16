@@ -22,6 +22,7 @@
 #include "notify.h"
 #include "meta.h"
 #include "events.h"
+#include "objectives.h"
 
 
 const uint32_t currentSeed = 1;  // Peut prendre des valeurs entre 1 et 2**32-1
@@ -55,6 +56,7 @@ int main(void) {
 
     loadNumbers(fonts[0]);
     initNotify(fonts[0]);
+    initObjectives(fonts[0]);
 
     initRects(textTextures);
 
@@ -113,6 +115,7 @@ int main(void) {
     }
 
     destroyNotify();
+    destroyObjectives();
     destroyImageTextures(imageTextures);
     destroyTextTextures(textTextures);
     destroyFonts(fonts);

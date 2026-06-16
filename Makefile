@@ -11,7 +11,7 @@ SRC     = src/main.c            src/camera.c          src/event.c           src/
 		  src/place.c           src/build.c           src/info_view.c       src/basic_ship_window.c\
 		  src/asteroid.c        src/side_bar_window.c src/enemy.c           src/tile.c             \
 		  src/pause_window.c    src/settings.c        src/notify.c          src/meta.c             \
-	  src/command_window.c   src/events.c          src/minimap.c
+	  src/command_window.c   src/events.c          src/minimap.c         src/objectives.c
 	      
 INCLUDE = inc/camera.h          inc/planet.h          inc/event.h           inc/renderer.h         \
           inc/ship.h            inc/ore.h             inc/map.h             inc/assets_gestion.h   \
@@ -20,7 +20,7 @@ INCLUDE = inc/camera.h          inc/planet.h          inc/event.h           inc/
 		  inc/build.h           inc/mine.h            inc/info_view.h       inc/asteroid.h         \
 		  inc/side_bar_window.h inc/enemy.h           inc/tile.h 			inc/pause_window.h     \
 	  inc/settings.h        inc/notify.h          inc/meta.h            inc/command_window.h   \
-	  inc/events.h          inc/minimap.h
+	  inc/events.h          inc/minimap.h         inc/objectives.h
 
 # Dependances automatiques
 DEPS = $(OBJ:$(OBJDIR)/%.o=$(OBJDIR)/%.d)
