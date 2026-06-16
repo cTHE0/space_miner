@@ -298,7 +298,6 @@ void updateGame(SDL_Texture **textTextures, TTF_Font **fonts, Ship **ships, int 
     updateCameraFollow(*ships, planets);
     updateAsteroids(planets,planetCount);
     updateTotalOre(planets, planetCount);
-    updateTiles(*ships, *shipCount);
     updateWarSystem(ships, shipCount, planets, planetCount, sounds);
     updateEvents();
     updateThreat(getMeta()->score);

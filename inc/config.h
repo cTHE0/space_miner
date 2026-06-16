@@ -48,6 +48,8 @@
 
 #define STEP_TRANSLATION 40
 #define LIMIT_UNZOOM 0.05
+#define MIN_CAMERA_SCALE 0.32f  // Dézoom maximal : on reste proche des planètes
+#define MAX_CAMERA_SCALE 2.0f   // Zoom maximal
 #define SHIP_SPEED 10.f
 #define FPS 60
 #define NAME_BACKUP "backups/backup1"

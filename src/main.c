@@ -113,7 +113,6 @@ int main(void) {
         destroyShips(ships);
         destroyPlanets(planets);
         destroyAsteroids();
-        destroyTiles();
     }
 
     destroyNotify();

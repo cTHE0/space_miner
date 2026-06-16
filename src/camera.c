@@ -82,7 +82,12 @@ void zoomCamera(float zoomFactor) {
     }
     
     if (zoomFactor < 1) {  // Limiter le zoom
-        float dx1 = camera.rect.x + (1 - 1 / (camera.scale * zoomFactor)) * SCREEN_WIDTH / 2.f, 
+        // Dézoom maximal : on reste proche des planètes
+        if (camera.scale * zoomFactor < MIN_CAMERA_SCALE) {
+            return;
+        }
+
+        float dx1 = camera.rect.x + (1 - 1 / (camera.scale * zoomFactor)) * SCREEN_WIDTH / 2.f,
               dy1 = camera.rect.y + (1 - 1 / (camera.scale * zoomFactor)) * SCREEN_HEIGHT / 2.f,
               dx2 = camera.rect.x - MAP_SIZE + (1 + 1 / (camera.scale * zoomFactor)) * SCREEN_WIDTH / 2.f,
               dy2 = camera.rect.y - MAP_SIZE + (1 + 1 / (camera.scale * zoomFactor)) * SCREEN_HEIGHT / 2.f;
@@ -107,7 +112,7 @@ void zoomCamera(float zoomFactor) {
             // Maintenant que la camera ne risque pas de depasser :
             camera.scale *= zoomFactor;
         }
-    } else if (camera.scale < 2) {  // zoomFactor >= 1 implicite 
+    } else if (camera.scale < MAX_CAMERA_SCALE) {  // zoomFactor >= 1 implicite
         camera.scale *= zoomFactor;
     }
 

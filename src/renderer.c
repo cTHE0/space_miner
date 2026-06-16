@@ -92,7 +92,6 @@ void displayGame(SDL_Texture ***imageTextures, SDL_Texture **textTextures, Ship 
     displayShips(imageTextures, ships, shipCount, planets);
     displayLasers(imageTextures);
     displayAsteroid(imageTextures);
-    displayTiles(imageTextures);
     displayMinimap(ships, shipCount, planets, planetCount);
     displayObjectiveHUD();
     displayWindow(imageTextures, textTextures, ships, planets);

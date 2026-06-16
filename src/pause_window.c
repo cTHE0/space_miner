@@ -363,7 +363,6 @@ void saveGame(Ship *ships, int shipCount, Planet *planets, int planetCount) {
     // Sauvegarder chaque fusee/planete/tuile dans le fichier
     fwrite(ships, sizeof(Ship), shipCount, backup);
     fwrite(planets, sizeof(Planet), planetCount, backup);
-    fwrite(*getTilesMatrix(), sizeof(uint8_t), *getByteCount(), backup);
 
     // Sauvegarde de la meta-progression (credits, score, ameliorations)
     fwrite(getMeta(), sizeof(Meta), 1, backup);

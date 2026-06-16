@@ -114,7 +114,6 @@ void handleMenuEvents(Mix_Chunk **sounds, GameState *gameState, short *gameBegun
                             initShips(ships, *shipCount, *planets);
                             initCamera(*planets);
                             initAsteroids(*planets, *planetCount);
-                            initTiles(*planets);
                             *gameState = GAME;
                             break;
                         case 3:  // Settings : ouvre la fenetre de reglages audio
@@ -243,23 +242,11 @@ int chargingGame(Ship **ships, int *shipCount, Planet **planets, int *planetCoun
         return 0;
     }
 
-    // Initialiser la variable static 'byteCount' de tile.c
-    setByteCount();
-
     // Allouer dynamiquement la mémoire pour la liste des fusees et des planetes
     *ships = malloc(sizeof(Ship) * (*shipCount));
     *planets = malloc(sizeof(Planet) * (*planetCount));
     if (!*ships || !*planets) {
         printf("Erreur d'allocation de mémoire pour les fusees/planetes.\n");
-        fclose(backup);
-        return 0;
-    }
-
-    // Allouer dynamiquement la mémoire pour la liste des tuiles
-    uint8_t **tilesMatrixMalloc = getTilesMatrix();
-    *tilesMatrixMalloc = malloc(sizeof(uint8_t) * *getByteCount());
-    if (!*tilesMatrixMalloc) {
-        printf("Erreur d'allocation de mémoire pour les tuiles.\n");
         fclose(backup);
         return 0;
     }
@@ -276,14 +263,6 @@ int chargingGame(Ship **ships, int *shipCount, Planet **planets, int *planetCoun
     itemsRead = fread(*planets, sizeof(Planet), *planetCount, backup);
     if (itemsRead != (size_t)(*planetCount)) {
         printf("Error reading the backup file (downloading planets).\n");
-        fclose(backup);
-        return 0;
-    }
-
-    // Charger le tableau de tuiles
-    itemsRead = fread(*tilesMatrixMalloc, sizeof(uint8_t), *getByteCount(), backup);
-    if (itemsRead != (size_t)(*getByteCount())) {
-        printf("Error reading the backup file (downloading tiles).\n");
         fclose(backup);
         return 0;
     }
