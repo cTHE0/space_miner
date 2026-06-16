@@ -168,7 +168,8 @@ SDL_Texture **loadTextTextures(TTF_Font **fonts) {  // ATTENTION: ne pas oublier
                                             {"Minerals mined", WHITE, fonts[0]},  // index 113
                                             {"Return to title", BLACK, fonts[0]}, // index 114
                                             {"VICTORY!", GOLD, fonts[0]},         // index 115
-                                            {"Threat", BLACK, fonts[0]}           // index 116
+                                            {"Threat", BLACK, fonts[0]},          // index 116
+                                            {"Hire Defender", BLACK, fonts[0]}    // index 117
                                            };
 
     for (int i = 0; i < CST_TEXT_NUMBER; i++) {

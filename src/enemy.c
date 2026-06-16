@@ -98,6 +98,7 @@ static int isColonized(Planet *p) {
 void updateWarSystem(Ship **ships, int *shipCount, Planet *planets, int planetCount, Mix_Chunk **sounds) {
     updateEnemies(ships, shipCount, planets, planetCount);
     updateDefenceTowers(planets, planetCount, *ships, *shipCount, sounds);
+    updateDefenders(*ships, *shipCount, sounds);
     updateRaiders(*ships, *shipCount, planets, planetCount);
     updateLasers(*ships, sounds);
     newLasersFired(*ships, *shipCount, sounds);
@@ -249,6 +250,54 @@ void updateDefenceTowers(Planet *planets, int planetCount, Ship *ships, int ship
             lastLaserSon++;
             if (lastLaserSon == 5) lastLaserSon = 2;
         }
+    }
+}
+
+void updateDefenders(Ship *ships, int shipCount, Mix_Chunk **sounds) {
+    Uint32 now = SDL_GetTicks();
+
+    for (int i = 0; i < shipCount; i++) {
+        if (ships[i].shiptype != DEFENDER) continue;
+
+        // Recherche du pirate le plus proche dans la portee du defenseur
+        int best = -1;
+        float bestDist = ships[i].range;
+        for (int s = 0; s < shipCount; s++) {
+            if (ships[s].shiptype != ENEMY) continue;
+            float d = distanceShipShip(&ships[i], &ships[s]);
+            if (d < bestDist) {
+                bestDist = d;
+                best = s;
+            }
+        }
+
+        if (best == -1) {
+            // Aucun ennemi : le defenseur se met en garde (immobile)
+            if (ships[i].state == ATTACKING_SHIP) ships[i].state = WAITING_ON_BASE;
+            continue;
+        }
+
+        // Poursuite de la cible
+        ships[i].state = ATTACKING_SHIP;
+        ships[i].target.type = SPOT_SHIP;
+        ships[i].target.id_ship = best;
+
+        // Tir si le pirate est a portee de feu et que la cadence le permet
+        if (now - ships[i].lastRefreshFiring < LASER_GENERATION_PERIOD - 100) continue;
+        ships[i].lastRefreshFiring = now;
+
+        SDL_Rect laser = {(int)(ships[i].x + ships[i].w / 2), (int)(ships[i].y + ships[i].h / 2), 200, 200};
+        addLaser(laser,
+                 (SDL_Point){(int)ships[best].x, (int)ships[best].y},
+                 best,
+                 computeAngleDeg((int)ships[best].x, (int)ships[best].y, laser.x, laser.y),
+                 16,
+                 2 + towerDamageBonus());  // Defenseurs : degats solides
+
+        Mix_PlayChannel(lastLaserSon, sounds[11], 0);
+        Mix_SetPositionCameraCentered(lastLaserSon, &lasers[lasersCount - 1].rect);
+        lastLaserSon++;
+        if (lastLaserSon == 5) lastLaserSon = 2;
     }
 }
 

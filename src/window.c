@@ -127,7 +127,7 @@ void openWindowGestion(SDL_Texture **textTextures, TTF_Font **fonts, Mix_Chunk *
             break;
 
         case COMMAND_WINDOW:
-            commandWindowGestion(sounds, planets, planetCount, mouse);
+            commandWindowGestion(sounds, ships, shipCount, planets, planetCount, mouse);
             break;
 
         case GAME_OVER_WINDOW:
@@ -309,10 +309,10 @@ void checkEndConditions(Ship **ships, int *shipCount) {
         pushNotification("VICTORY! You dominate the sector!", GOLD);
     }
 
-    // Defaite : plus aucun transporteur pendant 25 secondes
+    // Defaite : plus aucun transporteur pendant 25 secondes (les defenseurs ne comptent pas)
     int transporters = 0;
     for (int i = 0; i < *shipCount; i++) {
-        if ((*ships)[i].shiptype != ENEMY) transporters++;
+        if ((*ships)[i].shiptype == TRANSPORTER) transporters++;
     }
 
     if (transporters > 0) {

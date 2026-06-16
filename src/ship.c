@@ -206,8 +206,8 @@ void updateShipTanks(Ship *ship, Planet *planets, Uint32 currentTime) {  // Gere
         return;
     }
 
-    if (ship->shiptype == ENEMY) {
-        return;
+    if (ship->shiptype == ENEMY || ship->shiptype == DEFENDER) {
+        return;  // Ni les pirates ni les defenseurs n'utilisent de cargo/essence
     }
 
     ship->lastRefreshFilling = currentTime;
@@ -530,6 +530,43 @@ int fuelInShip(Ship *ship) {
         }
     }
     return totalFuel;
+}
+
+void addDefender(Ship **ships, int *shipCount, Planet *planet) {
+    Ship *temp = realloc(*ships, (*shipCount + 1) * sizeof(Ship));
+    if (temp == NULL) return;
+    *ships = temp;
+
+    Ship *d = &(*ships)[*shipCount];
+    memset(d, 0, sizeof(Ship));
+
+    d->shiptype = DEFENDER;
+    d->id = *shipCount;
+    d->idModel = 0;  // Sprite distinct des transporteurs
+    d->level = 1;
+
+    d->x = planet->x;
+    d->y = planet->y;
+    d->w = 170;
+    d->h = 170;
+    d->speed = (0.8f + (rand() % 40) / 100.f) * SHIP_SPEED * shipSpeedMultiplier();
+    d->maxLife = 140 + shipArmorBonus();
+    d->currentLife = d->maxLife;
+    d->fuelConsumption = 1;
+    d->range = 2600;  // Surclasse la portee des pirates
+
+    d->state = WAITING_ON_BASE;
+    d->base.type = SPOT_PLANET;
+    d->base.id_planet = planet->id;
+    d->target.type = SPOT_PLANET;
+    d->target.id_planet = planet->id;
+
+    d->frameIndex = rand() % 4;
+    d->lastRefreshFiring = SDL_GetTicks();
+
+    (*shipCount)++;
+
+    pushNotification("Defender deployed!", GREEN);
 }
 
 void addShip(Ship **ships, int *shipCount, Planet *planet, int planetCount) {

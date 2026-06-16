@@ -30,6 +30,7 @@ void updateWarSystem(Ship **ships, int *shipCount, Planet *planets, int planetCo
     void newLasersFired(Ship *ships, int shipCount, Mix_Chunk **sounds);
     void updateDefenceTowers(Planet *planets, int planetCount, Ship *ships, int shipCount, Mix_Chunk **sounds);
     void updateRaiders(Ship *ships, int shipCount, Planet *planets, int planetCount);
+    void updateDefenders(Ship *ships, int shipCount, Mix_Chunk **sounds);
 
 int getLasersCount(void);
 Laser *getLasersList(void);

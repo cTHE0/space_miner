@@ -23,6 +23,7 @@ static const int orePrice[ORE_TYPE_COUNT] = {1, 3, 9, 18, 35};
 static SDL_Rect panelRect, crossRect;
 static SDL_Rect sellRowRect[ORE_TYPE_COUNT];   // zone cliquable "Sell" de chaque minerai
 static SDL_Rect upgRowRect[UPG_COUNT];         // zone cliquable "Buy" de chaque amelioration
+static SDL_Rect hireDefenderRect;              // bouton de recrutement d'un defenseur
 
 
 void initCommandWindowRects(void) {
@@ -42,6 +43,9 @@ void initCommandWindowRects(void) {
         upgRowRect[i] = (SDL_Rect){panelRect.x + panelRect.w * 0.82, firstRowY + i * rowGap,
                                    panelRect.w * 0.13, rowGap * 0.62};
     }
+
+    hireDefenderRect = (SDL_Rect){panelRect.x + panelRect.w * 0.30, panelRect.y + panelRect.h * 0.88,
+                                  panelRect.w * 0.40, panelRect.h * 0.085};
 }
 
 static void drawText(SDL_Texture *tex, int x, int y, int h, int centered) {
@@ -136,13 +140,46 @@ void displayCommandWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextur
             drawButton(upgRowRect[i], textTextures[101], 0);  // Niveau max atteint
         }
     }
+
+    // Bouton de recrutement d'un defenseur (chasse les pirates)
+    drawButton(hireDefenderRect, textTextures[117], m->credits >= DEFENDER_COST);
+    SDL_Rect dcost = {hireDefenderRect.x + hireDefenderRect.w + panelRect.w * 0.01, hireDefenderRect.y + hireDefenderRect.h * 0.2,
+                      panelRect.w * 0.012, hireDefenderRect.h * 0.55};
+    renderNumber(DEFENDER_COST, dcost);
 }
 
-void commandWindowGestion(Mix_Chunk **sounds, Planet *planets, int planetCount, SDL_Point mouse) {
+void commandWindowGestion(Mix_Chunk **sounds, Ship **ships, int *shipCount, Planet *planets, int planetCount, SDL_Point mouse) {
     // Fermeture
     if (SDL_PointInRect(&mouse, &crossRect) || !SDL_PointInRect(&mouse, &panelRect)) {
         setWindowType(NO_WINDOW);
         Mix_PlayChannel(1, sounds[10], 0);
+        return;
+    }
+
+    // Recrutement d'un defenseur (apparait sur une planete colonisee)
+    if (SDL_PointInRect(&mouse, &hireDefenderRect)) {
+        if (getMeta()->credits >= DEFENDER_COST) {
+            int home = -1;
+            for (int i = 0; i < planetCount; i++) {
+                if (planets[i].planetType != SUN) {
+                    for (int b = 0; b < BUILD_TYPE_COUNT; b++) {
+                        if (planets[i].builds[b].level > 0) { home = i; break; }
+                    }
+                }
+                if (home != -1) break;
+            }
+            if (home != -1) {
+                spendCredits(DEFENDER_COST);
+                addDefender(ships, shipCount, &planets[home]);
+                Mix_PlayChannel(1, sounds[5], 0);
+            } else {
+                Mix_PlayChannel(1, sounds[8], 0);
+                pushNotification("No colony to deploy a defender!", RED);
+            }
+        } else {
+            Mix_PlayChannel(1, sounds[8], 0);
+            pushNotification("Not enough credits!", RED);
+        }
         return;
     }
 

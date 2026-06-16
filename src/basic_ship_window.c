@@ -82,6 +82,8 @@ void initBasicShipWindow(SDL_Texture **textTextures, TTF_Font **fonts, Ship *shi
     char shiptype[32] = "";
     if (ships[getWindowId()].shiptype == TRANSPORTER) {
         strcpy(shiptype, "transporter");
+    } else if (ships[getWindowId()].shiptype == DEFENDER) {
+        strcpy(shiptype, "defender");
     } else if (ships[getWindowId()].shiptype == ENEMY) {
         strcpy(shiptype, "enemy");
     } else {
