@@ -9,9 +9,11 @@
 #include "tile.h"
 #include "meta.h"
 #include "events.h"
+#include "pause_window.h"
 
 
 static int bg_button_a_afficher = 0;
+static int landingSettingsOpen = 0;
 
 static lpFrameControler lpFrameController = {0, 0, 0, 0};
 
@@ -34,6 +36,20 @@ void handleMenuEvents(Mix_Chunk **sounds, GameState *gameState, short *gameBegun
         int x, y;
         SDL_GetMouseState(&x, &y);
         SDL_Point point = {x, y};
+
+        // Si la fenetre de reglages est ouverte, elle capte les interactions
+        if (landingSettingsOpen) {
+            if (event.type == SDL_MOUSEBUTTONUP && event.button.button == SDL_BUTTON_LEFT) {
+                if (settingsWindowGestion(sounds, point)) {
+                    landingSettingsOpen = 0;
+                }
+            } else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE) {
+                landingSettingsOpen = 0;
+            } else if (event.type == SDL_QUIT) {
+                *gameState = QUIT;
+            }
+            continue;
+        }
 
         switch (event.type) {
 
@@ -97,6 +113,10 @@ void handleMenuEvents(Mix_Chunk **sounds, GameState *gameState, short *gameBegun
                             initAsteroids(*planets, *planetCount);
                             initTiles(*planets);
                             *gameState = GAME;
+                            break;
+                        case 3:  // Settings : ouvre la fenetre de reglages audio
+                            Mix_PlayChannel(0, sounds[7], 0);
+                            landingSettingsOpen = 1;
                             break;
                         default:
                             break;
@@ -188,6 +208,11 @@ void displayMenu(SDL_Texture ***imageTextures, SDL_Texture **textTextures) {
     SDL_QueryTexture(textTextures[3], NULL, NULL, &textureWidth, &textureHeight);
     SDL_Rect text3Rect = {SCREEN_WIDTH * 0.62, SCREEN_HEIGHT * 0.69, textureWidth * SCREEN_HEIGHT * 0.0013, textureHeight * SCREEN_HEIGHT * 0.0013};
     SDL_RenderCopy(renderer, textTextures[3], NULL, &text3Rect);  // Affiche "Settings"
+
+    // Fenetre de reglages audio par-dessus le menu
+    if (landingSettingsOpen) {
+        displaySettingsWindow(imageTextures, textTextures);
+    }
 
     SDL_RenderPresent(renderer);
 }

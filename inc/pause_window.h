@@ -20,7 +20,7 @@ void pauseWindowGestion(Mix_Chunk **sounds, GameState *gameState, SDL_Point mous
 
 void initSettingsWindowRects(void);
 void displaySettingsWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures);
-void settingsWindowGestion(Mix_Chunk **sounds, SDL_Point mouse);
+int settingsWindowGestion(Mix_Chunk **sounds, SDL_Point mouse);  // renvoie 1 si fermeture demandee
 
 void displayGameOverWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextures);
 void gameOverWindowGestion(GameState *gameState, Mix_Chunk **sounds, SDL_Point mouse);

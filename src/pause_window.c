@@ -213,7 +213,7 @@ void displaySettingsWindow(SDL_Texture ***imageTextures, SDL_Texture **textTextu
     drawToggle(textTextures, muteToggleRect, isMuted());
 }
 
-void settingsWindowGestion(Mix_Chunk **sounds, SDL_Point mouse) {
+int settingsWindowGestion(Mix_Chunk **sounds, SDL_Point mouse) {
     if (SDL_PointInRect(&mouse, &musicToggleRect)) {
         toggleMusic(sounds);
         Mix_PlayChannel(1, sounds[7], 0);
@@ -225,7 +225,9 @@ void settingsWindowGestion(Mix_Chunk **sounds, SDL_Point mouse) {
     } else if (!SDL_PointInRect(&mouse, &settingsPanelRect)) {
         setWindowType(NO_WINDOW);  // Clic en dehors : fermeture
         Mix_PlayChannel(1, sounds[7], 0);
+        return 1;
     }
+    return 0;
 }
 
 /* ----------------------- Ecran de fin de partie ----------------------- */
