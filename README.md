@@ -29,8 +29,18 @@ Vous dirigez une civilisation minière inter-galactique. Le but : extraire des m
 - **Crédits & primes** : chaque pirate détruit rapporte une prime. Vendez vos surplus de minerais pour financer vos améliorations.
 - **Événements galactiques** : des événements aléatoires bouleversent la partie (boom minier, marché en folie, déferlante de pirates, prime triplée).
 - **Objectifs** : suivez la mission affichée en haut à gauche pour gagner des crédits bonus et progresser.
+- **Vaisseaux défenseurs** : recrutez-les au Centre de commandement (crédits) ; ils chassent automatiquement les pirates. Arbitrez entre améliorations et flotte militaire.
 - **Minimap** : vue d'ensemble de la galaxie en bas à droite ; cliquez pour vous y déplacer.
 - **But** : atteindre **25 000 points** (victoire) tout en évitant de perdre toute votre flotte (défaite).
+
+## Difficulté
+Le jeu monte en pression : ne le laissez pas tourner sans rien faire.
+
+- **Rareté** : vous ne démarrez qu'avec 2 colonies aux stocks limités. Tout le reste est à conquérir — mais s'étendre attire les pirates.
+- **Niveau de Menace** (HUD) : croît avec le temps **et** votre réussite. Plus il est haut, plus les pirates sont nombreux, rapides, résistants et fréquents.
+- **Raids de colonies** : dès la menace 2, des pillards volent les minerais de vos planètes et endommagent vos bâtiments. Les **tours de défense** et les **boucliers planétaires** (recherche) sont vos parades.
+- **Cuirassés pirates (boss)** : dès la menace 4, d'énormes vaisseaux très résistants apparaissent — gros danger, mais grosse prime.
+- **Game over** : si vous perdez tous vos transporteurs sans pouvoir en reconstruire, votre empire s'effondre.
 
 ## Commandes  
 | Touche / Action | Effet |
