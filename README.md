@@ -18,13 +18,19 @@ Un jeu en C avec SDL2 dans lequel vous pourrez creer, developper et defendre une
    ```  
 
 ## Comment jouer  
-Vous dirigez une civilisation minière inter-galactique. Le but : extraire des minerais, développer vos planètes et survivre aux attaques de pirates.
+Vous dirigez une civilisation minière inter-galactique. Le but : extraire des minerais, développer vos planètes, bâtir un empire commercial et survivre aux attaques de pirates pour faire le meilleur score.
 
 - **Extraire** : sur une planète, construisez des *mines* (elles remplissent les *réservoirs* du minerai correspondant).
 - **Transporter** : chaque fusée fait la navette entre une *base* et une *cible*. Ouvrez sa fiche pour choisir les minerais à charger/décharger.
 - **Économie** : chaque construction/amélioration coûte des ressources, prélevées sur le réservoir de la planète. L'or, le joanium et le voidor forment un véritable arbre technologique (il faut de l'or pour le joanium, etc.).
 - **L'usine** fabrique de nouvelles fusées (fer + or).
 - **La guerre** : des pirates apparaissent et attaquent vos transporteurs. Construisez des **tours de défense** sur vos planètes : elles tirent automatiquement sur les ennemis à portée.
+- **Centre de commandement** (touche `C` ou onglet latéral droit) : vendez vos minerais contre des **crédits** et achetez des **améliorations globales** permanentes (rendement minier, puissance des tours, vitesse et blindage des fusées).
+- **Crédits & primes** : chaque pirate détruit rapporte une prime. Vendez vos surplus de minerais pour financer vos améliorations.
+- **Événements galactiques** : des événements aléatoires bouleversent la partie (boom minier, marché en folie, déferlante de pirates, prime triplée).
+- **Objectifs** : suivez la mission affichée en haut à gauche pour gagner des crédits bonus et progresser.
+- **Minimap** : vue d'ensemble de la galaxie en bas à droite ; cliquez pour vous y déplacer.
+- **But** : atteindre **25 000 points** (victoire) tout en évitant de perdre toute votre flotte (défaite).
 
 ## Commandes  
 | Touche / Action | Effet |
@@ -33,8 +39,10 @@ Vous dirigez une civilisation minière inter-galactique. Le but : extraire des m
 | Glisser (clic maintenu) | Déplacer la caméra |
 | Molette / `O` / `P` | Zoomer / dézoomer |
 | Flèches | Déplacer la caméra |
+| `C` | Ouvrir / fermer le Centre de commandement |
 | `M` | Couper / remettre le son |
 | `Échap` | Fermer une fenêtre / menu pause |
+| Clic sur la minimap | Recentrer la caméra |
 | Roue crantée (haut-droite) | Réglages audio |
 
 ## Contributions  
